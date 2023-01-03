@@ -3,6 +3,7 @@ import { nanoid } from 'nanoid'
 import * as Room from '../networking'
 import * as Map from './map'
 import * as Portal from './portal'
+import * as Book from './book'
 import { getActionState, addActionDownListener } from '../controller'
 import { getLocalStore, getRemoteStore } from '../singleton'
 import { roundToNearest } from '../utils'
@@ -94,6 +95,27 @@ export const init = (canvas, id) => {
       }
 
       Portal.create(nanoid(), Math.floor(x / 32), Math.floor(y / 32), slug)
+    }
+  })
+
+  addActionDownListener('createBook', () => {
+    const store = getRemoteStore()
+    const editor = store.getDocument('editor', id)
+
+    if (editor === null) {
+      return
+    }
+
+    const { position: { x, y }, interacting } = editor
+
+    if (interacting) {
+      const text = window.prompt('The book reads...', 'test')
+
+      if (text === null) {
+        return
+      }
+
+      Book.create(nanoid(), Math.floor(x / 32), Math.floor(y / 32), text)
     }
   })
 

@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { getTextureByName } from '../textures'
 import { getRemoteStore, getLocalStore } from '../singleton'
 import { getMultiple } from '../utils'
+import { getActionState } from 'core/controller'
 
 export const MAP_WIDTH = 20
 export const MAP_HEIGHT = 15
@@ -68,6 +69,8 @@ export const init = () => {
   const materialUV = new THREE.MeshLambertMaterial({
     map: loader.load('tileset.png'),
   })
+  materialUV.map.minFilter = THREE.NearestFilter
+  materialUV.map.magFilter = THREE.NearestFilter
 
   const floorGeometries = [
     geometryFloorUV0,
@@ -193,6 +196,7 @@ export const init = () => {
   }
 
   const localStore = getLocalStore()
+
   const scene = localStore.getDocument('scene', 'scene')
   scene.add(gridContainer)
 
@@ -371,32 +375,18 @@ export const render3D = (id) => {
     for (let y = 0; y < MAP_HEIGHT; y++) {
       let mapCell = map3D[MAP_HEIGHT-1-y][x]
 
-      //mapCell.isWall = walls[map[y][x]]
       mapCell.mesh.geometry = floorGeometries[map[y][x]]
 
-      //if(mapCell.isWall ) {
       mapCell.mesh.position.z = walls[map[y][x]]
 
       const updateGeometries = (wallStack) => {
         wallStack.children.forEach(element => {
           element.geometry = wallGeometries[map[y][x]]
         })
-        /*wallStack.walls.n.geometry = wallGeometries[map[y][x]]
-        wallStack.walls.s.geometry = wallGeometries[map[y][x]]
-        wallStack.walls.e.geometry = wallGeometries[map[y][x]]
-        wallStack.walls.w.geometry = wallGeometries[map[y][x]]*/
       }
       updateGeometries(mapCell.walls.stack1)
       updateGeometries(mapCell.walls.stack2)
       updateGeometries(mapCell.walls.stack3)
-
-      /*} else {
-        mapCell.mesh.position.z = 0
-        mapCell.walls.n.visible = false
-        mapCell.walls.s.visible = false
-        mapCell.walls.e.visible = false
-        mapCell.walls.w.visible = false
-      }*/
     }
   }
 }
@@ -421,6 +411,8 @@ export const swapTileset = (id, tileset) => {
   } else {
     materialUV.map = loader.load(tileset.blob)
   }
+  materialUV.map.magFilter = THREE.NearestFilter
+  materialUV.map.minFilter = THREE.NearestFilter
 
   materialUV.needsUpdate = true
 }

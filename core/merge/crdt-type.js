@@ -176,12 +176,28 @@ export const tileset = {
     height: 'number',
   },
 }
+export const presentation = {
+  visible: 'boolean',
+  slide: 'number',
+}
+export const book = {
+  position: {
+    x: 'number',
+    y: 'number',
+    z: 'number',
+  },
+  text: 'string',
+}
 
 export const typeDefs = {
   player: createTypeMetadata(player),
   map: createTypeMetadata(map),
   editor: createTypeMetadata(editor),
   portal: createTypeMetadata(portal),
+  book: createTypeMetadata(book),
   document: createTypeMetadata(document),
   tileset: createTypeMetadata(tileset),
+  presentation: createTypeMetadata(presentation),
+
+  //presentationVisible: createTypeMetadata(presentationVisible),
 }

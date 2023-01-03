@@ -10,6 +10,7 @@ import * as Player from './components/player'
 import * as Map from './components/map'
 import * as Editor from './components/editor'
 import * as Portal from './components/portal'
+import * as Book from './components/book'
 import { getRemoteStore, getLocalStore } from './singleton'
 import { createRenderTexture } from './textures'
 import { renderMarkdown } from './canvas-markdown'
@@ -100,6 +101,10 @@ export const init = async (slug, canvas, canvas3d) => {
       keycode: '80', // p
     },
     {
+      name: 'createBook',
+      keycode: '66', // b
+    },
+    {
       name: 'interact',
       keycode: '69', // e
     },
@@ -153,6 +158,7 @@ export const init = async (slug, canvas, canvas3d) => {
   Player.init()
   Map.init()
   Portal.init()
+  Book.init()
 
   room.init(slug)
 
@@ -183,6 +189,11 @@ export const init = async (slug, canvas, canvas3d) => {
     return
   }
   scene.add(documentMesh)
+
+  getRemoteStore().setDocument('presentation', 'presentation', { 
+    visible: false,
+    slide: 0,
+  })
 }
 
 export const update = (dt) => {
@@ -197,6 +208,7 @@ export const render = (canvas, context) => {
   const store = getRemoteStore()
   const playerIds = store.getIds('player')
   const portalIds = store.getIds('portal')
+  const bookIds = store.getIds('book')
   const document = store.getDocument('document', 'world')
   const text = document?.content || ''
 
@@ -214,6 +226,9 @@ export const render = (canvas, context) => {
 
   for (const portalId of portalIds) {
     Portal.render(portalId, context)
+  }
+  for (const bookId of bookIds) {
+    Book.render(bookId, context)
   }
 
   // Should probably be able to just get them directly.

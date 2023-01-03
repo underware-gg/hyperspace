@@ -83,7 +83,7 @@ export const applyOp = (op, crdts, documents) => {
       return false
     }
 
-    if (parentVersion !== undefined || parentPathIndex !== undefined) {
+    if ((parentVersion !== undefined && parentVersion !== null) || (parentPathIndex !== undefined && parentPathIndex !== -1)) {
       return false
     }
 

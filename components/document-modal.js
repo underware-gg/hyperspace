@@ -11,12 +11,14 @@ import {
 } from '@chakra-ui/react'
 import Textarea from 'components/textarea'
 import Button from 'components/button'
+import { getLocalStore, getRemoteStore } from 'core/singleton'
 
 const DocumentModal = ({
   finalRef,
   initialRef,
   isOpen,
   text,
+  onOpen,
   onClose,
   onInputChange,
 }) => {
@@ -27,6 +29,7 @@ const DocumentModal = ({
       initialFocusRef={initialRef}
       finalFocusRef={finalRef}
       isOpen={isOpen}
+      onAfterOpen={ text = getRemoteStore().getDocument('book', getLocalStore().getDocument('documentId', 'world'))?.text || "Error!"}
       onClose={onClose}
       isCentered
     >

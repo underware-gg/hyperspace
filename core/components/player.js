@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import * as Room from '../networking'
 import * as Portal from './portal'
+import * as Book from './book'
 import { getActionState } from '../controller'
 import { getTextureByName } from '../textures'
 import { getRemoteStore, getLocalStore } from '../singleton'
@@ -22,6 +23,8 @@ let grounded = false
 
 const image = new THREE.TextureLoader().load('james.png')
 const material = new THREE.SpriteMaterial({ map: image })
+material.map.minFilter = THREE.NearestFilter
+material.map.magFilter = THREE.NearestFilter
 
 export const init = () => {
   const room = Room.get()
@@ -135,6 +138,17 @@ export const interact = (id) => {
     // not touching a portal you can still use it for travel.
     if (rectanglesOverlap(getCollisionRect(id), Portal.getCollisionRect(portalId))) {
       Portal.travel(portalId)
+    }
+  }
+
+  const bookIds = store.getIds('book')
+  for (const bookId of bookIds) {
+    if (rectanglesOverlap(getCollisionRect(id), Book.getCollisionRect(bookId))) {
+      Book.read(bookId)
+      localStore.setDocument('documentId', 'world', bookId)
+
+      localStore.setDocument('show-doc', 'world', true)
+      break
     }
   }
 
@@ -362,8 +376,6 @@ export const update = (id, dt) => {
   const cameraOrbit = localStore.getDocument('cameraOrbit', 'cameraOrbit')
   const camera = localStore.getDocument('camera', 'camera')
 
-  //localStore.setDocument('cameraOrbit', 'cameraOrbit', this.cameraOrbit)
-
   if (cameraOrbit === null) {
     return
   }
@@ -408,6 +420,14 @@ export const render = (id, context) => {
     PLAYER_WIDTH,
     PLAYER_HEIGHT,
   )
+
+  /*context.drawImage(
+    playerTexture,
+    Math.round(x - 32 * 0.5),
+    Math.round(y - 32 + 5),
+    32,
+    32,
+  )*/
 
   strokeRect(context, getCollisionRect(id))
   strokeCircle(context, getCollisionCircle(id))

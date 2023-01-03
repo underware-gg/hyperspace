@@ -7,21 +7,15 @@ class Renderer3D {
       70,
       canvas.width / canvas.height,
       0.01,
-      20
+      30
     )
     
     this.cameraOrbit = new THREE.Object3D()
 
     this.camOffset = this.camera.position
 
-    //this.camera.position.set(10, -480/32, 10)
-
-    //this.camera.lookAt((640/32)/2, -(480/32)/2, 0)
     this.cameraOrbit.position.set(0, -10, 0)
     this.cameraOrbit.lookAt(0, 10, 0)
-
-    //this.camera.position.set(0, -10, 0)
-    //this.camera.lookAt(0, 10, 0)
 
     this.cameraOrbit.add(this.camera)
 
@@ -48,11 +42,6 @@ class Renderer3D {
       this.camera.aspect = canvas.width / canvas.height
       this.camera.updateProjectionMatrix()
     }
-
-    // const sphereGeo = new THREE.SphereGeometry(.25)
-    // const sphereMat = new THREE.MeshBasicMaterial({ color: 0xFF00FF })
-    // this.sphereMesh = new THREE.Mesh(sphereGeo, sphereMat)
-    // this.scene.add(this.sphereMesh)
 
     const localStore = getLocalStore()
     localStore.setDocument('scene', 'scene', this.scene)
