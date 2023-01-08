@@ -117,9 +117,6 @@ const Room = () => {
         <Heading as='h1' size='2xl'>
           Metaverse in a box
         </Heading>
-        <Text>
-          A metaverse project using CRDTs for state synchronisation.
-        </Text>
         <label htmlFor="tileset-image">Select tileset:</label>
         <input type="file" id="tileset-image" name="img" accept="image/*" onChange={handleTilesetChange} />
         <img src={tileset?.blob ?? 'tileset.png'} alt="tileset-preview" />

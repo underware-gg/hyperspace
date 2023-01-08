@@ -12,16 +12,16 @@ const Header = () => {
       pr={4}
       borderWidth='0 0 1px 0'
       sx={{ display: 'flex', width: '100%' }}
-    >
+      backgroundColor={'#000'}
+      >
       <Box>
         <Link href='/'>
           <a>
             <Image
-              src='/logo.png'
-              alt='Silicon Jungle'
-              w='196px'
-              h='28px'
-              sx={{ imageRendering: 'pixelated' }}
+              src='/funDAOmental-stamp.png'
+              alt='funDAOmental'
+              w='280px'
+              h='30px'
             />
           </a>
         </Link>

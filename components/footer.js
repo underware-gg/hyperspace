@@ -11,9 +11,9 @@ const Footer = () => {
       align='center'
       justifyContent='center'
       borderWidth='1px 0 0 0'
-    >
-      {/* All content copyright James Addison © 2022 • All rights reserved. */}
-      Some footer content.
+      backgroundColor={'#000'}
+      >
+      A collaborative, composable metaverse using CRDTs for state synchronisation.
     </Box>
   )
 }

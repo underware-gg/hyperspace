@@ -10,10 +10,10 @@ const Home = ({ slug }) => (
   <Layout>
     <VStack align='stretch' w='100%' spacing={4} shouldWrapChildren>
       <Heading as='h1' size='2xl'>
-        Metaverse in a box
+        Hyperbox
       </Heading>
       <Text>
-        A metaverse project using CRDTs for state synchronisation.
+        A collaborative, composable metaverse using CRDTs for state synchronisation.
       </Text>
       <NextLink href={slug} passHref>
         <Link>
