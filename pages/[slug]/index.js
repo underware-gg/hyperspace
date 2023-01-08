@@ -115,7 +115,7 @@ const Room = () => {
     <Layout>
       <VStack align='stretch' w='100%' spacing={4} shouldWrapChildren>
         <Heading as='h1' size='2xl'>
-          Metaverse in a box
+          Hyperbox
         </Heading>
         <label htmlFor="tileset-image">Select tileset:</label>
         <input type="file" id="tileset-image" name="img" accept="image/*" onChange={handleTilesetChange} />
