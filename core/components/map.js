@@ -64,6 +64,7 @@ export const init = () => {
   const geometryWallUV8 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
   const geometryWallUV9 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
 
+
   const loader = new THREE.TextureLoader()
 
   const materialUV = new THREE.MeshLambertMaterial({
@@ -72,6 +73,67 @@ export const init = () => {
   materialUV.map.minFilter = THREE.NearestFilter
   materialUV.map.magFilter = THREE.NearestFilter
 
+  const presentationTextures = [
+    loader.load('Presentation\\1.png'),
+    loader.load('Presentation\\2.png'),
+    loader.load('Presentation\\3.png'),
+    loader.load('Presentation\\4.png'),
+    loader.load('Presentation\\5.png'),
+    loader.load('Presentation\\6.png'),
+    loader.load('Presentation\\7.png'),
+    loader.load('Presentation\\8.png'),
+    loader.load('Presentation\\9.png'),
+    loader.load('Presentation\\10.png'),
+    loader.load('Presentation\\11.png'),
+    loader.load('Presentation\\12.png'),
+    loader.load('Presentation\\13.png'),
+    loader.load('Presentation\\14.png'),
+    loader.load('Presentation\\15.png'),
+    loader.load('Presentation\\16.png'),
+    loader.load('Presentation\\17.png'),
+    loader.load('Presentation\\18.png'),
+    loader.load('Presentation\\19.png'),
+    loader.load('Presentation\\10.png'),
+    loader.load('Presentation\\11.png'),
+    loader.load('Presentation\\20.png'),    
+    loader.load('Presentation\\21.png'),
+    loader.load('Presentation\\22.png'),
+    loader.load('Presentation\\23.png'),
+    loader.load('Presentation\\24.png'),
+    loader.load('Presentation\\25.png'),
+    loader.load('Presentation\\26.png'),
+    loader.load('Presentation\\27.png'),
+    loader.load('Presentation\\28.png'),
+    loader.load('Presentation\\29.png'),
+    loader.load('Presentation\\30.png'),
+    loader.load('Presentation\\31.png'),
+    loader.load('Presentation\\32.png'),
+    loader.load('Presentation\\33.png'),
+    loader.load('Presentation\\34.png'),
+    loader.load('Presentation\\35.png'),
+    loader.load('Presentation\\36.png'),
+    loader.load('Presentation\\37.png'),
+    loader.load('Presentation\\38.png'),
+    loader.load('Presentation\\39.png'),
+    loader.load('Presentation\\40.png'),
+  ]
+
+  const presentationPanel = new THREE.PlaneGeometry(19.2, 10.8, 1, 1)
+  const presentationMaterial = new THREE.MeshBasicMaterial({
+    map: presentationTextures[0],
+    index: 0,
+    textures: presentationTextures,
+  })
+
+  const presentationBoard = new THREE.Mesh(presentationPanel, presentationMaterial)
+  const presentationOrbiter = new THREE.Object3D()
+  presentationOrbiter.add(presentationBoard)
+  presentationBoard.position.y = 10
+  presentationBoard.position.z = 4
+  presentationBoard.rotateX(Math.PI/2*45)
+  presentationOrbiter.position.x = MAP_WIDTH*cellWidth/2
+  presentationOrbiter.position.z = MAP_HEIGHT*cellWidth/2
+  
   const floorGeometries = [
     geometryFloorUV0,
     geometryFloorUV1,
@@ -115,6 +177,8 @@ export const init = () => {
   }
 
   const gridContainer = new THREE.Object3D()
+  
+  gridContainer.add(presentationOrbiter)
 
   let map3D = new Array(MAP_WIDTH)
   for (let x = 0; x < MAP_WIDTH; x++) {
@@ -196,6 +260,7 @@ export const init = () => {
   }
 
   const localStore = getLocalStore()
+  const remoteStore = getRemoteStore()
 
   const scene = localStore.getDocument('scene', 'scene')
   scene.add(gridContainer)
@@ -206,8 +271,14 @@ export const init = () => {
   localStore.setDocument('material-uv', 'world', materialUV)
   localStore.setDocument('gridContainer', 'gridContainer', gridContainer)
 
+  localStore.setDocument('presentationMaterial', 'presentationMaterial', presentationMaterial)
+  localStore.setDocument('presentationTextures', 'presentationTextures', presentationTextures)
+  localStore.setDocument('presentationIndex', 'presentationIndex', 0)
+  //TODO make presentation
+  //remoteStore.setDocument('presentationVisible', 'presentationVisible', { visible: false})
+  localStore.setDocument('presentationBoard', 'presentationBoard', presentationBoard)
+
   // texture swapping
-  const remoteStore = getRemoteStore()
   remoteStore.on({ type: 'tileset', event: 'change' }, (id, tileset) => {
     if (id === 'world') {
       swapTileset(id, tileset)
@@ -369,6 +440,18 @@ export const render3D = (id) => {
 
   if (wallGeometries === null) {
     return
+  }
+  const presentationBoard = localStore.getDocument('presentationBoard', 'presentationBoard')
+  const presentation = remoteStore.getDocument('presentation', 'presentation')
+
+  if(presentation != null){
+    presentationBoard.visible = presentation.visible
+    if(presentation.visible){
+      const material = localStore.getDocument('presentationMaterial', 'presentationMaterial')
+      const textures = localStore.getDocument('presentationTextures', 'presentationTextures')
+      
+      material.map = textures[presentation.slide]
+    }
   }
 
   for (let x = 0; x < MAP_WIDTH; x++) {

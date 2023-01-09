@@ -13,7 +13,7 @@ import { getOverlappingTiles, rectanglesOverlap } from '../collisions'
 const SPEED = 125
 const PLAYER_WIDTH = 14
 const PLAYER_HEIGHT = 50
-const Z_OFFSET = 0.89
+const Z_OFFSET = 1.2
 const CAM_Z_OFFSET = 1.5
 const GRAVITY = 25
 const MAX_Z_SPEED = 100
@@ -58,7 +58,7 @@ export const init = () => {
     const selectionMesh = new THREE.Mesh(selectionGeometry, selectionMat)
     selectionMesh.visible = false
 
-    playerSprite.scale.set(.5,1.78,.5)
+    playerSprite.scale.set(1,1,1)
 
     playerSprite.position.set(
       player.position.x / 32,
@@ -220,7 +220,7 @@ export const update = (id, dt) => {
 
   const show3D = localStore.getDocument('show-3d', 'world')
 
-  if(show3D){
+  if(show3D){    
     const angle = new THREE.Euler(Math.PI/2,rotation.y,rotation.z)
     
     const forward = new THREE.Vector3(0,0,1)
@@ -295,7 +295,7 @@ export const update = (id, dt) => {
   x = clamp(x, 0, 640)
   y = clamp(y, 0, 480)
 
-  const overlappingTiles = getOverlappingTiles(fromPosToRect(x, player.position.y), 32)
+  /*const overlappingTiles = getOverlappingTiles(fromPosToRect(x, player.position.y), 32)
   for (let i = 0; i < overlappingTiles.length; i++) {
     const tile = getTile('world', overlappingTiles[i].x, overlappingTiles[i].y)
 
@@ -360,7 +360,7 @@ export const update = (id, dt) => {
         grounded = true
       }
     }
-  }
+  }*/
 
   if (player.position.x !== x || player.position.y !== y || player.position.z !== z || deepCompare(rotation, rotationCopy) === false) {
     store.setDocument('player', id, {
@@ -413,21 +413,21 @@ export const render = (id, context) => {
 
   const playerTexture = getTextureByName('player')
 
-  context.drawImage(
+  /*context.drawImage(
     playerTexture,
     Math.round(x - PLAYER_WIDTH * 0.5),
     Math.round(y - PLAYER_HEIGHT + 5),
     PLAYER_WIDTH,
     PLAYER_HEIGHT,
-  )
+  )*/
 
-  /*context.drawImage(
+  context.drawImage(
     playerTexture,
     Math.round(x - 32 * 0.5),
     Math.round(y - 32 + 5),
     32,
     32,
-  )*/
+  )
 
   strokeRect(context, getCollisionRect(id))
   strokeCircle(context, getCollisionCircle(id))

@@ -115,8 +115,21 @@ export const init = async (slug, canvas, canvas3d) => {
     {
       name: 'delete',
       keycode: '46', // delete
+    },
+    {
+      name: 'nextSlide',
+      keycode: '221', // ]
+    },
+    {
+      name: 'previousSlide',
+      keycode: '219', // [
+    },
+    {
+      name: 'togglePresentation',
+      keycode: '187', // =
     }
   ])
+  const remoteStore = getRemoteStore()
 
   addActionDownListener('toggle3d', () => {
     const localStore = getLocalStore()
@@ -152,6 +165,42 @@ export const init = async (slug, canvas, canvas3d) => {
     // console.log('_INTERACT_')
     Player.interact(room.agentId)
   })
+
+  
+  addActionDownListener('nextSlide', () => {
+    //const material = localStore.getDocument('presentationMaterial', 'presentationMaterial')
+    const textures = localStore.getDocument('presentationTextures', 'presentationTextures')
+    const presentation = remoteStore.getDocument('presentation', 'presentation')
+
+    presentation.slide ++;
+    if(presentation.slide >= textures.length)
+      presentation.slide = 0;
+
+    //localStore.setDocument('presentationMaterial', 'presentationMaterial', material)
+    remoteStore.setDocument('presentation', 'presentation', presentation)
+  })
+
+  addActionDownListener('previousSlide', () => {
+    //const material = localStore.getDocument('presentationMaterial', 'presentationMaterial')
+    const textures = localStore.getDocument('presentationTextures', 'presentationTextures')
+    const presentation = remoteStore.getDocument('presentation', 'presentation')
+
+    presentation.slide --;
+    if(presentation.slide < 0)
+      presentation.slide = textures.length-1;
+
+    //material.map = textures[presentation.slide];
+
+    //localStore.setDocument('presentationMaterial', 'presentationMaterial', material)
+    remoteStore.setDocument('presentation', 'presentation', presentation)
+  })
+
+  addActionDownListener('togglePresentation', () => {
+    const pres = remoteStore.getDocument('presentation', 'presentation')
+    pres.visible = !pres.visible
+    remoteStore.setDocument('presentation', 'presentation', pres)
+  })
+
 
   Editor.init(canvas, room.agentId)
   Editor.init3d(canvas3d, room.agentId)

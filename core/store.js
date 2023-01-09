@@ -22,7 +22,6 @@ class Store {
       if (triggerChange) {
         this.eventEmitter.emit('change', source, type, id, '/', document)
       }
-      // console.log(`setDocument(${source}, ${id}, ${type}): new type`)
       return true
     }
 
@@ -55,7 +54,6 @@ class Store {
       if (triggerChange) {
         this.eventEmitter.emit('change', source, type, id, '/', document)
       }
-      // console.log(`setDocument(${source}, ${id}, ${type}): update`)
       return true
     }
   }

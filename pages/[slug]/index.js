@@ -9,6 +9,8 @@ import { getLocalStore, getRemoteStore } from 'core/singleton'
 import { fromSourceToDataURL } from 'core/textures'
 import * as Tileset from 'core/components/tileset'
 import * as ClientRoom from 'core/networking'
+import { renderMarkdown } from 'core/canvas-markdown'
+import React, { useState } from 'react';
 
 const handleTilesetChange = async (e) => {
   const files = e.target.files
@@ -43,7 +45,13 @@ const downloadRoomData = (slug) => {
 }
 
 const Room = () => {
-  const document = useDocument('document', 'world')
+  //const bookId = getLocalStore().getDocument('documentId', 'world')
+  //const book = getRemoteStore().getDocument('book', bookId)
+
+  const bookId = useLocalDocument('documentId', 'world')
+  //const book = useDocument('book', bookId)
+  //const modalText = "snorp"
+
   const tileset = useDocument('tileset', 'world')
   const is3d = useLocalDocument('show-3d', 'world') ?? false
   const isDocOpen = useLocalDocument('show-doc', 'world') ?? false
@@ -64,15 +72,35 @@ const Room = () => {
       }
     }
   }, [is3d, canvasRef, canvas3dRef])
+  
+  const [modalText, setModalText] = useState(
+    getRemoteStore().getDocument('book', bookId)?.text || "Error, no text visible" 
+  );
 
   const handleInputChange = e => {
-    const store = getRemoteStore()
-    store.setDocument('document', 'world', { content: e.target.value })
+    
+    const remoteStore = getRemoteStore()
+    const localStore = getLocalStore()
+
+    const book = remoteStore.getDocument('book', bookId)
+    const documentTexture = localStore.getDocument('book-texture', bookId)
+    
+    setModalText(e)
+    book.text = e
+
+    renderMarkdown(book.text, documentTexture.canvas, documentTexture.context)
+    documentTexture.texture.needsUpdate = true
+
+    remoteStore.setDocument('book', bookId, book)
   }
 
   const handleClose = () => {
     const store = getLocalStore()
     store.setDocument('show-doc', 'world', false)
+  }
+
+  const handleOpen = () => {
+    console.log("OPENING")
   }
 
   const handleUploadRoomData = async (e) => {
@@ -111,12 +139,16 @@ const Room = () => {
     }
   }, [slug, canvasRef, canvas3dRef])
 
+
   return (
     <Layout>
       <VStack align='stretch' w='100%' spacing={4} shouldWrapChildren>
         <Heading as='h1' size='2xl'>
-          Hyperbox
+          Metaverse in a box
         </Heading>
+        <Text>
+          A metaverse project using CRDTs for state synchronisation.
+        </Text>
         <label htmlFor="tileset-image">Select tileset:</label>
         <input type="file" id="tileset-image" name="img" accept="image/*" onChange={handleTilesetChange} />
         <img src={tileset?.blob ?? 'tileset.png'} alt="tileset-preview" />
@@ -125,12 +157,17 @@ const Room = () => {
           borderRadius="4px"
         >
           <DocumentModal
+            id={"bookmodal"}
             initialRef={initialRef}
             finalRef={is3d ? canvas3dRef : canvasRef}
-            text={document?.content || ''}
+            //text={book?.text || ''}
+            //text={getRemoteStore().getDocument('book', bookId)}
+            text={modalText}
             isOpen={isDocOpen}
+            onOpen={handleOpen}
             onClose={handleClose}
-            onInputChange={handleInputChange}
+            //onInputChange={handleInputChange}
+            onInputChange={e => handleInputChange(e.target.value)}
           />
           <canvas
             id="game"

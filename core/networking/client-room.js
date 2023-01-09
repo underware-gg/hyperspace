@@ -60,6 +60,8 @@ class ClientRoom extends EventEmitter {
 		this.kernal.applyOps(ops, 'database')
 	}
 
+
+
 	handleStoreChange = (source, type, id, path, value) => {
 		if (source === 'local') {
 			const op = createOp(

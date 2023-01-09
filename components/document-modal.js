@@ -24,16 +24,12 @@ const DocumentModal = ({
 }) => {
   const containerRef = useRef(null)
 
-  function onAfterOpen() {
-    text = getRemoteStore().getDocument('book', getLocalStore().getDocument('documentId', 'world'))?.text || "Error!"
-  }
-
   return (
     <Modal
       initialFocusRef={initialRef}
       finalFocusRef={finalRef}
       isOpen={isOpen}
-      onAfterOpen={() => onAfterOpen()}
+      onAfterOpen={ text = getRemoteStore().getDocument('book', getLocalStore().getDocument('documentId', 'world'))?.text || "Error!"}
       onClose={onClose}
       isCentered
     >

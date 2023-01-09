@@ -1,24 +1,24 @@
 export const deepCopy = (obj) => JSON.parse(JSON.stringify(obj))
 
 export const getPrimitive = (value) => {
-  if (value === null) {
-    return 'null'
-  }
-  if (Array.isArray(value)) {
-    return 'array'
-  }
-  switch (typeof value) {
-    case 'string':
-      return 'string'
+	if (value === null) {
+		return 'null'
+	}
+	if (Array.isArray(value)) {
+		return 'array'
+	}
+	switch (typeof value) {
+		case 'string':
+			return 'string'
     case 'number':
-      return 'number'
-    case 'boolean':
-      return 'boolean'
-    case 'object':
-      return 'object'
-    default:
-      throw new Error(`Unsupported type: ${typeof value}`)
-  }
+			return 'number'
+		case 'boolean':
+			return 'boolean'
+		case 'object':
+			return 'object'
+		default:
+			throw new Error(`Unsupported type: ${typeof value}`)
+	}
 }
 
 export const getPaths = (type, paths = [], path = []) => {
@@ -95,6 +95,7 @@ export const getNestedChildIndices = (paths, parentIndices) => {
 
   for (let i = 0; i < parentIndices.length; i++) {
     const parentIndex = parentIndices[i]
+
     for (let j = 0; j < parentIndex.length; j++) {
       const parent = parentIndex[j]
       childIndices[parent].push(i)
@@ -161,7 +162,6 @@ export const portal = {
   position: {
     x: 'number',
     y: 'number',
-    z: 'number',
   },
   slug: 'string',
 }
