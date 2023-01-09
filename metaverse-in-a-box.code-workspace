@@ -1,19 +1,21 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
-	],
-	"settings": {
-		"files.exclude": {
-			"**/.next": true,
-			"**/*.svg": true,
-			"**/build": true,
-			"**/node_modules": true,
-		},
-		"search.exclude": {
-			"/package-lock.json": true,
-			"/yarn.lock": true,
-		},
-	}
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/.next": true,
+      "**/*.svg": true,
+      "**/build": true,
+      "**/node_modules": true,
+    },
+    "search.exclude": {
+      "/package-lock.json": true,
+      "/yarn.lock": true,
+    },
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+  }
 }
