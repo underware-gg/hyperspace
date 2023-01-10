@@ -3,12 +3,16 @@ import { Container, Box, Spacer } from '@chakra-ui/react'
 import Header from 'components/header'
 import Footer from 'components/footer'
 
-const Layout = ({ children, backgroundImage }) => {
+const Layout = ({
+  children,
+  height='100%',
+  backgroundImage,
+}) => {
   return (
-    <Box h="100vh" sx={{ display: 'flex', flexDirection: 'column' }} >
+    <Box h={height} sx={{ display: 'flex', flexDirection: 'column' }} >
       <Header />
       <Box
-        height={"100vh"}
+        height={'100%'}
         backgroundImage={backgroundImage}
         // backgroundColor={'#f00'}
       >
@@ -18,7 +22,7 @@ const Layout = ({ children, backgroundImage }) => {
           centerContent
           pt='1.5em'
           pb='1.5em'
-          flexGrow="1"
+          flexGrow='1'
           margin='auto'
         // backgroundColor={'#f00'}
         >

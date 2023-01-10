@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
-import { VStack, Heading, Box, Text, Button } from '@chakra-ui/react'
+import { VStack, HStack, Heading, Box, Text, Spacer } from '@chakra-ui/react'
 import Layout from 'components/layout'
+import Button from 'components/button'
 import DocumentModal from 'components/document-modal'
 import useDocument from 'hooks/use-document'
 import useLocalDocument from 'hooks/use-local-document'
@@ -114,21 +115,16 @@ const Room = () => {
   return (
     <Layout>
       <VStack align='stretch' w='100%' spacing={4} shouldWrapChildren>
-        <label htmlFor="tileset-image">Select tileset:</label>
-        <input type="file" id="tileset-image" name="img" accept="image/*" onChange={handleTilesetChange} />
-        <img src={tileset?.blob ?? 'tileset.png'} alt="tileset-preview" />
+        <HStack>
+          <img src={tileset?.blob ?? 'tileset.png'} alt="tileset-preview" />
+          <Spacer />
+          <div>Upload Tileset</div>
+          <input type="file" id="tileset-image" name="img" accept="image/*" onChange={handleTilesetChange}/>
+        </HStack>
         <Box
           border="1px"
           borderRadius="4px"
         >
-          <DocumentModal
-            initialRef={initialRef}
-            finalRef={is3d ? canvas3dRef : canvasRef}
-            text={document?.content || ''}
-            isOpen={isDocOpen}
-            onClose={handleClose}
-            onInputChange={handleInputChange}
-          />
           <canvas
             id="game"
             ref={canvasRef}
@@ -164,13 +160,27 @@ const Room = () => {
             Canvas not supported by your browser.
           </canvas>
         </Box>
-        <label htmlFor="upload-room-data">Upload room data</label>
-        <input type="file" id="upload-room-data" accept=".json" onChange={handleUploadRoomData} />
-        <a id="download-room-data" href="#" style={{ display: 'none' }}></a>
-        <Button colorScheme='teal' size='md' onClick={() => { downloadRoomData(slug) }}>
-          Download room data
-        </Button>
+
+        <HStack>
+          <Button variant='outline' colorScheme='teal' size='md' onClick={() => { downloadRoomData(slug) }}>
+            Download room data
+          </Button>
+          <Spacer />
+          <label htmlFor="upload-room-data">Upload room data</label>
+          <input type="file" id="upload-room-data" accept=".json" onChange={handleUploadRoomData} />
+          <a id="download-room-data" href="#" style={{ display: 'none' }}></a>
+        </HStack>
       </VStack>
+
+      <DocumentModal
+        initialRef={initialRef}
+        finalRef={is3d ? canvas3dRef : canvasRef}
+        text={document?.content || ''}
+        isOpen={isDocOpen}
+        onClose={handleClose}
+        onInputChange={handleInputChange}
+      />
+
     </Layout>
   )
 }
