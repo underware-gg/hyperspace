@@ -12,8 +12,8 @@ const _theme = extendTheme({
 
 const _custom = {
   fonts: {
-    body: 'monospace',
-    heading: 'monospace',
+    body: 'Share Tech Mono, monospace',
+    heading: 'Share Tech Mono, monospace',
   },
 
   colors: {
