@@ -12,7 +12,12 @@ const Home = ({ slug }) => {
 
   function enterRoom(roomName) {
     setRoomModal(false);
-    router.push(roomName?.length > 0 ? `/${roomName}` : slug);
+    const url = roomName?.length > 0 ? `/${roomName}` : slug;
+    // router.push(url);
+
+    // dirty fix!
+    window.history.pushState({}, '', url);
+    window.history.go(0);
   }
 
   return (

@@ -105,7 +105,9 @@ const Room = () => {
 
   useEffect(() => {
     if (canvasRef.current && canvas3dRef.current && slug) {
+      // console.log(`slug:`, slug)
       import ('core/game').then(({ default: Game }) => {
+        // console.log(`IMPORTED:`, slug)
         const game = new Game()
         game.init(slug, canvasRef.current, canvas3dRef.current)
       })
