@@ -9,10 +9,11 @@ const Button = forwardRef(({
   disabled,
   variant,
   onClick,
+  children,
 }, ref) => {
   return (
     <ChakraButton
-      colorScheme="teal"
+      colorScheme='teal'
       variant={variant}
       isLoading={loading}
       isDisabled={disabled}
@@ -20,7 +21,7 @@ const Button = forwardRef(({
       ref={ref}
       onClick={onClick}
     >
-      {value}
+      {value ?? children}
     </ChakraButton>
   )
 })

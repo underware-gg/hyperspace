@@ -12,7 +12,7 @@ const Footer = () => {
       justifyContent='center'
       borderWidth='1px 0 0 0'
       >
-      A collaborative, composable metaverse using CRDTs for state synchronisation.
+      A collaborative, composable metaverse by&nbsp;<b><a href='https://fundaomental.com/'>funDAOmental</a></b>
     </Box>
   )
 }

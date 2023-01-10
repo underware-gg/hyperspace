@@ -114,9 +114,6 @@ const Room = () => {
   return (
     <Layout>
       <VStack align='stretch' w='100%' spacing={4} shouldWrapChildren>
-        <Heading as='h1' size='2xl'>
-          Hyperbox
-        </Heading>
         <label htmlFor="tileset-image">Select tileset:</label>
         <input type="file" id="tileset-image" name="img" accept="image/*" onChange={handleTilesetChange} />
         <img src={tileset?.blob ?? 'tileset.png'} alt="tileset-preview" />

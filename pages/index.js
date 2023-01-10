@@ -1,28 +1,51 @@
 import { useState } from 'react'
-import Head from 'next/head'
-import NextLink from 'next/link'
-import { LinkIcon } from '@chakra-ui/icons'
-import { VStack, Heading, Text, Link } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
 import { nanoid } from 'nanoid'
+import { VStack, Heading, Text, Box } from '@chakra-ui/react'
+import Button from 'components/button'
 import Layout from '../components/layout'
+import RoomModal from 'components/room-modal'
 
-const Home = ({ slug }) => (
-  <Layout>
-    <VStack align='stretch' w='100%' spacing={4} shouldWrapChildren>
-      <Heading as='h1' size='2xl'>
-        Hyperbox
-      </Heading>
-      <Text>
-        A collaborative, composable metaverse using CRDTs for state synchronisation.
-      </Text>
-      <NextLink href={slug} passHref>
-        <Link>
-          Create room <LinkIcon mx='2px' />
-        </Link>
-      </NextLink>
-    </VStack>
-  </Layout>
-)
+const Home = ({ slug }) => {
+  const router = useRouter();
+  const [roomModal, setRoomModal] = useState(false);
+
+  function enterRoom(roomName) {
+    setRoomModal(false);
+    router.push(roomName?.length > 0 ? `/${roomName}` : slug);
+  }
+
+  return (
+    <Layout backgroundImage={'/gravity.jpg'}>
+      <Box backgroundColor='black' borderRadius='lg' borderWidth='0px'>
+        <VStack align='stretch' w='100%' spacing={8} shouldWrapChildren padding='50px' alignItems='center'>
+          <Heading as='h1' size='4xl'>
+            Hyperbox
+          </Heading>
+          <Text>
+            A collaborative, composable metaverse
+            <br />
+            using CRDTs for state synchronisation
+          </Text>
+          <Button
+            size='md'
+            variant='outline'
+            onClick={() => setRoomModal(true)}
+          >
+            Create / Enter Room
+          </Button>
+        </VStack>
+      </Box>
+
+      <RoomModal
+        isOpen={roomModal}
+        onClose={() => setRoomModal(false)}
+        onSubmit={(roomName) => enterRoom(roomName)}
+      />
+
+    </Layout>
+  )
+}
 
 export const getServerSideProps = async (context) => {
   return {
