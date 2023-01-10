@@ -12,7 +12,7 @@ import {
   OrderedList,
 } from '@chakra-ui/react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { theme } from 'config/syntax-theme'
+import { theme } from 'config/markdown-theme'
 import { /* ExternalLinkIcon, */ LinkIcon } from '@chakra-ui/icons'
 
 const components = {

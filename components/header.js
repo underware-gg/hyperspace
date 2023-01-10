@@ -12,7 +12,6 @@ const Header = () => {
       pr={4}
       borderWidth='0 0 1px 0'
       sx={{ display: 'flex', width: '100%' }}
-      backgroundColor={'#000'}
       >
       <Box>
         <Link href='/'>

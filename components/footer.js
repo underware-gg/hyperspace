@@ -11,7 +11,6 @@ const Footer = () => {
       align='center'
       justifyContent='center'
       borderWidth='1px 0 0 0'
-      backgroundColor={'#000'}
       >
       A collaborative, composable metaverse using CRDTs for state synchronisation.
     </Box>

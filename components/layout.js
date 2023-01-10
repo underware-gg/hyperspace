@@ -5,8 +5,7 @@ import Footer from 'components/footer'
 
 const Layout = ({ children }) => {
   return (
-    <Box h="100vh" sx={{ display: 'flex', flexDirection: 'column' }} backgroundColor={'#000'}>
-      <Header />
+    <Box h="100vh" sx={{ display: 'flex', flexDirection: 'column' }} >
       <Container
         as='main'
         maxW='container.lg'
@@ -14,8 +13,8 @@ const Layout = ({ children }) => {
         pt='1.5em'
         pb='1.5em'
         flexGrow="1"
-        backgroundColor={'#000'}
       >
+      <Header />
         {children}
       </Container>
       <Footer />
