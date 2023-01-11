@@ -24,7 +24,7 @@ const Header = () => {
       </Box>
       <Spacer sx={{ flex: 1 }} />
       <Box>
-        <a href='https://fundaomental.com/'>
+        <a href='https://twitter.com/funDAOmental'>
           <Image
             src='/funDAOmental-stamp.png'
             alt='funDAOmental'

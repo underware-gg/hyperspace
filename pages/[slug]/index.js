@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
-import { VStack, HStack, Heading, Box, Text, Spacer } from '@chakra-ui/react'
+import { VStack, HStack, Container, Box, Spacer } from '@chakra-ui/react'
 import Layout from 'components/layout'
 import Button from 'components/button'
 import DocumentModal from 'components/document-modal'
@@ -85,10 +85,10 @@ const Room = () => {
 
     const file = files[0]
 
-	  const reader = new FileReader()
-	  reader.onload = (e2) => {
+    const reader = new FileReader()
+    reader.onload = (e2) => {
       const str = e2.target.result
-	    const json = JSON.parse(str)
+      const json = JSON.parse(str)
 
       const remoteStore = getRemoteStore()
 
@@ -100,13 +100,13 @@ const Room = () => {
       }
     }
 
-	  reader.readAsText(file)
+    reader.readAsText(file)
   }
 
   useEffect(() => {
     if (canvasRef.current && canvas3dRef.current && slug) {
       // console.log(`slug:`, slug)
-      import ('core/game').then(({ default: Game }) => {
+      import('core/game').then(({ default: Game }) => {
         // console.log(`IMPORTED:`, slug)
         const game = new Game()
         game.init(slug, canvasRef.current, canvas3dRef.current)
@@ -116,73 +116,76 @@ const Room = () => {
 
   return (
     <Layout>
-      <VStack align='stretch' w='100%' spacing={4} shouldWrapChildren>
-        <HStack>
-          <img src={tileset?.blob ?? 'tileset.png'} alt="tileset-preview" />
-          <Spacer />
-          <div>Upload Tileset</div>
-          <input type="file" id="tileset-image" name="img" accept="image/*" onChange={handleTilesetChange}/>
-        </HStack>
-        <Box
-          border="1px"
-          borderRadius="4px"
-        >
-          <canvas
-            id="game"
-            ref={canvasRef}
-            border="1px"
-            borderradius={4}
-            width={640}
-            height={480}
-            style={{
-              width: '100%',
-              height: '100%',
-              borderTop: '1px solid white',
-              borderBottom: '1px solid white',
-              display: is3d ? 'none' : 'block',
-            }}
-            tabIndex="1"
+      <Container maxW='container.md' >
+
+        <VStack align='stretch' spacing={4} shouldWrapChildren >
+          <HStack>
+            <img src={tileset?.blob ?? 'tileset.png'} alt='tileset-preview' />
+            <Spacer />
+            <div>Upload Tileset</div>
+            <input type='file' id='tileset-image' name='img' accept='image/*' onChange={handleTilesetChange} />
+          </HStack>
+          <Box
+            border='1px'
+            borderRadius='4px'
           >
-            Canvas not supported by your browser.
-          </canvas>
-          <canvas
-            id="game3D"
-            ref={canvas3dRef}
-            border="1px"
-            borderradius={4}
-            width={640}
-            height={480}
-            style={{
-              width: '100%',
-              height: '100%',
-              display: is3d ? 'block' : 'none',
-            }}
-            tabIndex="2"
-          >
-            Canvas not supported by your browser.
-          </canvas>
-        </Box>
+            <canvas
+              id='game'
+              ref={canvasRef}
+              border='1px'
+              borderradius={4}
+              width={640}
+              height={480}
+              style={{
+                width: '100%',
+                height: '100%',
+                borderTop: '1px solid white',
+                borderBottom: '1px solid white',
+                display: is3d ? 'none' : 'block',
+              }}
+              tabIndex='1'
+            >
+              Canvas not supported by your browser.
+            </canvas>
+            <canvas
+              id='game3D'
+              ref={canvas3dRef}
+              border='1px'
+              borderradius={4}
+              width={640}
+              height={480}
+              style={{
+                width: '100%',
+                height: '100%',
+                display: is3d ? 'block' : 'none',
+              }}
+              tabIndex='2'
+            >
+              Canvas not supported by your browser.
+            </canvas>
+          </Box>
 
-        <HStack>
-          <Button variant='outline' colorScheme='teal' size='md' onClick={() => { downloadRoomData(slug) }}>
-            Download room data
-          </Button>
-          <Spacer />
-          <label htmlFor="upload-room-data">Upload room data</label>
-          <input type="file" id="upload-room-data" accept=".json" onChange={handleUploadRoomData} />
-          <a id="download-room-data" href="#" style={{ display: 'none' }}></a>
-        </HStack>
-      </VStack>
+          <HStack>
+            <Button variant='outline' colorScheme='teal' size='md' onClick={() => { downloadRoomData(slug) }}>
+              Download Room Data
+            </Button>
+            <Spacer />
+            <label htmlFor='upload-room-data'>Upload Room Data</label>
+            <input type='file' id='upload-room-data' accept='.json' onChange={handleUploadRoomData} />
+            <a id='download-room-data' href='#' style={{ display: 'none' }}></a>
+          </HStack>
+        </VStack>
 
-      <DocumentModal
-        initialRef={initialRef}
-        finalRef={is3d ? canvas3dRef : canvasRef}
-        text={document?.content || ''}
-        isOpen={isDocOpen}
-        onClose={handleClose}
-        onInputChange={handleInputChange}
-      />
+        <DocumentModal
+          initialRef={initialRef}
+          finalRef={is3d ? canvas3dRef : canvasRef}
+          text={document?.content || ''}
+          isOpen={isDocOpen}
+          onClose={handleClose}
+          onInputChange={handleInputChange}
+        />
 
+      </Container>
     </Layout>
   )
 }

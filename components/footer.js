@@ -12,7 +12,7 @@ const Footer = () => {
       justifyContent='center'
       borderWidth='1px 0 0 0'
       >
-      A collaborative, composable metaverse by&nbsp;<b><a href='https://fundaomental.com/'>funDAOmental</a></b>
+      A collaborative, composable metaverse by&nbsp;<b><a href='https://twitter.com/funDAOmental'>funDAOmental</a></b>
     </Box>
   )
 }

@@ -32,7 +32,7 @@ const RoomModal = ({
         backdropFilter='auto'
         backdropBlur='6px'
       />
-      <ModalContent>
+      <ModalContent boxShadow='dark-lg'>
         <ModalHeader>
           Room Name
         </ModalHeader>
@@ -44,7 +44,7 @@ const RoomModal = ({
               overflowY='auto'
               w='100%'
               resize='none'
-              placeholder='Random'
+              placeholder=''
               value={roomName}
               onChange={(e) => setRoomName(e.target.value)}
             />
