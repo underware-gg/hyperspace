@@ -1,8 +1,9 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
-import { VStack, HStack, Container, Box, Spacer } from '@chakra-ui/react'
+import { Container, Box, VStack, HStack, Text, Spacer } from '@chakra-ui/react'
 import Layout from 'components/layout'
 import Button from 'components/button'
+import FileSelectButton from 'components/file-select-button'
 import DocumentModal from 'components/document-modal'
 import useDocument from 'hooks/use-document'
 import useLocalDocument from 'hooks/use-local-document'
@@ -10,23 +11,7 @@ import { getLocalStore, getRemoteStore } from 'core/singleton'
 import { fromSourceToDataURL } from 'core/textures'
 import * as Tileset from 'core/components/tileset'
 import * as ClientRoom from 'core/networking'
-
-const handleTilesetChange = async (e) => {
-  const files = e.target.files
-  if (files && files[0]) {
-    try {
-      const { dataUrl, width, height } = await fromSourceToDataURL(URL.createObjectURL(files[0]))
-
-      if (width === 320 && height === 32) {
-        Tileset.create('world', { blob: dataUrl, size: { width, height } })
-      } else {
-        Tileset.remove('world')
-      }
-    } catch (e) {
-      Tileset.remove('world')
-    }
-  }
-}
+import { setConfig } from 'next/config'
 
 const downloadRoomData = (slug) => {
   const room = ClientRoom.get()
@@ -48,6 +33,7 @@ const Room = () => {
   const tileset = useDocument('tileset', 'world')
   const is3d = useLocalDocument('show-3d', 'world') ?? false
   const isDocOpen = useLocalDocument('show-doc', 'world') ?? false
+  const [currentTileset, setCurrentTileset] = useState('Default');
   const initialRef = useRef()
   const router = useRouter()
   const canvasRef = useRef()
@@ -76,15 +62,7 @@ const Room = () => {
     store.setDocument('show-doc', 'world', false)
   }
 
-  const handleUploadRoomData = async (e) => {
-    const files = e.target.files
-
-    if (files?.[0] === undefined) {
-      return
-    }
-
-    const file = files[0]
-
+  const handleUploadRoomData = async (fileName) => {
     const reader = new FileReader()
     reader.onload = (e2) => {
       const str = e2.target.result
@@ -100,7 +78,21 @@ const Room = () => {
       }
     }
 
-    reader.readAsText(file)
+    reader.readAsText(fileName)
+  }
+
+  const handleTilesetChange = async (fileName) => {
+    try {
+      const { dataUrl, width, height } = await fromSourceToDataURL(URL.createObjectURL(fileName))
+      if (width === 320 && height === 32) {
+        Tileset.create('world', { blob: dataUrl, size: { width, height } })
+      } else {
+        Tileset.remove('world')
+      }
+      setCurrentTileset(fileName)
+    } catch (e) {
+      Tileset.remove('world')
+    }
   }
 
   useEffect(() => {
@@ -116,14 +108,19 @@ const Room = () => {
 
   return (
     <Layout>
-      <Container maxW='container.md' >
+      <Container maxW='full'>
 
         <VStack align='stretch' spacing={4} shouldWrapChildren >
           <HStack>
             <img src={tileset?.blob ?? 'tileset.png'} alt='tileset-preview' />
+            <Text>{currentTileset}</Text>
             <Spacer />
-            <div>Upload Tileset</div>
-            <input type='file' id='tileset-image' name='img' accept='image/*' onChange={handleTilesetChange} />
+            <FileSelectButton
+              label='Upload Tileset'
+              id='tileset-image'
+              accept='image/*'
+              onSelect={(fileName) => handleTilesetChange(fileName)}
+            />
           </HStack>
           <Box
             border='1px'
@@ -166,13 +163,17 @@ const Room = () => {
           </Box>
 
           <HStack>
-            <Button variant='outline' colorScheme='teal' size='md' onClick={() => { downloadRoomData(slug) }}>
+            <Button variant='outline' size='md' onClick={() => downloadRoomData(slug)}>
               Download Room Data
             </Button>
+            <a id='download-room-data' href='#' hidden></a>
             <Spacer />
-            <label htmlFor='upload-room-data'>Upload Room Data</label>
-            <input type='file' id='upload-room-data' accept='.json' onChange={handleUploadRoomData} />
-            <a id='download-room-data' href='#' style={{ display: 'none' }}></a>
+            <FileSelectButton
+              label='Upload Room Data'
+              id='upload-room-data'
+              accept='.json'
+              onSelect={(fileName) => handleUploadRoomData(fileName)}
+            />
           </HStack>
         </VStack>
 
