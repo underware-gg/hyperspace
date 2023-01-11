@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import {
   VStack,
   Modal,
@@ -19,12 +19,14 @@ const RoomModal = ({
   onSubmit,
 }) => {
   const [roomName, setRoomName] = useState('');
+  const roomNameRef = useRef()
 
   return (
     <Modal
       isOpen={isOpen}
       // onAfterOpen={() => onAfterOpen()}
       onClose={() => onClose()}
+      initialFocusRef={roomNameRef}
       isCentered
     >
       <ModalOverlay
@@ -32,7 +34,7 @@ const RoomModal = ({
         backdropFilter='auto'
         backdropBlur='6px'
       />
-      <ModalContent boxShadow='dark-lg'>
+      <ModalContent boxShadow='hyperShadow'>
         <ModalHeader>
           Room Name
         </ModalHeader>
@@ -45,6 +47,7 @@ const RoomModal = ({
               w='100%'
               resize='none'
               placeholder=''
+              ref={roomNameRef}
               value={roomName}
               onChange={(e) => setRoomName(e.target.value)}
             />

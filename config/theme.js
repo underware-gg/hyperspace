@@ -20,6 +20,7 @@ const _custom = {
     black: '#000',
     white: '#fff',
     gray: '#ddd',
+    // chakra: { border: { color: 'teal' }},
   },
 
   styles: {
@@ -30,6 +31,18 @@ const _custom = {
       },
     },
   },
+
+  // replace chakra vars
+  // ring: {
+  //   color: 'teal',
+  // },
+
+  // custom styles
+  // ex: <ModalContent boxShadow='bigShadow'>
+  shadows: {
+    hyperOutline: '0 0 0 1px teal',
+    hyperShadow: '0 0 0 0.5px teal, 10px 10px 10px black, -10px -10px 10px black'
+  }
 
 }
 
