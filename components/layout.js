@@ -7,10 +7,11 @@ const Layout = ({
   children,
   height='100%',
   backgroundImage,
+  full=false,
 }) => {
   return (
     <Box h={height} sx={{ display: 'flex', flexDirection: 'column' }} >
-      <Header />
+      <Header full={full} />
       <Box
         height={'100%'}
         backgroundImage={backgroundImage}
