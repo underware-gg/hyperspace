@@ -115,7 +115,23 @@ export const init = async (slug, canvas, canvas3d) => {
     {
       name: 'delete',
       keycode: '46', // delete
-    }
+    },
+    {
+      name: 'turnLeft',
+      keycode: '37', // right
+    },
+    {
+      name: 'up',
+      keycode: '38', // up
+    },
+    {
+      name: 'turnRight',
+      keycode: '39', // left
+    },
+    {
+      name: 'down',
+      keycode: '40', // down
+    },
   ])
 
   addActionDownListener('toggle3d', () => {
