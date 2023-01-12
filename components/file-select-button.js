@@ -8,7 +8,7 @@ const FileSelectButton = ({
   label='Select File',
   textBefore,
   textAfter,
-  onSelect,
+  onSelect = (fileObject) => { },
   accept,
 }) => {
   const inputRef = useRef();

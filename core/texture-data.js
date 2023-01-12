@@ -4,7 +4,7 @@ export const textureData = [
     name: 'player',
   },
   {
-    src: 'tileset.png',
+    src: '/tilesets/library.png',
     name: 'tileset',
   },
   {

@@ -67,7 +67,7 @@ export const init = () => {
   const loader = new THREE.TextureLoader()
 
   const materialUV = new THREE.MeshLambertMaterial({
-    map: loader.load('tileset.png'),
+    map: loader.load('/tilesets/library.png'),
   })
   materialUV.map.minFilter = THREE.NearestFilter
   materialUV.map.magFilter = THREE.NearestFilter
@@ -407,7 +407,7 @@ export const swapTileset = (id, tileset) => {
   const loader = new THREE.TextureLoader()
 
   if (tileset === null) {
-    materialUV.map = loader.load('tileset.png')
+    materialUV.map = loader.load('/tilesets/library.png')
   } else {
     materialUV.map = loader.load(tileset.blob)
   }

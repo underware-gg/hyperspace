@@ -62,7 +62,7 @@ const Room = () => {
     store.setDocument('show-doc', 'world', false)
   }
 
-  const handleUploadRoomData = async (fileName) => {
+  const handleUploadRoomData = async (fileObject) => {
     const reader = new FileReader()
     reader.onload = (e2) => {
       const str = e2.target.result
@@ -78,18 +78,18 @@ const Room = () => {
       }
     }
 
-    reader.readAsText(fileName)
+    reader.readAsText(fileObject)
   }
 
-  const handleTilesetChange = async (fileName) => {
+  const handleTilesetChange = async (fileObject) => {
     try {
-      const { dataUrl, width, height } = await fromSourceToDataURL(URL.createObjectURL(fileName))
+      const { dataUrl, width, height } = await fromSourceToDataURL(URL.createObjectURL(fileObject))
       if (width === 320 && height === 32) {
         Tileset.create('world', { blob: dataUrl, size: { width, height } })
       } else {
         Tileset.remove('world')
       }
-      setCurrentTileset(fileName)
+      setCurrentTileset(fileObject.name)
     } catch (e) {
       Tileset.remove('world')
     }
@@ -112,14 +112,14 @@ const Room = () => {
 
         <VStack align='stretch' spacing={4} shouldWrapChildren >
           <HStack>
-            <img src={tileset?.blob ?? 'tileset.png'} alt='tileset-preview' />
+            <img src={tileset?.blob ?? '/tilesets/library.png'} alt='tileset-preview' />
             <Text>{currentTileset}</Text>
             <Spacer />
             <FileSelectButton
               label='Upload Tileset'
               id='tileset-image'
               accept='image/*'
-              onSelect={(fileName) => handleTilesetChange(fileName)}
+              onSelect={(fileObject) => handleTilesetChange(fileObject)}
             />
           </HStack>
           <Box
@@ -172,7 +172,7 @@ const Room = () => {
               label='Upload Room Data'
               id='upload-room-data'
               accept='.json'
-              onSelect={(fileName) => handleUploadRoomData(fileName)}
+              onSelect={(fileObject) => handleUploadRoomData(fileObject)}
             />
           </HStack>
         </VStack>
