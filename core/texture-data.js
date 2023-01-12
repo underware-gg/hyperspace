@@ -4,17 +4,13 @@ export const textureData = [
     name: 'player',
   },
   {
-    src: '/tilesets/library.png',
+    src: process.env.DEFAULT_TILESET,
     name: 'tileset',
   },
   {
     src: 'book.png',
     name: 'book',
   },
-  // {
-    // src: 'pillar-full.png',
-    // name: 'pillar',
-  // },
   {
     src: 'portal.png',
     name: 'portal',

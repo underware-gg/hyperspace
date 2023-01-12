@@ -10,6 +10,7 @@
       "**/*.svg": true,
       "**/build": true,
       "**/node_modules": true,
+      "**/_artwork": true,
     },
     "search.exclude": {
       "/package-lock.json": true,

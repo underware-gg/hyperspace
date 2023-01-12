@@ -67,7 +67,7 @@ export const init = () => {
   const loader = new THREE.TextureLoader()
 
   const materialUV = new THREE.MeshLambertMaterial({
-    map: loader.load('/tilesets/library.png'),
+    map: loader.load(process.env.DEFAULT_TILESET),
   })
   materialUV.map.minFilter = THREE.NearestFilter
   materialUV.map.magFilter = THREE.NearestFilter
@@ -276,11 +276,11 @@ export const render = (id, context) => {
   const crdtTileset = store.getDocument('tileset', id)
 
   let image
-  if (crdtTileset === null || crdtTileset === null) {
+  if (crdtTileset === null) {
     image = getTextureByName('tileset')
   } else {
     image = new Image()
-    image.src = crdtTileset.blob
+    image.src = crdtTileset.blob ?? crdtTileset.name
   }
 
   for (let x = 0; x < MAP_WIDTH; x++) {
@@ -406,11 +406,7 @@ export const swapTileset = (id, tileset) => {
 
   const loader = new THREE.TextureLoader()
 
-  if (tileset === null) {
-    materialUV.map = loader.load('/tilesets/library.png')
-  } else {
-    materialUV.map = loader.load(tileset.blob)
-  }
+  materialUV.map = loader.load(tileset?.blob ?? tileset?.name ?? process.env.DEFAULT_TILESET)
   materialUV.map.magFilter = THREE.NearestFilter
   materialUV.map.minFilter = THREE.NearestFilter
 

@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import { Container, Box, VStack, HStack, Text, Spacer } from '@chakra-ui/react'
 import Layout from 'components/layout'
 import Button from 'components/button'
+import TilesetSelector from 'components/tileset-selector'
 import FileSelectButton from 'components/file-select-button'
 import DocumentModal from 'components/document-modal'
 import useDocument from 'hooks/use-document'
@@ -11,7 +12,6 @@ import { getLocalStore, getRemoteStore } from 'core/singleton'
 import { fromSourceToDataURL } from 'core/textures'
 import * as Tileset from 'core/components/tileset'
 import * as ClientRoom from 'core/networking'
-import { setConfig } from 'next/config'
 
 const downloadRoomData = (slug) => {
   const room = ClientRoom.get()
@@ -33,7 +33,6 @@ const Room = () => {
   const tileset = useDocument('tileset', 'world')
   const is3d = useLocalDocument('show-3d', 'world') ?? false
   const isDocOpen = useLocalDocument('show-doc', 'world') ?? false
-  const [currentTileset, setCurrentTileset] = useState('Default');
   const initialRef = useRef()
   const router = useRouter()
   const canvasRef = useRef()
@@ -62,7 +61,7 @@ const Room = () => {
     store.setDocument('show-doc', 'world', false)
   }
 
-  const handleUploadRoomData = async (fileObject) => {
+  const _handleUploadRoomData = async (fileObject) => {
     const reader = new FileReader()
     reader.onload = (e2) => {
       const str = e2.target.result
@@ -81,19 +80,29 @@ const Room = () => {
     reader.readAsText(fileObject)
   }
 
-  const handleTilesetChange = async (fileObject) => {
+  const _handleUploadTileset = async (fileObject) => {
     try {
       const { dataUrl, width, height } = await fromSourceToDataURL(URL.createObjectURL(fileObject))
       if (width === 320 && height === 32) {
-        Tileset.create('world', { blob: dataUrl, size: { width, height } })
+        Tileset.create('world', {
+          blob: dataUrl,
+          name: fileObject.name,
+          size: { width, height },
+        })
       } else {
         Tileset.remove('world')
       }
-      setCurrentTileset(fileObject.name)
     } catch (e) {
       Tileset.remove('world')
     }
   }
+
+  const _handleSelectTileset = (fileName => {
+    Tileset.create('world', {
+      name: fileName,
+      size: { width: 320, height: 32 },
+    })
+  })
 
   useEffect(() => {
     if (canvasRef.current && canvas3dRef.current && slug) {
@@ -112,14 +121,16 @@ const Room = () => {
 
         <VStack align='stretch' spacing={4} shouldWrapChildren >
           <HStack>
-            <img src={tileset?.blob ?? '/tilesets/library.png'} alt='tileset-preview' />
-            <Text>{currentTileset}</Text>
+            <TilesetSelector
+              customTileset={tileset}
+              onSelect={(fileName) => _handleSelectTileset(fileName)}
+            />
             <Spacer />
             <FileSelectButton
               label='Upload Tileset'
               id='tileset-image'
               accept='image/*'
-              onSelect={(fileObject) => handleTilesetChange(fileObject)}
+              onSelect={(fileObject) => _handleUploadTileset(fileObject)}
             />
           </HStack>
           <Box
@@ -172,7 +183,7 @@ const Room = () => {
               label='Upload Room Data'
               id='upload-room-data'
               accept='.json'
-              onSelect={(fileObject) => handleUploadRoomData(fileObject)}
+              onSelect={(fileObject) => _handleUploadRoomData(fileObject)}
             />
           </HStack>
         </VStack>

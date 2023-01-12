@@ -171,6 +171,7 @@ export const document = {
 }
 
 export const tileset = {
+  name: 'string',
   blob: 'string',
   size: {
     width: 'number',
