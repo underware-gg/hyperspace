@@ -18,6 +18,9 @@ const CAM_Z_OFFSET = 1.5
 const GRAVITY = 25
 const MAX_Z_SPEED = 100
 const JUMP_SPEED = 7.5
+const TWO_PI = Math.PI * 2
+const HALF_PI = Math.PI * 0.5
+const QUATER_PI = Math.PI * 0.25
 let zSpeed = 0
 let grounded = false
 
@@ -152,41 +155,41 @@ export const update = (id, dt) => {
 
   const show3D = localStore.getDocument('show-3d', 'world')
 
-  if(show3D){
-    const angle = new THREE.Euler(Math.PI/2,rotation.y,rotation.z)
-    
-    const forward = new THREE.Vector3(0,0,1)
-    const right = new THREE.Vector3(1,0,0)
+  if (show3D) {
+    const angle = new THREE.Euler(Math.PI / 2, rotation.y, rotation.z)
+
+    const forward = new THREE.Vector3(0, 0, 1)
+    const right = new THREE.Vector3(1, 0, 0)
 
     forward.applyEuler(angle)
     right.applyEuler(angle)
 
-    const forwardMove = new THREE.Vector3(0,0,0)
-    const sideMove = new THREE.Vector3(0,0,0)
+    const forwardMove = new THREE.Vector3(0, 0, 0)
+    const sideMove = new THREE.Vector3(0, 0, 0)
 
-    forwardMove.add(forward.setLength(SPEED*dt))
-    sideMove.add(right.setLength(SPEED*dt))
+    forwardMove.add(forward.setLength(SPEED * dt))
+    sideMove.add(right.setLength(SPEED * dt))
 
     if (getActionState('left')) {
       x -= sideMove.x
       y += sideMove.y
     }
-  
+
     if (getActionState('right')) {
       x += sideMove.x
       y -= sideMove.y
     }
-  
+
     if (getActionState('up')) {
       x -= forwardMove.x
       y += forwardMove.y
     }
-  
+
     if (getActionState('down')) {
       x += forwardMove.x
       y -= forwardMove.y
     }
-  
+
     if (getActionState('turnLeft')) {
       rotationCopy.y += Math.PI * dt
     }
@@ -194,33 +197,43 @@ export const update = (id, dt) => {
       rotationCopy.y -= Math.PI * dt
     }
     if (getActionState('moveBack')) {
-      rotationCopy.x -= Math.PI * dt *0.75
-      if(rotationCopy.x < -Math.PI*0.25){
-        rotationCopy.x = -Math.PI*0.25
+      rotationCopy.x -= Math.PI * dt * 0.75
+      if (rotationCopy.x < -Math.PI * 0.25) {
+        rotationCopy.x = -Math.PI * 0.25
       }
     }
     if (getActionState('moveForward')) {
-      rotationCopy.x += Math.PI * dt *0.75
-      if(rotationCopy.x > +Math.PI*0.15){
-        rotationCopy.x = +Math.PI*0.15
+      rotationCopy.x += Math.PI * dt * 0.75
+      if (rotationCopy.x > +Math.PI * 0.15) {
+        rotationCopy.x = +Math.PI * 0.15
       }
     }
 
   } else {
+    let speedX = 0;
+    let speedY = 0;
+
     if (getActionState('left') || getActionState('turnLeft')) {
-      x -= SPEED * dt
+      speedX -= SPEED;
     }
-  
     if (getActionState('right') || getActionState('turnRight')) {
-      x += SPEED * dt
+      speedX += SPEED;
     }
-  
     if (getActionState('up')) {
-      y -= SPEED * dt
+      speedY -= SPEED;
     }
-  
     if (getActionState('down')) {
-      y += SPEED * dt
+      speedY += SPEED;
+    }
+
+    if (speedX || speedY) {
+      x += speedX * dt
+      y += speedY * dt
+      if (speedY) {
+        rotationCopy.y = HALF_PI + (HALF_PI * Math.sign(speedY))
+      } else if (speedX) {
+        rotationCopy.y = Math.PI + (HALF_PI * Math.sign(speedX))
+      }
     }
   }
 
@@ -295,6 +308,10 @@ export const update = (id, dt) => {
   }
 
   if (player.position.x !== x || player.position.y !== y || player.position.z !== z || deepCompare(rotation, rotationCopy) === false) {
+    
+    while (rotationCopy.y < 0) rotationCopy.y += TWO_PI;
+    while (rotationCopy.y > TWO_PI) rotationCopy.y -= TWO_PI;
+
     store.setDocument('player', id, {
       position: {
         x,
@@ -304,7 +321,7 @@ export const update = (id, dt) => {
       rotation: rotationCopy,
     })
   }
-  
+
   const cameraOrbit = localStore.getDocument('cameraOrbit', 'cameraOrbit')
   const camera = localStore.getDocument('camera', 'camera')
 
@@ -320,14 +337,14 @@ export const update = (id, dt) => {
     )
 
     cameraOrbit.rotation.set(
-      Math.PI/2, 
-      rotation.y, 
+      Math.PI / 2,
+      rotation.y,
       rotation.z
     )
 
     camera.rotation.set(
-      rotation.x, 
-      0, 
+      rotation.x,
+      0,
       0
     )
   }
@@ -342,29 +359,48 @@ export const render2d = (id, context) => {
   }
   // console.log(`render player:`, id)
 
-  const { position: { x, y } } = player
+  const { position: { x, y }, rotation } = player
 
   const texture = getTextureByName('player')
 
   strokeCircle(context, getCollisionCircle(id))
   strokeRect(context, getCollisionRect(id))
 
-  let sx = 0;
-  let sy = 0;
   let sWidth = texture.width;
   let sHeight = texture.height;
-  let dWidth = texture.width;
-  let dHeight = texture.height;
+  let sx = 0;
+  let sy = 0;
 
   if (texture.sprites) {
     sWidth = texture.sprites.width;
     sHeight = texture.sprites.height;
-    dWidth = texture.sprites.width;
-    dHeight = texture.sprites.height;
+
+    let step;
+    let cycleName;
+    if (Math.abs(rotation.y - HALF_PI) <= QUATER_PI) {
+      cycleName = 'walkLeft';
+      step = (x % 32) / 32;
+    } else if (Math.abs(rotation.y - (HALF_PI + Math.PI)) <= QUATER_PI) {
+      cycleName = 'walkRight';
+      step = (x % 32) / 32;
+    } else if (Math.abs(rotation.y - Math.PI) <= QUATER_PI) {
+      cycleName = 'walkDown';
+      step = (y % 32) / 32;
+    } else {
+      cycleName = 'walkUp';
+      step = (y % 32) / 32;
+    }
+
+    const cycle = texture.sprites.cycles?.[cycleName] ?? texture.sprites.cycles?.idle ?? null;
+    step = Math.floor(step * (cycle?.length ?? 1));
+    const spritePos = cycle?.[step] ?? [0, 0];
+
+    sx = spritePos[0] * sWidth;
+    sy = spritePos[1] * sHeight;
   }
 
-  dWidth *= texture.scale;
-  dHeight *= texture.scale;
+  const dWidth = sWidth * texture.scale;
+  const dHeight = sHeight * texture.scale;
   const dx = Math.round(x - (dWidth / 2));
   const dy = Math.round(y - dHeight + PLAYER_RADIUS);
 

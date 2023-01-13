@@ -18,14 +18,14 @@ export const loadTextures = async () =>
           scale: td.scale ?? 1,
           sprites: null,
         }
-        if(td.sprites) {
+        if (td.sprites) {
           const width = image.width / td.sprites.columns;
           const height = image.height / td.sprites.rows;
           let boxes = [];
-          for (let x = 0; x < image.width ; x += width) {
+          for (let x = 0; x < image.width; x += width) {
             let col = [];
             for (let y = 0; y < image.height; y += height) {
-              col.push({x, y})
+              col.push([x, y])
             }
             boxes.push(col);
           }
@@ -33,6 +33,7 @@ export const loadTextures = async () =>
             width,
             height,
             boxes,
+            cycles: td.sprites.cycles ?? null,
           }
         }
         if (--imagesToLoad == 0) {
