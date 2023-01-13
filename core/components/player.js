@@ -9,6 +9,7 @@ import { clamp, deepCompare, deepCopy } from '../utils'
 import { floors, getTile } from './map'
 import { strokeCircle, strokeRect } from '../debug-render'
 import { getOverlappingTiles, rectanglesOverlap } from '../collisions'
+import { textureData } from '../texture-data'
 
 const SPEED = 125
 const PLAYER_WIDTH = 14
@@ -21,10 +22,10 @@ const JUMP_SPEED = 7.5
 let zSpeed = 0
 let grounded = false
 
-const image = new THREE.TextureLoader().load('james.png')
-const material = new THREE.SpriteMaterial({ map: image })
-material.map.minFilter = THREE.NearestFilter
-material.map.magFilter = THREE.NearestFilter
+const playerTexture = new THREE.TextureLoader().load(textureData['player'])
+const playerMaterial = new THREE.SpriteMaterial({ map: playerTexture })
+playerMaterial.map.minFilter = THREE.NearestFilter
+playerMaterial.map.magFilter = THREE.NearestFilter
 
 export const init = () => {
   const room = Room.get()
@@ -54,7 +55,7 @@ export const init = () => {
       }
     }
 
-    const playerSprite = new THREE.Sprite(material)
+    const playerSprite = new THREE.Sprite(playerMaterial)
     const selectionMesh = new THREE.Mesh(selectionGeometry, selectionMat)
     selectionMesh.visible = false
 
@@ -275,11 +276,11 @@ export const update = (id, dt) => {
     }
 
   } else {
-    if (getActionState('left')) {
+    if (getActionState('left') || getActionState('turnLeft')) {
       x -= SPEED * dt
     }
   
-    if (getActionState('right')) {
+    if (getActionState('right') || getActionState('turnRight')) {
       x += SPEED * dt
     }
   
@@ -421,13 +422,13 @@ export const render = (id, context) => {
     PLAYER_HEIGHT,
   )
 
-  /*context.drawImage(
-    playerTexture,
-    Math.round(x - 32 * 0.5),
-    Math.round(y - 32 + 5),
-    32,
-    32,
-  )*/
+  // context.drawImage(
+  //   playerTexture,
+  //   Math.round(x - 32 * 0.5),
+  //   Math.round(y - 32 + 5),
+  //   32,
+  //   32,
+  // )
 
   strokeRect(context, getCollisionRect(id))
   strokeCircle(context, getCollisionCircle(id))

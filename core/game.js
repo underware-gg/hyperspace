@@ -1,5 +1,4 @@
 import { loadTextures } from './textures'
-import { textureData } from './texture-data'
 import Renderer2D from './rendering/renderer2D'
 import Renderer3D from './rendering/renderer3D'
 import * as Room from './room'
@@ -23,7 +22,7 @@ class Game {
     this.context = canvas.getContext('2d')
     this.canvas3d = canvas3d
 
-    await loadTextures(textureData)
+    await loadTextures()
 
     this.renderer2D.init(this.context)
     this.renderer3D.init(canvas3d)

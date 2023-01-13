@@ -99,6 +99,7 @@ const Room = () => {
 
   const _handleSelectTileset = (fileName => {
     Tileset.create('world', {
+      blob: null,
       name: fileName,
       size: { width: 320, height: 32 },
     })

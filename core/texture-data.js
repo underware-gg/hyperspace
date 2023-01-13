@@ -1,18 +1,14 @@
-export const textureData = [
-  {
+export const textureData = {
+  'player': {
     src: 'james.png',
-    name: 'player',
   },
-  {
+  'tileset': {
     src: process.env.DEFAULT_TILESET,
-    name: 'tileset',
   },
-  {
+  'book': {
     src: 'book.png',
-    name: 'book',
   },
-  {
+  'portal': {
     src: 'portal.png',
-    name: 'portal',
   },
-]
+}

@@ -1,24 +1,25 @@
 import * as THREE from 'three'
+import { textureData } from './texture-data'
 
 const textures = {}
 
-export const loadTextures = async (texturesData) =>
+export const loadTextures = async () =>
   new Promise((resolve, reject) => {
-    const images = {}
-    texturesData.forEach(textureData => {
+    let imagesToLoad = Object.keys(textureData).length;
+    Object.keys(textureData).forEach((name) => {
+      const td = textureData[name]
       const image = new Image()
-      image.src = textureData.src
+      image.src = td.src
       image.onload = () => {
-        images[textureData.name] = image
-        textures[textureData.name] = image
-        if (Object.keys(images).length === texturesData.length) {
-          resolve(images)
+        textures[name] = image
+        if (--imagesToLoad == 0) {
+          resolve()
         }
       }
-    })
+    });
   })
 
-export const getTextureByName = name => textures[name] || null
+export const getTextureByName = name => textures[name] ?? null
 
 export const createRenderTexture = (width, height) => {
   const canvas = document.createElement('canvas')
