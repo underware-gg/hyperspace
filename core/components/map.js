@@ -3,6 +3,7 @@ import { getTextureByName } from '../textures'
 import { getRemoteStore, getLocalStore } from '../singleton'
 import { getMultiple } from '../utils'
 import { getActionState } from 'core/controller'
+import { defaultTileset } from '../texture-data'
 
 export const MAP_WIDTH = 20
 export const MAP_HEIGHT = 15
@@ -67,7 +68,7 @@ export const init = () => {
   const loader = new THREE.TextureLoader()
 
   const materialUV = new THREE.MeshLambertMaterial({
-    map: loader.load(process.env.DEFAULT_TILESET),
+    map: loader.load(defaultTileset),
   })
   materialUV.map.minFilter = THREE.NearestFilter
   materialUV.map.magFilter = THREE.NearestFilter
@@ -406,7 +407,7 @@ export const swapTileset = (id, tileset) => {
 
   const loader = new THREE.TextureLoader()
 
-  materialUV.map = loader.load(tileset?.blob ?? tileset?.name ?? process.env.DEFAULT_TILESET)
+  materialUV.map = loader.load(tileset?.blob ?? tileset?.name ?? defaultTileset)
   materialUV.map.magFilter = THREE.NearestFilter
   materialUV.map.minFilter = THREE.NearestFilter
 

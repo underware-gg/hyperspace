@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from 'react'
 import { HStack, Select, Spacer } from '@chakra-ui/react'
+import { tilesets, defaultTileset } from '../core/texture-data'
 
 const TilesetSelector = ({
   customTileset,
@@ -8,10 +9,8 @@ const TilesetSelector = ({
   const [selectedValue, setSelectedValue] = useState('')
   const [options, setOptions] = useState([])
 
-  const tilesets = useMemo(() => JSON.parse(process.env.TILESETS), [])
-
   useEffect(() => {
-    const selectedTilesetName = customTileset?.name ?? process.env.DEFAULT_TILESET
+    const selectedTilesetName = customTileset?.name ?? defaultTileset
     let _selectedValue = ''
     let _options = []
     for (const value of tilesets) {
@@ -38,7 +37,7 @@ const TilesetSelector = ({
 
   return (
     <HStack>
-      <img src={customTileset?.blob ?? customTileset?.name ?? process.env.DEFAULT_TILESET} alt='tileset-preview' />
+      <img src={customTileset?.blob ?? customTileset?.name ?? defaultTileset} alt='tileset-preview' />
       <Spacer />
       <Select
         value={selectedValue}
