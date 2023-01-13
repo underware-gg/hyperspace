@@ -9,11 +9,10 @@ import { clamp, deepCompare, deepCopy } from '../utils'
 import { floors, getTile } from './map'
 import { strokeCircle, strokeRect } from '../debug-render'
 import { getOverlappingTiles, rectanglesOverlap } from '../collisions'
-import { textureData } from '../texture-data'
 
 const SPEED = 125
-const PLAYER_WIDTH = 14
-const PLAYER_HEIGHT = 50
+const PLAYER_BOX = 16
+const PLAYER_RADIUS = 8
 const Z_OFFSET = 0.89
 const CAM_Z_OFFSET = 1.5
 const GRAVITY = 25
@@ -22,84 +21,16 @@ const JUMP_SPEED = 7.5
 let zSpeed = 0
 let grounded = false
 
-const playerTexture = new THREE.TextureLoader().load(textureData['player'])
-const playerMaterial = new THREE.SpriteMaterial({ map: playerTexture })
-playerMaterial.map.minFilter = THREE.NearestFilter
-playerMaterial.map.magFilter = THREE.NearestFilter
-
 export const init = () => {
+  // Listen to remote players events
+  // managed by client-room, keeping just as an example
   const room = Room.get()
-  const localStore = getLocalStore()
   const remoteStore = getRemoteStore()
-
-  const scene = localStore.getDocument('scene', 'scene')
-
-  if (scene === null) {
-    return
-  }
-
-  const selectionGeometry = new THREE.BoxGeometry(1.2, 1.2, 2.3)
-
-  const selectionMat = new THREE.MeshBasicMaterial({ color: 0xFF0000, transparent: true, opacity: 0.23 })
-
   room.on('agent-join', (agentId) => {
-    let player = remoteStore.getDocument('player', agentId)
-
-    if (player === null) {
-      player = {
-        position: {
-          x: 0,
-          y: 0,
-          z: 0,
-        },
-      }
-    }
-
-    const playerSprite = new THREE.Sprite(playerMaterial)
-    const selectionMesh = new THREE.Mesh(selectionGeometry, selectionMat)
-    selectionMesh.visible = false
-
-    playerSprite.scale.set(.5,1.78,.5)
-
-    playerSprite.position.set(
-      player.position.x / 32,
-      -player.position.y / 32,
-      Z_OFFSET + player.position.z,
-    )
-
-    scene.add(playerSprite)
-    scene.add(selectionMesh)
-
-    localStore.setDocument('player-sprite', agentId, playerSprite)
-    localStore.setDocument('selection-mesh', agentId, selectionMesh)
   })
-
   room.on('agent-leave', (agentId) => {
-    const playerSprite = localStore.getDocument('player-sprite', agentId)
-    const selectionMesh = localStore.setDocument('selection-mesh', agentId)
-
-    if (playerSprite === null || selectionMesh === null) {
-      return
-    }
-    scene.remove(playerSprite)
-    scene.remove(selectionMesh)
-
-    localStore.setDocument('player-sprite', agentId, null)
   })
-
   remoteStore.on({ type: 'player', event: 'update' }, (id, player) => {
-    // Update the sprite location to be the position of the player.
-    const playerSprite = localStore.getDocument('player-sprite', id)
-
-    if (playerSprite === null) {
-      return
-    }
-
-    playerSprite.position.set(
-      player.position.x / 32,
-      -player.position.y / 32,
-      Z_OFFSET + player.position.z,
-    )
   })
 }
 
@@ -180,7 +111,7 @@ export const getCollisionCircle = (id) => {
       x: Math.round(x),
       y: Math.round(y),
     },
-    radius: PLAYER_WIDTH * 0.5,
+    radius: PLAYER_RADIUS,
   }
 }
 
@@ -199,12 +130,12 @@ export const getCollisionRect = (id) => {
 
 export const fromPosToRect = (x, y) => ({
   position: {
-    x: Math.round(x - PLAYER_WIDTH * 0.5),
-    y: Math.round(y - PLAYER_WIDTH + 7),
+    x: Math.round(x - PLAYER_RADIUS),
+    y: Math.round(y - PLAYER_RADIUS),
   },
   size: {
-    width: PLAYER_WIDTH,
-    height: PLAYER_WIDTH,
+    width: PLAYER_BOX,
+    height: PLAYER_BOX,
   },
 })
 
@@ -293,8 +224,8 @@ export const update = (id, dt) => {
     }
   }
 
-  x = clamp(x, 0, 640)
-  y = clamp(y, 0, 480)
+  x = clamp(x, PLAYER_RADIUS, 640 - PLAYER_RADIUS)
+  y = clamp(y, PLAYER_RADIUS, 480 - PLAYER_RADIUS)
 
   const overlappingTiles = getOverlappingTiles(fromPosToRect(x, player.position.y), 32)
   for (let i = 0; i < overlappingTiles.length; i++) {
@@ -402,34 +333,47 @@ export const update = (id, dt) => {
   }
 }
 
-export const render = (id, context) => {
+export const render2d = (id, context) => {
   const store = getRemoteStore()
   const player = store.getDocument('player', id)
 
   if (player === null) {
     return
   }
+  // console.log(`render player:`, id)
 
   const { position: { x, y } } = player
 
-  const playerTexture = getTextureByName('player')
+  const texture = getTextureByName('player')
+
+  strokeCircle(context, getCollisionCircle(id))
+  strokeRect(context, getCollisionRect(id))
+
+  let sx = 0;
+  let sy = 0;
+  let sWidth = texture.width;
+  let sHeight = texture.height;
+  let dWidth = texture.width;
+  let dHeight = texture.height;
+
+  if (texture.sprites) {
+    sWidth = texture.sprites.width;
+    sHeight = texture.sprites.height;
+    dWidth = texture.sprites.width;
+    dHeight = texture.sprites.height;
+  }
+
+  dWidth *= texture.scale;
+  dHeight *= texture.scale;
+  const dx = Math.round(x - (dWidth / 2));
+  const dy = Math.round(y - dHeight + PLAYER_RADIUS);
 
   context.drawImage(
-    playerTexture,
-    Math.round(x - PLAYER_WIDTH * 0.5),
-    Math.round(y - PLAYER_HEIGHT + 5),
-    PLAYER_WIDTH,
-    PLAYER_HEIGHT,
+    texture.image,
+    sx, sy,
+    sWidth, sHeight,
+    dx, dy,
+    dWidth, dHeight,
   )
 
-  // context.drawImage(
-  //   playerTexture,
-  //   Math.round(x - 32 * 0.5),
-  //   Math.round(y - 32 + 5),
-  //   32,
-  //   32,
-  // )
-
-  strokeRect(context, getCollisionRect(id))
-  strokeCircle(context, getCollisionCircle(id))
 }

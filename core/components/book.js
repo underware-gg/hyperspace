@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { getTextureByName } from '../textures'
+import { getTextureImageByName } from '../textures'
 import { getLocalStore, getRemoteStore } from '../singleton'
 import { getTile, floors } from './map'
 import { createRenderTexture } from '../textures'
@@ -163,7 +163,7 @@ export const getCollisionRect = (id) => {
   }
 }
 
-export const render = (id, context) => {
+export const render2d = (id, context) => {
   const store = getRemoteStore()
   const book = store.getDocument('book', id)
 
@@ -180,7 +180,7 @@ export const render = (id, context) => {
   renderMarkdown(book.text, documentTexture.canvas, documentTexture.context)
   documentTexture.texture.needsUpdate = true
 
-  const bookTexture = getTextureByName('book')
+  const bookTexture = getTextureImageByName('book')
 
   context.drawImage(
     bookTexture,

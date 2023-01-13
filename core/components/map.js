@@ -1,8 +1,7 @@
 import * as THREE from 'three'
-import { getTextureByName } from '../textures'
+import { getTextureImageByName } from '../textures'
 import { getRemoteStore, getLocalStore } from '../singleton'
 import { getMultiple } from '../utils'
-import { getActionState } from 'core/controller'
 import { defaultTileset } from '../texture-data'
 
 export const MAP_WIDTH = 20
@@ -266,7 +265,7 @@ export const update = (id, x, y, value) => {
   store.setValueAtPath('map', id, `/${y}.${x}`, value)
 }
 
-export const render = (id, context) => {
+export const render2d = (id, context) => {
   const store = getRemoteStore()
   const map = store.getDocument('map', id)
 
@@ -278,7 +277,7 @@ export const render = (id, context) => {
 
   let image
   if (crdtTileset === null) {
-    image = getTextureByName('tileset')
+    image = getTextureImageByName('tileset')
   } else {
     image = new Image()
     image.src = crdtTileset.blob ?? crdtTileset.name

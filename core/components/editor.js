@@ -321,7 +321,7 @@ export const update = (id, dt) => {
   }
 }
 
-export const render = (id, context) => {
+export const render2d = (id, context) => {
   const room = Room.get()
   const store = getRemoteStore()
   const editor = store.getDocument('editor', id)

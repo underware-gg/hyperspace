@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { getTextureByName } from '../textures'
+import { getTextureImageByName } from '../textures'
 import { getLocalStore, getRemoteStore } from '../singleton'
 import { getTile, floors } from './map'
 
@@ -148,7 +148,7 @@ export const getCollisionRect = (id) => {
   }
 }
 
-export const render = (id, context) => {
+export const render2d = (id, context) => {
   const store = getRemoteStore()
   const portal = store.getDocument('portal', id)
 
@@ -162,7 +162,7 @@ export const render = (id, context) => {
   // context.fillStyle = 'yellow'
   // context.fillRect(x * 32, y * 32, 32, 32)
 
-  const portalTexture = getTextureByName('portal')
+  const portalTexture = getTextureImageByName('portal')
 
   context.drawImage(
     portalTexture,

@@ -11,7 +11,30 @@ export const loadTextures = async () =>
       const image = new Image()
       image.src = td.src
       image.onload = () => {
-        textures[name] = image
+        textures[name] = {
+          image,
+          width: image.width,
+          height: image.height,
+          scale: td.scale ?? 1,
+          sprites: null,
+        }
+        if(td.sprites) {
+          const width = image.width / td.sprites.columns;
+          const height = image.height / td.sprites.rows;
+          let boxes = [];
+          for (let x = 0; x < image.width ; x += width) {
+            let col = [];
+            for (let y = 0; y < image.height; y += height) {
+              col.push({x, y})
+            }
+            boxes.push(col);
+          }
+          textures[name].sprites = {
+            width,
+            height,
+            boxes,
+          }
+        }
         if (--imagesToLoad == 0) {
           resolve()
         }
@@ -20,6 +43,7 @@ export const loadTextures = async () =>
   })
 
 export const getTextureByName = name => textures[name] ?? null
+export const getTextureImageByName = name => textures[name]?.image ?? null
 
 export const createRenderTexture = (width, height) => {
   const canvas = document.createElement('canvas')

@@ -7,7 +7,12 @@ export const defaultTileset = tilesets[0];
 
 export const textureData = {
   'player': {
-    src: 'james.png',
+    src: '/spritesheets/teacher_male.png',
+    scale: 1.25,
+    sprites: {
+      rows: 4,
+      columns: 3,
+    }
   },
   'tileset': {
     src: defaultTileset,

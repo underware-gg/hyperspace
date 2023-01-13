@@ -228,7 +228,7 @@ export const render = (canvas, context) => {
   const document = store.getDocument('document', 'world')
   const text = document?.content || ''
 
-  Map.render('world', context)
+  Map.render2d('world', context)
 
   // This should be rendered to another canvas only when changes occur.
   renderMarkdown(text, documentTexture.canvas, documentTexture.context)
@@ -241,17 +241,17 @@ export const render = (canvas, context) => {
   const room = Room.get()
 
   for (const portalId of portalIds) {
-    Portal.render(portalId, context)
+    Portal.render2d(portalId, context)
   }
   for (const bookId of bookIds) {
-    Book.render(bookId, context)
+    Book.render2d(bookId, context)
   }
 
   // Should probably be able to just get them directly.
   for (const playerId of playerIds) {
     if (room.hasAgentId(playerId)) {
-      Player.render(playerId, context)
-      Editor.render(playerId, context)
+      Player.render2d(playerId, context)
+      Editor.render2d(playerId, context)
     }
   }
 
