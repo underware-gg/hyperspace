@@ -61,20 +61,6 @@ export const init = (canvas, id) => {
 
   remoteStore.on({ type: 'editor', event: 'update' }, (id, editor) => {
     // id is the agent id.
-    // Update the sprite location to be the position of the player.
-    const selectionMesh = localStore.getDocument('selection-mesh', id)
-
-    if (selectionMesh === null) {
-      return
-    }
-
-    selectionMesh.position.set(
-      (Math.floor(editor.position.x / 32)) +0.5 ,
-      (-Math.floor(editor.position.y / 32))-0.5,
-      .9,
-    )
-
-    selectionMesh.visible = editor.interacting
   })
 
   addActionDownListener('createPortal', () => {

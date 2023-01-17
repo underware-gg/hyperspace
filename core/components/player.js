@@ -5,7 +5,7 @@ import * as Book from './book'
 import { getActionState } from '../controller'
 import { getTextureByName } from '../textures'
 import { getRemoteStore, getLocalStore } from '../singleton'
-import { clamp, deepCompare, deepCopy } from '../utils'
+import { CONST, clamp, clampRadians, deepCompare, deepCopy } from '../utils'
 import { floors, getTile } from './map'
 import { strokeCircle, strokeRect } from '../debug-render'
 import { getOverlappingTiles, rectanglesOverlap } from '../collisions'
@@ -13,14 +13,12 @@ import { getOverlappingTiles, rectanglesOverlap } from '../collisions'
 const SPEED = 125
 const PLAYER_BOX = 16
 const PLAYER_RADIUS = 8
+const PLAYER_MESH = 2
 const Z_OFFSET = 0.89
 const CAM_Z_OFFSET = 1.5
 const GRAVITY = 25
 const MAX_Z_SPEED = 100
 const JUMP_SPEED = 7.5
-const TWO_PI = Math.PI * 2
-const HALF_PI = Math.PI * 0.5
-const QUATER_PI = Math.PI * 0.25
 let zSpeed = 0
 let grounded = false
 
@@ -29,12 +27,110 @@ export const init = () => {
   // managed by client-room, keeping just as an example
   const room = Room.get()
   const remoteStore = getRemoteStore()
+
+  const geometry = new THREE.PlaneGeometry(PLAYER_MESH, PLAYER_MESH);
+  const textureName = getTextureByName('player').src;
+  const texture = new THREE.TextureLoader().load(textureName);
+  texture.minFilter = THREE.NearestFilter;
+  texture.magFilter = THREE.NearestFilter;
+  const material = new THREE.MeshBasicMaterial({
+    map: texture,
+    transparent: true,
+    side: THREE.DoubleSide,
+  });
+
   room.on('agent-join', (agentId) => {
+    if (agentId === room.agentId) {
+      return
+    }
+
+    const localStore = getLocalStore()
+    const scene = localStore.getDocument('scene', 'scene')
+    if (scene === null) {
+      return
+    }
+
+    const playerMesh = new THREE.Mesh(geometry, material);
+    scene.add(playerMesh);
+
+    localStore.setDocument('player-mesh', agentId, playerMesh)
+    // console.log(`ADDED Player`, agentId)
   })
   room.on('agent-leave', (agentId) => {
+    const localStore = getLocalStore()
+    const scene = localStore.getDocument('scene', 'scene')
+    const playerMesh = localStore.getDocument('player-mesh', agentId)
+
+    if (scene !== null && playerMesh !== null) {
+      scene.remove(playerMesh)
+      // console.log(`REMOVED Player`, agentId)
+    }
+
+    localStore.setDocument('player-mesh', agentId, null)
   })
   remoteStore.on({ type: 'player', event: 'update' }, (id, player) => {
   })
+}
+
+export const update3d = (id) => {
+  const room = Room.get()
+  if (id === room.agentId) {
+    return;
+  }
+
+  const localStore = getLocalStore()
+  const playerMesh = localStore.getDocument('player-mesh', id)
+  if (playerMesh === null) {
+    return;
+  }
+
+  const remoteStore = getRemoteStore()
+  const player = remoteStore.getDocument('player', id)
+  if (player === null) {
+    return
+  }
+
+  // Position
+  const { position: { x, y, z }, rotation } = player  
+  playerMesh.position.set(
+    x / 32,
+    - y / 32,
+    z + PLAYER_MESH / 2,
+  )
+
+  // Rotation (biillboard) 
+  const thisPlayer = remoteStore.getDocument('player', room.agentId)
+  const rotToThisPlayer = Math.atan2(y - thisPlayer.position.y, x - thisPlayer.position.x) - CONST.HALF_PI;
+  playerMesh.rotation.set(
+    CONST.HALF_PI,
+    -rotToThisPlayer,
+    0
+  )
+
+  // UV
+  const texture = getTextureByName('player')
+  const rot = -(player.rotation.y + rotToThisPlayer + CONST.PI);
+  const { uv } = getSpriteUV(texture, x, y, rot);
+  
+  var geometryUv = playerMesh.geometry.getAttribute('uv');
+
+  // 2 3
+  // 0 1
+  geometryUv.setXY(0, uv.start[0], uv.start[1]);
+  geometryUv.setXY(1, uv.end[0], uv.start[1]);
+  geometryUv.setXY(2, uv.start[0], uv.end[1]);
+  geometryUv.setXY(3, uv.end[0], uv.end[1]);
+  geometryUv.needsUpdate = true;
+
+  playerMesh.geometry.setAttribute('uv', geometryUv);
+
+  // Scale
+  playerMesh.scale.set(
+    texture.width / texture.height,
+    1.0,
+    1
+  )
+
 }
 
 export const create = (id, x, y, z = 0) => {
@@ -156,7 +252,7 @@ export const update = (id, dt) => {
   const show3D = localStore.getDocument('show-3d', 'world')
 
   if (show3D) {
-    const angle = new THREE.Euler(Math.PI / 2, rotation.y, rotation.z)
+    const angle = new THREE.Euler(CONST.HALF_PI, rotation.y, rotation.z)
 
     const forward = new THREE.Vector3(0, 0, 1)
     const right = new THREE.Vector3(1, 0, 0)
@@ -230,9 +326,9 @@ export const update = (id, dt) => {
       x += speedX * dt
       y += speedY * dt
       if (speedY) {
-        rotationCopy.y = HALF_PI + (HALF_PI * Math.sign(speedY))
+        rotationCopy.y = CONST.HALF_PI + (CONST.HALF_PI * Math.sign(speedY))
       } else if (speedX) {
-        rotationCopy.y = Math.PI + (HALF_PI * Math.sign(speedX))
+        rotationCopy.y = Math.PI + (CONST.HALF_PI * Math.sign(speedX))
       }
     }
   }
@@ -309,8 +405,7 @@ export const update = (id, dt) => {
 
   if (player.position.x !== x || player.position.y !== y || player.position.z !== z || deepCompare(rotation, rotationCopy) === false) {
     
-    while (rotationCopy.y < 0) rotationCopy.y += TWO_PI;
-    while (rotationCopy.y > TWO_PI) rotationCopy.y -= TWO_PI;
+    rotationCopy.y = clampRadians(rotationCopy.y);
 
     store.setDocument('player', id, {
       position: {
@@ -337,7 +432,7 @@ export const update = (id, dt) => {
     )
 
     cameraOrbit.rotation.set(
-      Math.PI / 2,
+      CONST.HALF_PI,
       rotation.y,
       rotation.z
     )
@@ -375,28 +470,10 @@ export const render2d = (id, context) => {
     sWidth = texture.sprites.width;
     sHeight = texture.sprites.height;
 
-    let step;
-    let cycleName;
-    if (Math.abs(rotation.y - HALF_PI) <= QUATER_PI) {
-      cycleName = 'walkLeft';
-      step = (x % 32) / 32;
-    } else if (Math.abs(rotation.y - (HALF_PI + Math.PI)) <= QUATER_PI) {
-      cycleName = 'walkRight';
-      step = (x % 32) / 32;
-    } else if (Math.abs(rotation.y - Math.PI) <= QUATER_PI) {
-      cycleName = 'walkDown';
-      step = (y % 32) / 32;
-    } else {
-      cycleName = 'walkUp';
-      step = (y % 32) / 32;
-    }
+    const { coord } = getSpriteUV(texture, x, y, rotation.y);
 
-    const cycle = texture.sprites.cycles?.[cycleName] ?? texture.sprites.cycles?.idle ?? null;
-    step = Math.floor(step * (cycle?.length ?? 1));
-    const spritePos = cycle?.[step] ?? [0, 0];
-
-    sx = spritePos[0] * sWidth;
-    sy = spritePos[1] * sHeight;
+    sx = coord[0] * sWidth;
+    sy = coord[1] * sHeight;
   }
 
   const dWidth = sWidth * texture.scale;
@@ -412,4 +489,44 @@ export const render2d = (id, context) => {
     dWidth, dHeight,
   )
 
+}
+
+const getSpriteUV = (texture, x, y, rot) => {
+  let step;
+  let cycleName;
+
+  rot = clampRadians(rot);
+
+  if (Math.abs(rot - CONST.HALF_PI) <= CONST.QUATER_PI) {
+    cycleName = 'walkLeft';
+    step = (x % 32) / 32;
+  } else if (Math.abs(rot - (CONST.HALF_PI + Math.PI)) <= CONST.QUATER_PI) {
+    cycleName = 'walkRight';
+    step = (x % 32) / 32;
+  } else if (Math.abs(rot - Math.PI) <= CONST.QUATER_PI) {
+    cycleName = 'walkDown';
+    step = (y % 32) / 32;
+  } else {
+    cycleName = 'walkUp';
+    step = (y % 32) / 32;
+  }
+
+  const cycle = texture.sprites.cycles?.[cycleName] ?? texture.sprites.cycles?.idle ?? null;
+  step = Math.floor(step * (cycle?.length ?? 1));
+
+  const coord = cycle?.[step] ?? [0, 0];
+
+  const dx = 1.0 / texture.sprites.columns;
+  const dy = 1.0 / texture.sprites.rows;
+
+  const uv = {
+    start: [coord[0] * dx, 1.0 - coord[1] * dy],
+    end: [(coord[0] + 1) * dx, 1.0 - (coord[1] + 1) * dy],
+  }
+
+  return {
+    cycleName,
+    coord,
+    uv,
+  }
 }

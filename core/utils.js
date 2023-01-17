@@ -1,8 +1,22 @@
+export class CONST {
+  static PI = Math.PI;
+  static TWO_PI = Math.PI * 2;
+  static HALF_PI = Math.PI * 0.5;
+  static QUATER_PI = Math.PI * 0.25;
+}
+
 export const deepCopy = data => JSON.parse(JSON.stringify(data))
 export const deepCompare = (a, b) => JSON.stringify(a) === JSON.stringify(b)
-export const clamp = (value, min, max) => Math.min(Math.max(value, min), max)
 export const roundToNearest = (value, nearest) => Math.round(value / nearest) * nearest
 export const getMultiple = (value, multiple) => Math.floor(value / multiple)
+export const clamp = (value, min, max) => Math.min(Math.max(value, min), max)
+export const clampRadians = (angle) => {
+  let result = angle
+  while (result < 0) result += CONST.TWO_PI
+  while (result > CONST.TWO_PI) result -= CONST.TWO_PI
+  return result
+}
+
 
 export const throttle = (cb, delay = 1000) => {
   let shouldWait = false

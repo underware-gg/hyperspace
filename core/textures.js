@@ -12,11 +12,11 @@ export const loadTextures = async () =>
       image.src = td.src
       image.onload = () => {
         textures[name] = {
-          image,
+          ...td,
+          scale: td.scale ?? 1,
           width: image.width,
           height: image.height,
-          scale: td.scale ?? 1,
-          sprites: null,
+          image,
         }
         if (td.sprites) {
           const width = image.width / td.sprites.columns;
@@ -30,10 +30,10 @@ export const loadTextures = async () =>
             boxes.push(col);
           }
           textures[name].sprites = {
+            ...td.sprites,
             width,
             height,
             boxes,
-            cycles: td.sprites.cycles ?? null,
           }
         }
         if (--imagesToLoad == 0) {
