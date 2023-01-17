@@ -1,48 +1,48 @@
 import { useEffect, useState, useMemo } from 'react'
 import { HStack, Select, Spacer } from '@chakra-ui/react'
-import { tilesets, defaultTileset } from '../core/texture-data'
+import { spritesheets, defaultSpritesheet } from '../core/texture-data'
 
-const TilesetSelector = ({
-  customTileset,
+const CharacterSelector = ({
+  profile,
   onSelect,
 }) => {
   const [selectedValue, setSelectedValue] = useState('')
   const [options, setOptions] = useState([])
 
   useEffect(() => {
-    const selectedTilesetName = customTileset?.name ?? defaultTileset
+    const selectedSpritesheetName = profile?.spritesheet ?? defaultSpritesheet
     let _selectedValue = ''
     let _options = []
-    for (const value of tilesets) {
+    for (const value of spritesheets) {
       const label = value.split('/').slice(-1)
       _options.push(<option key={label} value={value}>{label}</option>)
-      if (value === selectedTilesetName) {
+      if (value === selectedSpritesheetName) {
         _selectedValue = value
       }
     }
-    if (customTileset?.blob) {
+    if (profile?.blob) {
       _selectedValue = 'custom'
-      _options.push(<option key='custom' value='custom'>{`(custom) ${customTileset.name}`}</option>)
+      _options.push(<option key='custom' value='custom'>{`(custom) ${profile.spritesheet}`}</option>)
     }
     setSelectedValue(_selectedValue)
     setOptions(_options)
-  }, [customTileset])
+  }, [profile])
 
   const _onChange = (e) => {
     const value = e.target.value
-    if (tilesets.includes(value)) {
+    if (spritesheets.includes(value)) {
       onSelect?.(value)
     }
   }
 
   const style = {
-    width: '320px',
+    width: '32px',
     height: '32px',
   }
 
   return (
     <HStack>
-      <img src={customTileset?.blob ?? customTileset?.name ?? defaultTileset} style={style} alt='tileset-preview' />
+      <img src={profile?.blob ?? profile?.spritesheet ?? defaultSpritesheet} style={style} alt='spritesheet-preview' />
       <Spacer />
       <Select
         value={selectedValue}
@@ -55,4 +55,4 @@ const TilesetSelector = ({
   )
 }
 
-export default TilesetSelector
+export default CharacterSelector

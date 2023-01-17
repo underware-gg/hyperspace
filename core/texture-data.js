@@ -5,9 +5,18 @@ export const tilesets = [
 ]
 export const defaultTileset = tilesets[0];
 
+export const spritesheets = [
+  '/spritesheets/teacher_male.png',
+  '/spritesheets/teacher_female.png',
+  '/spritesheets/student_male.png',
+  '/spritesheets/student_female.png',
+  '/spritesheets/student_bike.png',
+]
+export const defaultSpritesheet = spritesheets[0];
+
 export const textureData = {
   'player': {
-    src: '/spritesheets/teacher_male.png',
+    src: defaultSpritesheet,
     scale: 1.25,
     sprites: {
       rows: 4,

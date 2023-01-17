@@ -4,12 +4,15 @@ import { Container, Box, VStack, HStack, Text, Spacer } from '@chakra-ui/react'
 import Layout from 'components/layout'
 import Button from 'components/button'
 import TilesetSelector from 'components/tileset-selector'
+import CharacterSelector from 'components/character-selector'
 import FileSelectButton from 'components/file-select-button'
 import DocumentModal from 'components/document-modal'
+import useRoom from 'hooks/use-room'
 import useDocument from 'hooks/use-document'
 import useLocalDocument from 'hooks/use-local-document'
 import { getLocalStore, getRemoteStore } from 'core/singleton'
 import { fromSourceToDataURL } from 'core/textures'
+import * as Profile from 'core/components/profile'
 import * as Tileset from 'core/components/tileset'
 import * as ClientRoom from 'core/networking'
 
@@ -29,7 +32,9 @@ const downloadRoomData = (slug) => {
 }
 
 const Room = () => {
+  const { agentId } = useRoom();
   const document = useDocument('document', 'world')
+  const profile = useDocument('profile', agentId)
   const tileset = useDocument('tileset', 'world')
   const is3d = useLocalDocument('show-3d', 'world') ?? false
   const isDocOpen = useLocalDocument('show-doc', 'world') ?? false
@@ -97,6 +102,14 @@ const Room = () => {
     }
   }
 
+  const _handleSelectSpritesheet = (fileName => {
+    if (agentId && fileName) {
+      Profile.update(agentId, {
+        spritesheet: fileName,
+      })
+    }
+  })
+
   const _handleSelectTileset = (fileName => {
     Tileset.create('world', {
       blob: null,
@@ -107,9 +120,7 @@ const Room = () => {
 
   useEffect(() => {
     if (canvasRef.current && canvas3dRef.current && slug) {
-      // console.log(`slug:`, slug)
       import('core/game').then(({ default: Game }) => {
-        // console.log(`IMPORTED:`, slug)
         const game = new Game()
         game.init(slug, canvasRef.current, canvas3dRef.current)
       })
@@ -122,6 +133,10 @@ const Room = () => {
 
         <VStack align='stretch' spacing={4} shouldWrapChildren >
           <HStack>
+            <CharacterSelector
+              profile={profile}
+              onSelect={(fileName) => _handleSelectSpritesheet(fileName)}
+            />
             <TilesetSelector
               customTileset={tileset}
               onSelect={(fileName) => _handleSelectTileset(fileName)}

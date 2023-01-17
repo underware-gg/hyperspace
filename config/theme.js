@@ -37,12 +37,12 @@ const _custom = {
   //   color: 'teal',
   // },
 
-  // custom styles
+  // custom chakra styles
   // ex: <ModalContent boxShadow='bigShadow'>
   shadows: {
     hyperOutline: '0 0 0 1px teal',
     hyperShadow: '0 0 0 0.5px teal, 10px 10px 10px black, -10px -10px 10px black'
-  }
+  },
 
 }
 

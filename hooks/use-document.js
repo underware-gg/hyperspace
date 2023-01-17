@@ -7,19 +7,24 @@ const useDocument = (type, id) => {
   const [document, setDocument] = useState(null)
 
   useEffect(() => {
-    // This is not efficient.
-    function handleChange(innerId, document) {
+    function _handleChange(innerId, document) {
       if (innerId === id) {
         setDocument(document)
       }
     }
 
-    remoteStore.on({ type, event: 'change' }, handleChange)
+    remoteStore.on({ type, event: 'change' }, _handleChange)
 
     return () => {
-      remoteStore.off({ type, event: 'change' }, handleChange)
+      remoteStore.off({ type, event: 'change' }, _handleChange)
     }
-  }, [type])
+  }, [type, id])
+
+  useEffect(() => {
+    if (id) {
+      setDocument(remoteStore.getDocument(type, id))
+    }
+  }, [id])
 
   return document
 }

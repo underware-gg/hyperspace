@@ -131,6 +131,12 @@ export const player = {
   },
 }
 
+export const profile = {
+  name: 'string',
+  spritesheet: 'string',
+  blob: 'string',
+}
+
 export const map = [
   ['number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number'],
   ['number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number'],
@@ -193,6 +199,7 @@ export const book = {
 
 export const typeDefs = {
   player: createTypeMetadata(player),
+  profile: createTypeMetadata(profile),
   map: createTypeMetadata(map),
   editor: createTypeMetadata(editor),
   portal: createTypeMetadata(portal),
