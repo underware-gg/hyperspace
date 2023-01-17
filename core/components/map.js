@@ -186,7 +186,7 @@ export const init = () => {
           stack3: wallStack3,
         },
       }
-      let pos = fromTileToPosition(x,y)
+      let pos = fromTileToCanvasPosition(x,y)
 
       gridCell3D.position.x = pos.x
       gridCell3D.position.y = pos.y + cellWidth
@@ -300,26 +300,13 @@ export const render2d = (id, context) => {
   }
 }
 
-export const fromTileToPosition = (tileX, tileY) => {
-  const x = tileX * cellWidth + cellWidth * 0.5
-  const y = tileY * cellWidth -MAP_HEIGHT * cellWidth - cellWidth * 0.5
-
-  return {
-    x: x,
-    y: y
-  }
-}
-
-export const getTileAtPosition = (id, x, y) => {
+export const getTile = (id, tileX, tileY) => {
   const store = getRemoteStore()
   const map = store.getDocument('map', id)
 
   if (map === null) {
     return null
   }
-
-  const tileX = getMultiple(x, 32)
-  const tileY = getMultiple(y, 32)
 
   if (tileX < 0 || tileX >= MAP_WIDTH || tileY < 0 || tileY >= MAP_HEIGHT) {
     return null
@@ -328,19 +315,19 @@ export const getTileAtPosition = (id, x, y) => {
   return map[tileY][tileX]
 }
 
-export const getTile = (id, x, y) => {
-  const store = getRemoteStore()
-  const map = store.getDocument('map', id)
+export const getTileAtCanvasPosition = (id, x, y) => {
+  const tileX = getMultiple(x, 32)
+  const tileY = getMultiple(y, 32)
+  return getTile(tileX, tileY);
+}
 
-  if (map === null) {
-    return null
+export const fromTileToCanvasPosition = (tileX, tileY) => {
+  const x = tileX * cellWidth + cellWidth * 0.5
+  const y = tileY * cellWidth -MAP_HEIGHT * cellWidth - cellWidth * 0.5
+  return {
+    x,
+    y,
   }
-
-  if (x < 0 || x >= MAP_WIDTH || y < 0 || y >= MAP_HEIGHT) {
-    return null
-  }
-
-  return map[y][x]
 }
 
 export const render3D = (id) => {

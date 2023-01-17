@@ -368,7 +368,7 @@ export const update = (id, dt) => {
     }
   }
 
-  // const tile = getTileAtPosition('world', x, y)
+  // const tile = getTile('world', x, y)
 
   zSpeed += GRAVITY * dt
   zSpeed = Math.min(zSpeed, MAX_Z_SPEED)
