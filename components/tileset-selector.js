@@ -14,7 +14,7 @@ const TilesetSelector = ({
     let _selectedValue = ''
     let _options = []
     for (const value of tilesets) {
-      const label = value.split('/').slice(-1)
+      const label = value.split('/').slice(-1)[0].split('.')[0]
       _options.push(<option key={label} value={value}>{label}</option>)
       if (value === selectedTilesetName) {
         _selectedValue = value

@@ -3,7 +3,7 @@ import * as Room from '../networking'
 import * as Portal from './portal'
 import * as Book from './book'
 import { getActionState } from '../controller'
-import { getTextureByName } from '../textures'
+import { getTextureByName, getSprite } from '../textures'
 import { getRemoteStore, getLocalStore } from '../singleton'
 import { CONST, clamp, clampRadians, deepCompare, deepCopy } from '../utils'
 import { floors, getTile } from './map'
@@ -29,15 +29,6 @@ export const init = () => {
   const remoteStore = getRemoteStore()
 
   const geometry = new THREE.PlaneGeometry(PLAYER_MESH, PLAYER_MESH);
-  const textureName = getTextureByName('player').src;
-  const texture = new THREE.TextureLoader().load(textureName);
-  texture.minFilter = THREE.NearestFilter;
-  texture.magFilter = THREE.NearestFilter;
-  const material = new THREE.MeshBasicMaterial({
-    map: texture,
-    transparent: true,
-    side: THREE.DoubleSide,
-  });
 
   room.on('agent-join', (agentId) => {
     if (agentId === room.agentId) {
@@ -50,6 +41,7 @@ export const init = () => {
       return
     }
 
+    const material = makePlayerMaterial(agentId)
     const playerMesh = new THREE.Mesh(geometry, material);
     scene.add(playerMesh);
 
@@ -68,8 +60,34 @@ export const init = () => {
 
     localStore.setDocument('player-mesh', agentId, null)
   })
-  remoteStore.on({ type: 'player', event: 'update' }, (id, player) => {
+  remoteStore.on({ type: 'player', event: 'update' }, (agentId, player) => {
   })
+
+  // texture swapping
+  remoteStore.on({ type: 'profile', event: 'change' }, (agentId, profile) => {
+    const localStore = getLocalStore()
+    const playerMesh = localStore.getDocument('player-mesh', agentId)
+
+    if (playerMesh !== null) {
+      const material = makePlayerMaterial(agentId)
+      playerMesh.material = material;
+      playerMesh.needsUpdate = true;
+      // console.log(`CHANGE MATERIAL`, agentId, material)
+    }
+  })
+}
+
+const makePlayerMaterial = (agentId) =>{
+  const textureName = getPlayerTextureName(agentId);
+  const texture = new THREE.TextureLoader().load(textureName);
+  texture.minFilter = THREE.NearestFilter;
+  texture.magFilter = THREE.NearestFilter;
+  const material = new THREE.MeshBasicMaterial({
+    map: texture,
+    transparent: true,
+    side: THREE.DoubleSide,
+  });
+  return material;
 }
 
 export const update3d = (id) => {
@@ -108,18 +126,20 @@ export const update3d = (id) => {
   )
 
   // UV
-  const texture = getTextureByName('player')
+  const textureName = getPlayerTextureName(id);
+  const texture = getTextureByName(textureName)
+
   const rot = -(player.rotation.y + rotToThisPlayer + CONST.PI);
-  const { uv } = getSpriteUV(texture, x, y, rot);
+  const { uv } = getPlayerSprite(textureName, x, y, rot);
   
   var geometryUv = playerMesh.geometry.getAttribute('uv');
 
   // 2 3
   // 0 1
-  geometryUv.setXY(0, uv.start[0], uv.start[1]);
-  geometryUv.setXY(1, uv.end[0], uv.start[1]);
-  geometryUv.setXY(2, uv.start[0], uv.end[1]);
-  geometryUv.setXY(3, uv.end[0], uv.end[1]);
+  geometryUv.setXY(0, uv.start[0], 1.0 - uv.start[1]);
+  geometryUv.setXY(1, uv.end[0], 1.0 - uv.start[1]);
+  geometryUv.setXY(2, uv.start[0], 1.0 - uv.end[1]);
+  geometryUv.setXY(3, uv.end[0], 1.0 - uv.end[1]);
   geometryUv.needsUpdate = true;
 
   playerMesh.geometry.setAttribute('uv', geometryUv);
@@ -456,13 +476,7 @@ export const render2d = (id, context) => {
 
   const { position: { x, y }, rotation } = player
 
-  let textureName = 'player';
-
-  const profile = store.getDocument('profile', id)
-  if (profile?.spritesheet) {
-    textureName = profile?.spritesheet;
-  }
-
+  const textureName = getPlayerTextureName(id);
   const texture = getTextureByName(textureName)
 
   // strokeCircle(context, getCollisionCircle(id))
@@ -477,10 +491,10 @@ export const render2d = (id, context) => {
     sWidth = texture.sprites.width;
     sHeight = texture.sprites.height;
 
-    const { coord } = getSpriteUV(texture, x, y, rotation.y);
+    const { pixel } = getPlayerSprite(textureName, x, y, rotation.y);
 
-    sx = coord[0] * sWidth;
-    sy = coord[1] * sHeight;
+    sx = pixel.start[0];
+    sy = pixel.start[1];
   }
 
   const dWidth = sWidth * texture.scale;
@@ -498,42 +512,33 @@ export const render2d = (id, context) => {
 
 }
 
-const getSpriteUV = (texture, x, y, rot) => {
-  let step;
+const getPlayerTextureName = (agentId) => {
+  const store = getRemoteStore()
+  const profile = store.getDocument('profile', agentId)
+  if (profile?.spritesheet) {
+    return profile?.spritesheet;
+  }
+
+  return 'player'
+}
+
+const getPlayerSprite = (textureName, x, y, rot) => {
   let cycleName;
 
   rot = clampRadians(rot);
-
   if (Math.abs(rot - CONST.HALF_PI) <= CONST.QUATER_PI) {
     cycleName = 'walkLeft';
-    step = (x % 32) / 32;
   } else if (Math.abs(rot - (CONST.HALF_PI + Math.PI)) <= CONST.QUATER_PI) {
     cycleName = 'walkRight';
-    step = (x % 32) / 32;
   } else if (Math.abs(rot - Math.PI) <= CONST.QUATER_PI) {
     cycleName = 'walkDown';
-    step = (y % 32) / 32;
   } else {
     cycleName = 'walkUp';
-    step = (y % 32) / 32;
   }
 
-  const cycle = texture.sprites.cycles?.[cycleName] ?? texture.sprites.cycles?.idle ?? null;
-  step = Math.floor(step * (cycle?.length ?? 1));
+  const stepX = x / 32.0;
+  const stepY = y / 32.0;
 
-  const coord = cycle?.[step] ?? [0, 0];
-
-  const dx = 1.0 / texture.sprites.columns;
-  const dy = 1.0 / texture.sprites.rows;
-
-  const uv = {
-    start: [coord[0] * dx, 1.0 - coord[1] * dy],
-    end: [(coord[0] + 1) * dx, 1.0 - (coord[1] + 1) * dy],
-  }
-
-  return {
-    cycleName,
-    coord,
-    uv,
-  }
+  return getSprite(textureName, stepX, stepY, cycleName)
 }
+
