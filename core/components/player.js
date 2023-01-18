@@ -13,9 +13,8 @@ import { getOverlappingTiles, rectanglesOverlap } from '../collisions'
 const SPEED = 125
 const PLAYER_BOX = 16
 const PLAYER_RADIUS = 8
-const PLAYER_MESH = 2
-const Z_OFFSET = 0.89
-const CAM_Z_OFFSET = 1.5
+const PLAYER_MESH = 1.4
+const CAM_Z_OFFSET = 1.15
 const GRAVITY = 25
 const MAX_Z_SPEED = 100
 const JUMP_SPEED = 7.5
@@ -127,7 +126,7 @@ export const update3d = (id) => {
 
   // UV
   const textureName = getPlayerTextureName(id);
-  const texture = getTextureByName(textureName)
+  const texture = getTextureByName(textureName, 'player')
 
   const rot = -(player.rotation.y + rotToThisPlayer + CONST.PI);
   const { uv } = getPlayerSprite(textureName, x, y, rot);
@@ -145,8 +144,9 @@ export const update3d = (id) => {
   playerMesh.geometry.setAttribute('uv', geometryUv);
 
   // Scale
+  const aspect = texture.sprites?.aspect ?? texture.aspect ?? 1.0;
   playerMesh.scale.set(
-    texture.width / texture.height,
+    aspect,
     1.0,
     1
   )
@@ -477,7 +477,11 @@ export const render2d = (id, context) => {
   const { position: { x, y }, rotation } = player
 
   const textureName = getPlayerTextureName(id);
-  const texture = getTextureByName(textureName)
+  const texture = getTextureByName(textureName, 'player')
+
+  // if (texture === null) {
+  //   return
+  // }
 
   // strokeCircle(context, getCollisionCircle(id))
   strokeRect(context, getCollisionRect(id))
@@ -515,6 +519,7 @@ export const render2d = (id, context) => {
 const getPlayerTextureName = (agentId) => {
   const store = getRemoteStore()
   const profile = store.getDocument('profile', agentId)
+
   if (profile?.spritesheet) {
     return profile?.spritesheet;
   }

@@ -7,7 +7,7 @@ const textures = {}
 export const loadTextures = async () =>
   new Promise((resolve, reject) => {
     let _textureData = deepCopy(textureData)
-    for(const sheet of spritesheets) {
+    for (const sheet of spritesheets) {
       _textureData[sheet.src] = sheet
     }
     let imagesToLoad = Object.keys(_textureData).length
@@ -21,7 +21,7 @@ export const loadTextures = async () =>
           scale: td.scale ?? 1,
           width: image.width,
           height: image.height,
-          aspect: image.width / image.height,
+          aspect: (image.width / image.height),
           image,
         }
         if (td.sprites) {
@@ -38,6 +38,7 @@ export const loadTextures = async () =>
           textures[name].sprites = {
             ...td.sprites,
             width,
+            aspect: (width / height),
             height,
             boxes,
           }
@@ -46,14 +47,20 @@ export const loadTextures = async () =>
           resolve()
         }
       }
+      image.onerror = (e) => {
+        console.warn(`loadTextures(${td.src}) NOT FOUND!`, e);
+        if (--imagesToLoad == 0) {
+          resolve()
+        }
+      }
     })
   })
 
-export const getTextureByName = name => textures[name] ?? null
+export const getTextureByName = (name, fallback) => textures[name] ?? textures[fallback] ?? null
 export const getTextureImageByName = name => textures[name]?.image ?? null
 
 export const getSprite = (textureName, stepX = 0.0, stepY = 0.0, cycleName = 'idle') => {
-  const texture = getTextureByName(textureName)
+  const texture = getTextureByName(textureName, 'player')
 
   if (!texture) {
     return null
@@ -71,14 +78,21 @@ export const getSprite = (textureName, stepX = 0.0, stepY = 0.0, cycleName = 'id
       },
     }
   }
-  
-  let step = 0.0
 
-  if (cycleName == 'walkLeft' || cycleName == 'walkRight') {
-    step = (stepX % 1.0)
-  } else if (cycleName == 'walkRight' || cycleName == 'walkDown') {
-    step = (stepY % 1.0)
+  const stepScale = texture.sprites.stepScale ?? 1;
+  let stepValue = 0.0
+
+  if (cycleName == 'walkRight') {
+    stepValue = stepX
+  } if (cycleName == 'walkLeft') {
+    stepValue = 10000 - stepX
+  } else if (cycleName == 'walkUp') {
+    stepValue = stepY
+  } else if (cycleName == 'walkDown') {
+    stepValue = 10000 - stepY
   }
+
+  let step = ((stepValue * stepScale) % 1.0)
 
   const cycle = texture.sprites.cycles?.[cycleName] ?? null
   step = Math.floor(step * (cycle?.length ?? 1))
