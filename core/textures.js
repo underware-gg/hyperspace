@@ -1,13 +1,18 @@
 import * as THREE from 'three'
-import { textureData } from './texture-data'
+import { textureData, spritesheets } from './texture-data'
+import { deepCopy } from '/core/merge/tiny-merge'
 
 const textures = {}
 
 export const loadTextures = async () =>
   new Promise((resolve, reject) => {
-    let imagesToLoad = Object.keys(textureData).length;
-    Object.keys(textureData).forEach((name) => {
-      const td = textureData[name]
+    let _textureData = deepCopy(textureData)
+    for(const sheet of spritesheets) {
+      _textureData[sheet.src] = sheet
+    }
+    let imagesToLoad = Object.keys(_textureData).length
+    Object.keys(_textureData).forEach((name) => {
+      const td = _textureData[name]
       const image = new Image()
       image.src = td.src
       image.onload = () => {
@@ -19,15 +24,15 @@ export const loadTextures = async () =>
           image,
         }
         if (td.sprites) {
-          const width = image.width / td.sprites.columns;
-          const height = image.height / td.sprites.rows;
-          let boxes = [];
+          const width = image.width / td.sprites.columns
+          const height = image.height / td.sprites.rows
+          let boxes = []
           for (let x = 0; x < image.width; x += width) {
-            let col = [];
+            let col = []
             for (let y = 0; y < image.height; y += height) {
               col.push([x, y])
             }
-            boxes.push(col);
+            boxes.push(col)
           }
           textures[name].sprites = {
             ...td.sprites,
@@ -40,7 +45,7 @@ export const loadTextures = async () =>
           resolve()
         }
       }
-    });
+    })
   })
 
 export const getTextureByName = name => textures[name] ?? null

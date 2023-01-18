@@ -456,9 +456,16 @@ export const render2d = (id, context) => {
 
   const { position: { x, y }, rotation } = player
 
-  const texture = getTextureByName('player')
+  let textureName = 'player';
 
-  strokeCircle(context, getCollisionCircle(id))
+  const profile = store.getDocument('profile', id)
+  if (profile?.spritesheet) {
+    textureName = profile?.spritesheet;
+  }
+
+  const texture = getTextureByName(textureName)
+
+  // strokeCircle(context, getCollisionCircle(id))
   strokeRect(context, getCollisionRect(id))
 
   let sWidth = texture.width;

@@ -30,6 +30,10 @@ const _custom = {
         color: 'white',
       },
     },
+    // TODO: find out how to make this into a class...
+    PixelArt: {
+      imageRendering: 'pixelated',
+    }
   },
 
   // replace chakra vars

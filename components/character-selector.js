@@ -10,14 +10,15 @@ const CharacterSelector = ({
   const [options, setOptions] = useState([])
 
   useEffect(() => {
-    const selectedSpritesheetName = profile?.spritesheet ?? defaultSpritesheet
+    const selectedSpritesheetName = profile?.spritesheet ?? defaultSpritesheet.src
     let _selectedValue = ''
     let _options = []
-    for (const value of spritesheets) {
-      const label = value.split('/').slice(-1)
-      _options.push(<option key={label} value={value}>{label}</option>)
-      if (value === selectedSpritesheetName) {
-        _selectedValue = value
+    for (const sheet of spritesheets) {
+      const src = sheet.src;
+      const label = src.split('/').slice(-1)
+      _options.push(<option key={label} value={src}>{label}</option>)
+      if (src === selectedSpritesheetName) {
+        _selectedValue = src
       }
     }
     if (profile?.blob) {
@@ -30,14 +31,13 @@ const CharacterSelector = ({
 
   const _onChange = (e) => {
     const value = e.target.value
-    if (spritesheets.includes(value)) {
-      onSelect?.(value)
-    }
+    onSelect?.(value)
   }
 
   const style = {
     width: '32px',
     height: '32px',
+    imageRendering: 'pixelated',
   }
 
   return (

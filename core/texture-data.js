@@ -1,3 +1,6 @@
+//-------------------------------
+// World tilesets
+//
 export const tilesets = [
   '/tilesets/library.png',
   '/tilesets/dungeon.png',
@@ -5,38 +8,65 @@ export const tilesets = [
 ]
 export const defaultTileset = tilesets[0];
 
+//-------------------------------
+// Character spritesheets
+//
+const schoolSet = {
+  scale: 1.25,
+  rows: 4,
+  columns: 3,
+  cycles: {
+    idle: [[0, 0]],
+    walkDown: [[0, 0], [1, 0], [2, 0], [1, 0]],
+    walkRight: [[0, 1], [1, 1], [2, 1], [1, 1]],
+    walkUp: [[0, 2], [1, 2], [2, 2], [1, 2]],
+    walkLeft: [[0, 3], [1, 3], [2, 3], [1, 3]],
+  }
+}
 export const spritesheets = [
-  '/spritesheets/teacher_male.png',
-  '/spritesheets/teacher_female.png',
-  '/spritesheets/student_male.png',
-  '/spritesheets/student_female.png',
-  '/spritesheets/student_bike.png',
+  {
+    src: '/spritesheets/teacher_male.png',
+    sprites: schoolSet,
+  },
+  {
+    src: '/spritesheets/teacher_female.png',
+    sprites: schoolSet,
+  },
+  {
+    src: '/spritesheets/student_male.png',
+    sprites: schoolSet,
+  },
+  {
+    src: '/spritesheets/student_female.png',
+    sprites: schoolSet,
+  },
+  {
+    src: '/spritesheets/student_bike.png',
+    sprites: schoolSet,
+  },
+  {
+    src: '/ghost2.png',
+    scale: 2,
+  },
 ]
 export const defaultSpritesheet = spritesheets[0];
 
+//-------------------------------
+// Character spritesheets
+//
 export const textureData = {
-  'player': {
-    src: defaultSpritesheet,
-    scale: 1.25,
-    sprites: {
-      rows: 4,
-      columns: 3,
-      cycles: {
-        idle: [[0, 0]],
-        walkDown: [[0, 0], [1, 0], [2, 0], [1, 0]],
-        walkRight: [[0, 1], [1, 1], [2, 1], [1, 1]],
-        walkUp: [[0, 2], [1, 2], [2, 2], [1, 2]],
-        walkLeft: [[0, 3], [1, 3], [2, 3], [1, 3]],
-      }
-    }
-  },
+  'player': defaultSpritesheet,
+  // 'player': {
+  //   src: '/ghost2.png',
+  //   // scale: 2,
+  // },
   'tileset': {
     src: defaultTileset,
   },
   'book': {
-    src: 'book.png',
+    src: '/book.png',
   },
   'portal': {
-    src: 'portal.png',
+    src: '/portal.png',
   },
 }
