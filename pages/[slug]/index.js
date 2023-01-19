@@ -7,6 +7,7 @@ import TilesetSelector from 'components/tileset-selector'
 import CharacterSelector from 'components/character-selector'
 import FileSelectButton from 'components/file-select-button'
 import DocumentModal from 'components/document-modal'
+import Markdown from 'components/markdown'
 import useRoom from 'hooks/use-room'
 import useDocument from 'hooks/use-document'
 import useLocalDocument from 'hooks/use-local-document'
@@ -171,8 +172,9 @@ const Room = () => {
               Create Portal
             </Button>
           </HStack>
-          
+
           <Box
+            style={{ position: 'relative' }}
             border='1px'
             borderRadius='4px'
           >
@@ -210,6 +212,18 @@ const Room = () => {
             >
               Canvas not supported by your browser.
             </canvas>
+
+            {(isDocOpen && !is3d) &&
+              <div style={{
+                width: '100%',
+                height: '100%',
+                position: 'absolute',
+                top: '0',
+                left: '0',
+              }}>
+                <Markdown>{document?.content || ''}</Markdown>
+              </div>
+            }
           </Box>
 
           <HStack>

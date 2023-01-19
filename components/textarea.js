@@ -1,4 +1,4 @@
-import React, { /* useRef, */ useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { Textarea as ChakraTextarea } from '@chakra-ui/react'
 import ResizeTextarea from 'react-textarea-autosize'
 
@@ -23,15 +23,15 @@ const Textarea = ({
 
   return (
     <ChakraTextarea
-      minH="unset"
-      overflowY="auto"
-      w="100%"
-      resize="none"
+      minH='unset'
+      overflowY='auto'
+      w='100%'
+      resize={true}
       // ref={ref}
-      minRows={1}
-      maxRows={10}
+      minRows={8}
+      maxRows={12}
       as={ResizeTextarea}
-      placeholder="Start editing the document"
+      placeholder='Start editing the document'
       value={value}
       onChange={handleChange}
     />

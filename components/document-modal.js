@@ -36,6 +36,7 @@ const DocumentModal = ({
       onAfterOpen={() => onAfterOpen()}
       onClose={onClose}
       isCentered
+      size='xl'
     >
       <ModalOverlay />
       <ModalContent
