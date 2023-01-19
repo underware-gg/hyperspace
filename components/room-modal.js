@@ -34,7 +34,10 @@ const RoomModal = ({
         backdropFilter='auto'
         backdropBlur='6px'
       />
-      <ModalContent boxShadow='hyperShadow'>
+      <ModalContent
+        backgroundColor='#0008'
+        boxShadow='hyperShadow'
+      >
         <ModalHeader>
           Room Name
         </ModalHeader>

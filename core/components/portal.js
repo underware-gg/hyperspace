@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import * as Interactable from './interactable'
 import { getTextureImageByName } from '../textures'
 import { getLocalStore, getRemoteStore } from '../singleton'
 import { getTile, floors } from './map'
@@ -99,24 +100,14 @@ export const init = () => {
 
 export const create = (id, x, y, slug) => {
   const portal = {
-    position: {
-      x,
-      y,
-    },
     slug,
   }
-
-  const store = getRemoteStore()
-  store.setDocument('portal', id, portal)
-
+  Interactable.create('portal', id, x, y, portal)
   return portal
 }
 
 export const exists = (id) => {
-  const store = getRemoteStore()
-  const portal = store.getDocument('portal', id)
-
-  return portal !== null
+  return Interactable.exists('portal', id)
 }
 
 export const travel = (id) => {
@@ -129,23 +120,7 @@ export const travel = (id) => {
 }
 
 export const getCollisionRect = (id) => {
-  const store = getRemoteStore()
-  const portal = store.getDocument('portal', id)
-
-  if (portal === null) {
-    return null
-  }
-
-  return {
-    position: {
-      x: portal.position.x * 32,
-      y: portal.position.y * 32,
-    },
-    size: {
-      width: 32,
-      height: 32,
-    },
-  }
+  return Interactable.getCollisionRect('portal', id)
 }
 
 export const render2d = (id, context) => {
@@ -157,10 +132,6 @@ export const render2d = (id, context) => {
   }
 
   const { position: { x, y } } = portal
-
-  // This should be replaced with a sprite eventually.
-  // context.fillStyle = 'yellow'
-  // context.fillRect(x * 32, y * 32, 32, 32)
 
   const portalTexture = getTextureImageByName('portal')
 

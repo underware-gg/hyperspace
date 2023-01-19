@@ -14,7 +14,7 @@ const Favicon = ({ slug }) => {
             GPT isn't here
           </Text>
           <Button
-            size='md'
+            size='sm'
             variant='outline'
             // colorScheme={'teal'}
             onClick={() => {}}

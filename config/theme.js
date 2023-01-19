@@ -1,14 +1,26 @@
-import { extendTheme } from '@chakra-ui/react'
+import { extendTheme, defineStyleConfig } from '@chakra-ui/react'
 import { deepMerge } from '../core/utils'
 
 // chakra-io theming
 // https://chakra-ui.com/docs/styled-system/customize-theme
 
+// const ModalContent = defineStyleConfig({
+//   baseStyle: {
+//     backgroundColor: '#0008',
+//   },
+// })
+
 const _theme = extendTheme({
   initialColorMode: 'dark',
   useSystemColorMode: false,
+
+  // TODO: find out how to make this work!!
+  // components: {
+  //   ModalContent,
+  // },
 });
 // console.log(_theme)
+
 
 const _custom = {
   fonts: {
@@ -46,6 +58,7 @@ const _custom = {
   shadows: {
     hyperOutline: '0 0 0 1px teal',
     hyperShadow: '0 0 0 0.5px teal, 10px 10px 10px black, -10px -10px 10px black'
+
   },
 
 }

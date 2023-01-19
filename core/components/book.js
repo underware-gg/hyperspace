@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import * as Interactable from './interactable'
 import { getTextureImageByName } from '../textures'
 import { getLocalStore, getRemoteStore } from '../singleton'
 import { getTile, floors } from './map'
@@ -112,24 +113,14 @@ export const init = () => {
 
 export const create = (id, x, y, text) => {
   const book = {
-    position: {
-      x,
-      y,
-    },
     text,
   }
-
-  const store = getRemoteStore()
-  store.setDocument('book', id, book)
-
+  Interactable.create('book', id, x, y, book)
   return book
 }
 
 export const exists = (id) => {
-  const store = getRemoteStore()
-  const portal = store.getDocument('book', id)
-
-  return portal !== null
+  return Interactable.exists('book', id)
 }
 
 export const read = (id) => {
@@ -144,23 +135,7 @@ export const read = (id) => {
 }
 
 export const getCollisionRect = (id) => {
-  const store = getRemoteStore()
-  const book = store.getDocument('book', id)
-
-  if (book === null) {
-    return null
-  }
-
-  return {
-    position: {
-      x: book.position.x * 32,
-      y: book.position.y * 32,
-    },
-    size: {
-      width: 32,
-      height: 32,
-    },
-  }
+  return Interactable.getCollisionRect('book', id)
 }
 
 export const render2d = (id, context) => {
@@ -174,8 +149,6 @@ export const render2d = (id, context) => {
   const { position: { x, y } } = book
 
   // This should be replaced with a sprite eventually.
-  // context.fillStyle = 'yellow'
-  // context.fillRect(x * 32, y * 32, 32, 32)
   const documentTexture = getLocalStore().getDocument('book-texture', id)
   renderMarkdown(book.text, documentTexture.canvas, documentTexture.context)
   documentTexture.texture.needsUpdate = true

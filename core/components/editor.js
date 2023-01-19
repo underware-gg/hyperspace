@@ -6,6 +6,7 @@ import * as Portal from './portal'
 import * as Book from './book'
 import { getActionState, addActionDownListener } from '../controller'
 import { getLocalStore, getRemoteStore } from '../singleton'
+import { canPlaceOverPlayer } from 'core/components/player'
 import { roundToNearest } from '../utils'
 import { MAP_SCALE_X, MAP_SCALE_Y } from './map'
 
@@ -60,43 +61,39 @@ export const init = (canvas, id) => {
   addActionDownListener('createPortal', () => {
     const store = getRemoteStore()
     const editor = store.getDocument('editor', id)
-
     if (editor === null) {
       return
     }
 
-    const { position: { x, y }, interacting } = editor
-
-    if (interacting) {
-      const slug = window.prompt('The portal leads to...', 'test')
-
-      if (slug === null) {
-        return
-      }
-
-      Portal.create(nanoid(), x, y, slug)
+    if (!canPlaceOverPlayer(id)) {
+      return
     }
+
+    const slug = window.prompt('The portal leads to...', 'test')
+    if (slug === null) {
+      return
+    }
+
+    Portal.create(nanoid(), x, y, slug)
   })
 
   addActionDownListener('createBook', () => {
     const store = getRemoteStore()
     const editor = store.getDocument('editor', id)
-
     if (editor === null) {
       return
     }
 
-    const { position: { x, y }, interacting } = editor
-
-    if (interacting) {
-      const text = window.prompt('The book reads...', 'test')
-
-      if (text === null) {
-        return
-      }
-
-      Book.create(nanoid(), x, y, text)
+    if (!canPlaceOverPlayer(id)) {
+      return
     }
+
+    const text = window.prompt('The book reads...', 'test')
+    if (text === null) {
+      return
+    }
+
+    Book.create(nanoid(), x, y, text)
   })
 
   canvas.addEventListener('mousemove', handleMouseMove)

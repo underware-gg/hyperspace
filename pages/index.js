@@ -33,7 +33,7 @@ const Home = ({ slug }) => {
             using CRDTs for state synchronisation
           </Text>
           <Button
-            size='md'
+            size='sm'
             variant='outline'
             onClick={() => setRoomModal(true)}
           >

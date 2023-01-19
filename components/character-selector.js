@@ -67,6 +67,7 @@ const CharacterSelector = ({
       </div>
       <Spacer />
       <Select
+        size='sm'
         value={selectedValue}
         placeholder={null}
         onChange={(e) => _onChange(e)}

@@ -4,6 +4,7 @@ import { Button as ChakraButton } from '@chakra-ui/react'
 const Button = forwardRef(({
   value,
   type = 'button',
+  size = 'sm',
   loading,
   fullWidth,
   disabled,
@@ -14,6 +15,7 @@ const Button = forwardRef(({
   return (
     <ChakraButton
       colorScheme='teal'
+      size={size}
       variant={variant}
       isLoading={loading}
       isDisabled={disabled}

@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react'
-import { HStack, Select, Spacer } from '@chakra-ui/react'
+import { AbsoluteCenter, HStack, Select, Spacer } from '@chakra-ui/react'
 import { tilesets, defaultTileset } from '../core/texture-data'
 
 const TilesetSelector = ({
@@ -35,16 +35,35 @@ const TilesetSelector = ({
     }
   }
 
-  const style = {
+  const imgStyle = {
+    minWidth: '320px',
     width: '320px',
     height: '32px',
+    position: 'relative',
+    textAlign: 'center',
+    padding: '0',
   }
+  const shortcutsStyle = {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    top: '12px',
+    left: '12px',
+    letterSpacing: '23px',
+    textShadow: '0.1em 0.1em black',
+    userSelect: 'none',
+  }
+
 
   return (
     <HStack>
-      <img src={customTileset?.blob ?? customTileset?.name ?? defaultTileset} style={style} alt='tileset-preview' />
+      <div style={imgStyle}>
+        <img src={customTileset?.blob ?? customTileset?.name ?? defaultTileset} style={imgStyle} alt='tileset-preview' />
+        <span style={shortcutsStyle}>1234567890</span>
+      </div>
       <Spacer />
       <Select
+        size='sm'
         value={selectedValue}
         placeholder={null}
         onChange={(e) => _onChange(e)}

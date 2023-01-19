@@ -10,8 +10,10 @@ import DocumentModal from 'components/document-modal'
 import useRoom from 'hooks/use-room'
 import useDocument from 'hooks/use-document'
 import useLocalDocument from 'hooks/use-local-document'
+import usePlayer from 'hooks/use-player'
 import { getLocalStore, getRemoteStore } from 'core/singleton'
 import { fromSourceToDataURL } from 'core/textures'
+import { emitAction } from 'core/controller'
 import * as Profile from 'core/components/profile'
 import * as Tileset from 'core/components/tileset'
 import * as ClientRoom from 'core/networking'
@@ -33,6 +35,7 @@ const downloadRoomData = (slug) => {
 
 const Room = () => {
   const { agentId } = useRoom();
+  const { overPortal, overBook, overDocument, canPlace } = usePlayer(agentId)
   const document = useDocument('document', 'world')
   const profile = useDocument('profile', agentId)
   const tileset = useDocument('tileset', 'world')
@@ -137,18 +140,38 @@ const Room = () => {
               profile={profile}
               onSelect={(fileName) => _handleSelectSpritesheet(fileName)}
             />
+            <Button size='sm' onClick={() => emitAction('toggle3d')}>
+              2D/3D
+            </Button>
+            <Spacer />
+            <Button size='sm' disabled={!overPortal} onClick={() => emitAction('interact')}>
+              Enter Portal
+            </Button>
+            <Button size='sm' disabled={!overBook} onClick={() => emitAction('interact')}>
+              Read Book
+            </Button>
+            <Button size='sm' disabled={!overDocument} onClick={() => emitAction('interact')}>
+              Edit Document
+            </Button>
+          </HStack>
+
+          <HStack>
             <TilesetSelector
               customTileset={tileset}
               onSelect={(fileName) => _handleSelectTileset(fileName)}
             />
-            <Spacer />
             <FileSelectButton
               label='Upload Tileset'
               id='tileset-image'
               accept='image/*'
               onSelect={(fileObject) => _handleUploadTileset(fileObject)}
             />
+            <Spacer />
+            <Button size='sm' disabled={!canPlace} onClick={() => emitAction('createPortal')}>
+              Create Portal
+            </Button>
           </HStack>
+          
           <Box
             border='1px'
             borderRadius='4px'
@@ -190,7 +213,7 @@ const Room = () => {
           </Box>
 
           <HStack>
-            <Button variant='outline' size='md' onClick={() => downloadRoomData(slug)}>
+            <Button variant='outline' size='sm' onClick={() => downloadRoomData(slug)}>
               Download Room Data
             </Button>
             <a id='download-room-data' href='#' hidden></a>
@@ -202,6 +225,8 @@ const Room = () => {
               onSelect={(fileObject) => _handleUploadRoomData(fileObject)}
             />
           </HStack>
+
+          {process.env.ENV == 'desenv' && <div>Agent ID: {agentId}</div>}
         </VStack>
 
         <DocumentModal

@@ -38,7 +38,10 @@ const DocumentModal = ({
       isCentered
     >
       <ModalOverlay />
-      <ModalContent ref={containerRef}>
+      <ModalContent
+        backgroundColor='#0008'
+        ref={containerRef}
+      >
         <ModalHeader>
           Document editor
         </ModalHeader>

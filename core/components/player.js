@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import * as Room from '../networking'
 import * as Portal from './portal'
 import * as Book from './book'
+import * as Interactable from './interactable'
 import { getActionState } from '../controller'
 import { getTextureByName, getSprite } from '../textures'
 import { getRemoteStore, getLocalStore } from '../singleton'
@@ -175,39 +176,69 @@ export const create = (id, x, y, z = 0) => {
 
 // We should add a delete portal button too.
 export const interact = (id) => {
-  const store = getRemoteStore()
   const localStore = getLocalStore()
-  const player = store.getDocument('player', id)
 
-  if (player === null) {
+  const portalId = getPortalOverPlayer(id)
+  if (portalId) {
+    Portal.travel(portalId)
     return
   }
 
-  const portalIds = store.getIds('portal')
-  for (const portalId of portalIds) {
-    // This should also take into account the height of the thing, currently if you're in the air
-    // not touching a portal you can still use it for travel.
-    if (rectanglesOverlap(getCollisionRect(id), Portal.getCollisionRect(portalId))) {
-      Portal.travel(portalId)
-    }
-  }
-
-  const bookIds = store.getIds('book')
-  for (const bookId of bookIds) {
-    if (rectanglesOverlap(getCollisionRect(id), Book.getCollisionRect(bookId))) {
-      Book.read(bookId)
-      localStore.setDocument('documentId', 'world', bookId)
-
-      localStore.setDocument('show-doc', 'world', true)
-      break
-    }
+  const bookId = getBookOverPlayer(id)
+  if (bookId) {
+    Book.read(bookId)
+    localStore.setDocument('documentId', 'world', bookId)
+    localStore.setDocument('show-doc', 'world', true)
+    return
   }
 
   // Check if you're standing where the document is
-  if (player.position.y / 32 >= 2 && player.position.y / 32 <= 3 && player.position.x / 32 >= 8.5 && player.position.x / 32 <= 11.5) {
+  if (getDocumentOverPlayer(id)) {
     localStore.setDocument('show-doc', 'world', true)
+    return
   }
 }
+
+export const getPortalOverPlayer = (id) => {
+  return getInteractableOverPlayer('portal', id)
+}
+
+export const getBookOverPlayer = (id) => {
+  return getInteractableOverPlayer('book', id)
+}
+
+export const getDocumentOverPlayer = (id) => {
+  const store = getRemoteStore()
+  const player = store.getDocument('player', id)
+  if (player === null) {
+    return
+  }
+  return (player.position.y / 32 >= 2 && player.position.y / 32 <= 3 && player.position.x / 32 >= 8.5 && player.position.x / 32 <= 11.5)
+}
+
+export const canPlaceOverPlayer = (id) => {
+  return (
+    getPortalOverPlayer(id) == null && 
+    getBookOverPlayer(id) == null
+  );
+}
+
+export const getInteractableOverPlayer = (type, id) => {
+  const playerRect = getPlayerCollisionRect(id);
+
+  const store = getRemoteStore()
+  const ids = store.getIds(type)
+
+  for (const targetId of ids) {
+    // This should also take into account the height of the thing, currently if you're in the air
+    // not touching a portal you can still use it for travel.
+    if (rectanglesOverlap(playerRect, Interactable.getCollisionRect(type, targetId))) {
+      return targetId
+    }
+  }
+  return null;
+}
+
 
 export const exists = (id) => {
   const store = getRemoteStore()
@@ -234,7 +265,7 @@ export const getCollisionCircle = (id) => {
   }
 }
 
-export const getCollisionRect = (id) => {
+export const getPlayerCollisionRect = (id) => {
   const store = getRemoteStore()
 
   const player = store.getDocument('player', id)
@@ -484,7 +515,7 @@ export const render2d = (id, context) => {
   // }
 
   // strokeCircle(context, getCollisionCircle(id))
-  strokeRect(context, getCollisionRect(id))
+  strokeRect(context, getPlayerCollisionRect(id))
 
   let scale = texture.scale;
   let sWidth = texture.width;
