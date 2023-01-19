@@ -486,12 +486,14 @@ export const render2d = (id, context) => {
   // strokeCircle(context, getCollisionCircle(id))
   strokeRect(context, getCollisionRect(id))
 
+  let scale = texture.scale;
   let sWidth = texture.width;
   let sHeight = texture.height;
   let sx = 0;
   let sy = 0;
 
   if (texture.sprites) {
+    scale = texture.sprites.scale ?? scale;
     sWidth = texture.sprites.width;
     sHeight = texture.sprites.height;
 
@@ -501,8 +503,8 @@ export const render2d = (id, context) => {
     sy = pixel.start[1];
   }
 
-  const dWidth = sWidth * texture.scale;
-  const dHeight = sHeight * texture.scale;
+  const dWidth = sWidth * scale;
+  const dHeight = sHeight * scale;
   const dx = Math.round(x - (dWidth / 2));
   const dy = Math.round(y - dHeight + PLAYER_RADIUS);
 

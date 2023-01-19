@@ -119,7 +119,7 @@ export const getSprite = (textureName, stepX = 0.0, stepY = 0.0, cycleName = 'id
   const right = Math.floor((1.0 - uv.end[0]) * 100);
   const top = Math.floor(uv.start[1] * 100);
   const bottom = Math.floor((1.0 - uv.end[1]) * 100);
-  const scaleY = ((32 / texture.sprites.height) / dy);
+  const scaleY = (1 / dy);
   const scaleX = scaleY * texture.aspect;
   const imgStyle = {
     transform: ` translate(-50%, -50%) scale(${scaleX}, ${scaleY}) translate(50%, 50%) translate(${left}%, ${top}%)`,
