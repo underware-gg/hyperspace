@@ -158,8 +158,8 @@ const Room = () => {
               ref={canvasRef}
               border='1px'
               borderradius={4}
-              width={640}
-              height={480}
+              width={process.env.CANVAS_WIDTH}
+              height={process.env.CANVAS_HEIGHT}
               style={{
                 width: '100%',
                 height: '100%',
@@ -176,8 +176,8 @@ const Room = () => {
               ref={canvas3dRef}
               border='1px'
               borderradius={4}
-              width={640}
-              height={480}
+              width={process.env.CANVAS_WIDTH}
+              height={process.env.CANVAS_HEIGHT}
               style={{
                 width: '100%',
                 height: '100%',

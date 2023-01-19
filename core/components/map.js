@@ -6,6 +6,8 @@ import { defaultTileset } from '../texture-data'
 
 export const MAP_WIDTH = 20
 export const MAP_HEIGHT = 15
+export const MAP_SCALE_X = (process.env.CANVAS_WIDTH / (MAP_WIDTH * 32))
+export const MAP_SCALE_Y = (process.env.CANVAS_HEIGHT / (MAP_HEIGHT * 32))
 
 const cellWidth = 1
 
@@ -272,6 +274,9 @@ export const render2d = (id, context) => {
   if (map === null) {
     return
   }
+
+  context.setTransform(1, 0, 0, 1, 0, 0);
+  context.scale(MAP_SCALE_X, MAP_SCALE_Y);
 
   const crdtTileset = store.getDocument('tileset', id)
 

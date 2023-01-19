@@ -7,6 +7,7 @@ import * as Book from './book'
 import { getActionState, addActionDownListener } from '../controller'
 import { getLocalStore, getRemoteStore } from '../singleton'
 import { roundToNearest } from '../utils'
+import { MAP_SCALE_X, MAP_SCALE_Y } from './map'
 
 export const getMouseCanvasPosition = (e, canvas) => {
   const rect = canvas.getBoundingClientRect()
@@ -23,8 +24,8 @@ export const getMouseTilePosition = (e, canvas) => {
   const { x, y } = getMouseCanvasPosition(e, canvas);
 
   return {
-    x: Math.floor(x / 32),
-    y: Math.floor(y / 32),
+    x: Math.floor(x / MAP_SCALE_X / 32),
+    y: Math.floor(y / MAP_SCALE_Y / 32),
   }
 }
 

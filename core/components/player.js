@@ -353,9 +353,6 @@ export const update = (id, dt) => {
     }
   }
 
-  x = clamp(x, PLAYER_RADIUS, 640 - PLAYER_RADIUS)
-  y = clamp(y, PLAYER_RADIUS, 480 - PLAYER_RADIUS)
-
   const overlappingTiles = getOverlappingTiles(fromPosToRect(x, player.position.y), 32)
   for (let i = 0; i < overlappingTiles.length; i++) {
     const tile = getTile('world', overlappingTiles[i].x, overlappingTiles[i].y)
@@ -387,6 +384,9 @@ export const update = (id, dt) => {
       }
     }
   }
+
+  x = clamp(x, PLAYER_RADIUS, process.env.CANVAS_WIDTH - PLAYER_RADIUS)
+  y = clamp(y, PLAYER_RADIUS, process.env.CANVAS_HEIGHT - PLAYER_RADIUS)
 
   // const tile = getTile('world', x, y)
 
