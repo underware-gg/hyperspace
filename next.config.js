@@ -3,6 +3,8 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   env: {
+    ENV: process.env.ENV,
+    
     // base canvas width is 640 (20 tiles * 32 pixels)
     // maximum canvas screen width is 960, double to 1920
     // thus canvas scale is: 1920/640 = 3x

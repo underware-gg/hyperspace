@@ -5,3 +5,4 @@ next
 .next
 .next/
 .DS_Store
+.env*
