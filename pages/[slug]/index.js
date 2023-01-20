@@ -36,7 +36,7 @@ const downloadRoomData = (slug) => {
 
 const Room = () => {
   const { agentId } = useRoom();
-  const { overPortal, overBook, overDocument, canPlace } = usePlayer(agentId)
+  const { overPortal, overBook, overDocument, canPlace, playerConnected, playerProfile } = usePlayer(agentId)
   const document = useDocument('document', 'world')
   const profile = useDocument('profile', agentId)
   const tileset = useDocument('tileset', 'world')
@@ -171,6 +171,16 @@ const Room = () => {
             <Button size='sm' disabled={!canPlace} onClick={() => emitAction('createPortal')}>
               Create Portal
             </Button>
+            { playerConnected == true ?
+              <Text>{
+                playerProfile.avatarUri ?
+                <img src={ playerProfile.avatarUri } width="40" height="40" /> :
+                <Text>No</Text>
+              }{ playerProfile.name }</Text> :
+              <Button size='sm' disabled={!canPlace} onClick={() => emitAction('connect')}>
+                Connect
+              </Button>
+            }
           </HStack>
 
           <Box
@@ -229,6 +239,9 @@ const Room = () => {
           <HStack>
             <Button variant='outline' size='sm' onClick={() => downloadRoomData(slug)}>
               Download Room Data
+            </Button>
+            <Button variant='outline' size='sm' onClick={() => emitAction('inviteFriend')}>
+              Invite Friend
             </Button>
             <a id='download-room-data' href='#' hidden></a>
             <Spacer />

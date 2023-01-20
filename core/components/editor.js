@@ -9,6 +9,7 @@ import { getLocalStore, getRemoteStore } from '../singleton'
 import { canPlaceOverPlayer } from 'core/components/player'
 import { roundToNearest } from '../utils'
 import { MAP_SCALE_X, MAP_SCALE_Y } from './map'
+import { VeridaApi } from '../networking/verida'
 
 export const getMouseCanvasPosition = (e, canvas) => {
   const rect = canvas.getBoundingClientRect()
@@ -56,6 +57,24 @@ export const init = (canvas, id) => {
 
   remoteStore.on({ type: 'editor', event: 'update' }, (id, editor) => {
     // id is the agent id.
+  })
+
+  addActionDownListener('connect', async () => {
+    await VeridaApi.connect()
+  })
+
+  addActionDownListener('inviteFriend', async () => {
+
+    const recipientDid = window.prompt('DID to invite', 'did:vda:....')
+    const room = Room.get()
+    const roomId = room.slug
+
+    const subject = `Please join me in hyperbox!`
+    const message = `You won't regret it...`
+    // @todo: Get app URL from next.js
+    const linkUrl = `http://192.168.68.124:3000/${roomId}`
+    const linkText = `Join my room on hyperbox (${roomId})`
+    await VeridaApi.sendMessage(recipientDid, subject, message, linkUrl, linkText)
   })
 
   addActionDownListener('createPortal', () => {

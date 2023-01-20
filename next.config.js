@@ -11,6 +11,14 @@ const nextConfig = {
     CANVAS_WIDTH: (640 * 3),
     CANVAS_HEIGHT: (480 * 3),
   },
+  webpack: (config, options) => {
+    config.module.rules.push({
+      test: /\.(png|gif|woff|woff2|eot|ttf|svg)$/,
+      loader: 'file-loader',
+    })
+
+    return config
+  },
 }
 
 module.exports = nextConfig
