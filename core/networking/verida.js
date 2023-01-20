@@ -2,11 +2,14 @@ import { Network, EnvironmentType } from '@verida/client-ts';
 import { VaultAccount, hasSession } from '@verida/account-web-vault';
 import EventEmitter from 'events';
 
+import { getRemoteStore } from '../../core/singleton'
+
 // (optional) Import WalletConnect if required
 //import WalletConnect from "@walletconnect/client";
 
-const VERIDA_ENVIRONMENT = EnvironmentType.TESTNET;
-const CONTEXT_NAME = 'funDAOmental: Hyperbox';
+const VERIDA_ENVIRONMENT = EnvironmentType.TESTNET
+const CONTEXT_NAME = 'funDAOmental: Hyperbox'
+const SNAPSPHOT_DB_NAME = 'room_snapshots'
 
 const VeridaEvents = new EventEmitter()
 
@@ -20,47 +23,25 @@ export class VeridaApi {
     static _connecting
     static _profile
 
-    static async isConnected() {
-        if (VeridaApi.did) {
-            return true
-        }
-
-        if (hasSession(CONTEXT_NAME)) {
-            await VeridaApi.connect()
-            return true
-        }
-
-        return false
-    }
-
     static async getContext() {
-        if (!VeridaApi.isConnected()) {
-            throw new Error('Not connected!')
-        }
-
+        await VeridaApi.requireConnection()
         return VeridaApi.context
     }
 
     static async getAccount() {
-        if (!VeridaApi.isConnected()) {
-            throw new Error('Not connected!')
-        }
+        await VeridaApi.requireConnection()
 
         return VeridaApi.account
     }
 
     static async getDid() {
-        if (!VeridaApi.isConnected()) {
-            throw new Error('Not connected!')
-        }
+        await VeridaApi.requireConnection()
 
         return VeridaApi.did
     }
 
     static async getPublicProfile(force) {
-        if (!VeridaApi.did) {
-            throw new Error('Not connected!')
-        }
+        await VeridaApi.requireConnection()
 
         if (!force && VeridaApi.profile) {
             // return cached profile
@@ -138,6 +119,8 @@ export class VeridaApi {
                 console.log(
                     'User cancelled login attempt by closing the QR code modal or an unexpected error occurred'
                 );
+
+                resolve(false)
             }
 
             const did = await account.did()
@@ -150,7 +133,7 @@ export class VeridaApi {
             const profile = await VeridaApi.getPublicProfile()
 
             VeridaEvents.emit('connected', profile)
-            resolve()
+            resolve(true)
         })
 
         return VeridaApi._connecting
@@ -160,31 +143,7 @@ export class VeridaApi {
         VeridaEvents.on(eventName, cb)
     }
 
-    static async requestData(did, ) {}
-
-    static async requestSocials() {
-        const messaging = await VeridaApi.context.getMessaging()
-        const message = 'Please share your social media posts'
-        const messageType = 'inbox/type/dataRequest'
-
-        // Note: You could apply a filter `{sourceApplication: 'https://twitter.com/'}` to only include twitter results
-        const data = {
-            requestSchema: 
-                'https://common.schemas.verida.io/social/post/v0.1.0/schema.json',
-            filter: {},
-            userSelect: false
-        }
-        const config = {
-            recipientContextName: 'Verida: Vault'
-        }
-
-        messaging.onMessage(function(message) {
-            console.log('Socials returned:')
-            console.log(message.data.data[0])
-        })
-
-        await messaging.send(VeridaApi.did, messageType, data, message, config)
-    }
+    //static async requestData(did, ) {}
 
     /**
      * Send a message to a user's Verida Wallet
@@ -196,7 +155,8 @@ export class VeridaApi {
      * @param {*} linkText 
      */
     static async sendMessage(did, subject, message, linkUrl, linkText) {
-        const messaging = await VeridaApi.context.getMessaging()
+        const context = await VeridaApi.getContext()
+        const messaging = await context.getMessaging()
 
         // The data message we are sending
         const link = {}
@@ -223,5 +183,110 @@ export class VeridaApi {
 
         // Now send the message
         await messaging.send(did, messageType, data, subject, config)
+    }
+
+    static async isConnected() {
+        if (VeridaApi.did) {
+            return true
+        }
+
+        if (hasSession(CONTEXT_NAME)) {
+            console.log('has session!')
+            const connected = await VeridaApi.connect()
+            console.log('connected?', connected)
+            return connected
+        }
+
+        return false
+    }
+
+    static async requireConnection() {
+        const isConnected = await VeridaApi.isConnected()
+        if (!isConnected) {
+            throw new Error('Not connected!')
+        }
+    }
+
+    /////
+
+    // @todo: Create a proper schema
+    static async saveRoom(roomId, snapshot) {
+        console.log(`saveRoom(${roomId})`)
+        const roomSnapshotsDb = await VeridaApi._getSnapshotDb()
+        let roomItem = {
+            _id: roomId
+        }
+
+        try {
+            roomItem = await roomSnapshotsDb.get(roomId)
+        } catch (err) {
+            if (err.name == 'not_found') {
+                roomItem.snapshot = JSON.stringify(snapshot)
+            }
+            else {
+                throw err
+            }
+        }
+
+        const result = await roomSnapshotsDb.save(roomItem)
+
+        if (!result) {
+            console.log('Save room error')
+            console.log(roomSnapshotsDb.errors)
+        }
+    }
+
+    static async getRoom(roomId) {
+        console.log(`getRoom(${roomId})`)
+        const roomSnapshotsDb = await VeridaApi._getSnapshotDb()
+        const roomItem = await roomSnapshotsDb.get(roomId)
+        console.log(roomItem)
+        return roomItem.snapshot
+    }
+
+    static async _getSnapshotDb() {
+        const context = await VeridaApi.getContext()
+        const roomSnapshotsDb = await context.openDatabase(SNAPSPHOT_DB_NAME, {
+            permissions: {
+                read: 'public',
+                write: 'users'
+            }
+        })
+
+        return roomSnapshotsDb
+    }
+
+    static async setDocumentToLastTweet() {
+        await VeridaApi.requireConnection()
+        const messaging = await VeridaApi.context.getMessaging()
+        const message = 'Please share your social media posts with hyperbox'
+        const messageType = 'inbox/type/dataRequest'
+
+        // Note: You could apply a filter `{sourceApplication: 'https://twitter.com/'}` to only include twitter results
+        const data = {
+            requestSchema: 
+                'https://common.schemas.verida.io/social/post/v0.1.0/schema.json',
+            filter: {
+                sourceApplication: 'https://twitter.com/'
+            },
+            userSelect: false
+        }
+        const config = {
+            recipientContextName: 'Verida: Vault'
+        }
+
+        messaging.onMessage(function(message) {
+            const recentPosts = message.data.data[0]
+            const lastPost = recentPosts[0]
+            console.log('Most recent twitter post:')
+            console.log(lastPost)
+            const content = `<img src="${lastPost.sourceData.user.avatar}" /><strong>@${lastPost.sourceData.user.screen_name}</strong>: ${lastPost.content}`
+
+            const store = getRemoteStore()
+            store.setDocument('document', 'world', { content })
+        })
+
+        console.log("Requesting tweet data from user's mobile")
+        await messaging.send(VeridaApi.did, messageType, data, message, config)
     }
 }

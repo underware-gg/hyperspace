@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getPortalOverPlayer, getBookOverPlayer, getDocumentOverPlayer } from 'core/components/player'
 import useDocument from 'hooks/use-document'
-import dynamic from 'next/dynamic'
 
 const usePlayer = (id) => {
   const player = useDocument('player', id)
