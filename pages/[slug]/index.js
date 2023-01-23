@@ -83,14 +83,21 @@ const Room = () => {
 
     const VeridaApi = (await import('core/networking/verida')).VeridaApi
     const snapshot = await VeridaApi.getRoom(room.slug)
-    const json = JSON.parse(snapshot)
-    const remoteStore = getRemoteStore()
 
-    for (const op of json) {
-      if (op.pathIndex === 0) {
-        const { type, key, value } = op
-        remoteStore.setDocument(type, key, value)
+    if (snapshot) {
+      const json = JSON.parse(snapshot)
+      console.log(json)
+      const remoteStore = getRemoteStore()
+
+      for (const op of json) {
+        if (op.pathIndex === 0) {
+          console.log(type, key, value)
+          const { type, key, value } = op
+          remoteStore.setDocument(type, key, value)
+        }
       }
+    } else {
+      console.log('No room data found')
     }
   }
 

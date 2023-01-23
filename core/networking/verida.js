@@ -1,4 +1,5 @@
-import { Network, EnvironmentType } from '@verida/client-ts';
+import { Network } from '@verida/client-ts';
+import { EnvironmentType } from '@verida/types'
 import { VaultAccount, hasSession } from '@verida/account-web-vault';
 import EventEmitter from 'events';
 
@@ -191,9 +192,7 @@ export class VeridaApi {
         }
 
         if (hasSession(CONTEXT_NAME)) {
-            console.log('has session!')
             const connected = await VeridaApi.connect()
-            console.log('connected?', connected)
             return connected
         }
 
@@ -220,28 +219,39 @@ export class VeridaApi {
         try {
             roomItem = await roomSnapshotsDb.get(roomId)
         } catch (err) {
-            if (err.name == 'not_found') {
-                roomItem.snapshot = JSON.stringify(snapshot)
-            }
-            else {
+            if (err.name != 'not_found') {
                 throw err
             }
         }
 
+        roomItem.snapshot = JSON.stringify(snapshot)
         const result = await roomSnapshotsDb.save(roomItem)
+        console.log('Room saved!')
+        console.log(result)
 
         if (!result) {
             console.log('Save room error')
             console.log(roomSnapshotsDb.errors)
+            return false
         }
+
+        return true
     }
 
     static async getRoom(roomId) {
         console.log(`getRoom(${roomId})`)
         const roomSnapshotsDb = await VeridaApi._getSnapshotDb()
-        const roomItem = await roomSnapshotsDb.get(roomId)
-        console.log(roomItem)
-        return roomItem.snapshot
+        try {
+            const roomItem = await roomSnapshotsDb.get(roomId)
+            console.log(roomItem)
+            return roomItem.snapshot
+        } catch (err) {
+            // If the room isn't found, return empty
+            // Otherwise re-raise the error
+            if (err.error != 'not_found') {
+                throw err
+            }
+        }
     }
 
     static async _getSnapshotDb() {
