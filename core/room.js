@@ -5,6 +5,7 @@ import {
   handleKeyUp,
   addActionDownListener,
 } from './controller'
+import { HTMLMesh } from './HTMLMesh'
 import * as Room from './networking'
 import * as Player from './components/player'
 import * as Map from './components/map'
@@ -12,12 +13,8 @@ import * as Editor from './components/editor'
 import * as Portal from './components/portal'
 import * as Book from './components/book'
 import { getRemoteStore, getLocalStore } from './singleton'
-import { createRenderTexture } from './textures'
-import { renderMarkdown } from './canvas-markdown'
 
-const documentTexture = createRenderTexture(process.env.BASE_WIDTH, process.env.BASE_HEIGHT)
-
-export const init = async (slug, canvas, canvas3d) => {
+export const init = async (slug, canvas, canvas3d, documentElement) => {
   registerActions([
     {
       name: 'left',
@@ -189,16 +186,15 @@ export const init = async (slug, canvas, canvas3d) => {
     Map.create('world')
   }
 
-  const aspect = process.env.BASE_WIDTH / process.env.BASE_HEIGHT
-  const cellHeight = 1.2
-  const cellWidth = cellHeight * aspect
-  const documentGeometry = new THREE.PlaneGeometry(cellWidth, cellHeight, 1, 1)
-  const documentMaterial = new THREE.MeshBasicMaterial({
-    map: documentTexture.texture,
-  })
-  const documentMesh = new THREE.Mesh(documentGeometry, documentMaterial)
+  const documentMesh = new HTMLMesh(documentElement);
   documentMesh.position.set(10, -1.01, .75)
-  documentMesh.rotation.set(90*Math.PI/180, 0, 0)
+  documentMesh.rotation.set(90 * Math.PI / 180, 0, 0)
+
+  const aspect = process.env.BASE_WIDTH / process.env.BASE_HEIGHT
+  const cellHeight = 1.5 //1.2
+  const cellWidth = cellHeight * aspect
+  documentMesh.geometry = new THREE.PlaneGeometry(cellWidth, cellHeight, 1, 1)
+
   const localStore = getLocalStore()
   const scene = localStore.getDocument('scene', 'scene')
   if (scene === null) {
@@ -232,18 +228,8 @@ export const render = (canvas, context) => {
   const playerIds = store.getIds('player')
   const portalIds = store.getIds('portal')
   const bookIds = store.getIds('book')
-  const document = store.getDocument('document', 'world')
-  const text = document?.content || ''
 
   Map.render2d('world', context)
-
-  // This should be rendered to another canvas only when changes occur.
-  renderMarkdown(text, documentTexture.canvas, documentTexture.context)
-  documentTexture.texture.needsUpdate = true
-
-  // const renderImage = new Image()
-  // renderImage.src = documentTexture.canvas.toDataURL()
-  // context.drawImage(renderImage, 128, 64, 256, 256)
 
   const room = Room.get()
 

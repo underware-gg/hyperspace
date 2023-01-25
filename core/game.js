@@ -17,7 +17,7 @@ class Game {
     this.renderer3D = new Renderer3D()
   }
 
-  async init(slug, canvas, canvas3d) {
+  async init(slug, canvas, canvas3d, documentElement) {
     this.canvas = canvas
     this.context = canvas.getContext('2d')
     this.canvas3d = canvas3d
@@ -26,7 +26,7 @@ class Game {
 
     this.renderer2D.init(this.context)
     this.renderer3D.init(canvas3d)
-    Room.init(slug, canvas, canvas3d)
+    Room.init(slug, canvas, canvas3d, documentElement)
 
     this.lastTime = (new Date()).getTime()
     this.currentTime = 0
