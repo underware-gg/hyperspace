@@ -15,8 +15,7 @@ import { getRemoteStore, getLocalStore } from './singleton'
 import { createRenderTexture } from './textures'
 import { renderMarkdown } from './canvas-markdown'
 
-// 1.9 - 1.2
-const documentTexture = createRenderTexture(640, 404)
+const documentTexture = createRenderTexture(process.env.BASE_WIDTH, process.env.BASE_HEIGHT)
 
 export const init = async (slug, canvas, canvas3d) => {
   registerActions([
@@ -190,8 +189,9 @@ export const init = async (slug, canvas, canvas3d) => {
     Map.create('world')
   }
 
-  const cellWidth = 1.9
+  const aspect = process.env.BASE_WIDTH / process.env.BASE_HEIGHT
   const cellHeight = 1.2
+  const cellWidth = cellHeight * aspect
   const documentGeometry = new THREE.PlaneGeometry(cellWidth, cellHeight, 1, 1)
   const documentMaterial = new THREE.MeshBasicMaterial({
     map: documentTexture.texture,

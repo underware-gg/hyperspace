@@ -24,7 +24,7 @@ export const init = () => {
   const remoteStore = getRemoteStore()
 
   remoteStore.on({ type: 'book', event: 'create' }, (id, portal) => {
-    const documentTexture = createRenderTexture(640, 404)
+    const documentTexture = createRenderTexture(process.env.BASE_WIDTH, process.env.BASE_HEIGHT)
     const portalMaterial = new THREE.MeshBasicMaterial({
        map: documentTexture.texture,
       })
