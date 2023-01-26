@@ -416,8 +416,8 @@ export const update = (id, dt) => {
     }
   }
 
-  x = clamp(x, PLAYER_RADIUS, process.env.CANVAS_WIDTH - PLAYER_RADIUS)
-  y = clamp(y, PLAYER_RADIUS, process.env.CANVAS_HEIGHT - PLAYER_RADIUS)
+  x = clamp(x, PLAYER_RADIUS, process.env.BASE_WIDTH - PLAYER_RADIUS)
+  y = clamp(y, PLAYER_RADIUS, process.env.BASE_HEIGHT - PLAYER_RADIUS)
 
   // const tile = getTile('world', x, y)
 
