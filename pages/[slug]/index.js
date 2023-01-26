@@ -51,6 +51,7 @@ const Room = () => {
   const router = useRouter()
   const canvasRef = useRef()
   const canvas3dRef = useRef()
+  const documentRef = useRef()
   const { slug } = router.query
 
   useEffect(() => {
@@ -161,13 +162,13 @@ const Room = () => {
   })
 
   useEffect(() => {
-    if (canvasRef.current && canvas3dRef.current && slug) {
+    if (slug && canvasRef.current && canvas3dRef.current && documentRef.current) {
       import('core/game').then(({ default: Game }) => {
         const game = new Game()
-        game.init(slug, canvasRef.current, canvas3dRef.current)
+        game.init(slug, canvasRef.current, canvas3dRef.current, documentRef.current)
       })
     }
-  }, [slug, canvasRef, canvas3dRef])
+  }, [slug, canvasRef.current, canvas3dRef.current, documentRef.current])
 
   return (
     <Layout>
@@ -264,17 +265,25 @@ const Room = () => {
               Canvas not supported by your browser.
             </canvas>
 
-            {(isDocOpen && !is3d) &&
-              <div style={{
+            <div id='document'
+              style={{
                 width: '100%',
                 height: '100%',
                 position: 'absolute',
                 top: '0',
                 left: '0',
-              }}>
+                visibility: (isDocOpen && !is3d) ? 'visible' : 'hidden',
+              }}
+            >
+              <div ref={documentRef}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                }}
+              >
                 <Markdown>{document?.content || ''}</Markdown>
               </div>
-            }
+            </div>
           </Box>
 
           <HStack>
