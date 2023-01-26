@@ -1,8 +1,9 @@
-import { useEffect, useState, useMemo } from 'react'
-import { HStack, Select, Spacer } from '@chakra-ui/react'
+import { useEffect, useState } from 'react'
+import { HStack, Select, Spacer, useTableStyles } from '@chakra-ui/react'
 import { spritesheets, defaultSpritesheet } from '../core/texture-data'
-import { getSprite } from '../core/textures'
 import { deepMerge } from '../core/utils'
+import useTexture from '../hooks/use-texture'
+import { images } from 'next.config'
 
 const CharacterSelector = ({
   profile,
@@ -10,8 +11,9 @@ const CharacterSelector = ({
 }) => {
   const [selectedValue, setSelectedValue] = useState('')
   const [imageName, setImageName] = useState(null)
-  const [imageStyle, setImageStyle] = useState({})
+  const [imageStyle, setImageStyle] = useState({ display: 'none' })
   const [options, setOptions] = useState([])
+  const { sprite } = useTexture(imageName)
 
   useEffect(() => {
     let _imageName = profile?.spritesheet ?? defaultSpritesheet.src
@@ -31,23 +33,22 @@ const CharacterSelector = ({
     //   _options.push(<option key='custom' value='custom'>{`(custom) ${profile.spritesheet}`}</option>)
     // }
 
-    let _imageStyle = {
-      imageRendering: 'pixelated',
-      width: '100%',
-      height: '100%',
-    }
-    if (_imageName) {
-      const sprite = getSprite(_imageName);
-      if (sprite) {
-        _imageStyle = deepMerge(_imageStyle, sprite.imgStyle);
-      }
-    }
-
     setSelectedValue(_selectedValue)
     setImageName(_imageName)
-    setImageStyle(_imageStyle);
     setOptions(_options)
   }, [profile?.spritesheet])
+
+  useEffect(() => {
+    if (sprite) {
+      let _imageStyle = {
+        imageRendering: 'pixelated',
+        width: '100%',
+        height: '100%',
+      }
+      _imageStyle = deepMerge(_imageStyle, sprite.imgStyle);
+      setImageStyle(_imageStyle);
+    }
+  }, [sprite])
 
   const _onChange = (e) => {
     const value = e.target.value
