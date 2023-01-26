@@ -29,22 +29,26 @@ const usePlayer = (id) => {
       setIsConnected(true)
       setProfile(profile)
 
-      const VeridaApi = (await import('core/networking/verida')).VeridaApi
-      VeridaApi.on('profileChanged', (profile) => {
+      const VeridaUser = (await import('core/networking/verida')).VeridaUser
+      VeridaUser.on('profileChanged', (profile) => {
         setProfile(profile)
       })
     }
 
     const initVerida = async () => {
-      const VeridaApi = (await import('core/networking/verida')).VeridaApi
-      const isConnected = await VeridaApi.isConnected()
+      const VeridaUser = (await import('core/networking/verida')).VeridaUser
+      const isConnected = await VeridaUser.isConnected()
       if (isConnected) {
-        const profile = await VeridaApi.getPublicProfile()
+        const profile = await VeridaUser.getPublicProfile()
         veridaConnected(profile)
       }
 
-      VeridaApi.on('connected', (profile) => {
+      VeridaUser.on('connected', (profile) => {
         veridaConnected(profile)
+      })
+
+      VeridaUser.on('disconnected', () => {
+        setIsConnected(false)
       })
     }
     

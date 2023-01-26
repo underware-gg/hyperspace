@@ -26,8 +26,8 @@ const downloadRoomData = async (slug) => {
   }
 
   const snapshotOps = room.getSnapshotOps()
-  const VeridaApi = (await import('core/networking/verida')).VeridaApi
-  await VeridaApi.saveRoom(slug, snapshotOps)
+  const VeridaUser = (await import('core/networking/verida')).VeridaUser
+  await VeridaUser.saveRoom(slug, snapshotOps)
 
   /*
   console.log(snapshotOps)
@@ -81,8 +81,8 @@ const Room = () => {
       return
     }
 
-    const VeridaApi = (await import('core/networking/verida')).VeridaApi
-    const snapshot = await VeridaApi.getRoom(room.slug)
+    const VeridaUser = (await import('core/networking/verida')).VeridaUser
+    const snapshot = await VeridaUser.getRoom(room.slug)
 
     if (snapshot) {
       const json = JSON.parse(snapshot)
@@ -102,8 +102,8 @@ const Room = () => {
   }
 
   const lastTweet = async () => {
-    const VeridaApi = (await import('core/networking/verida')).VeridaApi
-    await VeridaApi.setDocumentToLastTweet()
+    const VeridaUser = (await import('core/networking/verida')).VeridaUser
+    await VeridaUser.setDocumentToLastTweet()
   }
 
   /*
@@ -213,7 +213,7 @@ const Room = () => {
               Create Portal
             </Button>
             { playerConnected == true ?
-              <Text>{
+              <Text onClick={() => emitAction('disconnect')}>{
                 playerProfile.avatarUri ?
                 <img src={ playerProfile.avatarUri } width="40" height="40" /> :
                 <Text>No</Text>
