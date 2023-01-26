@@ -68,7 +68,8 @@ const components = {
   ),
   p: ({ children }) => <Text>{children}</Text>,
   // pre: () => {},
-  // strong: () => {},
+  strong: ({ children }) => <b>{children}</b>,
+  em: ({ children }) => <i>{children}</i>,
   ul: ({ children }) => (
     <Box>
       <UnorderedList>{children}</UnorderedList>
@@ -94,8 +95,24 @@ const components = {
   },
 }
 
-const Markdown = ({ children = '' }) => {
-  return <ReactMarkdown components={components}>{children}</ReactMarkdown>
+const Markdown = ({
+  documentName = 'world',
+  children = '',
+}) => {
+  return (
+    <div
+      style={{
+        padding: '10px',
+        width: '100%',
+        height: '100%',
+        backgroundColor: '#38B2AC', //'teal.400',
+        border: 'solid 3px white',
+        // borderRadius: '20px',
+      }}
+    >
+      <ReactMarkdown components={components}>{children}</ReactMarkdown>
+    </div>
+  )
 }
 
 export default Markdown

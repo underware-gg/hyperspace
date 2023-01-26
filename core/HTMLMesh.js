@@ -28,9 +28,8 @@ class HTMLMesh extends THREE.Mesh {
 
     const material = new THREE.MeshBasicMaterial({
       map: texture,
-      toneMapped: true,
-      transparent: false,
-      // side: THREE.DoubleSide,
+      // toneMapped: false,
+      // transparent: true,
     });
 
     super(geometry, material);

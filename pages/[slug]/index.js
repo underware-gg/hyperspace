@@ -228,7 +228,6 @@ const Room = () => {
                 style={{
                   width: '100%',
                   height: '100%',
-                  backgroundColor: '#00f',
                 }}
               >
                 <Markdown>{document?.content || ''}</Markdown>

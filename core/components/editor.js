@@ -109,7 +109,11 @@ export const init3d = (canvas, id) => {
 
   const selectionGeometry = new THREE.BoxGeometry(1.2, 1.2, 2.3)
 
-  const selectionMat = new THREE.MeshBasicMaterial({ color: 0x0000FF, transparent: true, opacity: 0.23 })
+  const selectionMat = new THREE.MeshBasicMaterial({
+    color: 0x0000FF,
+    transparent: true,
+    opacity: 0.23,
+  })
   const selectionMesh = new THREE.Mesh(selectionGeometry, selectionMat)
 
   scene.add(selectionMesh)
