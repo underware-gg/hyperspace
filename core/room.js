@@ -186,21 +186,22 @@ export const init = async (slug, canvas, canvas3d, documentElement) => {
     Map.create('world')
   }
 
-  const documentMesh = new HTMLMesh(documentElement);
-  documentMesh.position.set(10, -1.01, .75)
-  documentMesh.rotation.set(90 * Math.PI / 180, 0, 0)
-
-  const aspect = process.env.BASE_WIDTH / process.env.BASE_HEIGHT
-  const cellHeight = 1.5 //1.2
-  const cellWidth = cellHeight * aspect
-  documentMesh.geometry = new THREE.PlaneGeometry(cellWidth, cellHeight, 1, 1)
-
   const localStore = getLocalStore()
   const scene = localStore.getDocument('scene', 'scene')
   if (scene === null) {
     return
   }
+
+  const aspect = process.env.BASE_WIDTH / process.env.BASE_HEIGHT
+  const cellHeight = 1.5 //1.2
+  const cellWidth = cellHeight * aspect
+
+  const documentMesh = new HTMLMesh(documentElement, cellWidth, cellHeight)
+  documentMesh.position.set(10, -1.01, .75)
+  documentMesh.rotation.set(Math.PI / 2, 0, 0)
+
   scene.add(documentMesh)
+  // scene.add(documentMeshBack)
 
   getRemoteStore().setDocument('presentation', 'presentation', { 
     visible: false,

@@ -2,31 +2,41 @@
 // from: https://github.com/mrdoob/three.js/blob/dev/examples/jsm/interactive/HTMLMesh.js
 //
 
-import {
-  CanvasTexture,
-  LinearFilter,
-  Mesh,
-  MeshBasicMaterial,
-  PlaneGeometry,
-  sRGBEncoding,
-  Color
-} from 'three';
+import * as THREE from 'three';
+import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 
-class HTMLMesh extends Mesh {
+class HTMLMesh extends THREE.Mesh {
 
-  constructor(dom) {
+  constructor(dom, width, height) {
 
-    const texture = new HTMLTexture(dom);
+    const texture = new HTMLTexture(dom)
 
-    const geometry = new PlaneGeometry(texture.image.width * 0.001, texture.image.height * 0.001);
-    const material = new MeshBasicMaterial({ map: texture, toneMapped: false, transparent: true });
+    const front = new THREE.PlaneGeometry(width, height)
+    const back = new THREE.PlaneGeometry(width, height)
+
+    // flip back
+    const positions = back.attributes.position.array;
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j <= 6; j += 6) {
+        const v = positions[i + j]
+        positions[i + j] = positions[i + j + 3]
+        positions[i + j + 3] = v;
+      }
+    }
+
+    const geometry = BufferGeometryUtils.mergeBufferGeometries([front, back]);
+
+    const material = new THREE.MeshBasicMaterial({
+      map: texture,
+      toneMapped: true,
+      transparent: false,
+      // side: THREE.DoubleSide,
+    });
 
     super(geometry, material);
 
     function onEvent(event) {
-
       material.map.dispatchDOMEvent(event);
-
     }
 
     this.addEventListener('mousedown', onEvent);
@@ -35,7 +45,6 @@ class HTMLMesh extends Mesh {
     this.addEventListener('click', onEvent);
 
     this.dispose = function () {
-
       geometry.dispose();
       material.dispose();
 
@@ -47,14 +56,12 @@ class HTMLMesh extends Mesh {
       this.removeEventListener('mousemove', onEvent);
       this.removeEventListener('mouseup', onEvent);
       this.removeEventListener('click', onEvent);
-
     };
-
   }
 
 }
 
-class HTMLTexture extends CanvasTexture {
+class HTMLTexture extends THREE.CanvasTexture {
 
   constructor(dom) {
 
@@ -63,62 +70,43 @@ class HTMLTexture extends CanvasTexture {
     this.dom = dom;
 
     this.anisotropy = 16;
-    this.encoding = sRGBEncoding;
-    this.minFilter = LinearFilter;
-    this.magFilter = LinearFilter;
+    this.encoding = THREE.sRGBEncoding;
+    this.minFilter = THREE.LinearFilter;
+    this.magFilter = THREE.LinearFilter;
 
     // Create an observer on the DOM, and run html2canvas update in the next loop
     const observer = new MutationObserver(() => {
-
       if (!this.scheduleUpdate) {
-
         // ideally should use xr.requestAnimationFrame, here setTimeout to avoid passing the renderer
         this.scheduleUpdate = setTimeout(() => this.update(), 16);
-
       }
-
     });
 
     const config = { attributes: true, childList: true, subtree: true, characterData: true };
     observer.observe(dom, config);
 
     this.observer = observer;
-
   }
 
   dispatchDOMEvent(event) {
-
     if (event.data) {
-
       htmlevent(this.dom, event.type, event.data.x, event.data.y);
-
     }
-
   }
 
   update() {
-
     this.image = html2canvas(this.dom);
     this.needsUpdate = true;
-
     this.scheduleUpdate = null;
-
   }
 
   dispose() {
-
     if (this.observer) {
-
       this.observer.disconnect();
-
     }
-
     this.scheduleUpdate = clearTimeout(this.scheduleUpdate);
-
     super.dispose();
-
   }
-
 }
 
 
@@ -129,7 +117,7 @@ const canvases = new WeakMap();
 function html2canvas(element) {
 
   const range = document.createRange();
-  const color = new Color();
+  const color = new THREE.Color();
 
   function Clipper(context) {
 
@@ -137,12 +125,9 @@ function html2canvas(element) {
     let isClipping = false;
 
     function doClip() {
-
       if (isClipping) {
-
         isClipping = false;
         context.restore();
-
       }
 
       if (clips.length === 0) return;
@@ -151,14 +136,11 @@ function html2canvas(element) {
       let maxX = Infinity, maxY = Infinity;
 
       for (let i = 0; i < clips.length; i++) {
-
         const clip = clips[i];
-
         minX = Math.max(minX, clip.x);
         minY = Math.max(minY, clip.y);
         maxX = Math.min(maxX, clip.x + clip.width);
         maxY = Math.min(maxY, clip.y + clip.height);
-
       }
 
       context.save();
@@ -167,50 +149,34 @@ function html2canvas(element) {
       context.clip();
 
       isClipping = true;
-
     }
 
     return {
-
       add: function (clip) {
-
         clips.push(clip);
         doClip();
-
       },
-
       remove: function () {
-
         clips.pop();
         doClip();
-
       }
-
     };
 
   }
 
   function drawText(style, x, y, string) {
-
     if (string !== '') {
-
       if (style.textTransform === 'uppercase') {
-
         string = string.toUpperCase();
-
       }
-
       context.font = style.fontWeight + ' ' + style.fontSize + ' ' + style.fontFamily;
       context.textBaseline = 'top';
       context.fillStyle = style.color;
       context.fillText(string, x, y + parseFloat(style.fontSize) * 0.1);
-
     }
-
   }
 
   function buildRectPath(x, y, w, h, r) {
-
     if (w < 2 * r) r = w / 2;
     if (h < 2 * r) r = h / 2;
 
@@ -221,24 +187,20 @@ function html2canvas(element) {
     context.arcTo(x, y + h, x, y, r);
     context.arcTo(x, y, x + w, y, r);
     context.closePath();
-
   }
 
   function drawBorder(style, which, x, y, width, height) {
-
     const borderWidth = style[which + 'Width'];
     const borderStyle = style[which + 'Style'];
     const borderColor = style[which + 'Color'];
 
     if (borderWidth !== '0px' && borderStyle !== 'none' && borderColor !== 'transparent' && borderColor !== 'rgba(0, 0, 0, 0)') {
-
       context.strokeStyle = borderColor;
       context.lineWidth = parseFloat(borderWidth);
       context.beginPath();
       context.moveTo(x, y);
       context.lineTo(x + width, y + height);
       context.stroke();
-
     }
 
   }
@@ -248,9 +210,7 @@ function html2canvas(element) {
     let x = 0, y = 0, width = 0, height = 0;
 
     if (element.nodeType === Node.TEXT_NODE) {
-
       // text
-
       range.selectNode(element);
 
       const rect = range.getBoundingClientRect();
@@ -261,13 +221,9 @@ function html2canvas(element) {
       height = rect.height;
 
       drawText(style, x, y, element.nodeValue.trim());
-
     } else if (element.nodeType === Node.COMMENT_NODE) {
-
       return;
-
     } else if (element instanceof HTMLCanvasElement) {
-
       // Canvas element
       if (element.style.display === 'none') return;
 
@@ -278,7 +234,6 @@ function html2canvas(element) {
       context.restore();
 
     } else {
-
       if (element.style.display === 'none') return;
 
       const rect = element.getBoundingClientRect();
@@ -297,10 +252,8 @@ function html2canvas(element) {
       const backgroundColor = style.backgroundColor;
 
       if (backgroundColor !== 'transparent' && backgroundColor !== 'rgba(0, 0, 0, 0)') {
-
         context.fillStyle = backgroundColor;
         context.fill();
-
       }
 
       // If all the borders match then stroke the round rectangle
@@ -311,44 +264,31 @@ function html2canvas(element) {
       let prevBorder = null;
 
       for (const border of borders) {
-
         if (prevBorder !== null) {
-
           match = (style[border + 'Width'] === style[prevBorder + 'Width']) &&
             (style[border + 'Color'] === style[prevBorder + 'Color']) &&
             (style[border + 'Style'] === style[prevBorder + 'Style']);
-
         }
-
         if (match === false) break;
-
         prevBorder = border;
-
       }
 
       if (match === true) {
-
         // They all match so stroke the rectangle from before allows for border-radius
-
         const width = parseFloat(style.borderTopWidth);
 
         if (style.borderTopWidth !== '0px' && style.borderTopStyle !== 'none' && style.borderTopColor !== 'transparent' && style.borderTopColor !== 'rgba(0, 0, 0, 0)') {
-
           context.strokeStyle = style.borderTopColor;
           context.lineWidth = width;
           context.stroke();
-
         }
 
       } else {
-
         // Otherwise draw individual borders
-
         drawBorder(style, 'borderTop', x, y, width, 0);
         drawBorder(style, 'borderLeft', x, y, 0, height);
         drawBorder(style, 'borderBottom', x, y + height, width, 0);
         drawBorder(style, 'borderRight', x + width, y, 0, height);
-
       }
 
       if (element instanceof HTMLInputElement) {
@@ -363,7 +303,6 @@ function html2canvas(element) {
         const accentTextColor = luminance < 0.5 ? 'white' : '#111111';
 
         if (element.type === 'radio') {
-
           buildRectPath(x, y, width, height, height);
 
           context.fillStyle = 'white';
@@ -373,7 +312,6 @@ function html2canvas(element) {
           context.stroke();
 
           if (element.checked) {
-
             buildRectPath(x + 2, y + 2, width - 4, height - 4, height);
 
             context.fillStyle = accentColor;
@@ -381,13 +319,10 @@ function html2canvas(element) {
             context.lineWidth = 2;
             context.fill();
             context.stroke();
-
           }
-
         }
 
         if (element.type === 'checkbox') {
-
           buildRectPath(x, y, width, height, 2);
 
           context.fillStyle = element.checked ? accentColor : 'white';
@@ -397,7 +332,6 @@ function html2canvas(element) {
           context.fill();
 
           if (element.checked) {
-
             const currentTextAlign = context.textAlign;
 
             context.textAlign = 'center';
@@ -412,13 +346,10 @@ function html2canvas(element) {
             drawText(properties, x + (width / 2), y, '✔');
 
             context.textAlign = currentTextAlign;
-
           }
-
         }
 
         if (element.type === 'range') {
-
           const [min, max, value] = ['min', 'max', 'value'].map(property => parseFloat(element[property]));
           const position = ((value - min) / (max - min)) * (width - height);
 
@@ -436,17 +367,12 @@ function html2canvas(element) {
           buildRectPath(x + position, y, height, height, height / 2);
           context.fillStyle = accentColor;
           context.fill();
-
         }
 
         if (element.type === 'color' || element.type === 'text' || element.type === 'number') {
-
           clipper.add({ x: x, y: y, width: width, height: height });
-
           drawText(style, x + parseInt(style.paddingLeft), y + parseInt(style.paddingTop), element.value);
-
           clipper.remove();
-
         }
 
       }
@@ -464,40 +390,28 @@ function html2canvas(element) {
     if (isClipping) clipper.add({ x: x, y: y, width: width, height: height });
 
     for (let i = 0; i < element.childNodes.length; i++) {
-
       drawElement(element.childNodes[i], style);
-
     }
 
     if (isClipping) clipper.remove();
-
   }
 
   const offset = element.getBoundingClientRect();
-
   let canvas = canvases.get(element);
 
   if (canvas === undefined) {
-
     canvas = document.createElement('canvas');
     canvas.width = offset.width;
     canvas.height = offset.height;
     canvases.set(element, canvas);
-
   }
 
   const context = canvas.getContext('2d'/*, { alpha: false }*/);
-
   const clipper = new Clipper(context);
-
-  // console.time( 'drawElement' );
 
   drawElement(element);
 
-  // console.timeEnd( 'drawElement' );
-
   return canvas;
-
 }
 
 function htmlevent(element, event, x, y) {
@@ -518,31 +432,23 @@ function htmlevent(element, event, x, y) {
   function traverse(element) {
 
     if (element.nodeType !== Node.TEXT_NODE && element.nodeType !== Node.COMMENT_NODE) {
-
       const rect = element.getBoundingClientRect();
 
       if (x > rect.left && x < rect.right && y > rect.top && y < rect.bottom) {
-
         element.dispatchEvent(new MouseEvent(event, mouseEventInit));
 
         if (element instanceof HTMLInputElement && element.type === 'range' && (event === 'mousedown' || event === 'click')) {
-
           const [min, max] = ['min', 'max'].map(property => parseFloat(element[property]));
-
           const width = rect.width;
           const offsetX = x - rect.x;
           const proportion = offsetX / width;
           element.value = min + (max - min) * proportion;
           element.dispatchEvent(new InputEvent('input', { bubbles: true }));
-
         }
-
       }
 
       for (let i = 0; i < element.childNodes.length; i++) {
-
         traverse(element.childNodes[i]);
-
       }
 
     }
