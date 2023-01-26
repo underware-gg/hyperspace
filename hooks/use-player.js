@@ -7,6 +7,8 @@ const usePlayer = (id) => {
   const [portalId, setPortalId] = useState(null)
   const [bookId, setBookId] = useState(null)
   const [overDocument, setOverDocument] = useState(false)
+  const [isConnected, setIsConnected] = useState(false)
+  const [profile, setProfile] = useState({})
 
   useEffect(() => {
     if (player) {
@@ -18,16 +20,51 @@ const usePlayer = (id) => {
       setBookId(null)
       setOverDocument(null)
     }
+
+    const veridaConnected = async (profile) => {
+      if (isConnected) {
+        return
+      }
+
+      setIsConnected(true)
+      setProfile(profile)
+
+      const VeridaUser = (await import('core/networking/verida')).VeridaUser
+      VeridaUser.on('profileChanged', (profile) => {
+        setProfile(profile)
+      })
+    }
+
+    const initVerida = async () => {
+      const VeridaUser = (await import('core/networking/verida')).VeridaUser
+      const isConnected = await VeridaUser.isConnected()
+      if (isConnected) {
+        const profile = await VeridaUser.getPublicProfile()
+        veridaConnected(profile)
+      }
+
+      VeridaUser.on('connected', (profile) => {
+        veridaConnected(profile)
+      })
+
+      VeridaUser.on('disconnected', () => {
+        setIsConnected(false)
+      })
+    }
+    
+    initVerida()
   }, [player])
 
   return {
     portalId,
     bookId,
+    playerConnected: isConnected,
+    playerProfile: profile,
     overPortal: portalId != null,
     overBook: bookId != null,
     overDocument,
     canPlace: (portalId == null && bookId == null && !overDocument),
-    }
+  }
 }
 
 export default usePlayer

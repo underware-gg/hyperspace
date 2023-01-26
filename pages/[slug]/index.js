@@ -19,24 +19,29 @@ import * as Profile from 'core/components/profile'
 import * as Tileset from 'core/components/tileset'
 import * as ClientRoom from 'core/networking'
 
-const downloadRoomData = (slug) => {
+const downloadRoomData = async (slug) => {
   const room = ClientRoom.get()
   if (room === null) {
     return
   }
 
   const snapshotOps = room.getSnapshotOps()
+  const VeridaUser = (await import('core/networking/verida')).VeridaUser
+  await VeridaUser.saveRoom(slug, snapshotOps)
+
+  /*
+  console.log(snapshotOps)
 
   const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(snapshotOps))}`
   const dlAnchor = document.getElementById('download-room-data')
   dlAnchor.setAttribute('href', dataStr)
   dlAnchor.setAttribute('download', `room-${slug}.json`)
-  dlAnchor.click()
+  dlAnchor.click()*/
 }
 
 const Room = () => {
   const { agentId } = useRoom();
-  const { overPortal, overBook, overDocument, canPlace } = usePlayer(agentId)
+  const { overPortal, overBook, overDocument, canPlace, playerConnected, playerProfile } = usePlayer(agentId)
   const document = useDocument('document', 'world')
   const profile = useDocument('profile', agentId)
   const tileset = useDocument('tileset', 'world')
@@ -70,6 +75,38 @@ const Room = () => {
     store.setDocument('show-doc', 'world', false)
   }
 
+  const restoreRoomData = async () => {
+    const room = ClientRoom.get()
+    if (room === null) {
+      return
+    }
+
+    const VeridaUser = (await import('core/networking/verida')).VeridaUser
+    const snapshot = await VeridaUser.getRoom(room.slug)
+
+    if (snapshot) {
+      const json = JSON.parse(snapshot)
+      console.log(json)
+      const remoteStore = getRemoteStore()
+
+      for (const op of json) {
+        if (op.pathIndex === 0) {
+          console.log(type, key, value)
+          const { type, key, value } = op
+          remoteStore.setDocument(type, key, value)
+        }
+      }
+    } else {
+      console.log('No room data found')
+    }
+  }
+
+  const lastTweet = async () => {
+    const VeridaUser = (await import('core/networking/verida')).VeridaUser
+    await VeridaUser.setDocumentToLastTweet()
+  }
+
+  /*
   const _handleUploadRoomData = async (fileObject) => {
     const reader = new FileReader()
     reader.onload = (e2) => {
@@ -88,6 +125,7 @@ const Room = () => {
 
     reader.readAsText(fileObject)
   }
+  */
 
   const _handleUploadTileset = async (fileObject) => {
     try {
@@ -151,6 +189,9 @@ const Room = () => {
             <Button size='sm' disabled={!overBook} onClick={() => emitAction('interact')}>
               Read Book
             </Button>
+            <Button size='sm' disabled={!overDocument} onClick={async () => await lastTweet()}>
+              Last Tweet
+            </Button>
             <Button size='sm' disabled={!overDocument} onClick={() => emitAction('interact')}>
               Edit Document
             </Button>
@@ -171,6 +212,16 @@ const Room = () => {
             <Button size='sm' disabled={!canPlace} onClick={() => emitAction('createPortal')}>
               Create Portal
             </Button>
+            { playerConnected == true ?
+              <Text onClick={() => emitAction('disconnect')}>{
+                playerProfile.avatarUri ?
+                <img src={ playerProfile.avatarUri } width="40" height="40" /> :
+                <Text>No</Text>
+              }{ playerProfile.name }</Text> :
+              <Button size='sm' disabled={!canPlace} onClick={() => emitAction('connect')}>
+                Connect
+              </Button>
+            }
           </HStack>
 
           <Box
@@ -227,17 +278,16 @@ const Room = () => {
           </Box>
 
           <HStack>
-            <Button variant='outline' size='sm' onClick={() => downloadRoomData(slug)}>
-              Download Room Data
+            <Button variant='outline' size='sm' onClick={async () => await downloadRoomData(slug)}>
+              Save Room Data
             </Button>
-            <a id='download-room-data' href='#' hidden></a>
+            <Button variant='outline' size='sm' onClick={() => emitAction('inviteFriend')}>
+              Invite Friend
+            </Button>
             <Spacer />
-            <FileSelectButton
-              label='Upload Room Data'
-              id='upload-room-data'
-              accept='.json'
-              onSelect={(fileObject) => _handleUploadRoomData(fileObject)}
-            />
+            <Button variant='outline' size='sm' onClick={async () => await restoreRoomData(slug)}>
+              Restore Room Data
+            </Button>
           </HStack>
 
           {process.env.ENV == 'desenv' && <div>Agent ID: {agentId}</div>}
