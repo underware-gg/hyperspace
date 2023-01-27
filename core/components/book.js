@@ -123,6 +123,10 @@ export const exists = (id) => {
   return Interactable.exists('book', id)
 }
 
+export const remove = (id) => {
+  return Interactable.remove('book', id)
+}
+
 export const read = (id) => {
   const store = getRemoteStore()
   const book = store.getDocument('book', id)

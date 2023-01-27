@@ -73,6 +73,18 @@ export const init = async (slug, canvas, canvas3d, documentElement) => {
       keycode: '48',
     },
     {
+      name: 'createBook',
+      keycode: '66', // b
+    },
+    {
+      name: 'interact',
+      keycode: '69', // e (enter)
+    },
+    {
+      name: 'moveForward',
+      keycode: '73', // i
+    },
+    {
       name: 'turnLeft',
       keycode: '74', // j
     },
@@ -81,28 +93,16 @@ export const init = async (slug, canvas, canvas3d, documentElement) => {
       keycode: '76', // l
     },
     {
-      name: 'moveForward',
-      keycode: '73', // i
-    },
-    {
       name: 'moveBack',
       keycode: '75', // k
-    },
-    {
-      name: 'toggle3d',
-      keycode: '84', // t
     },
     {
       name: 'createPortal',
       keycode: '80', // p
     },
     {
-      name: 'createBook',
-      keycode: '66', // b
-    },
-    {
-      name: 'interact',
-      keycode: '69', // e
+      name: 'toggle3d',
+      keycode: '84', // t
     },
     {
       name: 'jump',

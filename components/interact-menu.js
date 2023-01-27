@@ -16,6 +16,7 @@ const InteractMenu = ({
     overPortal, portalId, portalName,
     overBook, bookId,
     overDocument, documentId,
+    tileX, tileY,
   } = usePlayer(agentId)
 
   const editor = useDocument('editor', agentId)
@@ -24,43 +25,46 @@ const InteractMenu = ({
     <HStack>
       {canPlace &&
         <>
-          {editor?.interacting && <>[{editor.position.x},{editor.position.y}]&nbsp;</>}
+          {editor?.interacting
+            ? <>Edit@[{editor.position.x},{editor.position.y}]&nbsp;</>
+            : <>Player@[{tileX},{tileY}]&nbsp;</>
+          }
           <Button size='sm' onClick={() => emitAction('createPortal')}>
-            Create Portal
+            Create [P]ortal
           </Button>
           <Button size='sm' onClick={() => emitAction('createBook')}>
-            Create Book
+            Create [B]ook
           </Button>
         </>
       }
 
       {overPortal &&
         <>
-          Portal:<b>{portalName}</b>
+          Portal [<b>{portalName}</b>]
           <Button size='sm' onClick={() => emitAction('interact')}>
-            Enter
+            [E]nter
           </Button>
-          <Button size='sm' onClick={() => emitAction('deletePortal')}>
-            Delete
+          <Button size='sm' onClick={() => emitAction('delete')}>
+            [Del]ete
           </Button>
         </>
       }
 
       {overBook &&
         <>
-          Book: <b>{bookId}</b>
+          Book [<b>{bookId}</b>]
           <Button size='sm' onClick={() => emitAction('interact')}>
-            Read
+            r[E]ad
           </Button>
-          <Button size='sm' onClick={() => emitAction('deleteBook')}>
-            Delete
+          <Button size='sm' onClick={() => emitAction('delete')}>
+            [Del]ete
           </Button>
         </>
       }
 
       {overDocument &&
         <>
-          Document: <b>{documentId}</b>
+          Document [<b>{documentId}</b>]
           <Button size='sm' onClick={async () => await lastTweet()}>
             Last Tweet
           </Button>

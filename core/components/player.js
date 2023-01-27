@@ -3,7 +3,7 @@ import * as Room from '../networking'
 import * as Portal from './portal'
 import * as Book from './book'
 import * as Interactable from './interactable'
-import { getActionState } from '../controller'
+import { getActionState, addActionDownListener } from '../controller'
 import { getTextureByName, getSprite } from '../textures'
 import { getRemoteStore, getLocalStore } from '../singleton'
 import { CONST, clamp, clampRadians, deepCompare, deepCopy } from '../utils'
@@ -74,6 +74,18 @@ export const init = () => {
       playerMesh.needsUpdate = true;
       // console.log(`CHANGE MATERIAL`, agentId, material)
     }
+  })
+
+  addActionDownListener('delete', () => {
+    console.log(`ACTION > (DELETE)`)
+    const store = getRemoteStore()
+    const editor = store.getDocument('editor', room.agentId)
+    if (editor === null) {
+      return
+    }
+
+    Portal.remove(getPortalOverPlayer(room.agentId))
+    Book.remove(getBookOverPlayer(room.agentId))
   })
 }
 
@@ -208,12 +220,8 @@ export const getBookOverPlayer = (id) => {
 }
 
 export const getDocumentOverPlayer = (id) => {
-  const store = getRemoteStore()
-  const player = store.getDocument('player', id)
-  if (player === null) {
-    return
-  }
-  return (player.position.y / 32 >= 2 && player.position.y / 32 <= 3 && player.position.x / 32 >= 8.5 && player.position.x / 32 <= 11.5)
+  const { tileX, tileY, } = getPlayerTile(id)
+  return (tileY >= 2 && tileY <= 3 && tileX >= 8.5 && tileX <= 11.5)
 }
 
 export const canPlaceOverPlayer = (id) => {
@@ -262,6 +270,21 @@ export const getCollisionCircle = (id) => {
       y: Math.round(y),
     },
     radius: PLAYER_RADIUS,
+  }
+}
+
+export const getPlayerTile = (id) => {
+  const store = getRemoteStore()
+  const player = store.getDocument('player', id)
+  if (player === null) {
+    return null
+  }
+  
+  const { x, y } = player.position
+
+  return {
+    tileX: Math.floor(x / 32),
+    tileY: Math.floor(y / 32),
   }
 }
 

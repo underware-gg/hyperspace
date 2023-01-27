@@ -14,9 +14,11 @@ const useDocument = (type, id) => {
     }
 
     remoteStore.on({ type, event: 'change' }, _handleChange)
+    remoteStore.on({ type, event: 'delete' }, _handleChange)
 
     return () => {
       remoteStore.off({ type, event: 'change' }, _handleChange)
+      remoteStore.off({ type, event: 'delete' }, _handleChange)
     }
   }, [type, id])
 

@@ -136,6 +136,10 @@ export const exists = (id) => {
   return Interactable.exists('portal', id)
 }
 
+export const remove = (id) => {
+  return Interactable.remove('portal', id)
+}
+
 export const travel = (id) => {
   const store = getRemoteStore()
   const portal = store.getDocument('portal', id)

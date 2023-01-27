@@ -6,9 +6,10 @@ import * as Portal from './portal'
 import * as Book from './book'
 import { getActionState, addActionDownListener } from '../controller'
 import { getLocalStore, getRemoteStore } from '../singleton'
-import { canPlaceOverPlayer } from 'core/components/player'
-import { roundToNearest } from '../utils'
+import { canPlaceOverPlayer, getPortalOverPlayer } from 'core/components/player'
 import { MAP_SCALE_X, MAP_SCALE_Y } from './map'
+import { getPlayerTile } from './player'
+import { roundToNearest } from '../utils'
 import { VeridaUser } from '../networking/verida'
 
 export const getMouseCanvasPosition = (e, canvas) => {
@@ -97,9 +98,15 @@ export const init = (canvas, id) => {
       return
     }
 
-    const { position: { x, y } } = editor
+    const { interacting } = editor
 
-    Portal.create(nanoid(), x, y, slug)
+    if (interacting) {
+      const { position: { x, y } } = editor
+      Portal.create(nanoid(), x, y, slug)
+    } else {
+      const { tileX, tileY } = getPlayerTile(id)
+      Portal.create(nanoid(), tileX, tileY, slug)
+    }
   })
 
   addActionDownListener('createBook', () => {
@@ -118,9 +125,15 @@ export const init = (canvas, id) => {
       return
     }
 
-    const { position: { x, y } } = editor
+    const { interacting } = editor
 
-    Book.create(nanoid(), x, y, text)
+    if (interacting) {
+      const { position: { x, y } } = editor
+      Book.create(nanoid(), x, y, text)
+    } else {
+      const { tileX, tileY } = getPlayerTile(id)
+      Book.create(nanoid(), tileX, tileY, text)
+    }
   })
 
   canvas.addEventListener('mousemove', handleMouseMove)

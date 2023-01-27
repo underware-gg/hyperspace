@@ -12,7 +12,7 @@ import Markdown from 'components/markdown'
 import useRoom from 'hooks/use-room'
 import useDocument from 'hooks/use-document'
 import useLocalDocument from 'hooks/use-local-document'
-import usePlayer from 'hooks/use-player'
+import useVerida from 'hooks/use-verida'
 import { getLocalStore, getRemoteStore } from 'core/singleton'
 import { fromSourceToDataURL } from 'core/textures'
 import { emitAction } from 'core/controller'
@@ -42,7 +42,7 @@ const downloadRoomData = async (slug) => {
 
 const Room = () => {
   const { agentId } = useRoom();
-  const { playerConnected, playerProfile } = usePlayer(agentId)
+  const { playerConnected, playerProfile } = useVerida(agentId)
   const document = useDocument('document', 'world')
   const profile = useDocument('profile', agentId)
   const tileset = useDocument('tileset', 'world')

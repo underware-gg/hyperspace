@@ -1,7 +1,6 @@
 import * as THREE from 'three'
 import { getTextureImageByName } from '../textures'
 import { getRemoteStore, getLocalStore } from '../singleton'
-import { getMultiple } from '../utils'
 import { defaultTileset } from '../texture-data'
 
 export const MAP_WIDTH = 20
@@ -321,8 +320,8 @@ export const getTile = (id, tileX, tileY) => {
 }
 
 export const getTileAtCanvasPosition = (id, x, y) => {
-  const tileX = getMultiple(x, 32)
-  const tileY = getMultiple(y, 32)
+  const tileX = x / 32
+  const tileY = y / 32
   return getTile(tileX, tileY);
 }
 
