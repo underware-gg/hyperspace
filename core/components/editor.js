@@ -73,11 +73,11 @@ export const init = (canvas, id) => {
     const room = Room.get()
     const roomId = room.slug
 
-    const subject = `Please join me in hyperbox!`
-    const message = `You won't regret it...`
+    const subject = `Hyperbox invite!`
+    const message = `Join me in ${roomId} on Hyperbox`
     // @todo: Get app URL from next.js
-    const linkUrl = `http://192.168.68.124:3000/${roomId}`
-    const linkText = `Join my room on hyperbox (${roomId})`
+    const url = `http://192.168.68.124:3000/${roomId}`
+    const text = `Open (${roomId})`
     await VeridaUser.sendMessage(recipientDid, subject, message, linkUrl, linkText)
   })
 

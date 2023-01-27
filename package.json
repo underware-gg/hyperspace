@@ -11,8 +11,8 @@
   "dependencies": {
     "@chakra-ui/icons": "^2.0.11",
     "@chakra-ui/react": "^2.4.6",
-    "@verida/account-web-vault": "^2.0.3",
-    "@verida/client-ts": "^2.0.2",
+    "@verida/account-web-vault": "^2.0.4",
+    "@verida/client-ts": "^2.0.4",
     "commonmark": "^0.30.0",
     "events": "^3.3.0",
     "file-loader": "^6.2.0",
