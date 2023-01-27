@@ -97,6 +97,8 @@ export const init = (canvas, id) => {
       return
     }
 
+    const { position: { x, y } } = editor
+
     Portal.create(nanoid(), x, y, slug)
   })
 
@@ -115,6 +117,8 @@ export const init = (canvas, id) => {
     if (text === null) {
       return
     }
+
+    const { position: { x, y } } = editor
 
     Book.create(nanoid(), x, y, text)
   })

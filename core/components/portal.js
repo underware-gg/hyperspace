@@ -9,6 +9,7 @@ import { getTile, floors } from './map'
 // This is sort of different from regular entities.
 // I guess it depends on if those entities can be on moving platforms.
 export const init = () => {
+  const remoteStore = getRemoteStore()
   const localStore = getLocalStore()
   const scene = localStore.getDocument('scene', 'scene')
 
@@ -16,11 +17,35 @@ export const init = () => {
     return
   }
 
-  const portalGeometry = new THREE.BoxGeometry(0.8, 0.8, 2.3)
-  const portalMaterial = new THREE.MeshBasicMaterial({ color: 'green', transparent: true, opacity: 0.23 })
+  const portalGeometry = new THREE.CylinderGeometry(0.5, 0.5, 4, 32, 1, true)
 
-  const remoteStore = getRemoteStore()
+  // animate texture???
+  // https://pierfrancesco-soffritti.medium.com/animations-with-alpha-textures-in-three-js-52a33654e137
+  // https://r105.threejsfundamentals.org/threejs/lessons/threejs-custom-buffergeometry.html
+  // const portalTexture = getTextureImageByName('portal')
+  // const loader = new THREE.TextureLoader()
+  // const portalMaterial = new THREE.MeshBasicMaterial({
+  //   map: loader.load(portalTexture?.src),
+  //   blending: THREE.AdditiveBlending,
+  //   side: THREE.DoubleSide,
+  //   transparent: true,
+  //   opacity: 0.5,
+  // })
+  // const uvs = portalGeometry.attributes.uv.array
+  // for (let i = 0; i < uvs.length; i += 2) {
+  //   if (uvs[i] == 1) {
+  //     uvs[i] = 0.5
+  //   }
+  // }
 
+  const portalMaterial = new THREE.MeshLambertMaterial({
+    blending: THREE.AdditiveBlending,
+    side: THREE.DoubleSide,
+    color: '#fff',
+    transparent: true,
+    opacity: 0.3,
+  })
+  
   remoteStore.on({ type: 'portal', event: 'create' }, (id, portal) => {
     const portalMesh = new THREE.Mesh(portalGeometry, portalMaterial)
 
@@ -39,10 +64,11 @@ export const init = () => {
     const currentFloorHeight = floors[tile]
 
     portalMesh.position.set(
-      (Math.floor(portal.position.x)) +0.5 ,
-      (-Math.floor(portal.position.y))-0.5,
-      currentFloorHeight + .9,
+      (Math.floor(portal.position.x)) + 0.5,
+      (-Math.floor(portal.position.y)) - 0.5,
+      0,
     )
+    portalMesh.rotation.set(Math.PI / 2, 0, 0);
 
     scene.add(portalMesh)
     localStore.setDocument('portal-mesh', id, portalMesh)
@@ -135,11 +161,17 @@ export const render2d = (id, context) => {
 
   const portalTexture = getTextureImageByName('portal')
 
+  const t = new Date().getTime() / 10000;
+  context.save()
+  context.translate(Math.round(x * 32 + 16), Math.round(y * 32 + 16));
+  context.rotate((t % 1) * Math.PI * 2);
+  context.translate(-16, -16);
   context.drawImage(
     portalTexture,
-    Math.round(x * 32),
-    Math.round(y * 32),
+    0,
+    0,
     32,
     32,
   )
+  context.restore();
 }
