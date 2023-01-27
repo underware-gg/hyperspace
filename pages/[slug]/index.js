@@ -7,6 +7,7 @@ import TilesetSelector from 'components/tileset-selector'
 import CharacterSelector from 'components/character-selector'
 import FileSelectButton from 'components/file-select-button'
 import DocumentModal from 'components/document-modal'
+import InteractMenu from 'components/interact-menu'
 import Markdown from 'components/markdown'
 import useRoom from 'hooks/use-room'
 import useDocument from 'hooks/use-document'
@@ -41,7 +42,7 @@ const downloadRoomData = async (slug) => {
 
 const Room = () => {
   const { agentId } = useRoom();
-  const { overPortal, overBook, overDocument, canPlace, playerConnected, playerProfile } = usePlayer(agentId)
+  const { playerConnected, playerProfile } = usePlayer(agentId)
   const document = useDocument('document', 'world')
   const profile = useDocument('profile', agentId)
   const tileset = useDocument('tileset', 'world')
@@ -184,18 +185,7 @@ const Room = () => {
               2D/3D
             </Button>
             <Spacer />
-            <Button size='sm' disabled={!overPortal} onClick={() => emitAction('interact')}>
-              Enter Portal
-            </Button>
-            <Button size='sm' disabled={!overBook} onClick={() => emitAction('interact')}>
-              Read Book
-            </Button>
-            <Button size='sm' disabled={!overDocument} onClick={async () => await lastTweet()}>
-              Last Tweet
-            </Button>
-            <Button size='sm' disabled={!overDocument} onClick={() => emitAction('interact')}>
-              Edit Document
-            </Button>
+            <InteractMenu />
           </HStack>
 
           <HStack>
@@ -210,16 +200,13 @@ const Room = () => {
               onSelect={(fileObject) => _handleUploadTileset(fileObject)}
             />
             <Spacer />
-            <Button size='sm' disabled={!canPlace} onClick={() => emitAction('createPortal')}>
-              Create Portal
-            </Button>
             { playerConnected == true ?
               <Text onClick={() => emitAction('disconnect')}>{
                 playerProfile.avatarUri ?
                 <img src={ playerProfile.avatarUri } width="40" height="40" /> :
                 <Text>No</Text>
               }{ playerProfile.name }</Text> :
-              <Button size='sm' disabled={!canPlace} onClick={() => emitAction('connect')}>
+              <Button size='sm' onClick={() => emitAction('connect')}>
                 Connect
               </Button>
             }

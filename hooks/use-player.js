@@ -10,6 +10,8 @@ const usePlayer = (id) => {
   const [isConnected, setIsConnected] = useState(false)
   const [profile, setProfile] = useState({})
 
+  const portal = useDocument('portal', portalId)
+
   useEffect(() => {
     if (player) {
       setPortalId(getPortalOverPlayer(id))
@@ -56,10 +58,12 @@ const usePlayer = (id) => {
   }, [player])
 
   return {
-    portalId,
-    bookId,
     playerConnected: isConnected,
     playerProfile: profile,
+    portalId,
+    portalName: portal?.slug ?? null,
+    bookId,
+    documentId: 'world',
     overPortal: portalId != null,
     overBook: bookId != null,
     overDocument,
