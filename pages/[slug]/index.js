@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import { Container, Box, VStack, HStack, Text, Spacer } from '@chakra-ui/react'
 import Layout from 'components/layout'
@@ -7,6 +7,7 @@ import TilesetSelector from 'components/tileset-selector'
 import CharacterSelector from 'components/character-selector'
 import FileSelectButton from 'components/file-select-button'
 import DocumentModal from 'components/document-modal'
+import HelpModal from 'components/help-modal'
 import InteractMenu from 'components/interact-menu'
 import Markdown from 'components/markdown'
 import useRoom from 'hooks/use-room'
@@ -43,6 +44,7 @@ const downloadRoomData = async (slug) => {
 const Room = () => {
   const { agentId } = useRoom();
   const { playerConnected, playerProfile } = useVerida(agentId)
+  const [showHelp, setShowHelp] = useState(false)
   const document = useDocument('document', 'world')
   const profile = useDocument('profile', agentId)
   const tileset = useDocument('tileset', 'world')
@@ -184,6 +186,9 @@ const Room = () => {
             <Button size='sm' onClick={() => emitAction('toggle3d')}>
               2D/3D
             </Button>
+            <Button size='sm' onClick={() => setShowHelp(!showHelp)}>
+              Help
+            </Button>
             <Spacer />
             <InteractMenu />
           </HStack>
@@ -296,6 +301,11 @@ const Room = () => {
           isOpen={isDocOpen}
           onClose={handleClose}
           onInputChange={handleInputChange}
+        />
+
+        <HelpModal
+          isOpen={showHelp}
+          handleClose={() => setShowHelp(false)}
         />
 
       </Container>
