@@ -172,10 +172,6 @@ export const portal = {
   slug: 'string',
 }
 
-export const document = {
-  content: 'string',
-}
-
 export const tileset = {
   name: 'string',
   blob: 'string',
@@ -184,11 +180,38 @@ export const tileset = {
     height: 'number',
   },
 }
-export const presentation = {
+
+export const screen = {
+  owner: 'string',
+  permissions: 'string',
+  name: 'string',
+  type: 'string',
+  content: 'string',
+  items: 'string',      // stringfied JSON array
+  position: 'number',   // item, slide, page, scroll, etc
+  visible: 'boolean',
+  position: {
+    x: 'number',
+    y: 'number',
+    z: 'number',
+  },
+  rotation: {
+    x: 'number',
+    y: 'number',
+    z: 'number',
+  },
+}
+
+export const document = { // deprecated
+  content: 'string',
+}
+
+export const presentation = { // deprecated
   visible: 'boolean',
   slide: 'number',
 }
-export const book = {
+
+export const book = { // deprecated
   position: {
     x: 'number',
     y: 'number',
@@ -203,10 +226,10 @@ export const typeDefs = {
   map: createTypeMetadata(map),
   editor: createTypeMetadata(editor),
   portal: createTypeMetadata(portal),
-  book: createTypeMetadata(book),
-  document: createTypeMetadata(document),
   tileset: createTypeMetadata(tileset),
+  screen: createTypeMetadata(screen),
+  // deprecated
+  document: createTypeMetadata(document),
+  book: createTypeMetadata(book),
   presentation: createTypeMetadata(presentation),
-
-  //presentationVisible: createTypeMetadata(presentationVisible),
 }
