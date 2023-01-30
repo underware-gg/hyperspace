@@ -4,6 +4,7 @@ import * as Room from '../networking'
 import * as Map from './map'
 import * as Portal from './portal'
 import * as Book from './book'
+import * as Screen from './screen'
 import { getActionState, addActionDownListener } from '../controller'
 import { getLocalStore, getRemoteStore } from '../singleton'
 import { canPlaceOverPlayer, getPortalOverPlayer } from 'core/components/player'
@@ -106,6 +107,30 @@ export const init = (canvas, id) => {
     } else {
       const { tileX, tileY } = getPlayerTile(id)
       Portal.create(nanoid(), tileX, tileY, slug)
+    }
+  })
+
+  addActionDownListener('createScreen', () => {
+    const store = getRemoteStore()
+    const editor = store.getDocument('editor', id)
+    if (editor === null) {
+      return
+    }
+
+    if (!canPlaceOverPlayer(id)) {
+      return
+    }
+
+    const text = 'this is a screen!'
+
+    const { interacting } = editor
+
+    if (interacting) {
+      const { position: { x, y } } = editor
+      Screen.create(nanoid(), x, y, text)
+    } else {
+      const { tileX, tileY } = getPlayerTile(id)
+      Screen.create(nanoid(), tileX, tileY, text)
     }
   })
 

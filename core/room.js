@@ -11,6 +11,7 @@ import * as Player from './components/player'
 import * as Map from './components/map'
 import * as Editor from './components/editor'
 import * as Portal from './components/portal'
+import * as Screen from './components/screen'
 import * as Book from './components/book'
 import { getRemoteStore, getLocalStore } from './singleton'
 
@@ -71,6 +72,10 @@ export const init = async (slug, canvas, canvas3d, documentElement) => {
     {
       name: '0',
       keycode: '48',
+    },
+    {
+      name: 'createScreen',
+      keycode: '78', // n
     },
     {
       name: 'createBook',
@@ -171,6 +176,7 @@ export const init = async (slug, canvas, canvas3d, documentElement) => {
   Map.init()
   Portal.init()
   Book.init()
+  Screen.init()
 
   room.init(slug)
 
@@ -228,6 +234,7 @@ export const render = (canvas, context) => {
   const store = getRemoteStore()
   const playerIds = store.getIds('player')
   const portalIds = store.getIds('portal')
+  const screenIds = store.getIds('screen')
   const bookIds = store.getIds('book')
 
   Map.render2d('world', context)
@@ -236,6 +243,9 @@ export const render = (canvas, context) => {
 
   for (const portalId of portalIds) {
     Portal.render2d(portalId, context)
+  }
+  for (const screenId of screenIds) {
+    Screen.render2d(screenId, context)
   }
   for (const bookId of bookIds) {
     Book.render2d(bookId, context)

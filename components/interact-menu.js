@@ -14,6 +14,7 @@ const InteractMenu = ({
   const {
     canPlace,
     overPortal, portalId, portalName,
+    overScreen, screenId,
     overBook, bookId,
     overDocument, documentId,
     tileX, tileY,
@@ -30,10 +31,13 @@ const InteractMenu = ({
             : <>Player@[{tileX},{tileY}]&nbsp;</>
           }
           <Button size='sm' onClick={() => emitAction('createPortal')}>
-            Create [P]ortal
+            [P]lace [P]ortal
+          </Button>
+          <Button size='sm' onClick={() => emitAction('createScreen')}>
+            [N]ew scree[N]
           </Button>
           <Button size='sm' onClick={() => emitAction('createBook')}>
-            Create [B]ook
+            New [B]ook
           </Button>
         </>
       }
@@ -43,6 +47,18 @@ const InteractMenu = ({
           Portal [<b>{portalName}</b>]
           <Button size='sm' onClick={() => emitAction('interact')}>
             [E]nter
+          </Button>
+          <Button size='sm' onClick={() => emitAction('delete')}>
+            [Del]ete
+          </Button>
+        </>
+      }
+
+      {overScreen &&
+        <>
+          Screen [<b>{screenId}</b>]
+          <Button size='sm' onClick={() => emitAction('interact')}>
+            [E]dit
           </Button>
           <Button size='sm' onClick={() => emitAction('delete')}>
             [Del]ete

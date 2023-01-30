@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import * as Room from '../networking'
 import * as Portal from './portal'
+import * as Screen from './screen'
 import * as Book from './book'
 import * as Interactable from './interactable'
 import { getActionState, addActionDownListener } from '../controller'
@@ -86,6 +87,7 @@ export const init = () => {
 
     Portal.remove(getPortalOverPlayer(room.agentId))
     Book.remove(getBookOverPlayer(room.agentId))
+    Screen.remove(getScreenOverPlayer(room.agentId))
   })
 }
 
@@ -196,11 +198,15 @@ export const interact = (id) => {
     return
   }
 
+  const screenId = getScreenOverPlayer(id)
+  if (screenId) {
+    Screen.read(screenId)
+    return
+  }
+
   const bookId = getBookOverPlayer(id)
   if (bookId) {
     Book.read(bookId)
-    localStore.setDocument('documentId', 'world', bookId)
-    localStore.setDocument('show-doc', 'world', true)
     return
   }
 
@@ -219,6 +225,10 @@ export const getBookOverPlayer = (id) => {
   return getInteractableOverPlayer('book', id)
 }
 
+export const getScreenOverPlayer = (id) => {
+  return getInteractableOverPlayer('screen', id)
+}
+
 export const getDocumentOverPlayer = (id) => {
   const { tileX, tileY, } = getPlayerTile(id)
   return (tileY >= 2 && tileY <= 3 && tileX >= 8.5 && tileX <= 11.5)
@@ -227,7 +237,8 @@ export const getDocumentOverPlayer = (id) => {
 export const canPlaceOverPlayer = (id) => {
   return (
     getPortalOverPlayer(id) == null && 
-    getBookOverPlayer(id) == null
+    getBookOverPlayer(id) == null && 
+    getScreenOverPlayer(id) == null
   );
 }
 

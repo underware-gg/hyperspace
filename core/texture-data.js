@@ -102,4 +102,7 @@ export const textureData = {
   'portal': {
     src: '/portal.png',
   },
+  'screen': {
+    src: '/screen.png',
+  },
 }
