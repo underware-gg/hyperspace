@@ -165,13 +165,13 @@ const Room = () => {
   })
 
   useEffect(() => {
-    if (slug && canvasRef.current && canvas3dRef.current && documentRef.current) {
+    if (slug && canvasRef.current && canvas3dRef.current && documentRef.current && !agentId) {
       import('core/game').then(({ default: Game }) => {
         const game = new Game()
         game.init(slug, canvasRef.current, canvas3dRef.current, documentRef.current)
       })
     }
-  }, [slug, canvasRef.current, canvas3dRef.current, documentRef.current])
+  }, [slug, canvasRef.current, canvas3dRef.current, documentRef.current, agentId])
 
   return (
     <Layout>
