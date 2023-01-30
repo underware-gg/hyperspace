@@ -5,7 +5,6 @@ import Layout from 'components/layout'
 import Button from 'components/button'
 import TilesetSelector from 'components/tileset-selector'
 import CharacterSelector from 'components/character-selector'
-import FileSelectButton from 'components/file-select-button'
 import DocumentModal from 'components/document-modal'
 import HelpModal from 'components/help-modal'
 import InteractMenu from 'components/interact-menu'
@@ -15,10 +14,8 @@ import useDocument from 'hooks/use-document'
 import useLocalDocument from 'hooks/use-local-document'
 import useVerida from 'hooks/use-verida'
 import { getLocalStore, getRemoteStore } from 'core/singleton'
-import { fromSourceToDataURL } from 'core/textures'
 import { emitAction } from 'core/controller'
 import * as Profile from 'core/components/profile'
-import * as Tileset from 'core/components/tileset'
 import * as ClientRoom from 'core/networking'
 
 const downloadRoomData = async (slug) => {
@@ -47,7 +44,6 @@ const Room = () => {
   const [showHelp, setShowHelp] = useState(false)
   const document = useDocument('document', 'world')
   const profile = useDocument('profile', agentId)
-  const tileset = useDocument('tileset', 'world')
   const is3d = useLocalDocument('show-3d', 'world') ?? false
   const isDocOpen = useLocalDocument('show-doc', 'world') ?? false
   const initialRef = useRef()
@@ -131,37 +127,12 @@ const Room = () => {
   }
   */
 
-  const _handleUploadTileset = async (fileObject) => {
-    try {
-      const { dataUrl, width, height } = await fromSourceToDataURL(URL.createObjectURL(fileObject))
-      if (width === 320 && height === 32) {
-        Tileset.create('world', {
-          blob: dataUrl,
-          name: fileObject.name,
-          size: { width, height },
-        })
-      } else {
-        Tileset.remove('world')
-      }
-    } catch (e) {
-      Tileset.remove('world')
-    }
-  }
-
   const _handleSelectSpritesheet = (fileName => {
     if (agentId && fileName) {
       Profile.update(agentId, {
         spritesheet: fileName,
       })
     }
-  })
-
-  const _handleSelectTileset = (fileName => {
-    Tileset.create('world', {
-      blob: null,
-      name: fileName,
-      size: { width: 320, height: 32 },
-    })
   })
 
   useEffect(() => {
@@ -194,16 +165,7 @@ const Room = () => {
           </HStack>
 
           <HStack>
-            <TilesetSelector
-              customTileset={tileset}
-              onSelect={(fileName) => _handleSelectTileset(fileName)}
-            />
-            <FileSelectButton
-              label='Upload Tileset'
-              id='tileset-image'
-              accept='image/*'
-              onSelect={(fileObject) => _handleUploadTileset(fileObject)}
-            />
+            <TilesetSelector />
             <Spacer />
             { playerConnected == true ?
               <Text onClick={() => emitAction('disconnect')}>{

@@ -1,16 +1,19 @@
 import { useEffect, useState, useMemo } from 'react'
 import { AbsoluteCenter, HStack, Select, Spacer } from '@chakra-ui/react'
 import { tilesets, defaultTileset } from '../core/texture-data'
+import { fromSourceToDataURL } from 'core/textures'
+import FileSelectButton from 'components/file-select-button'
+import useDocument from 'hooks/use-document'
+import * as Tileset from 'core/components/tileset'
 
-const TilesetSelector = ({
-  customTileset,
-  onSelect,
-}) => {
+const TilesetSelector = ({}) => {
+  const tileset = useDocument('tileset', 'world')
   const [selectedValue, setSelectedValue] = useState('')
   const [options, setOptions] = useState([])
 
+  // Chamge current tileset
   useEffect(() => {
-    const selectedTilesetName = customTileset?.name ?? defaultTileset
+    const selectedTilesetName = tileset?.name ?? defaultTileset
     let _selectedValue = ''
     let _options = []
     for (const value of tilesets) {
@@ -20,20 +23,46 @@ const TilesetSelector = ({
         _selectedValue = value
       }
     }
-    if (customTileset?.blob) {
+    if (tileset?.blob) {
       _selectedValue = 'custom'
-      _options.push(<option key='custom' value='custom'>{`(custom) ${customTileset.name}`}</option>)
+      _options.push(<option key='custom' value='custom'>{`(custom) ${tileset.name}`}</option>)
     }
     setSelectedValue(_selectedValue)
     setOptions(_options)
-  }, [customTileset])
+  }, [tileset])
+
+
+  const _handleSelectTileset = (e => {
+    const fileName = e.target.value
+    if (tilesets.includes(fileName)) {
+      Tileset.create('world', {
+        blob: null,
+        name: fileName,
+        size: { width: 320, height: 32 },
+      })
+    }
+  })
 
   const _onChange = (e) => {
-    const value = e.target.value
-    if (tilesets.includes(value)) {
-      onSelect?.(value)
+  }
+
+  const _handleUploadTileset = async (fileObject) => {
+    try {
+      const { dataUrl, width, height } = await fromSourceToDataURL(URL.createObjectURL(fileObject))
+      if (width === 320 && height === 32) {
+        Tileset.create('world', {
+          blob: dataUrl,
+          name: fileObject.name,
+          size: { width, height },
+        })
+      } else {
+        Tileset.remove('world')
+      }
+    } catch (e) {
+      Tileset.remove('world')
     }
   }
+
 
   const imgStyle = {
     minWidth: '320px',
@@ -54,11 +83,10 @@ const TilesetSelector = ({
     userSelect: 'none',
   }
 
-
   return (
     <HStack>
       <div style={imgStyle}>
-        <img src={customTileset?.blob ?? customTileset?.name ?? defaultTileset} style={imgStyle} alt='tileset-preview' />
+        <img src={tileset?.blob ?? tileset?.name ?? defaultTileset} style={imgStyle} alt='tileset-preview' />
         <span style={shortcutsStyle}>1234567890</span>
       </div>
       <Spacer />
@@ -66,10 +94,16 @@ const TilesetSelector = ({
         size='sm'
         value={selectedValue}
         placeholder={null}
-        onChange={(e) => _onChange(e)}
+        onChange={(e) => _handleSelectTileset(e)}
       >
         {options}
       </Select>
+      <FileSelectButton
+        label='Upload Tileset'
+        id='tileset-image'
+        accept='image/*'
+        onSelect={(fileObject) => _handleUploadTileset(fileObject)}
+      />
     </HStack>
   )
 }
