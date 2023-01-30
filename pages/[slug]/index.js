@@ -127,14 +127,6 @@ const Room = () => {
   }
   */
 
-  const _handleSelectSpritesheet = (fileName => {
-    if (agentId && fileName) {
-      Profile.update(agentId, {
-        spritesheet: fileName,
-      })
-    }
-  })
-
   useEffect(() => {
     if (slug && canvasRef.current && canvas3dRef.current && documentRef.current && !agentId) {
       import('core/game').then(({ default: Game }) => {
@@ -150,10 +142,7 @@ const Room = () => {
 
         <VStack align='stretch' spacing={4} shouldWrapChildren >
           <HStack>
-            <CharacterSelector
-              profile={profile}
-              onSelect={(fileName) => _handleSelectSpritesheet(fileName)}
-            />
+            <CharacterSelector />
             <Button size='sm' onClick={() => emitAction('toggle3d')}>
               2D/3D
             </Button>

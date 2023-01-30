@@ -2,13 +2,16 @@ import { useEffect, useState } from 'react'
 import { HStack, Select, Spacer, useTableStyles } from '@chakra-ui/react'
 import { spritesheets, defaultSpritesheet } from '../core/texture-data'
 import { deepMerge } from '../core/utils'
+import useRoom from 'hooks/use-room'
+import useDocument from '../hooks/use-document'
 import useTexture from '../hooks/use-texture'
-import { images } from 'next.config'
+import * as Profile from 'core/components/profile'
 
-const CharacterSelector = ({
-  profile,
-  onSelect,
-}) => {
+const CharacterSelector = ({}) => {
+  const { agentId } = useRoom();
+  const profile = useDocument('profile', agentId)
+
+
   const [selectedValue, setSelectedValue] = useState('')
   const [imageName, setImageName] = useState(null)
   const [imageStyle, setImageStyle] = useState({ display: 'none' })
@@ -27,6 +30,8 @@ const CharacterSelector = ({
         _selectedValue = src
       }
     }
+
+    // can be used for uploaded character in the future, see Tileset implementation
     // if (profile?.blob) {
     //   _imageName = profile.blob
     //   _selectedValue = 'custom'
@@ -50,10 +55,14 @@ const CharacterSelector = ({
     }
   }, [sprite])
 
-  const _onChange = (e) => {
-    const value = e.target.value
-    onSelect?.(value)
-  }
+  const _handleSelectSpritesheet = (e => {
+    const fileName = e.target.value
+    if (agentId && fileName) {
+      Profile.update(agentId, {
+        spritesheet: fileName,
+      })
+    }
+  })
 
   const containerStyle = {
     width: '32px',
@@ -71,7 +80,7 @@ const CharacterSelector = ({
         size='sm'
         value={selectedValue}
         placeholder={null}
-        onChange={(e) => _onChange(e)}
+        onChange={(e) => _handleSelectSpritesheet(e)}
       >
         {options}
       </Select>
