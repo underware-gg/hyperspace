@@ -1,70 +1,65 @@
 import * as THREE from 'three'
-import * as Interactable from './interactable'
+import { HTMLMesh } from '../HTMLMesh'
 import { getTextureImageByName } from '../textures'
 import { getLocalStore, getRemoteStore } from '../singleton'
 import { getTile, floors } from './map'
-import { createRenderTexture } from '../textures'
+import { addActionDownListener } from '../controller'
+import * as Interactable from './interactable'
+
+export const TYPE = {
+  DOCUMENT: 'document',
+}
 
 export const init = () => {
   const localStore = getLocalStore()
-  const scene = localStore.getDocument('scene', 'scene')
-
-  if (scene === null) {
-    return
-  }
-
-  //const portalGeometry = new THREE.BoxGeometry(0.8, 0.8, 2.3)
-  //const portalMaterial = new THREE.MeshBasicMaterial({ color: 'pink', transparent: true, opacity: 0.23 })
-
   const remoteStore = getRemoteStore()
 
-  remoteStore.on({ type: 'screen', event: 'create' }, (id, portal) => {
-    const documentTexture = createRenderTexture(process.env.BASE_WIDTH, process.env.BASE_HEIGHT)
-    const portalMaterial = new THREE.MeshBasicMaterial({
-      // map: documentTexture.texture,
-      color: '#ffe7a3'
-    })
+  const _createScreen = (screenId, screen) => {
+    const scene = localStore.getDocument('scene', 'scene')
+    if (scene === null) return
 
-    const portalGeometry = new THREE.BoxGeometry(1.28, 0.01, 0.86)
+    const { position: { x, y }, rotation: { x: rotation } } = screen
 
-    const portalMesh = new THREE.Mesh(portalGeometry, portalMaterial)
+    const aspect = process.env.BASE_WIDTH / process.env.BASE_HEIGHT
+    const cellHeight = 1.5 //1.2
+    const cellWidth = cellHeight * aspect
 
-    const map = remoteStore.getDocument('map', 'world')
-
-    if (map === null) {
+    const screenElement = document.getElementById(screenId)
+    if (screenElement == null) {
+      // console.warn(`Screen component [${screenId}] not fond!`)
       return
     }
 
-    const tile = getTile('world', portal.position.x, portal.position.y)
+    const screenMesh = new HTMLMesh(screenElement, cellWidth, cellHeight)
+    
+    screenMesh.position.set(Math.floor(x) + 0.5, -Math.floor(y) - 0.5, .75)
+    screenMesh.rotation.set(Math.PI / 2, rotation, 0)
 
-    if (tile === null) {
-      return
-    }
+    scene.add(screenMesh)
 
-    //Update Refs
-    // renderMarkdown("", documentTexture.canvas, documentTexture.context)
-    // documentTexture.texture.needsUpdate = true
+    localStore.setDocument('screen-mesh', screenId, screenMesh)
+  }
 
-    const currentFloorHeight = floors[tile]
+  const _deleteScreen = (screenId) => {
+    const scene = localStore.getDocument('scene', 'scene')
+    if (scene === null) return
 
-    portalMesh.position.set(
-      (Math.floor(portal.position.x)) + 0.5,
-      (-Math.floor(portal.position.y)) - 0.05,
-      currentFloorHeight + 1.2,
-    )
-    scene.add(portalMesh)
-    localStore.setDocument('screen-mesh', id, portalMesh)
-    localStore.setDocument('screen-texture', id, documentTexture)
+    const screenMesh = localStore.getDocument('screen-mesh', screenId)
+    if (screenMesh === null) return
+
+    localStore.setDocument('screen-mesh', screenId, null)
+    scene.remove(screenMesh)
+  }
+
+  remoteStore.on({ type: 'screen', event: 'create' }, (screenId, screen) => {
+    _createScreen(screenId, screen)
   })
 
-  // If we had something that said "how the data has changed" it would help a lot.
-  remoteStore.on({ type: 'map', event: 'update' }, (id, map) => {
-    if (id !== 'world') {
-      return
-    }
-
+  remoteStore.on({ type: 'map', event: 'update' }, (mapId, map) => {
     const screenIds = remoteStore.getIds('screen')
 
+    // update all screens because we don't know what changed
+    // TODO: Improve this! (save tile to localStore and compare with new map)
     for (const screenId of screenIds) {
       const screen = remoteStore.getDocument('screen', screenId)
 
@@ -96,29 +91,30 @@ export const init = () => {
     }
   })
 
-  remoteStore.on({ type: 'screen', event: 'delete' }, (id) => {
-    const portalMesh = localStore.getDocument('screen-mesh', id)
-    if (portalMesh === null) {
-      return
+  remoteStore.on({ type: 'screen', event: 'delete' }, (screenId) => {
+    _deleteScreen(screenId)
+  })
+
+  addActionDownListener('syncScreens', async () => {
+    const screenIds = remoteStore.getIds('screen')
+    for (const screenId of screenIds) {
+      // delete if already exists (component could have been remounted)
+      _deleteScreen(screenId)
+
+      const screen = remoteStore.getDocument('screen', screenId)
+      _createScreen(screenId, screen)
     }
-    scene.remove(portalMesh)
-    localStore.setDocument('screen-mesh', id, null)
   })
 }
 
-const SCREEN_TYPE = {
-  DOCUMENT: 'document',
-}
-
-const makeScreen = (id, x, y, type) => {
+const makeScreen = (id, x, y, type, content) => {
   return {
     owner: id,
     permissions: 'rw',
     name: type,
     type,
-    content: '',
-    items: '',
-    position: 0,
+    content,
+    page: 0,
     visible: true,
     position: {
       x: x,
@@ -133,9 +129,9 @@ const makeScreen = (id, x, y, type) => {
   }
 }
 
-export const create = (id, x, y, text) => {
+export const createDocument = (id, x, y, text) => {
   const screen = {
-    ...makeScreen(id, x, y, SCREEN_TYPE.DOCUMENT),
+    ...makeScreen(id, x, y, TYPE.DOCUMENT, text),
   }
   Interactable.create('screen', id, x, y, screen)
   return screen
@@ -174,7 +170,6 @@ export const render2d = (id, context) => {
   const { position: { x, y } } = screen
 
   // This should be replaced with a sprite eventually.
-  // const documentTexture = getLocalStore().getDocument('screen-texture', id)
   // renderMarkdown(screen.text, documentTexture.canvas, documentTexture.context)
   // documentTexture.texture.needsUpdate = true
 

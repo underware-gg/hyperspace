@@ -17,7 +17,6 @@ export const getMouseCanvasPosition = (e, canvas) => {
   const rect = canvas.getBoundingClientRect()
   const x = (e.clientX - rect.left) / canvas.scrollWidth * canvas.width
   const y = (e.clientY - rect.top) / canvas.scrollHeight * canvas.height
-
   return {
     x: Math.floor(x),
     y: Math.floor(y),
@@ -26,11 +25,25 @@ export const getMouseCanvasPosition = (e, canvas) => {
 
 export const getMouseTilePosition = (e, canvas) => {
   const { x, y } = getMouseCanvasPosition(e, canvas);
-
   return {
     x: Math.floor(x / MAP_SCALE_X / 32),
     y: Math.floor(y / MAP_SCALE_Y / 32),
   }
+}
+
+export const getCreateTile = () => {
+  const store = getRemoteStore()
+  const editor = store.getDocument('editor', id)
+  if (editor) {
+    const { interacting, position: { x, y } } = editor
+    if (interacting) {
+      return {
+        tileX: x,
+        tileY: y,
+      }
+    }
+  }
+  return getPlayerTile(id)
 }
 
 export const init = (canvas, id) => {
@@ -84,12 +97,6 @@ export const init = (canvas, id) => {
   })
 
   addActionDownListener('createPortal', () => {
-    const store = getRemoteStore()
-    const editor = store.getDocument('editor', id)
-    if (editor === null) {
-      return
-    }
-
     if (!canPlaceOverPlayer(id)) {
       return
     }
@@ -99,48 +106,23 @@ export const init = (canvas, id) => {
       return
     }
 
-    const { interacting } = editor
-
-    if (interacting) {
-      const { position: { x, y } } = editor
-      Portal.create(nanoid(), x, y, slug)
-    } else {
-      const { tileX, tileY } = getPlayerTile(id)
-      Portal.create(nanoid(), tileX, tileY, slug)
-    }
+    const { tileX, tileY } = getCreateTile(id)
+    Portal.create(nanoid(), tileX, tileY, slug)
   })
 
   addActionDownListener('createScreen', () => {
-    const store = getRemoteStore()
-    const editor = store.getDocument('editor', id)
-    if (editor === null) {
-      return
-    }
-
     if (!canPlaceOverPlayer(id)) {
       return
     }
 
-    const text = 'this is a screen!'
+    const screenId = nanoid()
+    const text = `# New screen\n\nThis is a MarkDown shared document\n\nid: ${screenId}`
 
-    const { interacting } = editor
-
-    if (interacting) {
-      const { position: { x, y } } = editor
-      Screen.create(nanoid(), x, y, text)
-    } else {
-      const { tileX, tileY } = getPlayerTile(id)
-      Screen.create(nanoid(), tileX, tileY, text)
-    }
+    const { tileX, tileY } = getCreateTile(id)
+    Screen.createDocument(screenId, tileX, tileY, text)
   })
 
   addActionDownListener('createBook', () => {
-    const store = getRemoteStore()
-    const editor = store.getDocument('editor', id)
-    if (editor === null) {
-      return
-    }
-
     if (!canPlaceOverPlayer(id)) {
       return
     }
@@ -150,15 +132,8 @@ export const init = (canvas, id) => {
       return
     }
 
-    const { interacting } = editor
-
-    if (interacting) {
-      const { position: { x, y } } = editor
-      Book.create(nanoid(), x, y, text)
-    } else {
-      const { tileX, tileY } = getPlayerTile(id)
-      Book.create(nanoid(), tileX, tileY, text)
-    }
+    const { tileX, tileY } = getCreateTile(id)
+    Book.create(nanoid(), tileX, tileY, text)
   })
 
   canvas.addEventListener('mousemove', handleMouseMove)

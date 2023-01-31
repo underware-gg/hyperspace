@@ -187,8 +187,7 @@ export const screen = {
   name: 'string',
   type: 'string',
   content: 'string',
-  items: 'string',      // stringfied JSON array
-  position: 'number',   // item, slide, page, scroll, etc
+  page: 'number',   // page, slide, item, scroll position, etc
   visible: 'boolean',
   position: {
     x: 'number',

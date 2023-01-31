@@ -8,10 +8,7 @@ export const create = (type, id, x, y, data) => {
   const store = getRemoteStore()
   data = {
     ...data,
-    position: {
-      x,
-      y,
-    },
+    position: { x, y, z: 0 },
   }
   store.setDocument(type, id, data)
   return data

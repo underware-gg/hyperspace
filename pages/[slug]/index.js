@@ -8,6 +8,7 @@ import CharacterSelector from 'components/character-selector'
 import DocumentModal from 'components/document-modal'
 import HelpModal from 'components/help-modal'
 import InteractMenu from 'components/interact-menu'
+import Screens from 'components/screens'
 import Markdown from 'components/markdown'
 import useRoom from 'hooks/use-room'
 import useDocument from 'hooks/use-document'
@@ -15,7 +16,6 @@ import useLocalDocument from 'hooks/use-local-document'
 import useVerida from 'hooks/use-verida'
 import { getLocalStore, getRemoteStore } from 'core/singleton'
 import { emitAction } from 'core/controller'
-import * as Profile from 'core/components/profile'
 import * as ClientRoom from 'core/networking'
 
 const downloadRoomData = async (slug) => {
@@ -43,7 +43,6 @@ const Room = () => {
   const { playerConnected, playerProfile } = useVerida(agentId)
   const [showHelp, setShowHelp] = useState(false)
   const document = useDocument('document', 'world')
-  const profile = useDocument('profile', agentId)
   const is3d = useLocalDocument('show-3d', 'world') ?? false
   const isDocOpen = useLocalDocument('show-doc', 'world') ?? false
   const initialRef = useRef()
@@ -227,6 +226,8 @@ const Room = () => {
                 <Markdown>{document?.content || ''}</Markdown>
               </div>
             </div>
+
+            <Screens />
           </Box>
 
           <HStack>
