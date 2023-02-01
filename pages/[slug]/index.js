@@ -10,6 +10,7 @@ import HelpModal from 'components/help-modal'
 import InteractMenu from 'components/interact-menu'
 import Screens from 'components/screens'
 import Markdown from 'components/markdown'
+import RoomDownloadMenu from 'components/room-download-menu'
 import VeridaLogin from 'components/verida-login'
 import VeridaMenu from 'components/verida-menu'
 import useRoom from 'hooks/use-room'
@@ -18,22 +19,6 @@ import useLocalDocument from 'hooks/use-local-document'
 import { getLocalStore, getRemoteStore } from 'core/singleton'
 import { focusGameCanvas } from 'core/gamecanvas'
 import { emitAction } from 'core/controller'
-import * as ClientRoom from 'core/networking'
-
-const downloadRoomData = async (slug) => {
-  const room = ClientRoom.get()
-  if (room === null) {
-    return
-  }
-
-  const snapshotOps = room.getSnapshotOps()
-
-  const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(snapshotOps))}`
-  const dlAnchor = document.getElementById('download-room-data')
-  dlAnchor.setAttribute('href', dataStr)
-  dlAnchor.setAttribute('download', `room-${slug}.json`)
-  dlAnchor.click()
-}
 
 const RoomPage = () => {
   const { agentId } = useRoom();
@@ -60,56 +45,6 @@ const RoomPage = () => {
     const store = getLocalStore()
     store.setDocument('show-doc', 'world', false)
   }
-
-  const restoreRoomData = async () => {
-    const room = ClientRoom.get()
-    if (room === null) {
-      return
-    }
-
-    const VeridaUser = (await import('core/networking/verida')).VeridaUser
-    const snapshot = await VeridaUser.getRoom(room.slug)
-
-    if (snapshot) {
-      const json = JSON.parse(snapshot)
-      const remoteStore = getRemoteStore()
-
-      for (const op of json) {
-        if (op.pathIndex === 0) {
-          const { type, key, value } = op
-          remoteStore.setDocument(type, key, value)
-        }
-      }
-    } else {
-      console.log('No room data found')
-    }
-  }
-
-  const lastTweet = async () => {
-    const VeridaUser = (await import('core/networking/verida')).VeridaUser
-    await VeridaUser.setDocumentToLastTweet()
-  }
-
-  /*
-  const _handleUploadRoomData = async (fileObject) => {
-    const reader = new FileReader()
-    reader.onload = (e2) => {
-      const str = e2.target.result
-      const json = JSON.parse(str)
-
-      const remoteStore = getRemoteStore()
-
-      for (const op of json) {
-        if (op.pathIndex === 0) {
-          const { type, key, value } = op
-          remoteStore.setDocument(type, key, value)
-        }
-      }
-    }
-
-    reader.readAsText(fileObject)
-  }
-  */
 
   useEffect(() => {
     if (slug && canvasRef.current && canvas3dRef.current && documentRef.current && !agentId) {
@@ -202,12 +137,7 @@ const RoomPage = () => {
           </Box>
 
           <HStack>
-            <Button variant='outline' size='sm' onClick={async () => await downloadRoomData(slug)}>
-              Download Room Data
-            </Button>
-            <Button variant='outline' size='sm' onClick={async () => _handleUploadRoomData(slug)}>
-              Upload Room Data
-            </Button>
+            <RoomDownloadMenu />
             <Spacer />
             <VeridaMenu />
           </HStack>
