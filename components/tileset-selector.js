@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from 'react'
 import { AbsoluteCenter, HStack, Select, Spacer } from '@chakra-ui/react'
 import { tilesets, defaultTileset } from '../core/texture-data'
 import { fromSourceToDataURL } from 'core/textures'
+import { focusGameCanvas } from '../core/gamecanvas'
 import FileSelectButton from 'components/file-select-button'
 import useDocument from 'hooks/use-document'
 import * as Tileset from 'core/components/tileset'
@@ -41,10 +42,8 @@ const TilesetSelector = ({}) => {
         size: { width: 320, height: 32 },
       })
     }
+    focusGameCanvas()
   })
-
-  const _onChange = (e) => {
-  }
 
   const _handleUploadTileset = async (fileObject) => {
     try {
@@ -61,6 +60,7 @@ const TilesetSelector = ({}) => {
     } catch (e) {
       Tileset.remove('world')
     }
+    focusGameCanvas()
   }
 
 

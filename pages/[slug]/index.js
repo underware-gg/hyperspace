@@ -15,6 +15,7 @@ import useDocument from 'hooks/use-document'
 import useLocalDocument from 'hooks/use-local-document'
 import useVerida from 'hooks/use-verida'
 import { getLocalStore, getRemoteStore } from 'core/singleton'
+import { focusGameCanvas } from 'core/gamecanvas'
 import { emitAction } from 'core/controller'
 import * as ClientRoom from 'core/networking'
 
@@ -45,7 +46,6 @@ const Room = () => {
   const document = useDocument('document', 'world')
   const is3d = useLocalDocument('show-3d', 'world') ?? false
   const isDocOpen = useLocalDocument('show-doc', 'world') ?? false
-  const initialRef = useRef()
   const router = useRouter()
   const canvasRef = useRef()
   const canvas3dRef = useRef()
@@ -53,11 +53,7 @@ const Room = () => {
   const { slug } = router.query
 
   useEffect(() => {
-    if (is3d) {
-      canvas3dRef.current?.focus()
-    } else {
-      canvasRef.current?.focus()
-    }
+    focusGameCanvas()
   }, [is3d, canvasRef, canvas3dRef])
 
   const handleInputChange = e => {
@@ -236,7 +232,6 @@ const Room = () => {
         </VStack>
 
         <DocumentModal
-          initialRef={initialRef}
           finalRef={is3d ? canvas3dRef : canvasRef}
           text={document?.content || ''}
           isOpen={isDocOpen}

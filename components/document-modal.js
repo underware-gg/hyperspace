@@ -15,10 +15,8 @@ import { getLocalStore, getRemoteStore } from 'core/singleton'
 
 const DocumentModal = ({
   finalRef,
-  initialRef,
   isOpen,
   text,
-  onOpen,
   onClose,
   onInputChange,
 }) => {
@@ -30,7 +28,7 @@ const DocumentModal = ({
 
   return (
     <Modal
-      initialFocusRef={initialRef}
+      initialFocusRef={containerRef}
       finalFocusRef={finalRef}
       isOpen={isOpen}
       onAfterOpen={() => onAfterOpen()}

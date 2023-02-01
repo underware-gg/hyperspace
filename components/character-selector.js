@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { HStack, Select, Spacer, useTableStyles } from '@chakra-ui/react'
 import { spritesheets, defaultSpritesheet } from '../core/texture-data'
+import { focusGameCanvas } from '../core/gamecanvas'
 import { deepMerge } from '../core/utils'
 import useRoom from 'hooks/use-room'
 import useDocument from '../hooks/use-document'
@@ -62,6 +63,7 @@ const CharacterSelector = ({}) => {
         spritesheet: fileName,
       })
     }
+    focusGameCanvas()
   })
 
   const containerStyle = {
