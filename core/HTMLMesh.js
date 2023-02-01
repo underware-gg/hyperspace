@@ -7,7 +7,7 @@ import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js'
 
 class HTMLMesh extends THREE.Mesh {
 
-  constructor(dom, width, height) {
+  constructor(dom, width, height, transparent) {
 
     const texture = new HTMLTexture(dom)
 
@@ -29,7 +29,7 @@ class HTMLMesh extends THREE.Mesh {
     const material = new THREE.MeshBasicMaterial({
       map: texture,
       // toneMapped: false,
-      // transparent: true,
+      transparent,
     });
 
     super(geometry, material);

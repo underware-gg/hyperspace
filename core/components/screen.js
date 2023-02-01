@@ -4,6 +4,7 @@ import { getTextureImageByName } from '../textures'
 import { getLocalStore, getRemoteStore } from '../singleton'
 import { getTile, floors } from './map'
 import { addActionDownListener } from '../controller'
+import { deepCopy } from '../utils'
 import * as Interactable from './interactable'
 
 export const TYPE = {
@@ -29,8 +30,9 @@ export const init = () => {
       // console.warn(`Screen component [${screenId}] not fond!`)
       return
     }
+    // console.warn(`HTML Screen element [${screenId}]:`, screenElement)
 
-    const screenMesh = new HTMLMesh(screenElement, cellWidth, cellHeight)
+    const screenMesh = new HTMLMesh(screenElement, cellWidth, cellHeight, true)
     
     screenMesh.position.set(Math.floor(x) + 0.5, -Math.floor(y) - 0.5, .75)
     screenMesh.rotation.set(Math.PI / 2, rotation, 0)
@@ -145,13 +147,12 @@ export const remove = (id) => {
   return Interactable.remove('screen', id)
 }
 
-export const read = (id) => {
+export const setContent = (id, content) => {
   const store = getRemoteStore()
-  const screen = store.getDocument('screen', id)
+  let screen = store.getDocument('screen', id)
 
   if (screen !== null) {
-    console.log("SCREEN TEXT " + screen.text)
-    //window.location.href = `/${portal.slug}`
+    store.setDocument('screen', id, { ...screen, content })
   }
 }
 

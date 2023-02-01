@@ -202,7 +202,7 @@ export const init = async (slug, canvas, canvas3d, documentElement) => {
   const cellHeight = 1.5 //1.2
   const cellWidth = cellHeight * aspect
 
-  const documentMesh = new HTMLMesh(documentElement, cellWidth, cellHeight)
+  const documentMesh = new HTMLMesh(documentElement, cellWidth, cellHeight, false)
   documentMesh.position.set(10, -1.01, .75)
   documentMesh.rotation.set(Math.PI / 2, 0, 0)
 

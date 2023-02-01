@@ -54,13 +54,9 @@ const Room = () => {
 
   useEffect(() => {
     if (is3d) {
-      if (canvasRef.current) {
-        canvas3dRef.current.focus()
-      }
+      canvas3dRef.current?.focus()
     } else {
-      if (canvas3dRef.current) {
-        canvasRef.current.focus()
-      }
+      canvasRef.current?.focus()
     }
   }, [is3d, canvasRef, canvas3dRef])
 
@@ -85,12 +81,10 @@ const Room = () => {
 
     if (snapshot) {
       const json = JSON.parse(snapshot)
-      console.log(json)
       const remoteStore = getRemoteStore()
 
       for (const op of json) {
         if (op.pathIndex === 0) {
-          console.log(type, key, value)
           const { type, key, value } = op
           remoteStore.setDocument(type, key, value)
         }
@@ -217,12 +211,7 @@ const Room = () => {
                 visibility: (isDocOpen && !is3d) ? 'visible' : 'hidden',
               }}
             >
-              <div ref={documentRef}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                }}
-              >
+              <div ref={documentRef} className='FillParent'>
                 <Markdown>{document?.content || ''}</Markdown>
               </div>
             </div>

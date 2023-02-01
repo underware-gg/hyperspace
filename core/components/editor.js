@@ -31,7 +31,7 @@ export const getMouseTilePosition = (e, canvas) => {
   }
 }
 
-export const getCreateTile = () => {
+export const getCreateTile = (id) => {
   const store = getRemoteStore()
   const editor = store.getDocument('editor', id)
   if (editor) {

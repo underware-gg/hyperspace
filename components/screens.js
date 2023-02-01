@@ -5,56 +5,73 @@ import useDocument from 'hooks/use-document'
 import useDocumentIds from 'hooks/use-document-ids'
 import useLocalDocument from 'hooks/use-local-document'
 import Markdown from 'components/markdown'
+import ScreenEditModal from 'components/screen-edit-modal'
+import * as Screen from '../core/components/screen'
 
 
-const Screens = ({}) => {
-  const screenIds = useDocumentIds('screen')
-  const is3d = useLocalDocument('show-3d', 'world') ?? false
+const ScreenComponent = ({
+  screenId,
+}) => {
+  const screen = useDocument('screen', screenId)
 
-  const screensComponents = useMemo(() => {
-    let result = []
-    const store = getRemoteStore()
-    for (const screenId of screenIds) {
-      const screen = store.getDocument('screen', screenId)
-      if (!screen) {
-        continue;
-      }
-
-      result.push(
-        <div
-          key={screenId}
-          id={screenId}
-          style={{
-            width: '100%',
-            height: '100%',
-            position: 'absolute',
-            top: '0',
-            left: '0',
-          }}
-        >
-          <Markdown>{screen.content || `# Screen [${screenId}] has no content`}</Markdown>
-        </div>
-      )
-    }
-
-    return result
-  }, [screenIds.length])
-
-  useEffect(() => {
-    emitAction('syncScreens')
-  }, [screensComponents])
-
-  const isDocOpen = false
+  if(screen?.type == Screen.TYPE.DOCUMENT) {
+    return <Markdown>{screen.content || `# Screen [${screenId}] has no content`}</Markdown>
+  }
 
   return (
     <div
       style={{
         width: '100%',
         height: '100%',
-        visibility: (isDocOpen && !is3d) ? 'visible' : 'hidden',
+        border: 'solid 4px white',
+        backgroundColor: '#f0f8',
+        // backgroundImage: 'url(/nosignal_testcard.jpg)',
+        // backgroundSize: 'cover',
+        // backgroundPosition: 'center center',
+        // imageRendering: 'pixelated',
       }}
     >
+      Invalid scren type [{screen?.type}]
+    </div>
+  )
+}
+
+
+const Screens = ({}) => {
+  const screenIds = useDocumentIds('screen')
+  const is3d = useLocalDocument('show-3d', 'world') ?? false
+  const editingScreenId = useLocalDocument('screens', 'editing')
+
+  const screensComponents = useMemo(() => {
+    let result = []
+    const store = getRemoteStore()
+    for (const screenId of screenIds) {
+      const isEditing = (screenId == editingScreenId)
+      result.push(
+        <div key={screenId}
+          className='FillParent Absolute'
+          style={{
+            visibility: (isEditing && !is3d) ? 'visible' : 'hidden',
+          }}
+        >
+          <div id={screenId} className='FillParent'>
+            <ScreenComponent screenId={screenId} />
+          </div>
+        </div>
+      )
+    }
+
+    return result
+  }, [screenIds.length, editingScreenId])
+
+  useEffect(() => {
+    emitAction('syncScreens')
+  }, [screensComponents])
+
+  return (
+    <div className='FillParent'>
       {screensComponents}
+      <ScreenEditModal screenId={editingScreenId} />
     </div>
   )
 }

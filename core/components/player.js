@@ -200,7 +200,9 @@ export const interact = (id) => {
 
   const screenId = getScreenOverPlayer(id)
   if (screenId) {
-    Screen.read(screenId)
+    const currentScreenId = localStore.getDocument('screens', 'editing')
+    const newScreenId = screenId != currentScreenId ? screenId : null
+    localStore.setDocument('screens', 'editing', newScreenId)
     return
   }
 
