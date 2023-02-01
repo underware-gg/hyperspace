@@ -7,7 +7,7 @@ import Textarea from 'components/textarea'
 import useDocument from 'hooks/use-document'
 import { getRemoteStore } from 'core/singleton'
 
-const Room = () => {
+const DocumentPage = () => {
   const document = useDocument('document', 'world')
   const router = useRouter()
   const { slug } = router.query
@@ -50,4 +50,4 @@ const Room = () => {
   )
 }
 
-export default Room
+export default DocumentPage

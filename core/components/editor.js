@@ -11,7 +11,6 @@ import { canPlaceOverPlayer, getPortalOverPlayer } from 'core/components/player'
 import { MAP_SCALE_X, MAP_SCALE_Y } from './map'
 import { getPlayerTile } from './player'
 import { roundToNearest } from '../utils'
-import { VeridaUser } from '../networking/verida'
 
 export const getMouseCanvasPosition = (e, canvas) => {
   const rect = canvas.getBoundingClientRect()
@@ -72,28 +71,6 @@ export const init = (canvas, id) => {
 
   remoteStore.on({ type: 'editor', event: 'update' }, (id, editor) => {
     // id is the agent id.
-  })
-
-  addActionDownListener('connect', async () => {
-    await VeridaUser.connect()
-  })
-
-  addActionDownListener('disconnect', async () => {
-    await VeridaUser.disconnect()
-  })
-
-  addActionDownListener('inviteFriend', async () => {
-
-    const recipientDid = window.prompt('DID to invite', 'did:vda:....')
-    const room = Room.get()
-    const roomId = room.slug
-
-    const subject = `Hyperbox invite!`
-    const message = `Join me in ${roomId} on Hyperbox`
-    // @todo: Get app URL from next.js
-    const url = `http://192.168.68.124:3000/${roomId}`
-    const text = `Open (${roomId})`
-    await VeridaUser.sendMessage(recipientDid, subject, message, linkUrl, linkText)
   })
 
   addActionDownListener('createPortal', () => {

@@ -10,10 +10,11 @@ import HelpModal from 'components/help-modal'
 import InteractMenu from 'components/interact-menu'
 import Screens from 'components/screens'
 import Markdown from 'components/markdown'
+import VeridaLogin from 'components/verida-login'
+import VeridaMenu from 'components/verida-menu'
 import useRoom from 'hooks/use-room'
 import useDocument from 'hooks/use-document'
 import useLocalDocument from 'hooks/use-local-document'
-import useVerida from 'hooks/use-verida'
 import { getLocalStore, getRemoteStore } from 'core/singleton'
 import { focusGameCanvas } from 'core/gamecanvas'
 import { emitAction } from 'core/controller'
@@ -26,22 +27,16 @@ const downloadRoomData = async (slug) => {
   }
 
   const snapshotOps = room.getSnapshotOps()
-  const VeridaUser = (await import('core/networking/verida')).VeridaUser
-  await VeridaUser.saveRoom(slug, snapshotOps)
-
-  /*
-  console.log(snapshotOps)
 
   const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(snapshotOps))}`
   const dlAnchor = document.getElementById('download-room-data')
   dlAnchor.setAttribute('href', dataStr)
   dlAnchor.setAttribute('download', `room-${slug}.json`)
-  dlAnchor.click()*/
+  dlAnchor.click()
 }
 
-const Room = () => {
+const RoomPage = () => {
   const { agentId } = useRoom();
-  const { playerConnected, playerProfile } = useVerida(agentId)
   const [showHelp, setShowHelp] = useState(false)
   const document = useDocument('document', 'world')
   const is3d = useLocalDocument('show-3d', 'world') ?? false
@@ -145,16 +140,7 @@ const Room = () => {
           <HStack>
             <TilesetSelector />
             <Spacer />
-            { playerConnected == true ?
-              <Text onClick={() => emitAction('disconnect')}>{
-                playerProfile.avatarUri ?
-                <img src={ playerProfile.avatarUri } width="40" height="40" /> :
-                <Text>No</Text>
-              }{ playerProfile.name }</Text> :
-              <Button size='sm' onClick={() => emitAction('connect')}>
-                Connect
-              </Button>
-            }
+            <VeridaLogin />
           </HStack>
 
           <Box
@@ -217,15 +203,13 @@ const Room = () => {
 
           <HStack>
             <Button variant='outline' size='sm' onClick={async () => await downloadRoomData(slug)}>
-              Save Room Data
+              Download Room Data
             </Button>
-            <Button variant='outline' size='sm' onClick={() => emitAction('inviteFriend')}>
-              Invite Friend
+            <Button variant='outline' size='sm' onClick={async () => _handleUploadRoomData(slug)}>
+              Upload Room Data
             </Button>
             <Spacer />
-            <Button variant='outline' size='sm' onClick={async () => await restoreRoomData(slug)}>
-              Restore Room Data
-            </Button>
+            <VeridaMenu />
           </HStack>
 
           {process.env.ENV == 'desenv' && <div>Agent ID: {agentId}</div>}
@@ -249,4 +233,4 @@ const Room = () => {
   )
 }
 
-export default Room
+export default RoomPage

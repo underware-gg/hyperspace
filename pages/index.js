@@ -6,7 +6,7 @@ import Button from 'components/button'
 import Layout from '../components/layout'
 import RoomModal from 'components/room-modal'
 
-const Home = ({ slug }) => {
+const HomePage = ({ slug }) => {
   const router = useRouter();
   const [roomModal, setRoomModal] = useState(false);
 
@@ -60,4 +60,4 @@ export const getServerSideProps = async (context) => {
   }
 }
 
-export default Home
+export default HomePage

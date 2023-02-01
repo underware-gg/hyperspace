@@ -40,8 +40,8 @@ const useVerida = (id) => {
   }, [])
 
   return {
-    playerConnected: isConnected,
-    playerProfile: profile,
+    veridaConnected: isConnected,
+    veridaProfile: profile,
   }
 }
 
