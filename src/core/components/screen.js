@@ -107,51 +107,12 @@ export const init = () => {
   })
 }
 
-const makeScreen = (id, x, y, type, content) => {
-  return {
-    owner: id,
-    permissions: 'rw',
-    name: type,
-    type,
-    content,
-    page: 0,
-    visible: true,
-    position: {
-      x: x,
-      y: y,
-      z: 0,
-    },
-    rotation: {
-      x: 0,
-      y: 0,
-      z: 0,
-    },
-  }
-}
-
-export const createDocument = (id, x, y, text) => {
-  const screen = {
-    ...makeScreen(id, x, y, TYPE.DOCUMENT, text),
-  }
-  Interactable.create('screen', id, x, y, screen)
-  return screen
-}
-
 export const exists = (id) => {
   return Interactable.exists('screen', id)
 }
 
 export const remove = (id) => {
   return Interactable.remove('screen', id)
-}
-
-export const setContent = (id, content) => {
-  const store = getRemoteStore()
-  let screen = store.getDocument('screen', id)
-
-  if (screen !== null) {
-    store.setDocument('screen', id, { ...screen, content })
-  }
 }
 
 export const getCollisionRect = (id) => {
@@ -182,3 +143,50 @@ export const render2d = (id, context) => {
     32,
   )
 }
+
+
+
+//---------------------------------------
+// Actions
+//
+
+const makeScreen = (id, x, y, type, content, name = null) => {
+  return {
+    owner: id,
+    permissions: 'rw',
+    name: name ?? type,
+    type,
+    content,
+    page: 0,
+    visible: true,
+    position: {
+      x: x,
+      y: y,
+      z: 0,
+    },
+    rotation: {
+      x: 0,
+      y: 0,
+      z: 0,
+    },
+  }
+}
+
+export const createDocument = (id, x, y, text, name) => {
+  const screen = {
+    ...makeScreen(id, x, y, TYPE.DOCUMENT, text, name),
+  }
+  Interactable.create('screen', id, x, y, screen)
+  return screen
+}
+
+export const editScreen = (id, values) => {
+  const store = getRemoteStore()
+  let screen = store.getDocument('screen', id)
+  if (screen !== null) {
+    store.setDocument('screen', id, {
+      ...screen, ...values
+    })
+  }
+}
+

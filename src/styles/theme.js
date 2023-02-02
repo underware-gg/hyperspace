@@ -6,7 +6,7 @@ import { deepMerge } from '@/core/utils'
 
 // const ModalContent = defineStyleConfig({
 //   baseStyle: {
-//     backgroundColor: '#0008',
+//     backgroundColor: '#000a',
 //   },
 // })
 

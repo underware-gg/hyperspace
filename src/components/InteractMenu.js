@@ -1,6 +1,7 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import { HStack } from '@chakra-ui/react'
 import Button from '@/components/Button'
+import DialogConfirm from '@/components/DialogConfirm'
 import useRoom from '@/hooks/useRoom'
 import usePlayer from '@/hooks/usePlayer'
 import useDocument from '@/hooks/useDocument'
@@ -20,7 +21,12 @@ const InteractMenu = ({
     tileX, tileY,
   } = usePlayer(agentId)
 
+  // TODO: remove this (obsolete)
   const editor = useDocument('editor', agentId)
+
+  const _createScreen = () => {
+    emitAction('createScreen')
+  }
 
   return (
     <HStack>
@@ -33,7 +39,7 @@ const InteractMenu = ({
           <Button size='sm' onClick={() => emitAction('createPortal')}>
             [P]lace [P]ortal
           </Button>
-          <Button size='sm' onClick={() => emitAction('createScreen')}>
+          <Button size='sm' onClick={() => _createScreen()}>
             [N]ew scree[N]
           </Button>
           <Button size='sm' onClick={() => emitAction('createBook')}>
@@ -90,6 +96,7 @@ const InteractMenu = ({
         </>
       }
 
+      <DialogConfirm id='screenNameDialog' />
     </HStack>
   )
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useRouter } from 'next/router'
 import {
-  VStack,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -8,36 +8,47 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
+  HStack,
+  Spacer,
+  Text,
 } from '@chakra-ui/react'
 import { getLocalStore, getRemoteStore } from '@/core/singleton'
 import { getGameCanvasElement } from '@/core/game-canvas'
+import useDocument from '@/hooks/useDocument'
 import useLocalDocument from '@/hooks/useLocalDocument'
 import Textarea from '@/components/Textarea'
 import Button from '@/components/Button'
+import Editable from '@/components/Editable'
 import * as Screen from '@/core/components/screen'
 
 const ScreenEditModal = ({
   screenId,
 }) => {
-  const [content, setContent] = useState('')
   const editingScreenId = useLocalDocument('screens', 'editing')
+  const screen = useDocument('screen', screenId)
+  // console.log(screen)
+
   const initialRef = useRef(null)
   const finalRef = useRef(null)
+
+  const router = useRouter()
+  const { slug } = router.query
 
   useEffect(() => {
     finalRef.current = getGameCanvasElement()
   }, [])
 
-  useEffect(() => {
-    const remoteStore = getRemoteStore();
-    const screen = remoteStore.getDocument('screen', screenId);
-    setContent(screen?.content ?? `Screen [${screenId}] not found`)
-  }, [screenId])
+  const _renameScreen = (value) => {
+    Screen.editScreen(screenId, {
+      name: value,
+    })
+  }
 
   const _onContentChange = (e) => {
-    const newContent = e.target.value
-    Screen.setContent(screenId, newContent)
-    setContent(newContent)
+    const content = e.target.value
+    Screen.editScreen(screenId, {
+      content,
+    })
   }
 
   const _handleClose = () => {
@@ -59,16 +70,21 @@ const ScreenEditModal = ({
     >
       <ModalOverlay />
       <ModalContent
-        backgroundColor='#0008'
+        maxW="56rem"
+        backgroundColor='#000a'
       >
         <ModalHeader>
-          Screen Editor
+          <HStack>
+            <Text>Screen:</Text>
+            <Editable currentValue={screen?.name ?? '???'} onSubmit={(value) => _renameScreen(value)} />
+            <Spacer />
+          </HStack>
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={4}>
           <Textarea
             ref={initialRef}
-            value={content}
+            value={screen?.content ?? `Screen [${screenId}] not found`}
             onChange={(e) => _onContentChange(e)}
           />
         </ModalBody>

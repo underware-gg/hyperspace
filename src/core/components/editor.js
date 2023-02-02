@@ -92,11 +92,16 @@ export const init = (canvas, id) => {
       return
     }
 
+    const name = window.prompt('Scren name', '')
+    if (name == null || name == '') {
+      return
+    }
+
     const screenId = nanoid()
-    const text = `# New screen\n\nThis is a MarkDown shared document\n\nid: ${screenId}`
+    const text = `# Screen: ${name}\n\nThis is a MarkDown shared document\n\nid: ${screenId}`
 
     const { tileX, tileY } = getCreateTile(id)
-    Screen.createDocument(screenId, tileX, tileY, text)
+    Screen.createDocument(screenId, tileX, tileY, text, name)
   })
 
   addActionDownListener('createBook', () => {

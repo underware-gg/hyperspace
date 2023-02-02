@@ -64,7 +64,7 @@ export const init = () => {
   })
 
   remoteStore.on({ type: 'player', event: 'update' }, (agentId, player) => {
-    console.log(`agent-update:`, agentId)
+    // console.log(`agent-update:`, agentId)
   })
 
   // texture swapping
@@ -81,7 +81,6 @@ export const init = () => {
   })
 
   addActionDownListener('delete', () => {
-    console.log(`ACTION > (DELETE)`)
     const store = getRemoteStore()
     const editor = store.getDocument('editor', room.agentId)
     if (editor === null) {

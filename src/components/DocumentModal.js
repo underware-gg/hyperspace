@@ -38,7 +38,7 @@ const DocumentModal = ({
     >
       <ModalOverlay />
       <ModalContent
-        backgroundColor='#0008'
+        backgroundColor='#000a'
         ref={containerRef}
       >
         <ModalHeader>

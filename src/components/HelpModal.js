@@ -25,7 +25,7 @@ const HelpModal = ({
     >
       <ModalOverlay />
       <ModalContent
-        backgroundColor='#0008'
+        backgroundColor='#000a'
       >
         <ModalHeader>
           Keyboard shortcuts

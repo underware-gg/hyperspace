@@ -38,8 +38,8 @@ export const handleKeyUp = e => {
   }
 }
 
-export const emitAction = actionName => {
-  actionDownEmitter.emit(actionName)
+export const emitAction = (actionName, options) => {
+  actionDownEmitter.emit(actionName, options)
 }
 
 export const clearKeys = e => {

@@ -34,7 +34,7 @@ const RoomModal = ({
         backdropBlur='6px'
       />
       <ModalContent
-        backgroundColor='#0008'
+        backgroundColor='#000a'
         boxShadow='hyperShadow'
       >
         <ModalHeader>
