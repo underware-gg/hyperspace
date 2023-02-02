@@ -1,5 +1,12 @@
 {
   "compilerOptions": {
-    "baseUrl": "."
+    // allows VSCode to prompt for path rename when files are moved/renamed
+    "baseUrl": ".",
+    // import path shortcuts
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    }
   }
 }

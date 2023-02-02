@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { nanoid } from 'nanoid'
 import { VStack, Heading, Text, Box } from '@chakra-ui/react'
-import Button from 'components/button'
-import Layout from '../components/layout'
-import RoomModal from 'components/room-modal'
+import Button from '@/components/Button'
+import Layout from '@/components/Layout'
+import RoomModal from '@/components/RoomModal'
 
 const HomePage = ({ slug }) => {
   const router = useRouter();

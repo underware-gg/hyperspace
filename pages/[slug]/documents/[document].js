@@ -1,11 +1,11 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { VStack, Heading, Box, Text } from '@chakra-ui/react'
-import Layout from 'components/layout'
-import Markdown from 'components/markdown'
-import Textarea from 'components/textarea'
-import useDocument from 'hooks/use-document'
-import { getRemoteStore } from 'core/singleton'
+import Layout from '@/components/Layout'
+import Markdown from '@/components/Markdown'
+import Textarea from '@/components/Textarea'
+import useDocument from '@/hooks/useDocument'
+import { getRemoteStore } from '@/core/singleton'
 
 const DocumentPage = () => {
   const document = useDocument('document', 'world')
@@ -14,7 +14,7 @@ const DocumentPage = () => {
 
   useEffect(() => {
     if (slug) {
-      import ('core/networking').then((ClientRoom) => {
+      import ('src/core/networking').then((ClientRoom) => {
         ClientRoom.init(slug)
         const room = ClientRoom.get()
         room.init(slug)

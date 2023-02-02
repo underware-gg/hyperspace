@@ -1,5 +1,5 @@
 import { VStack, Heading, Text, Box, Button } from '@chakra-ui/react'
-import Layout from '../components/layout'
+import Layout from '@/components/Layout'
 
 const Favicon = ({ slug }) => {
 

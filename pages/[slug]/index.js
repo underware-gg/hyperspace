@@ -1,24 +1,24 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import { Container, Box, VStack, HStack, Text, Spacer } from '@chakra-ui/react'
-import Layout from 'components/layout'
-import Button from 'components/button'
-import TilesetSelector from 'components/tileset-selector'
-import CharacterSelector from 'components/character-selector'
-import DocumentModal from 'components/document-modal'
-import HelpModal from 'components/help-modal'
-import InteractMenu from 'components/interact-menu'
-import Screens from 'components/screens'
-import Markdown from 'components/markdown'
-import RoomDownloadMenu from 'components/room-download-menu'
-import VeridaLogin from 'components/verida-login'
-import VeridaMenu from 'components/verida-menu'
-import useRoom from 'hooks/use-room'
-import useDocument from 'hooks/use-document'
-import useLocalDocument from 'hooks/use-local-document'
-import { getLocalStore, getRemoteStore } from 'core/singleton'
-import { focusGameCanvas } from 'core/gamecanvas'
-import { emitAction } from 'core/controller'
+import Layout from '@/components/Layout'
+import Button from '@/components/Button'
+import TilesetSelector from '@/components/TilesetSelector'
+import CharacterSelector from '@/components/CharacterSelector'
+import DocumentModal from '@/components/DocumentModal'
+import HelpModal from '@/components/HelpModal'
+import InteractMenu from '@/components/InteractMenu'
+import Screens from '@/components/Screens'
+import Markdown from '@/components/Markdown'
+import RoomDownloadMenu from '@/components/RoomDownloadMenu'
+import VeridaLogin from '@/components/VeridaLogin'
+import VeridaMenu from '@/components/VeridaMenu'
+import useRoom from '@/hooks/useRoom'
+import useDocument from '@/hooks/useDocument'
+import useLocalDocument from '@/hooks/useLocalDocument'
+import { getLocalStore, getRemoteStore } from '@/core/singleton'
+import { focusGameCanvas } from '@/core/game-canvas'
+import { emitAction } from '@/core/controller'
 
 const RoomPage = () => {
   const { agentId } = useRoom();
@@ -48,7 +48,7 @@ const RoomPage = () => {
 
   useEffect(() => {
     if (slug && canvasRef.current && canvas3dRef.current && documentRef.current && !agentId) {
-      import('core/game').then(({ default: Game }) => {
+      import('src/core/game').then(({ default: Game }) => {
         const game = new Game()
         game.init(slug, canvasRef.current, canvas3dRef.current, documentRef.current)
       })
@@ -146,7 +146,6 @@ const RoomPage = () => {
         </VStack>
 
         <DocumentModal
-          finalRef={is3d ? canvas3dRef : canvasRef}
           text={document?.content || ''}
           isOpen={isDocOpen}
           onClose={handleClose}
