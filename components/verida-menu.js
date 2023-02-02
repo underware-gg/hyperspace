@@ -9,12 +9,15 @@ import * as ClientRoom from 'core/networking'
 
 const VeridaMenu = () => {
   const { agentId } = useRoom();
-  const { veridaConnected, veridaProfile } = useVerida(agentId)
+  const { veridaIsConnected, veridaProfile } = useVerida(agentId)
   const router = useRouter()
   const { slug } = router.query
 
   const _inviteFriend = async () => {
     const recipientDid = window.prompt('DID to invite', 'did:vda:....')
+    if (!recipientDid) {
+      return
+    }
     const subject = `Hyperbox invite!`
     const message = `Join me in ${slug} on Hyperbox`
     // @todo: Get app URL from next.js
@@ -29,7 +32,7 @@ const VeridaMenu = () => {
       return
     }
     const snapshotOps = room.getSnapshotOps()
-    const VeridaUser = (await import('core/networking/verida')).VeridaUser
+    const { VeridaUser } = (await import('core/networking/verida'))
     await VeridaUser.saveRoom(slug, snapshotOps)
   }
 
@@ -39,7 +42,7 @@ const VeridaMenu = () => {
       return
     }
 
-    const VeridaUser = (await import('core/networking/verida')).VeridaUser
+    const { VeridaUser } = (await import('core/networking/verida'))
     const snapshot = await VeridaUser.getRoom(room.slug)
 
     if (snapshot) {
@@ -58,13 +61,13 @@ const VeridaMenu = () => {
   }
 
   const _lastTweet = async () => {
-    const VeridaUser = (await import('core/networking/verida')).VeridaUser
+    const { VeridaUser } = (await import('core/networking/verida'))
     await VeridaUser.setDocumentToLastTweet()
   }
 
   return (
     <HStack>
-      {veridaConnected &&
+      {veridaIsConnected &&
         <>
           <Button variant='outline' size='sm' onClick={() => _inviteFriend()}>
             Invite Friend

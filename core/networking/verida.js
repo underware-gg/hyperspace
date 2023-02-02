@@ -1,23 +1,25 @@
 import { EnvironmentType } from '@verida/types'
 import { WebUser } from '@verida/account-web-vault';
-
 import { getRemoteStore } from '../../core/singleton'
 
 // (optional) Import WalletConnect if required
-//import WalletConnect from "@walletconnect/client";
+//import WalletConnect from '@walletconnect/client';
+
+// API docs:
+// https://developers.verida.network/docs/single-sign-on-sdk/web-user
 
 const VERIDA_ENVIRONMENT = EnvironmentType.TESTNET
 const CONTEXT_NAME = 'funDAOmental: Hyperbox'
 const SNAPSPHOT_DB_NAME = 'room_snapshots'
 
-const LOGO_URL = "https://fundaomental.com/oathring/512x512.png";
+const LOGO_URL = '/oathring_512x512.png';
 
 class HyperboxWebUser extends WebUser {
 
   // @todo: Create a proper schema
   async saveRoom(roomId, snapshot) {
     console.log(`saveRoom(${roomId})`)
-    const roomSnapshotsDb = await VeridaUser._getSnapshotDb()
+    const roomSnapshotsDb = await VeridaUser.getSnapshotDb()
     let roomItem = {
       _id: roomId
     }
@@ -46,7 +48,7 @@ class HyperboxWebUser extends WebUser {
 
   async getRoom(roomId) {
     console.log(`getRoom(${roomId})`)
-    const roomSnapshotsDb = await VeridaUser._getSnapshotDb()
+    const roomSnapshotsDb = await VeridaUser.getSnapshotDb()
     try {
       const roomItem = await roomSnapshotsDb.get(roomId)
       console.log(roomItem)
@@ -60,7 +62,7 @@ class HyperboxWebUser extends WebUser {
     }
   }
 
-  async _getSnapshotDb() {
+  async getSnapshotDb() {
     const context = await VeridaUser.getContext()
     const roomSnapshotsDb = await context.openDatabase(SNAPSPHOT_DB_NAME, {
       permissions: {
@@ -96,13 +98,13 @@ class HyperboxWebUser extends WebUser {
       const lastPost = recentPosts[0]
       console.log('Most recent twitter post:')
       console.log(lastPost)
-      const content = `<img src="${lastPost.sourceData.user.avatar}" /><strong>@${lastPost.sourceData.user.screen_name}</strong>: ${lastPost.content}`
+      const content = `<img src='${lastPost.sourceData.user.avatar}' /><strong>@${lastPost.sourceData.user.screen_name}</strong>: ${lastPost.content}`
 
       const store = getRemoteStore()
       store.setDocument('document', 'world', { content })
     })
 
-    console.log("Requesting tweet data from user's mobile")
+    console.log('Requesting tweet data from user\'s mobile')
     await messaging.send(VeridaUser.did, messageType, data, message, config)
   }
 }

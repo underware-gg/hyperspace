@@ -2,45 +2,60 @@ import { useState, useEffect } from 'react'
 
 const useVerida = (id) => {
   const [isConnected, setIsConnected] = useState(false)
+  const [isConnecting, setIsConnecting] = useState(false)
   const [profile, setProfile] = useState({})
 
   useEffect(() => {
-    const veridaConnected = async (profile) => {
-      if (isConnected) {
-        return
-      }
+    let _mounted = true
 
+    const _veridaConnected = (profile) => {
       setIsConnected(true)
+      setIsConnecting(false)
       setProfile(profile)
-
-      const VeridaUser = (await import('core/networking/verida')).VeridaUser
-      VeridaUser.on('profileChanged', (profile) => {
-        setProfile(profile)
-      })
     }
 
-    const initVerida = async () => {
-      const VeridaUser = (await import('core/networking/verida')).VeridaUser
+    const _veridaDisconnected = () => {
+      setIsConnected(false)
+      setIsConnecting(false)
+      setProfile({})
+    }
+
+    const _veridaProfileChanged = (profile) => {
+      setProfile(profile)
+    }
+
+    const _initVerida = async () => {
+      setIsConnecting(true)
+      const { VeridaUser } = (await import('core/networking/verida'))
       const isConnected = await VeridaUser.isConnected()
       if (isConnected) {
         const profile = await VeridaUser.getPublicProfile()
-        veridaConnected(profile)
+        _veridaConnected(profile)
+      } else {
+        setIsConnecting(false)
       }
 
-      VeridaUser.on('connected', (profile) => {
-        veridaConnected(profile)
-      })
-
-      VeridaUser.on('disconnected', () => {
-        setIsConnected(false)
-      })
+      if (_mounted) {
+        VeridaUser.on('connected', _veridaConnected)
+        VeridaUser.on('disconnected', _veridaDisconnected)
+        VeridaUser.on('profileChanged', _veridaProfileChanged)
+      }
     }
 
-    initVerida()
+    _initVerida()
+
+    return async () => {
+      _mounted = false
+      const { VeridaUser } = (await import('core/networking/verida'))
+      VeridaUser.off('connected', _veridaConnected)
+      VeridaUser.off('disconnected', _veridaDisconnected)
+      VeridaUser.off('profileChanged', _veridaProfileChanged)
+    }
   }, [])
 
   return {
-    veridaConnected: isConnected,
+    veridaIsConnected: isConnected,
+    veridaIsInitializing: isConnecting,
     veridaProfile: profile,
   }
 }
