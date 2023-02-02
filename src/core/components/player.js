@@ -47,8 +47,9 @@ export const init = () => {
     scene.add(playerMesh);
 
     localStore.setDocument('player-mesh', agentId, playerMesh)
-    // console.log(`ADDED Player`, agentId)
+    console.log(`agent-join:`, agentId)
   })
+
   room.on('agent-leave', (agentId) => {
     const localStore = getLocalStore()
     const scene = localStore.getDocument('scene', 'scene')
@@ -56,12 +57,14 @@ export const init = () => {
 
     if (scene !== null && playerMesh !== null) {
       scene.remove(playerMesh)
-      // console.log(`REMOVED Player`, agentId)
+      console.log(`agent-leave:`, agentId)
     }
 
     localStore.setDocument('player-mesh', agentId, null)
   })
+
   remoteStore.on({ type: 'player', event: 'update' }, (agentId, player) => {
+    console.log(`agent-update:`, agentId)
   })
 
   // texture swapping
@@ -93,13 +96,14 @@ export const init = () => {
 
 const makePlayerMaterial = (agentId) =>{
   const textureName = getPlayerTextureName(agentId);
-  const texture = new THREE.TextureLoader().load(textureName);
-  texture.minFilter = THREE.NearestFilter;
-  texture.magFilter = THREE.NearestFilter;
+  const texture = getTextureByName(textureName, 'player')
+  const materialTexture = new THREE.TextureLoader().load(texture.src);
+  materialTexture.minFilter = THREE.NearestFilter;
+  materialTexture.magFilter = THREE.NearestFilter;
   const material = new THREE.MeshBasicMaterial({
-    map: texture,
-    transparent: true,
+    map: materialTexture,
     side: THREE.DoubleSide,
+    transparent: true,
   });
   return material;
 }
@@ -588,12 +592,7 @@ export const render2d = (id, context) => {
 const getPlayerTextureName = (agentId) => {
   const store = getRemoteStore()
   const profile = store.getDocument('profile', agentId)
-
-  if (profile?.spritesheet) {
-    return profile?.spritesheet;
-  }
-
-  return 'player'
+  return profile?.spritesheet ?? null;
 }
 
 const getPlayerSprite = (textureName, x, y, rot) => {
