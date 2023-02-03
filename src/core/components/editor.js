@@ -109,13 +109,17 @@ export const init = (canvas, id) => {
       return
     }
 
-    const text = window.prompt('The book reads...', 'test')
-    if (text === null) {
+    // const url = window.prompt('PDF URL:', 'https://bitcoin.org/bitcoin.pdf')
+    const url = window.prompt('PDF URL:', '/books/funDAOmentals.pdf')
+    if (url == null || url == '') {
       return
     }
+    const name = url.split('/').slice(-1)[0]
+    console.log(url, name)
 
+    const screenId = nanoid()
     const { tileX, tileY } = getCreateTile(id)
-    Book.create(nanoid(), tileX, tileY, text)
+    Screen.createBook(screenId, tileX, tileY, url, name)
   })
 
   canvas.addEventListener('mousemove', handleMouseMove)

@@ -96,13 +96,14 @@ export const textureData = {
   'tileset': {
     src: defaultTileset,
   },
-  'book': {
-    src: '/book.png',
-  },
   'portal': {
-    src: '/portal.png',
+    src: '/tiles/portal.png',
   },
-  'screen': {
-    src: '/screen.png',
+  // matching screen types
+  'document': {
+    src: '/tiles/screen_document.png',
+  },
+  'pdf_book': {
+    src: '/tiles/screen_book.png',
   },
 }

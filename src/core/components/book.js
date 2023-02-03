@@ -157,7 +157,7 @@ export const render2d = (id, context) => {
   renderMarkdown(book.text, documentTexture.canvas, documentTexture.context)
   documentTexture.texture.needsUpdate = true
 
-  const bookTexture = getTextureImageByName('book')
+  const bookTexture = getTextureImageByName('pdf_book')
 
   context.drawImage(
     bookTexture,

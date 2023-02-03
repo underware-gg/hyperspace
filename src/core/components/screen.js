@@ -7,6 +7,15 @@ import * as Interactable from '@/core/components/interactable'
 
 export const TYPE = {
   DOCUMENT: 'document',
+  PDF_BOOK: 'pdf_book',
+}
+
+export const isMultiline = (type) => {
+  return type == (TYPE.DOCUMENT)
+}
+
+export const hasPageControl = (type) => {
+  return type == (TYPE.PDF_BOOK)
 }
 
 export const init = () => {
@@ -133,7 +142,7 @@ export const render2d = (id, context) => {
   // renderMarkdown(screen.text, documentTexture.canvas, documentTexture.context)
   // documentTexture.texture.needsUpdate = true
 
-  const screenTexture = getTextureImageByName('screen')
+  const screenTexture = getTextureImageByName(screen.type)
 
   context.drawImage(
     screenTexture,
@@ -176,11 +185,21 @@ export const createDocument = (id, x, y, text, name) => {
   const screen = {
     ...makeScreen(id, x, y, TYPE.DOCUMENT, text, name),
   }
+  console.log(`New screen:`, screen)
   Interactable.create('screen', id, x, y, screen)
   return screen
 }
 
-export const editScreen = (id, values) => {
+export const createBook = (id, x, y, url, name) => {
+  const screen = {
+    ...makeScreen(id, x, y, TYPE.PDF_BOOK, url, name),
+  }
+  console.log(`New screen:`, screen)
+  Interactable.create('screen', id, x, y, screen)
+  return screen
+}
+
+export const updateScreen = (id, values) => {
   const store = getRemoteStore()
   let screen = store.getDocument('screen', id)
   if (screen !== null) {

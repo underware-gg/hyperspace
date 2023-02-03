@@ -11,14 +11,17 @@ import {
   HStack,
   Spacer,
   Text,
+  Input,
+  Box,
 } from '@chakra-ui/react'
 import { getLocalStore, getRemoteStore } from '@/core/singleton'
 import { getGameCanvasElement } from '@/core/game-canvas'
 import useDocument from '@/hooks/useDocument'
 import useLocalDocument from '@/hooks/useLocalDocument'
-import Textarea from '@/components/Textarea'
 import Button from '@/components/Button'
 import Editable from '@/components/Editable'
+import Textarea from '@/components/Textarea'
+import { SliderProgress } from '@/components/Sliders'
 import * as Screen from '@/core/components/screen'
 
 const ScreenEditModal = ({
@@ -39,15 +42,21 @@ const ScreenEditModal = ({
   }, [])
 
   const _renameScreen = (value) => {
-    Screen.editScreen(screenId, {
+    Screen.updateScreen(screenId, {
       name: value,
     })
   }
 
   const _onContentChange = (e) => {
     const content = e.target.value
-    Screen.editScreen(screenId, {
+    Screen.updateScreen(screenId, {
       content,
+    })
+  }
+
+  const _onProgressChange = (value) => {
+    Screen.updateScreen(screenId, {
+      page: value,
     })
   }
 
@@ -62,6 +71,8 @@ const ScreenEditModal = ({
   }
 
   const isOpen = (editingScreenId != null && editingScreenId == screenId)
+  const isMultiline = Screen.isMultiline(screen?.type)
+  const hasPageControl = Screen.hasPageControl(screen?.type)
 
   return (
     <Modal
@@ -80,18 +91,36 @@ const ScreenEditModal = ({
       >
         <ModalHeader>
           <HStack>
-            <Text>Screen:</Text>
-            <Editable currentValue={screen?.name ?? '???'} onSubmit={(value) => _renameScreen(value)} />
+            <Text>{screen?.type}:</Text>
+            {screen?.name
+              ? <Editable currentValue={screen.name} onSubmit={(value) => _renameScreen(value)} />
+              : <Text color='important'>???</Text>
+            }
             <Spacer />
           </HStack>
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={4}>
-          <Textarea
-            ref={initialRef}
-            value={screen?.content ?? `Screen [${screenId}] not found`}
-            onChange={(e) => _onContentChange(e)}
-          />
+          {isMultiline ? 
+            <Textarea
+              ref={initialRef}
+              value={screen?.content ?? `Screen [${screenId}] not found`}
+              onChange={(e) => _onContentChange(e)}
+              disabled={!screen}
+            />
+            :
+            <Input
+              value={screen?.content ?? `Screen [${screenId}] not found`}
+              onChange={(e) => _onContentChange(e)}
+              disabled={!screen}
+            />
+
+          }
+          {hasPageControl &&
+            // <Box borderWidth='1px' borderRadius='lg' overflow='hidden'>
+            <SliderProgress onChange={(value) => _onProgressChange(value)}/>
+            // </Box>
+          }
         </ModalBody>
         <ModalFooter>
           <Button
@@ -100,7 +129,9 @@ const ScreenEditModal = ({
             disabled={!screen?.name}
             onClick={() => _openDocumentLink()}
           />
-          &nbsp;<Text>{screenId}</Text>
+          <Spacer />
+          <Text>{screen?.type}</Text>
+          :<Text>{screenId}</Text>
           <Spacer />
           <Button
             variant='outline'

@@ -5,13 +5,12 @@ import ResizeTextarea from 'react-textarea-autosize'
 const Textarea = forwardRef(({
   value,
   onChange,
+  disabled,
 }, ref) => {
 
   const handleChange = (e) => {
     onChange?.(e)
   }
-
-  const noContent = (value == null);
 
   return (
     <ChakraTextarea
@@ -23,8 +22,8 @@ const Textarea = forwardRef(({
       minRows={15}
       maxRows={25}
       as={ResizeTextarea}
-      disabled={noContent}
-      placeholder={noContent ? 'No content' : 'Start editing the document'}
+      disabled={disabled || value == null}
+      placeholder={value == null ? 'No content' : 'Start editing the document'}
       value={value}
       onChange={handleChange}
     />

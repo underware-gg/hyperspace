@@ -1,5 +1,8 @@
 import { useEffect, useState, useMemo, useRef } from 'react'
-import { HStack } from '@chakra-ui/react'
+import {
+  HStack,
+  Text,
+} from '@chakra-ui/react'
 import Button from '@/components/Button'
 import DialogConfirm from '@/components/DialogConfirm'
 import useRoom from '@/hooks/useRoom'
@@ -21,10 +24,7 @@ const InteractMenu = ({
   } = usePlayer(agentId)
 
   const editor = useDocument('editor', agentId)
-
-  const _createScreen = () => {
-    emitAction('createScreen')
-  }
+  const screen = useDocument('screen', screenId)
 
   return (
     <HStack>
@@ -35,10 +35,10 @@ const InteractMenu = ({
             : <>Player@[{tileX},{tileY}]&nbsp;</>
           }
           <Button size='sm' onClick={() => emitAction('createPortal')}>
-            [P]lace [P]ortal
+            New [P]ortal
           </Button>
-          <Button size='sm' onClick={() => _createScreen()}>
-            [N]ew scree[N]
+          <Button size='sm' onClick={() => emitAction('createScreen')}>
+            New scree[N]
           </Button>
           <Button size='sm' onClick={() => emitAction('createBook')}>
             New [B]ook
@@ -48,7 +48,7 @@ const InteractMenu = ({
 
       {overPortal &&
         <>
-          Portal [<b>{portalName}</b>]
+          Portal to&nbsp;<Text color='important'>{portalName}</Text>
           <Button size='sm' onClick={() => emitAction('interact')}>
             [E]nter
           </Button>
@@ -60,14 +60,14 @@ const InteractMenu = ({
 
       {overScreen &&
         <>
-          Screen [<b>{screenId}</b>]
-          <Button size='sm' onClick={() => emitAction('interact')}>
+          {screen?.type}&nbsp;<Text color='important'>{screen?.name ?? screenId}</Text>:
+          <Button size='sm' onClick={() => emitAction('interact')} disabled={!screen}>
             [E]dit
           </Button>
-          <Button size='sm' onClick={() => emitAction('delete')}>
+          <Button size='sm' onClick={() => emitAction('delete')} disabled={!screen}>
             [Del]ete
           </Button>
-          <Button size='sm' onClick={async () => await lastTweet()}>
+          <Button size='sm' onClick={async () => await lastTweet()} disabled={!screen}>
             Last Tweet
           </Button>
         </>

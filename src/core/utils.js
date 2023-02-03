@@ -8,6 +8,8 @@ export class CONST {
 export const deepCopy = data => JSON.parse(JSON.stringify(data))
 export const deepCompare = (a, b) => JSON.stringify(a) === JSON.stringify(b)
 export const roundToNearest = (value, nearest) => Math.round(value / nearest) * nearest
+export const lerp = (v, min, max) => (min + (max - min) * v)
+export const map = (v, inMin, inMax, outMin, outMax) => (outMin + (outMax - outMin) * ((v - inMin) / (inMax - inMin)))
 export const clamp = (value, min, max) => Math.min(Math.max(value, min), max)
 export const clampRadians = (angle) => {
   let result = angle

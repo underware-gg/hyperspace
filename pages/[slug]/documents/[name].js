@@ -47,7 +47,7 @@ const DocumentPage = () => {
   const _handleInputChange = (e) => {
     if(screenId) {
       const content = e.target.value
-      Screen.editScreen(screenId, {
+      Screen.updateScreen(screenId, {
         content,
       })
     }
@@ -57,7 +57,7 @@ const DocumentPage = () => {
     <Layout>
       <VStack align='stretch' w='100%' spacing={4} shouldWrapChildren>
         <Heading as='h1' size='2xl'>
-          Screen <Text color='orange.300' as='span'>{screen?.name ?? '???'}</Text>
+          Screen <Text color='important' as='span'>{screen?.name ?? '???'}</Text>
         </Heading>
         <Box border='1px' borderRadius='4px'>
           <Textarea
