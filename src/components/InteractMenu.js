@@ -19,7 +19,6 @@ const InteractMenu = ({
     canPlace,
     overPortal, portalId, portalName,
     overScreen, screenId,
-    overBook, bookId,
     tileX, tileY,
   } = usePlayer(agentId)
 
@@ -69,18 +68,6 @@ const InteractMenu = ({
           </Button>
           <Button size='sm' onClick={async () => await lastTweet()} disabled={!screen}>
             Last Tweet
-          </Button>
-        </>
-      }
-
-      {overBook &&
-        <>
-          Book [<b>{bookId}</b>]
-          <Button size='sm' onClick={() => emitAction('interact')}>
-            r[E]ad
-          </Button>
-          <Button size='sm' onClick={() => emitAction('delete')}>
-            [Del]ete
           </Button>
         </>
       }

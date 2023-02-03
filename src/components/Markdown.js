@@ -96,7 +96,6 @@ const components = {
 }
 
 const Markdown = ({
-  documentName = 'world',
   children = '',
 }) => {
   return (

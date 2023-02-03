@@ -10,7 +10,6 @@ import * as Map from '@/core/components/map'
 import * as Editor from '@/core/components/editor'
 import * as Portal from '@/core/components/portal'
 import * as Screen from '@/core/components/screen'
-import * as Book from '@/core/components/book'
 import { getRemoteStore, getLocalStore } from '@/core/singleton'
 
 export const init = async (slug, canvas, canvas3d) => {
@@ -173,7 +172,6 @@ export const init = async (slug, canvas, canvas3d) => {
   Player.init()
   Map.init()
   Portal.init()
-  Book.init()
   Screen.init()
 
   room.init(slug)
@@ -217,7 +215,6 @@ export const render = (canvas, context) => {
   const playerIds = store.getIds('player')
   const portalIds = store.getIds('portal')
   const screenIds = store.getIds('screen')
-  const bookIds = store.getIds('book')
 
   Map.render2d('world', context)
 
@@ -228,9 +225,6 @@ export const render = (canvas, context) => {
   }
   for (const screenId of screenIds) {
     Screen.render2d(screenId, context)
-  }
-  for (const bookId of bookIds) {
-    Book.render2d(bookId, context)
   }
 
   // Should probably be able to just get them directly.

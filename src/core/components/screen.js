@@ -138,10 +138,6 @@ export const render2d = (id, context) => {
 
   const { position: { x, y } } = screen
 
-  // This should be replaced with a sprite eventually.
-  // renderMarkdown(screen.text, documentTexture.canvas, documentTexture.context)
-  // documentTexture.texture.needsUpdate = true
-
   const screenTexture = getTextureImageByName(screen.type)
 
   context.drawImage(

@@ -2,7 +2,6 @@ import * as THREE from 'three'
 import * as Room from '@/core/networking'
 import * as Portal from '@/core/components/portal'
 import * as Screen from '@/core/components/screen'
-import * as Book from '@/core/components/book'
 import * as Interactable from '@/core/components/interactable'
 import { getActionState, addActionDownListener } from '@/core/controller'
 import { getTextureByName, getSprite } from '@/core/textures'
@@ -88,7 +87,6 @@ export const init = () => {
     }
 
     Portal.remove(getPortalOverPlayer(room.agentId))
-    Book.remove(getBookOverPlayer(room.agentId))
     Screen.remove(getScreenOverPlayer(room.agentId))
   })
 }
@@ -208,21 +206,10 @@ export const interact = (id) => {
     localStore.setDocument('screens', 'editing', newScreenId)
     return
   }
-
-  const bookId = getBookOverPlayer(id)
-  if (bookId) {
-    Book.read(bookId)
-    return
-  }
-
 }
 
 export const getPortalOverPlayer = (id) => {
   return getInteractableOverPlayer('portal', id)
-}
-
-export const getBookOverPlayer = (id) => {
-  return getInteractableOverPlayer('book', id)
 }
 
 export const getScreenOverPlayer = (id) => {
@@ -232,7 +219,6 @@ export const getScreenOverPlayer = (id) => {
 export const canPlaceOverPlayer = (id) => {
   return (
     getPortalOverPlayer(id) == null && 
-    getBookOverPlayer(id) == null && 
     getScreenOverPlayer(id) == null
   );
 }
