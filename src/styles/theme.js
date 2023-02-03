@@ -32,6 +32,7 @@ const _custom = {
     black: '#000',
     white: '#fff',
     gray: '#ddd',
+    important: '#F39C12',
     // chakra: { border: { color: 'teal' }},
   },
 

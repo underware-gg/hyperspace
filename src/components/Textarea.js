@@ -11,6 +11,8 @@ const Textarea = forwardRef(({
     onChange?.(e)
   }
 
+  const noContent = (value == null);
+
   return (
     <ChakraTextarea
       ref={ref}
@@ -21,7 +23,8 @@ const Textarea = forwardRef(({
       minRows={15}
       maxRows={25}
       as={ResizeTextarea}
-      placeholder='Start editing the document'
+      disabled={noContent}
+      placeholder={noContent ? 'No content' : 'Start editing the document'}
       value={value}
       onChange={handleChange}
     />

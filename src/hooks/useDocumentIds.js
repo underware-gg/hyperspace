@@ -11,6 +11,8 @@ const useDocumentIds = (type) => {
       setIds(remoteStore.getIds(type))
     }
 
+    setIds(remoteStore.getIds(type))
+
     remoteStore.on({ type, event: 'create' }, _handleChange)
     remoteStore.on({ type, event: 'delete' }, _handleChange)
 

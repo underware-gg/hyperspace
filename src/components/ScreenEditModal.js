@@ -51,6 +51,11 @@ const ScreenEditModal = ({
     })
   }
 
+  const _openDocumentLink = () => {
+    const url = `/${slug}/documents/${screen?.name}`
+    window.open(url, '_blank', 'noreferrer')
+  }
+
   const _handleClose = () => {
     const store = getLocalStore()
     store.setDocument('screens', 'editing', null)
@@ -70,7 +75,7 @@ const ScreenEditModal = ({
     >
       <ModalOverlay />
       <ModalContent
-        maxW="56rem"
+        maxW='56rem'
         backgroundColor='#000a'
       >
         <ModalHeader>
@@ -90,8 +95,16 @@ const ScreenEditModal = ({
         </ModalBody>
         <ModalFooter>
           <Button
-            variant="outline"
-            value="Close"
+            variant='outline'
+            value='Document Link'
+            disabled={!screen?.name}
+            onClick={() => _openDocumentLink()}
+          />
+          &nbsp;<Text>{screenId}</Text>
+          <Spacer />
+          <Button
+            variant='outline'
+            value='Close'
             onClick={() => _handleClose()}
           />
         </ModalFooter>

@@ -51,7 +51,7 @@ const Editable = ({
       onSubmit={onSubmit}
     >
       <HStack>
-        <EditablePreview color='orange.300' />
+        <EditablePreview  color='important' />
         <Input as={EditableInput} />
         <EditableControls />
       </HStack>
