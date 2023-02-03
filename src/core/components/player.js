@@ -225,13 +225,14 @@ export const canPlaceOverPlayer = (id) => {
 
 export const getInteractableOverPlayer = (type, id) => {
   const playerRect = getPlayerCollisionRect(id);
+  if (playerRect == null) {
+    return
+  }
 
   const store = getRemoteStore()
   const ids = store.getIds(type)
 
   for (const targetId of ids) {
-    // This should also take into account the height of the thing, currently if you're in the air
-    // not touching a portal you can still use it for travel.
     if (rectanglesOverlap(playerRect, Interactable.getCollisionRect(type, targetId))) {
       return targetId
     }

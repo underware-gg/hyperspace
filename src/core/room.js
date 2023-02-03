@@ -224,7 +224,7 @@ export const render = (canvas, context) => {
     Portal.render2d(portalId, context)
   }
   for (const screenId of screenIds) {
-    Screen.render2d(screenId, context)
+    Screen.render2d(screenId, context, room.agentId)
   }
 
   // Should probably be able to just get them directly.

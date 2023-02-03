@@ -103,7 +103,13 @@ export const textureData = {
   'document': {
     src: '/tiles/screen_document.png',
   },
+  'document_over': {
+    src: '/tiles/screen_document2.png',
+  },
   'pdf_book': {
     src: '/tiles/screen_book.png',
+  },
+  'pdf_book_over': {
+    src: '/tiles/screen_book2.png',
   },
 }

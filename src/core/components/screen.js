@@ -3,6 +3,7 @@ import { getTextureImageByName } from '@/core/textures'
 import { getLocalStore, getRemoteStore } from '@/core/singleton'
 import { getTile, floors } from '@/core/components/map'
 import { addActionDownListener } from '@/core/controller'
+import { getScreenOverPlayer } from '@/core/components/player'
 import * as Interactable from '@/core/components/interactable'
 
 export const TYPE = {
@@ -128,7 +129,7 @@ export const getCollisionRect = (id) => {
   return Interactable.getCollisionRect('screen', id)
 }
 
-export const render2d = (id, context) => {
+export const render2d = (id, context, agentId) => {
   const store = getRemoteStore()
   const screen = store.getDocument('screen', id)
 
@@ -138,7 +139,17 @@ export const render2d = (id, context) => {
 
   const { position: { x, y } } = screen
 
-  const screenTexture = getTextureImageByName(screen.type)
+  let textureName = screen.type
+  let textureNameOver = screen.type
+  if (agentId && id == getScreenOverPlayer(agentId)) {
+    textureNameOver += `_over`
+  }
+  let screenTexture = getTextureImageByName(textureNameOver, textureName)
+
+  if (screenTexture == null) {
+    console.warn(`Screen texture not found`, textureNameOver, textureName)
+    return
+  }
 
   context.drawImage(
     screenTexture,
