@@ -17,11 +17,9 @@ const InteractMenu = ({
     overPortal, portalId, portalName,
     overScreen, screenId,
     overBook, bookId,
-    overDocument, documentId,
     tileX, tileY,
   } = usePlayer(agentId)
 
-  // TODO: remove this (obsolete)
   const editor = useDocument('editor', agentId)
 
   const _createScreen = () => {
@@ -69,6 +67,9 @@ const InteractMenu = ({
           <Button size='sm' onClick={() => emitAction('delete')}>
             [Del]ete
           </Button>
+          <Button size='sm' onClick={async () => await lastTweet()}>
+            Last Tweet
+          </Button>
         </>
       }
 
@@ -80,18 +81,6 @@ const InteractMenu = ({
           </Button>
           <Button size='sm' onClick={() => emitAction('delete')}>
             [Del]ete
-          </Button>
-        </>
-      }
-
-      {overDocument &&
-        <>
-          Document [<b>{documentId}</b>]
-          <Button size='sm' onClick={async () => await lastTweet()}>
-            Last Tweet
-          </Button>
-          <Button size='sm' onClick={() => emitAction('interact')}>
-            Edit Document
           </Button>
         </>
       }

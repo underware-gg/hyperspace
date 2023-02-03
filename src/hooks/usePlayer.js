@@ -3,7 +3,6 @@ import {
   getPortalOverPlayer,
   getScreenOverPlayer,
   getBookOverPlayer,
-  getDocumentOverPlayer,
   getPlayerTile,
 } from '@/core/components/player'
 import useDocument from '@/hooks/useDocument'
@@ -14,7 +13,6 @@ const usePlayer = (id) => {
   const [portalId, setPortalId] = useState(null)
   const [screenId, setScreenId] = useState(null)
   const [bookId, setBookId] = useState(null)
-  const [overDocument, setOverDocument] = useState(false)
   const [playerTile, setPlayerTile] = useState(null)
 
   const portal = useDocument('portal', portalId)
@@ -28,13 +26,11 @@ const usePlayer = (id) => {
       setPortalId(getPortalOverPlayer(id))
       setScreenId(getScreenOverPlayer(id))
       setBookId(getBookOverPlayer(id))
-      setOverDocument(getDocumentOverPlayer(id))
       setPlayerTile(getPlayerTile(id))
     } else {
       setPortalId(null)
       setScreenId(null)
       setBookId(null)
-      setOverDocument(null)
       setPlayerTile(null)
     }
   }, [player?.position?.x, player?.position?.y, portalIds.length, bookIds.length, screenIds.length])
@@ -48,8 +44,7 @@ const usePlayer = (id) => {
     overPortal: portalId != null,
     overScreen: screenId != null,
     overBook: bookId != null,
-    overDocument,
-    canPlace: (portalId == null && screenId == null && bookId == null && !overDocument),
+    canPlace: (portalId == null && screenId == null && bookId == null),
     tileX: playerTile?.tileX ?? null,
     tileY: playerTile?.tileY ?? null,
   }

@@ -215,11 +215,6 @@ export const interact = (id) => {
     return
   }
 
-  // Check if you're standing where the document is
-  if (getDocumentOverPlayer(id)) {
-    localStore.setDocument('show-doc', 'world', true)
-    return
-  }
 }
 
 export const getPortalOverPlayer = (id) => {
@@ -232,11 +227,6 @@ export const getBookOverPlayer = (id) => {
 
 export const getScreenOverPlayer = (id) => {
   return getInteractableOverPlayer('screen', id)
-}
-
-export const getDocumentOverPlayer = (id) => {
-  const { tileX, tileY, } = getPlayerTile(id)
-  return (tileY >= 2 && tileY <= 3 && tileX >= 8.5 && tileX <= 11.5)
 }
 
 export const canPlaceOverPlayer = (id) => {

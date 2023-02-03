@@ -5,55 +5,38 @@ import Layout from '@/components/Layout'
 import Button from '@/components/Button'
 import TilesetSelector from '@/components/TilesetSelector'
 import CharacterSelector from '@/components/CharacterSelector'
-import DocumentModal from '@/components/DocumentModal'
 import HelpModal from '@/components/HelpModal'
 import InteractMenu from '@/components/InteractMenu'
 import Screens from '@/components/Screens'
-import Markdown from '@/components/Markdown'
 import RoomDownloadMenu from '@/components/RoomDownloadMenu'
 import VeridaLogin from '@/components/VeridaLogin'
 import VeridaMenu from '@/components/VeridaMenu'
 import useRoom from '@/hooks/useRoom'
-import useDocument from '@/hooks/useDocument'
 import useLocalDocument from '@/hooks/useLocalDocument'
-import { getLocalStore, getRemoteStore } from '@/core/singleton'
 import { focusGameCanvas } from '@/core/game-canvas'
 import { emitAction } from '@/core/controller'
 
 const RoomPage = () => {
   const { agentId } = useRoom();
   const [showHelp, setShowHelp] = useState(false)
-  const document = useDocument('document', 'world')
   const is3d = useLocalDocument('show-3d', 'world') ?? false
-  const isDocOpen = useLocalDocument('show-doc', 'world') ?? false
   const router = useRouter()
   const canvasRef = useRef()
   const canvas3dRef = useRef()
-  const documentRef = useRef()
   const { slug } = router.query
 
   useEffect(() => {
     focusGameCanvas()
   }, [is3d, canvasRef, canvas3dRef])
 
-  const handleInputChange = e => {
-    const store = getRemoteStore()
-    store.setDocument('document', 'world', { content: e.target.value })
-  }
-
-  const handleClose = () => {
-    const store = getLocalStore()
-    store.setDocument('show-doc', 'world', false)
-  }
-
   useEffect(() => {
-    if (slug && canvasRef.current && canvas3dRef.current && documentRef.current && !agentId) {
+    if (slug && canvasRef.current && canvas3dRef.current && !agentId) {
       import('src/core/game').then(({ default: Game }) => {
         const game = new Game()
-        game.init(slug, canvasRef.current, canvas3dRef.current, documentRef.current)
+        game.init(slug, canvasRef.current, canvas3dRef.current)
       })
     }
-  }, [slug, canvasRef.current, canvas3dRef.current, documentRef.current, agentId])
+  }, [slug, canvasRef.current, canvas3dRef.current, agentId])
 
   return (
     <Layout>
@@ -118,21 +101,6 @@ const RoomPage = () => {
               Canvas not supported by your browser.
             </canvas>
 
-            <div id='document'
-              style={{
-                width: '100%',
-                height: '100%',
-                position: 'absolute',
-                top: '0',
-                left: '0',
-                visibility: (isDocOpen && !is3d) ? 'visible' : 'hidden',
-              }}
-            >
-              <div ref={documentRef} className='FillParent'>
-                <Markdown>{document?.content || ''}</Markdown>
-              </div>
-            </div>
-
             <Screens />
           </Box>
 
@@ -144,13 +112,6 @@ const RoomPage = () => {
 
           {process.env.ENV == 'desenv' && <div>Agent ID: {agentId}</div>}
         </VStack>
-
-        <DocumentModal
-          text={document?.content || ''}
-          isOpen={isDocOpen}
-          onClose={handleClose}
-          onInputChange={handleInputChange}
-        />
 
         <HelpModal
           isOpen={showHelp}

@@ -1,11 +1,9 @@
-import * as THREE from 'three'
 import {
   registerActions,
   handleKeyDown,
   handleKeyUp,
   addActionDownListener,
 } from '@/core/controller'
-import { HTMLMesh } from '@/core/rendering/HTMLMesh'
 import * as Room from '@/core/networking'
 import * as Player from '@/core/components/player'
 import * as Map from '@/core/components/map'
@@ -15,7 +13,7 @@ import * as Screen from '@/core/components/screen'
 import * as Book from '@/core/components/book'
 import { getRemoteStore, getLocalStore } from '@/core/singleton'
 
-export const init = async (slug, canvas, canvas3d, documentElement) => {
+export const init = async (slug, canvas, canvas3d) => {
   registerActions([
     {
       name: 'left',
@@ -197,22 +195,6 @@ export const init = async (slug, canvas, canvas3d, documentElement) => {
   if (scene === null) {
     return
   }
-
-  const aspect = process.env.BASE_WIDTH / process.env.BASE_HEIGHT
-  const cellHeight = 1.5 //1.2
-  const cellWidth = cellHeight * aspect
-
-  const documentMesh = new HTMLMesh(documentElement, cellWidth, cellHeight, false)
-  documentMesh.position.set(10, -1.01, .75)
-  documentMesh.rotation.set(Math.PI / 2, 0, 0)
-
-  scene.add(documentMesh)
-  // scene.add(documentMeshBack)
-
-  getRemoteStore().setDocument('presentation', 'presentation', { 
-    visible: false,
-    slide: 0,
-  })
 }
 
 export const update = (dt) => {

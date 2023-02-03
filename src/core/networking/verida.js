@@ -100,8 +100,8 @@ class HyperboxWebUser extends WebUser {
       console.log(lastPost)
       const content = `<img src='${lastPost.sourceData.user.avatar}' /><strong>@${lastPost.sourceData.user.screen_name}</strong>: ${lastPost.content}`
 
-      const store = getRemoteStore()
-      store.setDocument('document', 'world', { content })
+      // const store = getRemoteStore()
+      // store.setDocument('document', 'world', { content })
     })
 
     console.log('Requesting tweet data from user\'s mobile')
