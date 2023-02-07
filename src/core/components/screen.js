@@ -166,15 +166,12 @@ export const render2d = (id, context, agentId) => {
 // Actions
 //
 
-const makeScreen = (id, x, y, type, content, name = null) => {
+const makeScreen = (type, x, y, content, name = null) => {
   return {
-    owner: id,
-    permissions: 'rw',
     name: name ?? type,
     type,
     content,
     page: 0,
-    visible: true,
     position: {
       x: x,
       y: y,
@@ -190,7 +187,7 @@ const makeScreen = (id, x, y, type, content, name = null) => {
 
 export const createDocument = (id, x, y, text, name) => {
   const screen = {
-    ...makeScreen(id, x, y, TYPE.DOCUMENT, text, name),
+    ...makeScreen(TYPE.DOCUMENT, x, y, text, name),
   }
   console.log(`New screen:`, screen)
   Interactable.create('screen', id, x, y, screen)
@@ -199,7 +196,7 @@ export const createDocument = (id, x, y, text, name) => {
 
 export const createBook = (id, x, y, url, name) => {
   const screen = {
-    ...makeScreen(id, x, y, TYPE.PDF_BOOK, url, name),
+    ...makeScreen(TYPE.PDF_BOOK, x, y, url, name),
   }
   console.log(`New screen:`, screen)
   Interactable.create('screen', id, x, y, screen)

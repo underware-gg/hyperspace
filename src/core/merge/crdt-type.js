@@ -182,13 +182,10 @@ export const tileset = {
 }
 
 export const screen = {
-  owner: 'string',
-  permissions: 'string',
   name: 'string',
   type: 'string',
   content: 'string',
   page: 'number',   // page, slide, item, scroll position, etc
-  visible: 'boolean',
   position: {
     x: 'number',
     y: 'number',
@@ -199,6 +196,13 @@ export const screen = {
     y: 'number',
     z: 'number',
   },
+}
+
+export const permission = {
+  id: 'string',       // document id
+  owner: 'string',    // owner address
+  visible: 'boolean', // anyone can view
+  public: 'boolean',  // anyone can edit
 }
 
 export const document = { // deprecated
@@ -227,6 +231,7 @@ export const typeDefs = {
   portal: createTypeMetadata(portal),
   tileset: createTypeMetadata(tileset),
   screen: createTypeMetadata(screen),
+  permission: createTypeMetadata(permission),
   // deprecated
   document: createTypeMetadata(document),
   book: createTypeMetadata(book),
