@@ -382,10 +382,10 @@ export const update = (id, dt) => {
     if (getActionState('right') || getActionState('turnRight')) {
       speedX += SPEED;
     }
-    if (getActionState('up')) {
+    if (getActionState('up') || getActionState('moveForward')) {
       speedY -= SPEED;
     }
-    if (getActionState('down')) {
+    if (getActionState('down') || getActionState('moveBack')) {
       speedY += SPEED;
     }
 

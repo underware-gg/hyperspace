@@ -23,6 +23,7 @@ export const getActionState = name => {
 }
 
 export const handleKeyDown = e => {
+  if(e.metaKey) return // ignore if CMD is pressed
   const actionName = keyMapping[e.which]
   if (actionName) {
     actionDownEmitter.emit(actionName)
