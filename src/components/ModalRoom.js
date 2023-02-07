@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react'
 import Button from '@/components/Button'
 
-const RoomModal = ({
+const ModalRoom = ({
   isOpen,
   onClose,
   onSubmit,
@@ -68,4 +68,4 @@ const RoomModal = ({
   )
 }
 
-export default RoomModal
+export default ModalRoom

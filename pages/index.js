@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid'
 import { VStack, Heading, Text, Box } from '@chakra-ui/react'
 import Button from '@/components/Button'
 import Layout from '@/components/Layout'
-import RoomModal from '@/components/RoomModal'
+import ModalRoom from '@/components/ModalRoom'
 
 const HomePage = ({ slug }) => {
   const router = useRouter();
@@ -42,7 +42,7 @@ const HomePage = ({ slug }) => {
         </VStack>
       </Box>
 
-      <RoomModal
+      <ModalRoom
         isOpen={roomModal}
         onClose={() => setRoomModal(false)}
         onSubmit={(roomName) => enterRoom(roomName)}

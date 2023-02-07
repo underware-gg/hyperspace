@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react'
 import Button from '@/components/Button'
 
-const HelpModal = ({
+const ModalHelp = ({
   isOpen,
   handleClose,
 }) => {
@@ -57,4 +57,4 @@ const HelpModal = ({
   )
 }
 
-export default HelpModal
+export default ModalHelp

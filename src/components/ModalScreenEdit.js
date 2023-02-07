@@ -24,7 +24,7 @@ import Textarea from '@/components/Textarea'
 import { SliderProgress } from '@/components/Sliders'
 import * as Screen from '@/core/components/screen'
 
-const ScreenEditModal = ({
+const ModalScreenEdit = ({
   screenId,
 }) => {
   const editingScreenId = useLocalDocument('screens', 'editing')
@@ -144,4 +144,4 @@ const ScreenEditModal = ({
   )
 }
 
-export default ScreenEditModal
+export default ModalScreenEdit

@@ -5,7 +5,7 @@ import Layout from '@/components/Layout'
 import Button from '@/components/Button'
 import TilesetSelector from '@/components/TilesetSelector'
 import CharacterSelector from '@/components/CharacterSelector'
-import HelpModal from '@/components/HelpModal'
+import ModalHelp from '@/components/ModalHelp'
 import InteractMenu from '@/components/InteractMenu'
 import Screens from '@/components/Screens'
 import RoomDownloadMenu from '@/components/RoomDownloadMenu'
@@ -113,7 +113,7 @@ const RoomPage = () => {
           {process.env.ENV == 'desenv' && <div>Agent ID: {agentId}</div>}
         </VStack>
 
-        <HelpModal
+        <ModalHelp
           isOpen={showHelp}
           handleClose={() => setShowHelp(false)}
         />

@@ -4,7 +4,7 @@ import { emitAction } from '@/core/controller'
 import useDocument from '@/hooks/useDocument'
 import useDocumentIds from '@/hooks/useDocumentIds'
 import useLocalDocument from '@/hooks/useLocalDocument'
-import ScreenEditModal from '@/components/ScreenEditModal'
+import ModalScreenEdit from '@/components/ModalScreenEdit'
 import * as Screen from '@/core/components/screen'
 
 const Screens = ({ }) => {
@@ -41,7 +41,7 @@ const Screens = ({ }) => {
   return (
     <div className='FillParent'>
       {screensComponents}
-      <ScreenEditModal screenId={editingScreenId} />
+      <ModalScreenEdit screenId={editingScreenId} />
     </div>
   )
 }
