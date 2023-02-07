@@ -1,13 +1,16 @@
 import { useState } from 'react'
-import { HStack, Text, VStack } from '@chakra-ui/react'
-import useRoom from '@/hooks/useRoom'
+import {
+  HStack,
+  VStack,
+  Text,
+} from '@chakra-ui/react'
 import useVerida from '@/hooks/useVerida'
 import Button from '@/components/Button'
 import { DialogConfirm, useConfirmDisclosure } from '@/components/DialogConfirm'
+import { ModalPermissions, usePermissionsDisclosure } from '@/components/ModalPermissions'
 
 const VeridaAvatar = () => {
-  const { agentId } = useRoom();
-  const { veridaProfile, did, didAddress } = useVerida(agentId)
+  const { veridaProfile, did, didAddress } = useVerida()
 
   const avatarUri = veridaProfile?.avatarUri ?? '/nosignal_noise.gif'
   const avatarName = veridaProfile?.name ?? null
@@ -32,11 +35,11 @@ const VeridaAvatar = () => {
     </VStack>
   )
 }
-
+ 
 const VeridaLogin = () => {
-  const { agentId } = useRoom();
-  const { veridaIsConnected, veridaIsInitializing } = useVerida(agentId)
+  const { veridaIsConnected, veridaIsInitializing } = useVerida()
   const [isConnecting, setIsConnecting] = useState(false)
+  const permissionsDisclosure = usePermissionsDisclosure('world')
 
   const _connect = async () => {
     const { VeridaUser } = (await import('src/core/networking/verida'))
@@ -57,21 +60,23 @@ const VeridaLogin = () => {
     // });
   }
 
-  const diabled = (veridaIsInitializing || isConnecting)
+  const disabled = (veridaIsInitializing || isConnecting)
 
   return (
-    <div>
+    <HStack>
+      <Button disabled={disabled} size='sm' onClick={() => permissionsDisclosure.openPermissions()}>
+        Permissions
+      </Button>
       {veridaIsConnected &&
-        <HStack>
-          <VeridaAvatar />
-        </HStack>
+        <VeridaAvatar />
       }
       {!veridaIsConnected &&
-        <Button disabled={diabled} size='sm' onClick={() => _connect()}>
+        <Button disabled={disabled} size='sm' onClick={() => _connect()}>
           {isConnecting ? 'Connecting' : 'Connect'}
         </Button>
       }
-    </div>
+      <ModalPermissions type='Room' permissionsDisclosure={permissionsDisclosure} />
+    </HStack>
   )
 }
 

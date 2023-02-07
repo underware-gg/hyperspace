@@ -2,14 +2,12 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { HStack, Spacer } from '@chakra-ui/react'
 import Button from '@/components/Button'
-import useRoom from '@/hooks/useRoom'
 import useVerida from '@/hooks/useVerida'
 import { getLocalStore, getRemoteStore } from '@/core/singleton'
 import * as ClientRoom from '@/core/networking'
 
 const VeridaMenu = () => {
-  const { agentId } = useRoom();
-  const { veridaIsConnected, veridaProfile } = useVerida(agentId)
+  const { veridaIsConnected, veridaProfile } = useVerida()
   const router = useRouter()
   const { slug } = router.query
 

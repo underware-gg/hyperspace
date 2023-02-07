@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 
-const useVerida = (id) => {
+const useVerida = () => {
   const [isConnected, setIsConnected] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false)
   const [profile, setProfile] = useState({})
