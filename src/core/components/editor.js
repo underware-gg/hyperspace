@@ -4,12 +4,15 @@ import * as Room from '@/core/networking'
 import * as Map from '@/core/components/map'
 import * as Portal from '@/core/components/portal'
 import * as Screen from '@/core/components/screen'
+import * as Permission from '@/core/components/permission'
 import { getActionState, addActionDownListener } from '@/core/controller'
 import { getLocalStore, getRemoteStore } from '@/core/singleton'
 import { canPlaceOverPlayer, getPortalOverPlayer } from '@/core/components/player'
 import { MAP_SCALE_X, MAP_SCALE_Y } from '@/core/components/map'
 import { getPlayerTile } from '@/core/components/player'
 import { roundToNearest } from '@/core/utils'
+
+import { VeridaUser, getAddressFromDid } from '@/core/networking/verida'
 
 export const getMouseCanvasPosition = (e, canvas) => {
   const rect = canvas.getBoundingClientRect()
@@ -286,6 +289,11 @@ export const update = (id, dt) => {
     return
   }
 
+  const didAddress = getAddressFromDid(VeridaUser.did)
+  if (!Permission.canEdit('world', didAddress)) {
+    return
+  }
+
   if (getActionState('1')) {
     Map.update('world', x, y, 0)
   }
@@ -338,15 +346,29 @@ export const render2d = (id, context) => {
 
   const { position: { x, y }, interacting } = editor
 
-  context.lineWidth = 3
-  context.strokeStyle = room.agentId === id ? 'blue' : 'red'
-
-  if (interacting) {
-    context.strokeRect(
-      roundToNearest(x * 32 - 16, 32),
-      roundToNearest(y * 32 - 16, 32),
-      32,
-      32,
-    )
+  if (!interacting) {
+    return
   }
+
+  // do not draw cursor for if I cant edit
+  const didAddress = getAddressFromDid(VeridaUser.did)
+  if (!Permission.canEdit('world', didAddress)) {
+    return
+  }
+
+  // do not draw cursor for remote users if room is not editable
+  const isRemoteUser = (room.agentId !== id)
+  if (isRemoteUser && !Permission.canEdit('world', null)) {
+    return
+  }
+
+  context.lineWidth = 3
+  context.strokeStyle = isRemoteUser ? 'red' : 'blue'
+
+  context.strokeRect(
+    roundToNearest(x * 32 - 16, 32),
+    roundToNearest(y * 32 - 16, 32),
+    32,
+    32,
+  )
 }

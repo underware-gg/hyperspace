@@ -5,15 +5,18 @@ const useVerida = () => {
   const [isConnecting, setIsConnecting] = useState(false)
   const [profile, setProfile] = useState({})
   const [did, setDid] = useState(null)
+  const [didAddress, setDidAddress] = useState(null)
 
   useEffect(() => {
     let _mounted = true
 
-    const _veridaConnected = (profile, did) => {
+    const _veridaConnected = async (profile) => {
+      const { VeridaUser, getAddressFromDid } = (await import('src/core/networking/verida'))
       setIsConnected(true)
       setIsConnecting(false)
       setProfile(profile)
-      setDid(did)
+      setDid(VeridaUser.did)
+      setDidAddress(getAddressFromDid(VeridaUser.did))
     }
 
     const _veridaDisconnected = () => {
@@ -21,6 +24,7 @@ const useVerida = () => {
       setIsConnecting(false)
       setProfile({})
       setDid(null)
+      setDidAddress(null)
     }
 
     const _veridaProfileChanged = (profile) => {
@@ -33,7 +37,7 @@ const useVerida = () => {
       const isConnected = await VeridaUser.isConnected()
       if (isConnected) {
         const profile = await VeridaUser.getPublicProfile()
-        _veridaConnected(profile, VeridaUser.did)
+        await _veridaConnected(profile)
       } else {
         setIsConnecting(false)
       }
@@ -55,8 +59,6 @@ const useVerida = () => {
       VeridaUser.off('profileChanged', _veridaProfileChanged)
     }
   }, [])
-
-  const didAddress = useMemo(() => (did?.split(':')?.slice(-1)?.[0] ?? null), [did])
 
   return {
     veridaIsConnected: isConnected,

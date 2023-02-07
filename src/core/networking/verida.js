@@ -123,3 +123,7 @@ export const VeridaUser = new HyperboxWebUser({
   },
   debug: true
 })
+
+export const getAddressFromDid = (did) => {
+  return did?.split(':')?.slice(-1)?.[0] ?? null
+}
