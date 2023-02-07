@@ -1,9 +1,10 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { HStack } from '@chakra-ui/react'
+import { getLocalStore, getRemoteStore } from '@/core/singleton'
+import usePermission from '@/hooks/usePermission'
 import Button from '@/components/Button'
 import FileSelectButton from '@/components/FileSelectButton'
-import { getLocalStore, getRemoteStore } from '@/core/singleton'
 import * as ClientRoom from '@/core/networking'
 
 const _downloadRoomData = (slug) => {
@@ -22,6 +23,8 @@ const _downloadRoomData = (slug) => {
 const RoomDownloadMenu = () => {
   const router = useRouter()
   const { slug } = router.query
+
+  const { canEdit } = usePermission('world')
 
   const _uploadRoomData = (fileObject) => {
     const reader = new FileReader()
@@ -45,6 +48,7 @@ const RoomDownloadMenu = () => {
         Download Room Data
       </Button>
       <FileSelectButton
+        disabled={!canEdit}
         label='Upload Room Data'
         id='upload-room-data'
         accept='.json'

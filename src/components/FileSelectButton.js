@@ -4,8 +4,8 @@ import Button from '@/components/Button'
 
 const FileSelectButton = ({
   id,
-  disabled=false,
-  label='Select File',
+  disabled = false,
+  label = 'Select File',
   textBefore,
   textAfter,
   onSelect = (fileObject) => { },
@@ -30,7 +30,9 @@ const FileSelectButton = ({
         ref={inputRef}
         hidden
       />
-      <Button variant='outline' onClick={() => inputRef.current.click()}>{label}</Button>
+      <Button variant='outline' disabled={disabled} onClick={() => inputRef.current.click()}>
+        {label}
+      </Button>
       {textAfter && <Text>{textAfter}</Text>}
     </HStack>
   )
