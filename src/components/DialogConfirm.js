@@ -1,4 +1,3 @@
-import { useState, useRef } from 'react'
 import {
   AlertDialog,
   AlertDialogBody,
@@ -6,25 +5,44 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
+  useDisclosure,
   Spacer,
 } from '@chakra-ui/react'
 import Button from '@/components/Button'
 
-const DialogConfirm = ({
-  finalRef,
-  text,
-  onClose,
-  onConfirm,
-}) => {
-  const [isOpen, setIsOpen] = useState(false)
-  // const { isOpen, onOpen, onClose } = useDisclosure()
-  const cancelRef = useRef()
+const _defaultOptions = {
+  header: 'Action required',
+  message: 'Confirm?',
+  confirmLabel: 'OK',
+  cancelLabel: 'Cancel',
+  onConfirm: () => { },
+  onCancel: () => { }
+}
 
-  const trigger = () => {
-    setIsOpen(!isOpen)
-    if (isOpen) {
-      // onClose()
-    }
+export const useConfirmDisclosure = (options = _defaultOptions) => {
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
+  return {
+    openConfirmDialog: onOpen,
+    isOpen, onClose,
+    ..._defaultOptions,
+    ...options,
+  }
+}
+
+export const DialogConfirm = ({
+  confirmDisclosure = _defaultOptions,
+}) => {
+  const { isOpen, onClose, onConfirm, onCancel, header, message, confirmLabel, cancelLabel } = confirmDisclosure
+
+  const _cancel = () => {
+    onCancel()
+    onClose()
+  }
+
+  const _confirm = () => {
+    onConfirm()
+    onClose()
   }
 
   return (
@@ -34,22 +52,26 @@ const DialogConfirm = ({
       isCentered
     >
       <AlertDialogOverlay>
-        <AlertDialogContent>
-          <AlertDialogHeader fontSize='lg' fontWeight='bold'>
-            Delete Customer
-          </AlertDialogHeader>
+        <AlertDialogContent
+          backgroundColor='#000a'
+        >
+          {header &&
+            <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+              {header}
+            </AlertDialogHeader>
+          }
 
           <AlertDialogBody>
-            Are you sure? You can't undo this action afterwards.
+            {message}
           </AlertDialogBody>
 
           <AlertDialogFooter>
-            <Button onClick={() => trigger()}>
-              Cancel
+            <Button onClick={() => _cancel()}>
+              {cancelLabel ?? 'Cancel'}
             </Button>
             <Spacer />
-            <Button colorScheme='red' onClick={onClose} ml={3}>
-              Delete
+            <Button colorScheme='red' onClick={() => _confirm()} ml={3}>
+              {confirmLabel ?? 'OK'}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -57,5 +79,3 @@ const DialogConfirm = ({
     </AlertDialog>
   )
 }
-
-export default DialogConfirm

@@ -1,10 +1,8 @@
-import { useEffect, useState, useMemo, useRef } from 'react'
 import {
   HStack,
   Text,
 } from '@chakra-ui/react'
 import Button from '@/components/Button'
-import DialogConfirm from '@/components/DialogConfirm'
 import useRoom from '@/hooks/useRoom'
 import usePlayer from '@/hooks/usePlayer'
 import useDocument from '@/hooks/useDocument'
@@ -71,8 +69,6 @@ const InteractMenu = ({
           </Button>
         </>
       }
-
-      <DialogConfirm id='screenNameDialog' />
     </HStack>
   )
 }

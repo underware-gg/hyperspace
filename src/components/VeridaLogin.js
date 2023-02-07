@@ -1,32 +1,34 @@
 import { useState } from 'react'
-import { Text, VStack } from '@chakra-ui/react'
+import { HStack, Text, VStack } from '@chakra-ui/react'
 import useRoom from '@/hooks/useRoom'
 import useVerida from '@/hooks/useVerida'
 import Button from '@/components/Button'
+import { DialogConfirm, useConfirmDisclosure } from '@/components/DialogConfirm'
 
 const VeridaAvatar = () => {
   const { agentId } = useRoom();
-  const { veridaProfile } = useVerida(agentId)
+  const { veridaProfile, did, didAddress } = useVerida(agentId)
 
   const avatarUri = veridaProfile?.avatarUri ?? '/nosignal_noise.gif'
   const avatarName = veridaProfile?.name ?? null
 
   const _disconnect = async () => {
     const { VeridaUser } = (await import('src/core/networking/verida'))
-
     await VeridaUser.disconnect()
-
-    // VeridaUser.disconnect().then(() => {
-    //   console.warn(`Verida disconnected`);
-    // }).catch((error) => {
-    //   console.warn(`Verida disconnect exception:`, error);
-    // });
   }
 
+  const confirmDisclosure = useConfirmDisclosure({
+    header: 'Verida',
+    message: <>Disconnect {veridaProfile.name}?<br />{did}</>,
+    confirmLabel: 'Disconnect',
+    onConfirm: _disconnect,
+  })
+
   return (
-    <VStack onClick={() => _disconnect()}>
+    <VStack style={{ cursor: 'pointer' }} onClick={() => confirmDisclosure.openConfirmDialog()}>
       <img src={avatarUri} width='40' height='40' />
       <Text className='NoMargin'>{avatarName}</Text>
+      <DialogConfirm confirmDisclosure={confirmDisclosure} />
     </VStack>
   )
 }
@@ -55,11 +57,17 @@ const VeridaLogin = () => {
     // });
   }
 
+  const diabled = (veridaIsInitializing || isConnecting)
+
   return (
     <div>
-      {veridaIsConnected == true
-        ? <VeridaAvatar />
-        : <Button disabled={veridaIsInitializing || isConnecting} size='sm' onClick={() => _connect()}>
+      {veridaIsConnected &&
+        <HStack>
+          <VeridaAvatar />
+        </HStack>
+      }
+      {!veridaIsConnected &&
+        <Button disabled={diabled} size='sm' onClick={() => _connect()}>
           {isConnecting ? 'Connecting' : 'Connect'}
         </Button>
       }

@@ -1,23 +1,26 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 
 const useVerida = (id) => {
   const [isConnected, setIsConnected] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false)
   const [profile, setProfile] = useState({})
+  const [did, setDid] = useState(null)
 
   useEffect(() => {
     let _mounted = true
 
-    const _veridaConnected = (profile) => {
+    const _veridaConnected = (profile, did) => {
       setIsConnected(true)
       setIsConnecting(false)
       setProfile(profile)
+      setDid(did)
     }
 
     const _veridaDisconnected = () => {
       setIsConnected(false)
       setIsConnecting(false)
       setProfile({})
+      setDid(null)
     }
 
     const _veridaProfileChanged = (profile) => {
@@ -30,7 +33,7 @@ const useVerida = (id) => {
       const isConnected = await VeridaUser.isConnected()
       if (isConnected) {
         const profile = await VeridaUser.getPublicProfile()
-        _veridaConnected(profile)
+        _veridaConnected(profile, VeridaUser.did)
       } else {
         setIsConnecting(false)
       }
@@ -53,10 +56,14 @@ const useVerida = (id) => {
     }
   }, [])
 
+  const didAddress = useMemo(() => (did?.split(':')?.slice(-1)?.[0] ?? null), [did])
+
   return {
     veridaIsConnected: isConnected,
     veridaIsInitializing: isConnecting,
     veridaProfile: profile,
+    did,
+    didAddress,
   }
 }
 
