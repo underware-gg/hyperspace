@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, forwardRef } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import { getLocalStore, getRemoteStore } from '@/core/singleton'
 import { emitAction } from '@/core/controller'
 import { useDocument, useLocalDocument } from '@/hooks/useDocument'
@@ -69,7 +69,7 @@ const ScreenComponent = ({
         width: '100%',
         height: '100%',
         border: 'solid 4px white',
-        backgroundColor: '#f0f8',
+        backgroundColor: '#F39C1288',
         // backgroundImage: 'url(/nosignal_testcard.jpg)',
         // backgroundSize: 'cover',
         // backgroundPosition: 'center center',
@@ -115,33 +115,73 @@ const PdfBookScreen = ({
   page = 0,
 }) => {
   const [numPages, setNumPages] = useState(1);
-  const [pageNumber, setPageNumber] = useState(null);
+  const [containerStyle, setContainerStyle] = useState({});
+  const canvasRef = useRef();
 
-  function _onDocumentLoadSuccess({ numPages }) {
-    setNumPages(numPages);
+  function _onDocumentLoadSuccess(pdf) {
+    setNumPages(pdf.numPages);
     const store = getLocalStore()
-    store.setDocument('page-count', screenId, numPages)
-    console.log(`PDF ${screenId} has ${numPages} pages`)
+    store.setDocument('page-count', screenId, pdf.numPages)
+    console.log(`PDF ${screenId} has ${pdf.numPages} pages`)
   }
 
-  useEffect(() => {
+  const pageNumber = useMemo(() => {
     const _page = Math.round(map(page, 0, 1, 1, numPages))
-    console.log(`page progress:`, page, _page)
-    setPageNumber(clamp(_page, 1, numPages))
+    return clamp(_page, 1, numPages)
   }, [page, numPages])
 
+  useEffect(() => {
+    if (canvasRef.current){
+      const gameWidth = document.getElementById('game').clientWidth
+      const gameHeight = document.getElementById('game').clientHeight
+      const gameAspect = gameWidth / gameHeight
+
+      const pdfWidth = canvasRef.current.clientWidth
+      const pdfHeight = canvasRef.current.clientHeight
+      const pdfAspect = pdfWidth / pdfHeight
+
+      let scale = 1
+      let topMargin = 0
+      let sideMargin = 0
+      if (gameAspect > pdfAspect) {
+        scale = gameHeight / pdfHeight
+        sideMargin = ((gameWidth - pdfWidth * scale) / 2) / gameWidth
+      } else {
+        scale = gameWidth / pdfWidth
+        topMargin = ((gameHeight - pdfHeight * scale) / 2) / gameHeight
+      }
+      console.log(gameWidth, gameHeight, gameAspect, pdfWidth, pdfHeight, pdfAspect, '>', topMargin, sideMargin, scale)
+
+      // setPageScale(scale)
+      setContainerStyle({
+        transformOrigin: 'top left',
+        transform: `scale(${scale})`,
+        margin: `${Math.floor(topMargin * 100)}% ${Math.floor(sideMargin * 100)}%`
+      })
+    }
+  }, [canvasRef.current, url, numPages])
+
   return (
-    <Document
-      file={url}
-      onLoadSuccess={_onDocumentLoadSuccess}
-    >
-      <Page
-        pageNumber={pageNumber}
-        width={document.getElementById('game').clientWidth}
-      />
-      <p>
-        Page {pageNumber} of {numPages}
-      </p>
-    </Document>)
+    <div style={containerStyle}>
+
+      <Document
+        file={url}
+        onLoadSuccess={_onDocumentLoadSuccess}
+      >
+        <Page
+          pageNumber={pageNumber}
+          canvasRef={canvasRef}
+          className='PdfBook'
+          canvasBackground='white'
+          // width={document.getElementById('game').clientWidth}
+          // height={document.getElementById('game').clientHeight}
+          // scale={1}
+        />
+        <p>
+          Page {pageNumber} of {numPages}
+        </p>
+      </Document>
+    </div>
+  )
 }
 

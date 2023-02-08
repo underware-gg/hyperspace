@@ -226,6 +226,11 @@ function html2canvas(element) {
       // Canvas element
       if (element.style.display === 'none') return;
 
+      if (element.width === 0 || element.height === 0) {
+        console.warn(`HTMLMesh lost this cavas!`, element)
+        return;
+      } 
+
       context.save();
       const dpr = window.devicePixelRatio;
       context.scale(1 / dpr, 1 / dpr);

@@ -185,7 +185,7 @@ export const screen = {
   name: 'string',
   type: 'string',
   content: 'string',
-  page: 'number',   // page, slide, item, scroll position, etc
+  page: 'number',   // page, slide, item, scroll position, etc, but value range is always 0 to 1
   position: {
     x: 'number',
     y: 'number',
