@@ -85,7 +85,7 @@ const SliderPage = ({
   precision = 100,
   onChange = () => { },
 }) => {
-  const [sliderValue, setSliderValue] = useState(0)
+  const [sliderValue, setSliderValue] = useState(1)
 
   const _firstPage = 1
   const _lastPage = Math.max(pageCount, 1)
@@ -122,6 +122,7 @@ const SliderPage = ({
       <ChakraSlider
         defaultValue={_defaultValue}
         min={_firstPage} max={_lastPage} step={1}
+        disabled={_firstPage == _lastPage}
         aria-label='slider-ex-6'
         onChange={(value) => _onChange(value)}
       >

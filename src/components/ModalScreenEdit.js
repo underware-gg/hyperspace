@@ -28,6 +28,7 @@ const ModalScreenEdit = ({
 }) => {
   const editingScreenId = useLocalDocument('screens', 'editing')
   const screen = useDocument('screen', screenId)
+  const pageCount = useLocalDocument('page-count', editingScreenId) ?? 1
   // console.log(screen)
 
   const initialRef = useRef(null)
@@ -120,7 +121,7 @@ const ModalScreenEdit = ({
             <SliderProgress defaultValue={screen?.page} onChange={(value) => _onProgressChange(value)} />
           }
           {hasPageControl &&
-            <SliderPage defaultValue={screen?.page} pageCount={3} onChange={(value) => _onProgressChange(value)} />
+            <SliderPage defaultValue={screen?.page} pageCount={pageCount} onChange={(value) => _onProgressChange(value)} />
           }
         </ModalBody>
         <ModalFooter>

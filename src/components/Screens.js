@@ -56,11 +56,11 @@ const ScreenComponent = ({
   const screen = useDocument('screen', screenId)
 
   if (screen?.type == Screen.TYPE.DOCUMENT) {
-    return <DocumentScreen content={screen.content || `# Screen [${screenId}] has no content`} />
+    return <DocumentScreen screenId={screenId} content={screen.content || `# Screen [${screenId}] has no content`} />
   }
 
   if (screen?.type == Screen.TYPE.PDF_BOOK) {
-    return <PdfBookScreen url={screen.content} page={screen.page} />
+    return <PdfBookScreen screenId={screenId} url={screen.content} page={screen.page} />
   }
 
   return (
@@ -89,6 +89,7 @@ const ScreenComponent = ({
 // Markdown document
 import Markdown from '@/components/Markdown'
 const DocumentScreen = ({
+  screenId,
   content,
 }) => {
   return (
@@ -109,6 +110,7 @@ import { clamp, map } from '@/core/utils'
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 const PdfBookScreen = ({
+  screenId,
   url,
   page = 0,
 }) => {
@@ -117,6 +119,9 @@ const PdfBookScreen = ({
 
   function _onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
+    const store = getLocalStore()
+    store.setDocument('page-count', screenId, numPages)
+    console.log(`PDF ${screenId} has ${numPages} pages`)
   }
 
   useEffect(() => {
