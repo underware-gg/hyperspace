@@ -1,4 +1,5 @@
 import { EnvironmentType } from '@verida/types'
+import { Client } from '@verida/client-ts'
 import { WebUser } from '@verida/account-web-vault';
 import { getRemoteStore } from '@/core/singleton'
 
@@ -15,6 +16,10 @@ const SNAPSPHOT_DB_NAME = 'room_snapshots'
 const LOGO_URL = '/oathring_512x512.png';
 
 class HyperboxWebUser extends WebUser {
+
+  getDidAddress(){
+    return this.did?.split(':')?.slice(-1)?.[0] ?? null
+  }
 
   // @todo: Create a proper schema
   async saveRoom(roomId, snapshot) {
@@ -124,6 +129,28 @@ export const VeridaUser = new HyperboxWebUser({
   debug: true
 })
 
-export const getAddressFromDid = (did) => {
-  return did?.split(':')?.slice(-1)?.[0] ?? null
+
+// client setup: https://developers.verida.network/docs/client-sdk/authentication
+const getClient = async  () => {
+  const isConnected = await VeridaUser.isConnected()
+  if (!isConnected) return null
+
+  const client = new Client({
+    environment: VERIDA_ENVIRONMENT
+  })
+  await client.connect(VeridaUser.account)
+
+  return client
+}
+
+// profile fetch: https://developers.verida.network/docs/client-sdk/profiles
+export const getPublicProfile = async (didAddress) => {
+  const client = await getClient()
+  if (!client) return null
+
+  const did = `did:vda:testnet:${didAddress}`
+  const profileConnection = await client.openPublicProfile(did, 'Verida: Vault', 'basicProfile')
+  const publicProfile = await profileConnection.getMany()
+
+  return publicProfile
 }

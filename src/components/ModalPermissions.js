@@ -18,7 +18,9 @@ import {
 } from '@chakra-ui/react'
 import usePermission from '@/hooks/usePermission'
 import useVerida from '@/hooks/useVerida'
+import useVeridaPublicProfile from '@/hooks/useVeridaPublicProfile'
 import Button from '@/components/Button'
+import { VeridaAvatar } from './VeridaLogin'
 import * as Permission from '@/core/components/permission'
 
 const _defaultOptions = {
@@ -46,10 +48,12 @@ export const ModalPermissions = ({
 }) => {
   const { id, isOpen, onClose } = permissionsDisclosure
   const { veridaIsConnected, veridaProfile, did, didAddress } = useVerida()
-  const router = useRouter()
-  const { slug } = router.query
 
   const { permission, isOwner, canEdit } = usePermission(id)
+  const { publicProfile } = useVeridaPublicProfile(permission?.owner);
+
+  const router = useRouter()
+  const { slug } = router.query
 
   const _canView = (value) => {
     Permission.updatePermission(id, didAddress, {
@@ -85,16 +89,31 @@ export const ModalPermissions = ({
         <ModalCloseButton />
         <ModalBody pb={4}>
           <VStack align='stretch'>
-            <Text>Room: {slug}</Text>
-            <Text>Document id: {id}</Text>
-            <Text>Owner: {permission?.owner ?? 'Unclaimed'}</Text>
+
+            <HStack>
+              <VStack align='stretch'>
+                <Text>Room: {slug}</Text>
+                <Text>Document id: {id}</Text>
+                <Text>Owner: {permission?.owner ?? 'Unclaimed'}</Text>
+                {!veridaIsConnected &&
+                  <Text>(connect to Verida for user profile)</Text>
+                }
+              </VStack>
+              
+              {publicProfile &&
+                <VeridaAvatar profile={publicProfile} />
+              }
+            </HStack>
+
             <Divider />
+            
             <Checkbox isChecked={permission?.visible ?? true} isDisabled={true} onChange={(e) => _canView(e.target.checked)}>
               Anyone can View
             </Checkbox>
             <Checkbox isChecked={permission?.public ?? true} isDisabled={isDisabled} onChange={(e) => _canEdit(e.target.checked)}>
               Anyone can Edit
             </Checkbox>
+
           </VStack>
         </ModalBody>
         <ModalFooter>

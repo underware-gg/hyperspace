@@ -11,12 +11,12 @@ const useVerida = () => {
     let _mounted = true
 
     const _veridaConnected = async (profile) => {
-      const { VeridaUser, getAddressFromDid } = (await import('src/core/networking/verida'))
+      const { VeridaUser } = (await import('src/core/networking/verida'))
       setIsConnected(true)
       setIsConnecting(false)
       setProfile(profile)
       setDid(VeridaUser.did)
-      setDidAddress(getAddressFromDid(VeridaUser.did))
+      setDidAddress(VeridaUser.getDidAddress())
     }
 
     const _veridaDisconnected = () => {

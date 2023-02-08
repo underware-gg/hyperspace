@@ -9,12 +9,23 @@ import Button from '@/components/Button'
 import { DialogConfirm, useConfirmDisclosure } from '@/components/DialogConfirm'
 import { ModalPermissions, usePermissionsDisclosure } from '@/components/ModalPermissions'
 
-const VeridaAvatar = () => {
-  const { veridaProfile, did, didAddress } = useVerida()
+export const VeridaAvatar = ({
+  profile,
+}) => {
+  const avatarUri = profile?.avatarUri ?? profile?.avatar?.uri ?? '/nosignal_noise.gif'
+  const avatarName = profile?.name ?? null
 
-  const avatarUri = veridaProfile?.avatarUri ?? '/nosignal_noise.gif'
-  const avatarName = veridaProfile?.name ?? null
+  return (
+    <VStack>
+      <img src={avatarUri} width='40' height='40' />
+      <Text className='NoMargin'>{avatarName}</Text>
+    </VStack>
+  )
+}
 
+export const VeridaAvatarDisconnect = ({
+  profile,
+}) => {
   const _disconnect = async () => {
     const { VeridaUser } = (await import('src/core/networking/verida'))
     await VeridaUser.disconnect()
@@ -22,22 +33,21 @@ const VeridaAvatar = () => {
 
   const confirmDisclosure = useConfirmDisclosure({
     header: 'Verida',
-    message: <>Disconnect {veridaProfile.name}?<br />{did}</>,
+    message: <>Disconnect {profile.name}?</>,
     confirmLabel: 'Disconnect',
     onConfirm: _disconnect,
   })
 
   return (
-    <VStack style={{ cursor: 'pointer' }} onClick={() => confirmDisclosure.openConfirmDialog()}>
-      <img src={avatarUri} width='40' height='40' />
-      <Text className='NoMargin'>{avatarName}</Text>
+    <div style={{ cursor: 'pointer' }} onClick={() => confirmDisclosure.openConfirmDialog()}>
+      <VeridaAvatar profile={profile} />
       <DialogConfirm confirmDisclosure={confirmDisclosure} />
-    </VStack>
+    </div>
   )
 }
- 
+
 const VeridaLogin = () => {
-  const { veridaIsConnected, veridaIsInitializing } = useVerida()
+  const { veridaIsConnected, veridaIsInitializing, veridaProfile, did } = useVerida()
   const [isConnecting, setIsConnecting] = useState(false)
   const permissionsDisclosure = usePermissionsDisclosure('world')
 
@@ -68,7 +78,7 @@ const VeridaLogin = () => {
         Permissions
       </Button>
       {veridaIsConnected &&
-        <VeridaAvatar />
+        <VeridaAvatarDisconnect profile={veridaProfile} />
       }
       {!veridaIsConnected &&
         <Button disabled={disabled} size='sm' onClick={() => _connect()}>
