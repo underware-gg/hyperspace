@@ -1,9 +1,8 @@
 import { useEffect, useState, useMemo, forwardRef } from 'react'
 import { getLocalStore, getRemoteStore } from '@/core/singleton'
 import { emitAction } from '@/core/controller'
-import useDocument from '@/hooks/useDocument'
+import { useDocument, useLocalDocument } from '@/hooks/useDocument'
 import useDocumentIds from '@/hooks/useDocumentIds'
-import useLocalDocument from '@/hooks/useLocalDocument'
 import ModalScreenEdit from '@/components/ModalScreenEdit'
 import * as Screen from '@/core/components/screen'
 

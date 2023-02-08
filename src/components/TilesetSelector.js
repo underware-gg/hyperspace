@@ -4,7 +4,7 @@ import { tilesets, defaultTileset } from '@/core/texture-data'
 import { fromSourceToDataURL } from '@/core/textures'
 import { focusGameCanvas } from '@/core/game-canvas'
 import FileSelectButton from '@/components/FileSelectButton'
-import useDocument from '@/hooks/useDocument'
+import { useDocument } from '@/hooks/useDocument'
 import usePermission from '@/hooks/usePermission'
 import * as Tileset from '@/core/components/tileset'
 

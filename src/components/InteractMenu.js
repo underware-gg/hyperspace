@@ -5,7 +5,7 @@ import {
 import Button from '@/components/Button'
 import useRoom from '@/hooks/useRoom'
 import usePlayer from '@/hooks/usePlayer'
-import useDocument from '@/hooks/useDocument'
+import { useDocument } from '@/hooks/useDocument'
 import { emitAction } from '@/core/controller'
 
 const InteractMenu = ({

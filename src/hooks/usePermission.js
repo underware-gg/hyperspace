@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import useDocument from '@/hooks/useDocument'
+import { useDocument } from '@/hooks/useDocument'
 import useVerida from '@/hooks/useVerida'
 
 const usePermission = (id) => {

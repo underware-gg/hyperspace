@@ -4,7 +4,7 @@ import {
   getScreenOverPlayer,
   getPlayerTile,
 } from '@/core/components/player'
-import useDocument from '@/hooks/useDocument'
+import { useDocument } from '@/hooks/useDocument'
 import useDocumentIds from '@/hooks/useDocumentIds'
 
 const usePlayer = (id) => {

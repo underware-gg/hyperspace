@@ -12,7 +12,7 @@ import RoomDownloadMenu from '@/components/RoomDownloadMenu'
 import VeridaLogin from '@/components/VeridaLogin'
 import VeridaMenu from '@/components/VeridaMenu'
 import useRoom from '@/hooks/useRoom'
-import useLocalDocument from '@/hooks/useLocalDocument'
+import { useLocalDocument } from '@/hooks/useDocument'
 import { focusGameCanvas } from '@/core/game-canvas'
 import { emitAction } from '@/core/controller'
 

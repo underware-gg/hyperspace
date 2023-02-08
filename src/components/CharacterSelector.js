@@ -4,7 +4,7 @@ import { spritesheets, defaultSpritesheet } from '@/core/texture-data'
 import { focusGameCanvas } from '@/core/game-canvas'
 import { deepMerge } from '@/core/utils'
 import useRoom from '@/hooks/useRoom'
-import useDocument from '@/hooks/useDocument'
+import { useDocument } from '@/hooks/useDocument'
 import useTexture from '@/hooks/useTexture'
 import * as Profile from '@/core/components/profile'
 
