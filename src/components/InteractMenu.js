@@ -57,7 +57,7 @@ const InteractMenu = ({
 
       {overScreen &&
         <>
-          {screen?.type}&nbsp;<Text color='important'>{screen?.name ?? screenId}</Text>:
+          {screen?.type}:<Text color='important'>{screen?.name ?? screenId}</Text>
           <Button size='sm' onClick={() => emitAction('interact')} disabled={!screen}>
             [E]dit
           </Button>

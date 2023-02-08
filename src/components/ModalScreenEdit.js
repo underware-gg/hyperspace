@@ -21,7 +21,7 @@ import useLocalDocument from '@/hooks/useLocalDocument'
 import Button from '@/components/Button'
 import Editable from '@/components/Editable'
 import Textarea from '@/components/Textarea'
-import { SliderProgress } from '@/components/Sliders'
+import { SliderProgress, SliderPage } from '@/components/Sliders'
 import * as Screen from '@/core/components/screen'
 
 const ModalScreenEdit = ({
@@ -72,6 +72,7 @@ const ModalScreenEdit = ({
 
   const isOpen = (editingScreenId != null && editingScreenId == screenId)
   const isMultiline = Screen.isMultiline(screen?.type)
+  const hasProgressControl = Screen.hasProgressControl(screen?.type)
   const hasPageControl = Screen.hasPageControl(screen?.type)
 
   return (
@@ -116,10 +117,11 @@ const ModalScreenEdit = ({
             />
 
           }
+          {hasProgressControl &&
+            <SliderProgress defaultValue={screen?.page} onChange={(value) => _onProgressChange(value)} />
+          }
           {hasPageControl &&
-            // <Box borderWidth='1px' borderRadius='lg' overflow='hidden'>
-            <SliderProgress onChange={(value) => _onProgressChange(value)}/>
-            // </Box>
+            <SliderPage defaultValue={screen?.page} pageCount={3} onChange={(value) => _onProgressChange(value)} />
           }
         </ModalBody>
         <ModalFooter>
@@ -130,8 +132,7 @@ const ModalScreenEdit = ({
             onClick={() => _openDocumentLink()}
           />
           <Spacer />
-          <Text>{screen?.type}</Text>
-          :<Text>{screenId}</Text>
+          <Text>document id: {screenId}</Text>
           <Spacer />
           <Button
             variant='outline'
