@@ -70,6 +70,20 @@ const VeridaLogin = () => {
     // });
   }
 
+  const _inviteFriend = async () => {
+    const recipientDid = window.prompt('DID to invite', 'did:vda:....')
+    if (!recipientDid) {
+      return
+    }
+    const subject = `Hyperbox invite!`
+    const message = `Join me in ${slug} on Hyperbox`
+    // @todo: Get app URL from next.js
+    const url = `http://192.168.68.124:3000/${slug}`
+    const text = `Open (${slug})`
+    await VeridaUser.sendMessage(recipientDid, subject, message, url, text)
+  }
+
+
   const disabled = (veridaIsInitializing || isConnecting)
 
   return (
@@ -78,7 +92,12 @@ const VeridaLogin = () => {
         Permissions
       </Button>
       {veridaIsConnected &&
-        <VeridaAvatarDisconnect profile={veridaProfile} />
+        <>
+          <Button size='sm' onClick={() => _inviteFriend()}>
+            Invite Friend
+          </Button>
+          <VeridaAvatarDisconnect profile={veridaProfile} />
+        </>
       }
       {!veridaIsConnected &&
         <Button disabled={disabled} size='sm' onClick={() => _connect()}>

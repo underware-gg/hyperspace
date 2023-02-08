@@ -3,26 +3,16 @@ import { useRouter } from 'next/router'
 import { HStack, Spacer } from '@chakra-ui/react'
 import Button from '@/components/Button'
 import useVerida from '@/hooks/useVerida'
+import usePermission from '@/hooks/usePermission'
 import { getLocalStore, getRemoteStore } from '@/core/singleton'
 import * as ClientRoom from '@/core/networking'
 
 const VeridaMenu = () => {
   const { veridaIsConnected, veridaProfile } = useVerida()
+  const { canEdit } = usePermission('world')
+
   const router = useRouter()
   const { slug } = router.query
-
-  const _inviteFriend = async () => {
-    const recipientDid = window.prompt('DID to invite', 'did:vda:....')
-    if (!recipientDid) {
-      return
-    }
-    const subject = `Hyperbox invite!`
-    const message = `Join me in ${slug} on Hyperbox`
-    // @todo: Get app URL from next.js
-    const url = `http://192.168.68.124:3000/${slug}`
-    const text = `Open (${slug})`
-    await VeridaUser.sendMessage(recipientDid, subject, message, url, text)
-  }
 
   const _saveRoomData = async (slug) => {
     const room = ClientRoom.get()
@@ -67,14 +57,11 @@ const VeridaMenu = () => {
     <HStack>
       {veridaIsConnected &&
         <>
-          <Button variant='outline' size='sm' onClick={() => _inviteFriend()}>
-            Invite Friend
-          </Button>
           <Spacer />
-          <Button variant='outline' size='sm' onClick={async () => await _saveRoomData(slug)}>
+          <Button disabled={!canEdit} variant='outline' size='sm' onClick={async () => await _saveRoomData(slug)}>
             Save Room Data
           </Button>
-          <Button variant='outline' size='sm' onClick={async () => await _restoreRoomData(slug)}>
+          <Button disabled={!canEdit} variant='outline' size='sm' onClick={async () => await _restoreRoomData(slug)}>
             Restore Room Data
           </Button>
         </>

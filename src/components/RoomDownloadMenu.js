@@ -44,7 +44,12 @@ const RoomDownloadMenu = () => {
   return (
     <HStack>
       <a id='download-room-data' href='#' hidden></a>
-      <Button variant='outline' size='sm' onClick={() => _downloadRoomData(slug)}>
+      <Button
+        disabled={!canEdit}
+        variant='outline'
+        size='sm'
+        onClick={() => _downloadRoomData(slug)}
+      >
         Download Room Data
       </Button>
       <FileSelectButton
