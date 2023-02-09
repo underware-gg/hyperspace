@@ -94,7 +94,7 @@ export const init = (canvas, id) => {
       return
     }
 
-    const name = window.prompt('Scren name', '')
+    const name = window.prompt('Screen name', '')
     if (name == null || name == '') {
       return
     }

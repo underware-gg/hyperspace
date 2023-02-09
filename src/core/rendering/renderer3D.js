@@ -34,7 +34,7 @@ class Renderer3D {
 
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
-      alpha: true,
+      alpha: false,
       canvas,
     })
 
