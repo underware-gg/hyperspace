@@ -229,18 +229,43 @@ function html2canvas(element) {
       if (element.width === 0 || element.height === 0) {
         console.warn(`HTMLMesh lost this cavas!`, element)
         return;
-      } 
+      }
 
-      context.save();
-      const dpr = window.devicePixelRatio;
-      context.scale(1 / dpr, 1 / dpr);
-      context.drawImage(element, 0, 0);
-      context.restore();
+      const rect = element.getBoundingClientRect();
+      x = rect.left - offset.left - 0.5;
+      y = rect.top - offset.top - 0.5;
+      width = rect.width;
+      height = rect.height;
+
+      const _getCanvasDim = (e, p) => {
+        if (e[p]) return e[p];
+        if (e.style[p]) return parseInt(e.style[p], 10);
+        return undefined;
+      }
+
+      const canvasWidth = _getCanvasDim(element, 'width');
+      const canvasHeight = _getCanvasDim(element, 'height');
+      // console.log(`HTML canvas:`, canvasWidth, canvasHeight, {x,y,width,height}, element)
+
+      context.drawImage(
+        element,
+        0, 0,
+        canvasWidth, canvasHeight,
+        x, y,
+        width, height,
+      )
+
+      // context.save();
+      // const dpr = window.devicePixelRatio;
+      // context.scale(1 / dpr, 1 / dpr);
+      // context.drawImage(element, 0, 0);
+      // context.restore();
 
     } else {
       if (element.style.display === 'none') return;
 
       const rect = element.getBoundingClientRect();
+      // console.log(`HTML element:`, rect, element)
 
       x = rect.left - offset.left - 0.5;
       y = rect.top - offset.top - 0.5;

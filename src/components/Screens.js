@@ -163,7 +163,7 @@ const PdfBookScreen = ({
         scale = gameWidth / page.width
         topMargin = Math.floor((gameHeight - page.height * scale) / 2)
       }
-      console.log(gameWidth, gameHeight, gameAspect, page.width, page.height, page.aspect, '>', topMargin, sideMargin, scale)
+      // console.log(gameWidth, gameHeight, gameAspect, page.width, page.height, page.aspect, '>', topMargin, sideMargin, scale)
     }
 
     return {
@@ -171,7 +171,6 @@ const PdfBookScreen = ({
       height: '100%',
       transformOrigin: 'top left',
       transform: `translate(${sideMargin}px,${topMargin}px)scale(${scale})`,
-      // margin: `${Math.floor(topMargin * 100)}% ${Math.floor(sideMargin * 100)}%`
     }
   }, [numPages, pageSizes, pageNumber])
 

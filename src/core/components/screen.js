@@ -42,7 +42,7 @@ export const init = () => {
       // console.warn(`Screen component [${screenId}] not fond!`)
       return
     }
-    console.warn(`HTML Screen [${screenId}]:`, screenElement)
+    // console.log(`HTML Screen [${screenId}]:`, screenElement)
 
     const screenMesh = new HTMLMesh(screenElement, cellWidth, cellHeight, true)
     
