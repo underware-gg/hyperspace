@@ -208,6 +208,9 @@ function html2canvas(element) {
 
     let x = 0, y = 0, width = 0, height = 0;
 
+    const isCanvas = element instanceof HTMLCanvasElement
+    const isImage = element instanceof HTMLImageElement
+
     if (element.nodeType === Node.TEXT_NODE) {
       // text
       range.selectNode(element);
@@ -222,8 +225,9 @@ function html2canvas(element) {
       drawText(style, x, y, element.nodeValue.trim());
     } else if (element.nodeType === Node.COMMENT_NODE) {
       return;
-    } else if (element instanceof HTMLCanvasElement) {
-      // Canvas element
+    } else if (isCanvas || isImage) {
+      // Canvas or Image element
+      if (isImage && (isImage.loading || element.naturalWidth === 0 || element.naturalHeight === 0)) return
       if (element.style.display === 'none') return;
 
       if (element.width === 0 || element.height === 0) {
@@ -265,12 +269,12 @@ function html2canvas(element) {
       if (element.style.display === 'none') return;
 
       const rect = element.getBoundingClientRect();
-      // console.log(`HTML element:`, rect, element)
 
       x = rect.left - offset.left - 0.5;
       y = rect.top - offset.top - 0.5;
       width = rect.width;
       height = rect.height;
+      // console.log(`HTML element:`, x, y, width, height, typeof element, element)
 
       style = window.getComputedStyle(element);
 

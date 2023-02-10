@@ -22,6 +22,13 @@ export const getFilenameFromUrl = (url) => {
   return url?.split('/')?.slice(-1)?.[0] ?? null
 }
 
+export const getFilenameExtensionFromUrl = (url) => {
+  const filename = getFilenameFromUrl(url)
+  if(!filename) return null
+  const parts = filename.split('.')
+  return parts.length >= 2 ? parts.slice(-1)[0].toLowerCase() : null
+}
+
 
 export const throttle = (cb, delay = 1000) => {
   let shouldWait = false

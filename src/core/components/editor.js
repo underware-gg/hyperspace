@@ -111,8 +111,8 @@ export const init = (canvas, id) => {
       return
     }
 
-    // const url = window.prompt('PDF URL:', 'https://bitcoin.org/bitcoin.pdf')
-    const url = window.prompt('PDF URL:', '/books/funDAOmentals.pdf')
+    // const url = window.prompt('PDF or Image URL:', 'https://bitcoin.org/bitcoin.pdf')
+    const url = window.prompt('PDF or Image URL:', '/books/funDAOmentals.pdf')
     if (url == null || url == '') {
       return
     }
