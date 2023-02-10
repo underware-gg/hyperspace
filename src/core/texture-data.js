@@ -2,6 +2,7 @@
 // World tilesets
 //
 export const tilesets = [
+  '/tilesets/castle.png',
   '/tilesets/library.png',
   '/tilesets/dungeon.png',
   '/tilesets/warehouse.png',

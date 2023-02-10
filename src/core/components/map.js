@@ -286,15 +286,16 @@ export const render2d = (id, context) => {
     image = new Image()
     image.src = crdtTileset.blob ?? crdtTileset.name
   }
+  const sz = image?.height ?? 32
 
   for (let x = 0; x < MAP_WIDTH; x++) {
     for (let y = 0; y < MAP_HEIGHT; y++) {
       context.drawImage(
         image,
-        map[y][x] * 32,
+        map[y][x] * sz,
         0,
-        32,
-        32,
+        sz,
+        sz,
         x * 32,
         y * 32,
         32,
