@@ -24,7 +24,7 @@ const Screens = ({ }) => {
             zIndex: (isEditing && !is3d) ? '100' : '-100',
           }}
         >
-          <div id={screenId} className='FillParent'>
+          <div id={screenId} className='FillParent ScreenBackground'>
             <ScreenComponent screenId={screenId} />
             <div className='ScreenBorder' />
           </div>

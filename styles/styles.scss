@@ -1,6 +1,14 @@
 @import 'googlefonts';
 
-//
+
+//-----------------------------------
+// variables
+// 
+
+$color-important: #F39C12;
+
+
+//-----------------------------------
 // Generics
 //
 
@@ -25,20 +33,20 @@
   margin: 0 !important;
 }
 
-//
+//-----------------------------------
 // Hyperbox
 //
 
 .Important {
-  color: #F39C12;
+  color: $color-important;
 }
 .ScreenBorder {
   @extend .FillParent;
   @extend .Absolute;
-  border: solid 2px #fff8;
+  border: solid 5px #fffa;
 }
 .ScreenBackground {
-  background-color: #ff9100;
+  background-color: rgba($color-important, 0.5);
 }
 .ScreenError {
   background-color: #f0f8;
@@ -51,6 +59,7 @@
 .MarkdownScreen {
   @extend .FillParent;
   @extend .ScreenBackground;
+  background-color: $color-important;
   border: solid 2px #fff8;
   padding: 1em;
 }
@@ -58,7 +67,6 @@
 .PdfBook {
   background-color: #fff0;
 }
-
 
 
 

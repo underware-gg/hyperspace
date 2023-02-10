@@ -436,6 +436,9 @@ function html2canvas(element) {
   }
 
   const context = canvas.getContext('2d'/*, { alpha: false }*/);
+
+  context.clearRect(0, 0, canvas.width, canvas.height);
+
   const clipper = new Clipper(context);
 
   drawElement(element);
