@@ -18,6 +18,10 @@ export const clampRadians = (angle) => {
   return result
 }
 
+export const getFilenameFromUrl = (url) => {
+  return url?.split('/')?.slice(-1)?.[0] ?? null
+}
+
 
 export const throttle = (cb, delay = 1000) => {
   let shouldWait = false

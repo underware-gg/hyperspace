@@ -13,6 +13,7 @@ import {
   Text,
   Input,
   Box,
+  VStack,
 } from '@chakra-ui/react'
 import { getLocalStore, getRemoteStore } from '@/core/singleton'
 import { getGameCanvasElement } from '@/core/game-canvas'
@@ -21,17 +22,15 @@ import Button from '@/components/Button'
 import Editable from '@/components/Editable'
 import Textarea from '@/components/Textarea'
 import { SliderProgress, SliderPage } from '@/components/Sliders'
+import { getFilenameFromUrl } from '@/core/utils'
 import * as Screen from '@/core/components/screen'
 
 const ModalScreenEdit = ({
   screenId,
 }) => {
-  const editingScreenId = useLocalDocument('screens', 'editing')
   const screen = useDocument('screen', screenId)
-  const pageCount = useLocalDocument('page-count', editingScreenId) ?? 1
-  // console.log(screen)
 
-  const initialRef = useRef(null)
+  const initialFocusRef = useRef(null)
   const finalRef = useRef(null)
 
   const router = useRouter()
@@ -46,20 +45,6 @@ const ModalScreenEdit = ({
       name: value,
     })
   }
-
-  const _onContentChange = (e) => {
-    const content = e.target.value
-    Screen.updateScreen(screenId, {
-      content,
-    })
-  }
-
-  const _onProgressChange = (value) => {
-    Screen.updateScreen(screenId, {
-      page: value,
-    })
-  }
-
   const _openDocumentLink = () => {
     const url = `/${slug}/documents/${screen?.name}`
     window.open(url, '_blank', 'noreferrer')
@@ -70,14 +55,11 @@ const ModalScreenEdit = ({
     store.setDocument('screens', 'editing', null)
   }
 
-  const isOpen = (editingScreenId != null && editingScreenId == screenId)
-  const isMultiline = Screen.isMultiline(screen?.type)
-  const hasProgressControl = Screen.hasProgressControl(screen?.type)
-  const hasPageControl = Screen.hasPageControl(screen?.type)
+  const isOpen = (screenId != null)
 
   return (
     <Modal
-      initialFocusRef={initialRef}
+      initialFocusRef={initialFocusRef}
       finalFocusRef={finalRef}
       isOpen={isOpen}
       // onAfterOpen={() => _onAfterOpen()}
@@ -102,27 +84,7 @@ const ModalScreenEdit = ({
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={4}>
-          {isMultiline ? 
-            <Textarea
-              ref={initialRef}
-              value={screen?.content ?? `Screen [${screenId}] not found`}
-              onChange={(e) => _onContentChange(e)}
-              disabled={!screen}
-            />
-            :
-            <Input
-              value={screen?.content ?? `Screen [${screenId}] not found`}
-              onChange={(e) => _onContentChange(e)}
-              disabled={!screen}
-            />
-
-          }
-          {hasProgressControl &&
-            <SliderProgress defaultValue={screen?.page} onChange={(value) => _onProgressChange(value)} />
-          }
-          {hasPageControl &&
-            <SliderPage defaultValue={screen?.page} pageCount={pageCount} onChange={(value) => _onProgressChange(value)} />
-          }
+          <ScreenEditor screenId={screenId} initialFocusRef={initialFocusRef} />
         </ModalBody>
         <ModalFooter>
           <Button
@@ -146,3 +108,97 @@ const ModalScreenEdit = ({
 }
 
 export default ModalScreenEdit
+
+
+//----------------------
+// Generic Screen Editor
+//
+const ScreenEditor = ({
+  screenId,
+  initialFocusRef,
+}) => {
+  const screen = useDocument('screen', screenId)
+
+  if (screen?.type == Screen.TYPE.DOCUMENT) {
+    return <ScreenEditorDocument screenId={screenId} initialFocusRef={initialFocusRef} />
+  }
+
+  if (screen?.type == Screen.TYPE.PDF_BOOK) {
+    return <ScreenEditorPdfBook screenId={screenId} initialFocusRef={initialFocusRef} />
+  }
+
+  return (
+    <div className='FillParent ScreenError'>
+      Invalid screen type [{screen?.type}]
+    </div>
+  )
+}
+
+//---------------------------
+// Specialized Screen Editors
+//
+
+const ScreenEditorDocument = ({
+  screenId,
+  initialFocusRef,
+}) => {
+  const screen = useDocument('screen', screenId)
+
+  const _onContentChange = (e) => {
+    const content = e.target.value
+    Screen.updateScreen(screenId, {
+      content,
+    })
+  }
+
+  return (
+    <div>
+      <Textarea
+        ref={initialFocusRef}
+        value={screen?.content ?? `Screen [${screenId}] not found`}
+        onChange={(e) => _onContentChange(e)}
+        disabled={!screen}
+      />
+    </div>
+  )
+}
+
+
+const ScreenEditorPdfBook = ({
+  screenId,
+  initialFocusRef,
+}) => {
+  const screen = useDocument('screen', screenId)
+  const pageCount = useLocalDocument('page-count', screenId) ?? 1
+
+  const _onContentChange = (e) => {
+    const url = e.target.value
+    const name = getFilenameFromUrl(url) ?? undefined
+    Screen.updateScreen(screenId, {
+      content: url,
+      name,
+    })
+  }
+
+  const _onProgressChange = (value) => {
+    Screen.updateScreen(screenId, {
+      page: value,
+    })
+  }
+
+  return (
+    <VStack align='stretch'>
+      <HStack>
+        <Text>URL:</Text>
+        <Input
+          ref={initialFocusRef}
+          value={screen?.content ?? `Screen [${screenId}] not found`}
+          onChange={(e) => _onContentChange(e)}
+          disabled={!screen}
+        />
+      </HStack>
+      <SliderPage defaultValue={screen?.page} pageCount={pageCount} onChange={(value) => _onProgressChange(value)} />
+    </VStack>
+  )
+}
+

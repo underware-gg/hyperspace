@@ -50,6 +50,7 @@ export const DialogConfirm = ({
       isOpen={isOpen}
       onClose={onClose}
       isCentered
+      size='sm'
     >
       <AlertDialogOverlay>
         <AlertDialogContent

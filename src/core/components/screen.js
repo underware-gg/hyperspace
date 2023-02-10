@@ -11,18 +11,6 @@ export const TYPE = {
   PDF_BOOK: 'pdf_book',
 }
 
-export const isMultiline = (type) => {
-  return type == (TYPE.DOCUMENT)
-}
-
-export const hasProgressControl = (type) => {
-  return false
-}
-
-export const hasPageControl = (type) => {
-  return type == (TYPE.PDF_BOOK)
-}
-
 export const init = () => {
   const localStore = getLocalStore()
   const remoteStore = getRemoteStore()

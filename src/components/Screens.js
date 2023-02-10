@@ -26,6 +26,7 @@ const Screens = ({ }) => {
         >
           <div id={screenId} className='FillParent'>
             <ScreenComponent screenId={screenId} />
+            <div className='ScreenBorder' />
           </div>
         </div>
       )
@@ -65,18 +66,7 @@ const ScreenComponent = ({
   }
 
   return (
-    <div
-      style={{
-        width: '100%',
-        height: '100%',
-        border: 'solid 4px white',
-        backgroundColor: '#F39C1288',
-        // backgroundImage: 'url(/nosignal_testcard.jpg)',
-        // backgroundSize: 'cover',
-        // backgroundPosition: 'center center',
-        // imageRendering: 'pixelated',
-      }}
-    >
+    <div className='FillParent ScreenError'>
       Invalid screen type [{screen?.type}]
     </div>
   )

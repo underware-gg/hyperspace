@@ -1,8 +1,10 @@
+import { useEffect, useState } from 'react'
 import {
   Editable as ChakraEditable,
   EditablePreview,
   EditableInput,
   useEditableControls,
+  useStatStyles,
 } from '@chakra-ui/react'
 import {
   HStack,
@@ -41,17 +43,29 @@ const Editable = ({
   currentValue,
   onSubmit,
 }) => {
+  const [value, setValue] = useState(currentValue)
+
+  useEffect(() => {
+    // value changed externally (not editing)
+    setValue(currentValue)
+  }, [currentValue])
+
+  const _onChange = (value) => {
+    // value was edited
+    setValue(value)
+  }
 
   return (
     <ChakraEditable
       textAlign='center'
       defaultValue={currentValue}
-      // fontSize='2xl'
+      value={value}
       isPreviewFocusable={false}
+      onChange={_onChange}
       onSubmit={onSubmit}
     >
       <HStack>
-        <EditablePreview  color='important' />
+        <EditablePreview color='important' />
         <Input as={EditableInput} />
         <EditableControls />
       </HStack>

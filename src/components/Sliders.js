@@ -35,8 +35,8 @@ const SliderProgress = ({
   const p = precision / 100
 
   return (
-    <Box pt={6} pb={2}>
-      <Box pb={6} />
+    <Box p={'0 1.3em'}>
+      <Box pt={8} />
       <ChakraSlider
         defaultValue={defaultValue * precision}
         min={0} max={precision} step={1}
@@ -117,8 +117,8 @@ const SliderPage = ({
   }, [pageCount])
 
   return (
-    <Box pt={6} pb={2}>
-      <Box pb={6} />
+    <Box p={'0 1.3em'}>
+      <Box pt={8} />
       <ChakraSlider
         defaultValue={_defaultValue}
         min={_firstPage} max={_lastPage} step={1}

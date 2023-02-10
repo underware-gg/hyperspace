@@ -99,16 +99,7 @@ const Markdown = ({
   children = '',
 }) => {
   return (
-    <div
-      style={{
-        padding: '10px',
-        width: '100%',
-        height: '100%',
-        backgroundColor: '#38B2AC', //'teal.400',
-        border: 'solid 3px white',
-        // borderRadius: '20px',
-      }}
-    >
+    <div className='MarkdownScreen'>
       <ReactMarkdown components={components}>{children}</ReactMarkdown>
     </div>
   )

@@ -7,6 +7,7 @@ import useRoom from '@/hooks/useRoom'
 import usePlayer from '@/hooks/usePlayer'
 import { useDocument } from '@/hooks/useDocument'
 import { emitAction } from '@/core/controller'
+import { DialogConfirm, useConfirmDisclosure } from '@/components/DialogConfirm'
 
 const InteractMenu = ({
   customTileset,
@@ -22,6 +23,20 @@ const InteractMenu = ({
 
   const editor = useDocument('editor', agentId)
   const screen = useDocument('screen', screenId)
+
+  const deletePortalDisclosure = useConfirmDisclosure({
+    header: 'Delete Portal',
+    message: <>Delete Portal to <span className='Important'>{portalName}</span>?</>,
+    confirmLabel: 'Delete',
+    onConfirm:() => emitAction('delete'),
+  })
+
+  const deleteScreenDisclosure = useConfirmDisclosure({
+    header: 'Delete Screen',
+    message: <>Delete Screen <span className='Important'>{screen?.name}</span>?</>,
+    confirmLabel: 'Delete',
+    onConfirm: () => emitAction('delete'),
+  })
 
   return (
     <HStack>
@@ -49,9 +64,10 @@ const InteractMenu = ({
           <Button size='sm' onClick={() => emitAction('interact')}>
             [E]nter
           </Button>
-          <Button size='sm' onClick={() => emitAction('delete')}>
+          <Button size='sm' onClick={() => deletePortalDisclosure.openConfirmDialog()}>
             [Del]ete
           </Button>
+          <DialogConfirm confirmDisclosure={deletePortalDisclosure} />
         </>
       }
 
@@ -61,12 +77,13 @@ const InteractMenu = ({
           <Button size='sm' onClick={() => emitAction('interact')} disabled={!screen}>
             [E]dit
           </Button>
-          <Button size='sm' onClick={() => emitAction('delete')} disabled={!screen}>
+          <Button size='sm' onClick={() => deleteScreenDisclosure.openConfirmDialog()} disabled={!screen}>
             [Del]ete
           </Button>
-          <Button size='sm' onClick={async () => await lastTweet()} disabled={!screen}>
+          <Button size='sm' onClick={async () => await lastTweet()} disabled={true}>
             Last Tweet
           </Button>
+          <DialogConfirm confirmDisclosure={deleteScreenDisclosure} />
         </>
       }
     </HStack>

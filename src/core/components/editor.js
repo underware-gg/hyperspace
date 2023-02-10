@@ -10,7 +10,7 @@ import { getLocalStore, getRemoteStore } from '@/core/singleton'
 import { canPlaceOverPlayer, getPortalOverPlayer } from '@/core/components/player'
 import { MAP_SCALE_X, MAP_SCALE_Y } from '@/core/components/map'
 import { getPlayerTile } from '@/core/components/player'
-import { roundToNearest } from '@/core/utils'
+import { roundToNearest, getFilenameFromUrl } from '@/core/utils'
 
 import { VeridaUser } from '@/core/networking/verida'
 
@@ -116,7 +116,7 @@ export const init = (canvas, id) => {
     if (url == null || url == '') {
       return
     }
-    const name = url.split('/').slice(-1)[0]
+    const name = getFilenameFromUrl(url) ?? 'New Book'
     console.log(url, name)
 
     const screenId = nanoid()
