@@ -18,6 +18,7 @@ import {
 import { getLocalStore, getRemoteStore } from '@/core/singleton'
 import { getGameCanvasElement } from '@/core/game-canvas'
 import { useDocument, useLocalDocument } from '@/hooks/useDocument'
+import useVerida from '@/hooks/useVerida'
 import Button from '@/components/Button'
 import Editable from '@/components/Editable'
 import Textarea from '@/components/Textarea'
@@ -142,6 +143,7 @@ const ScreenEditorDocument = ({
   screenId,
   initialFocusRef,
 }) => {
+  const { veridaIsConnected } = useVerida()
   const screen = useDocument('screen', screenId)
 
   const _onContentChange = (e) => {
@@ -151,14 +153,32 @@ const ScreenEditorDocument = ({
     })
   }
 
+  const [isFetchingTweet, setIsFetchingTweet] = useState(false)
+  const _lastTweet = async () => {
+    setIsFetchingTweet(true)
+    const { VeridaUser } = (await import('src/core/networking/verida'))
+    await VeridaUser.retrieveLastTweet((content) => {
+      setIsFetchingTweet(false)
+      console.log(content)
+    })
+  }
+
   return (
     <div>
-      <Textarea
-        ref={initialFocusRef}
-        value={screen?.content ?? `Screen [${screenId}] not found`}
-        onChange={(e) => _onContentChange(e)}
-        disabled={!screen}
-      />
+      <VStack align='stretch'>
+        <Textarea
+          ref={initialFocusRef}
+          value={screen?.content ?? `Screen [${screenId}] not found`}
+          onChange={(e) => _onContentChange(e)}
+          disabled={!screen}
+        />
+        <HStack>
+          <Button size='sm' onClick={async () => await _lastTweet()} disabled={!veridaIsConnected || isFetchingTweet}>
+            Append Last Tweet
+          </Button>
+          <Spacer />
+        </HStack>
+      </VStack>
     </div>
   )
 }

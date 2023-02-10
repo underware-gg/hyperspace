@@ -48,11 +48,6 @@ const VeridaMenu = () => {
     }
   }
 
-  const _lastTweet = async () => {
-    const { VeridaUser } = (await import('src/core/networking/verida'))
-    await VeridaUser.setDocumentToLastTweet()
-  }
-
   return (
     <HStack>
       {veridaIsConnected &&

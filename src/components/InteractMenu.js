@@ -80,9 +80,6 @@ const InteractMenu = ({
           <Button size='sm' onClick={() => deleteScreenDisclosure.openConfirmDialog()} disabled={!screen}>
             [Del]ete
           </Button>
-          <Button size='sm' onClick={async () => await lastTweet()} disabled={true}>
-            Last Tweet
-          </Button>
           <DialogConfirm confirmDisclosure={deleteScreenDisclosure} />
         </>
       }

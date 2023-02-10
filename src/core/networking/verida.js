@@ -79,7 +79,7 @@ class HyperboxWebUser extends WebUser {
     return roomSnapshotsDb
   }
 
-  async setDocumentToLastTweet() {
+  async retrieveLastTweet(onFinished) {
     await VeridaUser.requireConnection()
     const messaging = await VeridaUser.context.getMessaging()
     const message = 'Please share your social media posts with hyperbox'
@@ -101,12 +101,15 @@ class HyperboxWebUser extends WebUser {
     messaging.onMessage(function (message) {
       const recentPosts = message.data.data[0]
       const lastPost = recentPosts[0]
+      if(!lastPost) {
+        onFinished(null)
+        return
+      }
       console.log('Most recent twitter post:')
       console.log(lastPost)
       const content = `<img src='${lastPost.sourceData.user.avatar}' /><strong>@${lastPost.sourceData.user.screen_name}</strong>: ${lastPost.content}`
 
-      // const store = getRemoteStore()
-      // store.setDocument('document', 'world', { content })
+      onFinished(content)
     })
 
     console.log('Requesting tweet data from user\'s mobile')
