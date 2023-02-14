@@ -33,6 +33,7 @@ const _custom = {
     white: '#fff',
     gray: '#ddd',
     important: '#F39C12',
+    error: '#F34000',
     // chakra: { border: { color: 'teal' }},
   },
 

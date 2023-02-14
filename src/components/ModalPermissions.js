@@ -13,8 +13,9 @@ import {
   VStack,
   Spacer,
   Divider,
-  Text,
   Checkbox,
+  Text,
+  Box,
 } from '@chakra-ui/react'
 import usePermission from '@/hooks/usePermission'
 import useVerida from '@/hooks/useVerida'
@@ -23,14 +24,6 @@ import Button from '@/components/Button'
 import { VeridaAvatar } from './VeridaLogin'
 import * as Permission from '@/core/components/permission'
 
-const _defaultOptions = {
-  header: 'Action required',
-  message: 'Confirm?',
-  confirmLabel: 'OK',
-  cancelLabel: 'Cancel',
-  onConfirm: () => { },
-  onCancel: () => { }
-}
 
 export const usePermissionsDisclosure = (id) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -46,28 +39,9 @@ export const ModalPermissions = ({
   type,
   permissionsDisclosure,
 }) => {
-  const { id, isOpen, onClose } = permissionsDisclosure
-  const { veridaIsConnected, veridaProfile, did, didAddress } = useVerida()
-
-  const { permission, isOwner, canEdit } = usePermission(id)
-  const { publicProfile } = useVeridaPublicProfile(permission?.owner);
-
   const router = useRouter()
   const { slug } = router.query
-
-  const _canView = (value) => {
-    Permission.updatePermission(id, didAddress, {
-      visible: value,
-    })
-  }
-
-  const _canEdit = (value) => {
-    Permission.updatePermission(id, didAddress, {
-      public: value,
-    })
-  }
-
-  const isDisabled = (!veridaIsConnected || !canEdit)
+  const { id, isOpen, onClose } = permissionsDisclosure
 
   return (
     <Modal
@@ -88,38 +62,9 @@ export const ModalPermissions = ({
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={4}>
-          <VStack align='stretch'>
-
-            <HStack>
-              <VStack align='stretch'>
-                <Text>Room: {slug}</Text>
-                <Text>Document id: {id}</Text>
-                <Text>Owner: {permission?.owner ?? 'Unclaimed'}</Text>
-                {!veridaIsConnected &&
-                  <Text>(connect to Verida for user profile)</Text>
-                }
-              </VStack>
-              
-              {publicProfile &&
-                <VeridaAvatar profile={publicProfile} />
-              }
-            </HStack>
-
-            <Divider />
-            
-            <Checkbox isChecked={permission?.visible ?? true} isDisabled={true} onChange={(e) => _canView(e.target.checked)}>
-              Anyone can View
-            </Checkbox>
-            <Checkbox isChecked={permission?.public ?? true} isDisabled={isDisabled} onChange={(e) => _canEdit(e.target.checked)}>
-              Anyone can Edit
-            </Checkbox>
-
-          </VStack>
+          <PermissionsForm type={type} name={slug} id={id} />
         </ModalBody>
         <ModalFooter>
-          {!veridaIsConnected && <>Connect to Verida!</>}
-          {veridaIsConnected && !canEdit && <>Not the owner!</>}
-          <Spacer />
           <Button
             variant='outline'
             value='Close'
@@ -128,5 +73,72 @@ export const ModalPermissions = ({
         </ModalFooter>
       </ModalContent>
     </Modal>
+  )
+}
+
+export const PermissionsForm = ({
+  type,
+  name,
+  id,
+  disabled=false,
+}) => {
+  const { veridaIsConnected, veridaProfile, did, didAddress } = useVerida()
+
+  const { permission, isOwner, canEdit } = usePermission(id)
+  const { publicProfile } = useVeridaPublicProfile(permission?.owner);
+
+  const router = useRouter()
+  const { slug } = router.query
+
+  const _canView = (value) => {
+    Permission.updatePermission(id, didAddress, {
+      visible: value,
+    })
+  }
+
+  const _canEdit = (value) => {
+    Permission.updatePermission(id, didAddress, {
+      public: value,
+    })
+  }
+
+  const isDisabled = (disabled || !id || !veridaIsConnected || !canEdit)
+
+  return (
+    <Box>
+      <VStack align='stretch'>
+
+        <HStack>
+          <VStack align='stretch'>
+            <Text>{type}: {name}</Text>
+            <Text>Document id: {id}</Text>
+            <Text>Owner: {permission?.owner ?? <span className='Important'>Unclaimed</span>}</Text>
+            {!veridaIsConnected &&
+              <Text>(connect to Verida for user profile)</Text>
+            }
+          </VStack>
+
+          {publicProfile &&
+          <>
+            <Spacer />
+            <VeridaAvatar profile={publicProfile} />
+          </>
+          }
+        </HStack>
+
+        <Divider />
+
+        <Checkbox isChecked={permission?.visible ?? true} isDisabled={isDisabled} onChange={(e) => _canView(e.target.checked)}>
+          Anyone can View
+        </Checkbox>
+        <Checkbox isChecked={permission?.public ?? true} isDisabled={isDisabled} onChange={(e) => _canEdit(e.target.checked)}>
+          Anyone can Edit
+        </Checkbox>
+
+        {!veridaIsConnected && <><Divider /><Text color='error'>Connect to Verida!</Text></>}
+        {veridaIsConnected && !canEdit && <><Divider /><Text color='error'>Not the owner!</Text></>}
+
+      </VStack>
+    </Box>
   )
 }

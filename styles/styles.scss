@@ -6,7 +6,7 @@
 // 
 
 $color-important: #F39C12;
-
+$color-error: #F34000;
 
 //-----------------------------------
 // Generics
@@ -39,6 +39,9 @@ $color-important: #F39C12;
 
 .Important {
   color: $color-important;
+}
+.Error {
+  color: $color-error;
 }
 .ScreenBorder {
   @extend .FillParent;

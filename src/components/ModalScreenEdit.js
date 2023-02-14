@@ -8,6 +8,7 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
+  Tabs, TabList, TabPanels, Tab, TabPanel,
   HStack,
   Spacer,
   Text,
@@ -22,6 +23,7 @@ import useVerida from '@/hooks/useVerida'
 import Button from '@/components/Button'
 import Editable from '@/components/Editable'
 import Textarea from '@/components/Textarea'
+import { PermissionsForm } from '@/components/ModalPermissions'
 import { SliderProgress, SliderPage } from '@/components/Sliders'
 import { getFilenameFromUrl } from '@/core/utils'
 import * as Screen from '@/core/components/screen'
@@ -84,8 +86,29 @@ const ModalScreenEdit = ({
           </HStack>
         </ModalHeader>
         <ModalCloseButton />
-        <ModalBody pb={4}>
-          <ScreenEditor screenId={screenId} initialFocusRef={initialFocusRef} />
+        <ModalBody pb={4} minHeight='300px'>
+          <Tabs isFitted variant='enclosed'>
+            <TabList mb='1em'>
+              <Tab _selected={{ bg: 'teal' }}>Edit</Tab>
+              <Tab _selected={{ bg: 'teal' }}>Permissions</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
+                <ScreenEditor
+                  screenId={screenId}
+                  initialFocusRef={initialFocusRef}
+                />
+              </TabPanel>
+              <TabPanel>
+                <PermissionsForm
+                  type={screen?.type}
+                  name={screen?.name ?? '???'}
+                  id={screenId}
+                  disabled={screen == null}
+                />
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
         </ModalBody>
         <ModalFooter>
           <Button
