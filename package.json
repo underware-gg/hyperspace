@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.17",
-    "@chakra-ui/react": "^2.4.9",
+    "@chakra-ui/react": "^2.5.0",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@rsodre/crawler-data": "^0.0.3",
@@ -29,7 +29,7 @@
     "react-pdf": "^6.2.2",
     "react-syntax-highlighter": "^15.5.0",
     "react-textarea-autosize": "^8.4.0",
-    "sass": "^1.58.0",
+    "sass": "^1.58.1",
     "three": "^0.145.0"
   }
 }
