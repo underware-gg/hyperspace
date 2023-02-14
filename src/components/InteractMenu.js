@@ -24,7 +24,7 @@ const InteractMenu = ({
 
   const editor = useDocument('editor', agentId)
   const screen = useDocument('screen', screenId)
-  const { permission, isOwner, canEdit } = usePermission(screenId)
+  const { permission, isOwner, canEdit, canView } = usePermission(screenId)
 
   const deletePortalDisclosure = useConfirmDisclosure({
     header: 'Delete Portal',
@@ -76,13 +76,21 @@ const InteractMenu = ({
       {overScreen &&
         <>
           {screen?.type}:<Text color='important'>{screen?.name ?? screenId}</Text>
-          <Button size='sm' disabled={!screen || !canEdit} onClick={() => emitAction('interact')}>
-            [E]dit
-          </Button>
-          <Button size='sm' disabled={!screen || !canEdit} onClick={() => deleteScreenDisclosure.openConfirmDialog()}>
-            [Del]ete
-          </Button>
-          <DialogConfirm confirmDisclosure={deleteScreenDisclosure} />
+          {canEdit ?
+            <>
+              <Button size='sm' disabled={!screen || !canEdit} onClick={() => emitAction('interact')}>
+                [E]dit
+              </Button>
+              <Button size='sm' disabled={!screen || !canEdit} onClick={() => deleteScreenDisclosure.openConfirmDialog()}>
+                [Del]ete
+              </Button>
+              <DialogConfirm confirmDisclosure={deleteScreenDisclosure} />
+            </>
+            :
+            <Button size='sm' disabled={!screen || !canView} onClick={() => emitAction('interact')}>
+              [V]iew
+            </Button>
+          }
         </>
       }
     </HStack>

@@ -137,16 +137,24 @@ export const exists = (id) => {
 }
 
 export const remove = (id) => {
+  if (!Permission.canEdit(id)) {
+    console.warn(`No permission to delete Portal [${id}]`)
+    return
+  }
   return Interactable.remove('portal', id)
 }
 
 export const travel = (id) => {
   const store = getRemoteStore()
   const portal = store.getDocument('portal', id)
+  if (portal == null) return
 
-  if (portal !== null) {
-    window.location.href = `/${portal.slug}`
+  if (!Permission.canView(id)) {
+    console.warn(`No permission to enter Portal [${id}]`)
+    return
   }
+
+  window.location.href = `/${portal.slug}`
 }
 
 export const getCollisionRect = (id) => {

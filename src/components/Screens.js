@@ -1,8 +1,9 @@
 import { useEffect, useMemo } from 'react'
-import { getRemoteStore } from '@/core/singleton'
+import { getLocalStore } from '@/core/singleton'
 import { emitAction } from '@/core/controller'
 import { useDocument, useLocalDocument } from '@/hooks/useDocument'
 import useDocumentIds from '@/hooks/useDocumentIds'
+import usePermission from '@/hooks/usePermission'
 import ModalScreenEdit from '@/components/ModalScreenEdit'
 import { ScreenBook } from '@/components/ScreenBook'
 import * as Screen from '@/core/components/screen'
@@ -11,20 +12,24 @@ const Screens = ({ }) => {
   const screenIds = useDocumentIds('screen')
   const is3d = useLocalDocument('show-3d', 'world') ?? false
   const editingScreenId = useLocalDocument('screens', 'editing')
+  const { permission, isOwner, canEdit, canView } = usePermission(editingScreenId)
 
   const screensComponents = useMemo(() => {
     let result = []
-    const store = getRemoteStore()
+    const localStore = getLocalStore()
     for (const screenId of screenIds) {
-      const isEditing = (screenId == editingScreenId)
+      const overlayScreen = (screenId == editingScreenId)// && !is3d
       result.push(
         <div key={screenId}
           className='FillParent Absolute'
           style={{
-            zIndex: (isEditing && !is3d) ? '100' : '-100',
+            zIndex: overlayScreen ? '100' : '-100',
           }}
         >
-          <div id={screenId} className='FillParent ScreenBackground'>
+          <div id={screenId}
+            className='FillParent ScreenBackground Clickable'
+            onClick={() => localStore.setDocument('screens', 'editing', null)}
+          >
             <ScreenComponent screenId={screenId} />
             <div className='ScreenBorder' />
           </div>
@@ -33,7 +38,7 @@ const Screens = ({ }) => {
     }
 
     return result
-  }, [screenIds.length, editingScreenId])
+  }, [screenIds.length, editingScreenId, is3d, canEdit, canView])
 
   useEffect(() => {
     emitAction('syncScreens')

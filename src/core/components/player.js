@@ -3,6 +3,7 @@ import * as Room from '@/core/networking'
 import * as Portal from '@/core/components/portal'
 import * as Screen from '@/core/components/screen'
 import * as Interactable from '@/core/components/interactable'
+import * as Permission from '@/core/components/permission'
 import { getActionState, addActionDownListener } from '@/core/controller'
 import { getTextureByName, getSprite } from '@/core/textures'
 import { getRemoteStore, getLocalStore } from '@/core/singleton'
@@ -191,29 +192,36 @@ export const create = (id, x, y, z = 0) => {
 
 // We should add a delete portal button too.
 export const interact = (id) => {
-  const localStore = getLocalStore()
-
   const portalId = getPortalOverPlayer(id)
   if (portalId) {
     Portal.travel(portalId)
     return
   }
 
+  const localStore = getLocalStore()
+
   const screenId = getScreenOverPlayer(id)
   if (screenId) {
     const currentScreenId = localStore.getDocument('screens', 'editing')
     const newScreenId = screenId != currentScreenId ? screenId : null
+
+    if (newScreenId && !Permission.canView(newScreenId)) {
+      return
+    }
+
     localStore.setDocument('screens', 'editing', newScreenId)
     return
   }
 }
 
 export const getPortalOverPlayer = (id) => {
-  return getInteractableOverPlayer('portal', id)
+  const portalId = getInteractableOverPlayer('portal', id)
+  return portalId && Permission.canView(portalId) ? portalId : null
 }
 
 export const getScreenOverPlayer = (id) => {
-  return getInteractableOverPlayer('screen', id)
+  const screenId = getInteractableOverPlayer('screen', id)
+  return screenId && Permission.canView(screenId) ? screenId : null
 }
 
 export const canPlaceOverPlayer = (id) => {

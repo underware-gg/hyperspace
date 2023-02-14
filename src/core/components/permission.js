@@ -30,7 +30,7 @@ export const canEdit = (id, didAddress) => {
   if (didAddress === undefined) {
     didAddress = getLocalStore().getDocument('user', 'VeridaUser')?.getDidAddress() ?? null
   }
-  return (permission.public || permission.owner == didAddress)
+  return ((permission.visible && permission.public) || permission.owner == didAddress)
 }
 
 export const updatePermission = (id, owner, values) => {

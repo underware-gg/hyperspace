@@ -10,7 +10,7 @@ const usePermission = (id) => {
 
   const isOwner = useMemo(() => (veridaIsConnected && permission?.owner == didAddress), [veridaIsConnected, permission])
   const canView = useMemo(() => (isOwner || !permission || permission.visible), [isOwner, permission])
-  const canEdit = useMemo(() => (isOwner || !permission || permission.public), [isOwner, permission])
+  const canEdit = useMemo(() => (isOwner || !permission || (permission.visible && permission.public)), [isOwner, permission])
   
   return {
     permission,

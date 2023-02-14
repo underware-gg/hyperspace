@@ -19,6 +19,7 @@ import {
 import { getLocalStore, getRemoteStore } from '@/core/singleton'
 import { getGameCanvasElement } from '@/core/game-canvas'
 import { useDocument, useLocalDocument } from '@/hooks/useDocument'
+import usePermission from '@/hooks/usePermission'
 import useVerida from '@/hooks/useVerida'
 import Button from '@/components/Button'
 import Editable from '@/components/Editable'
@@ -31,6 +32,7 @@ import * as Screen from '@/core/components/screen'
 const ModalScreenEdit = ({
   screenId,
 }) => {
+  const { permission, isOwner, canEdit, canView } = usePermission(screenId)
   const screen = useDocument('screen', screenId)
 
   const initialFocusRef = useRef(null)
@@ -58,7 +60,7 @@ const ModalScreenEdit = ({
     store.setDocument('screens', 'editing', null)
   }
 
-  const isOpen = (screenId != null)
+  const isOpen = (screenId != null && canEdit)
 
   return (
     <Modal

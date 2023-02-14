@@ -41,6 +41,8 @@ export const init = () => {
     scene.add(screenMesh)
 
     localStore.setDocument('screen-mesh', screenId, screenMesh)
+
+    _updatePermission(screenId)
   }
 
   const _deleteScreen = (screenId) => {
@@ -54,37 +56,41 @@ export const init = () => {
     scene.remove(screenMesh)
   }
 
+  const _updatePermission = (screenId) => {
+    const scene = localStore.getDocument('scene', 'scene')
+    if (scene === null) return
+
+    const screenMesh = localStore.getDocument('screen-mesh', screenId)
+    if (screenMesh === null) return
+
+    screenMesh.visible = Permission.canView(screenId)
+  }
+
   remoteStore.on({ type: 'screen', event: 'create' }, (screenId, screen) => {
     _createScreen(screenId, screen)
+  })
+
+  remoteStore.on({ type: 'screen', event: 'delete' }, (screenId) => {
+    _deleteScreen(screenId)
   })
 
   remoteStore.on({ type: 'map', event: 'update' }, (mapId, map) => {
     const screenIds = remoteStore.getIds('screen')
 
     // update all screens because we don't know what changed
-    // TODO: Improve this! (save tile to localStore and compare with new map)
     for (const screenId of screenIds) {
       const screen = remoteStore.getDocument('screen', screenId)
-
-      if (screen === null) {
-        continue
-      }
+      if (screen === null) continue
 
       const { position: { x, y } } = screen
 
       const tile = getTile('world', x, y)
-
-      if (tile === null) {
-        continue
-      }
+      if (tile === null) continue
 
       const currentFloorHeight = floors[tile]
 
       const screenMesh = localStore.getDocument('screen-mesh', screenId)
-
-      if (screenMesh === null) {
-        return
-      }
+      if (screenMesh === null) continue
 
       screenMesh.position.set(
         (Math.floor(x)) + 0.5,
@@ -94,8 +100,8 @@ export const init = () => {
     }
   })
 
-  remoteStore.on({ type: 'screen', event: 'delete' }, (screenId) => {
-    _deleteScreen(screenId)
+  remoteStore.on({ type: 'permission', event: 'update' }, (screenId, permission) => {
+    _updatePermission(screenId)
   })
 
   addActionDownListener('syncScreens', async () => {
@@ -209,7 +215,7 @@ export const updateScreen = (id, values) => {
     console.warn(`No permission to update Screen [${id}]`)
     return
   }
-  
+
   store.setDocument('screen', id, {
     ...screen, ...values
   })
