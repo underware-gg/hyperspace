@@ -188,11 +188,10 @@ export const init = async (slug, canvas, canvas3d) => {
     Map.create('world')
   }
 
+  const { VeridaUser } = (await import('src/core/networking/verida'))
+
   const localStore = getLocalStore()
-  const scene = localStore.getDocument('scene', 'scene')
-  if (scene === null) {
-    return
-  }
+  localStore.setDocument('user', 'VeridaUser', VeridaUser)
 }
 
 export const update = (dt) => {

@@ -12,8 +12,6 @@ import { MAP_SCALE_X, MAP_SCALE_Y } from '@/core/components/map'
 import { getPlayerTile } from '@/core/components/player'
 import { roundToNearest, getFilenameFromUrl } from '@/core/utils'
 
-import { VeridaUser } from '@/core/networking/verida'
-
 export const getMouseCanvasPosition = (e, canvas) => {
   const rect = canvas.getBoundingClientRect()
   const x = (e.clientX - rect.left) / canvas.scrollWidth * canvas.width
@@ -289,8 +287,7 @@ export const update = (id, dt) => {
     return
   }
 
-  const didAddress = VeridaUser.getDidAddress()
-  if (!Permission.canEdit('world', didAddress)) {
+  if (!Permission.canEdit('world')) {
     return
   }
 
@@ -351,8 +348,7 @@ export const render2d = (id, context) => {
   }
 
   // do not draw cursor for if I cant edit
-  const didAddress = VeridaUser.getDidAddress()
-  if (!Permission.canEdit('world', didAddress)) {
+  if (!Permission.canEdit('world')) {
     return
   }
 

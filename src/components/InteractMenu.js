@@ -5,6 +5,7 @@ import {
 import Button from '@/components/Button'
 import useRoom from '@/hooks/useRoom'
 import usePlayer from '@/hooks/usePlayer'
+import usePermission from '@/hooks/usePermission'
 import { useDocument } from '@/hooks/useDocument'
 import { emitAction } from '@/core/controller'
 import { DialogConfirm, useConfirmDisclosure } from '@/components/DialogConfirm'
@@ -23,6 +24,7 @@ const InteractMenu = ({
 
   const editor = useDocument('editor', agentId)
   const screen = useDocument('screen', screenId)
+  const { permission, isOwner, canEdit } = usePermission(screenId)
 
   const deletePortalDisclosure = useConfirmDisclosure({
     header: 'Delete Portal',
@@ -61,10 +63,10 @@ const InteractMenu = ({
       {overPortal &&
         <>
           Portal to&nbsp;<Text color='important'>{portalName}</Text>
-          <Button size='sm' onClick={() => emitAction('interact')}>
+          <Button size='sm' disabled={!canEdit} onClick={() => emitAction('interact')}>
             [E]nter
           </Button>
-          <Button size='sm' onClick={() => deletePortalDisclosure.openConfirmDialog()}>
+          <Button size='sm' disabled={!canEdit} onClick={() => deletePortalDisclosure.openConfirmDialog()}>
             [Del]ete
           </Button>
           <DialogConfirm confirmDisclosure={deletePortalDisclosure} />
@@ -74,10 +76,10 @@ const InteractMenu = ({
       {overScreen &&
         <>
           {screen?.type}:<Text color='important'>{screen?.name ?? screenId}</Text>
-          <Button size='sm' onClick={() => emitAction('interact')} disabled={!screen}>
+          <Button size='sm' disabled={!screen || !canEdit} onClick={() => emitAction('interact')}>
             [E]dit
           </Button>
-          <Button size='sm' onClick={() => deleteScreenDisclosure.openConfirmDialog()} disabled={!screen}>
+          <Button size='sm' disabled={!screen || !canEdit} onClick={() => deleteScreenDisclosure.openConfirmDialog()}>
             [Del]ete
           </Button>
           <DialogConfirm confirmDisclosure={deleteScreenDisclosure} />

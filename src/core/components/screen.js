@@ -5,6 +5,7 @@ import { getTile, floors } from '@/core/components/map'
 import { addActionDownListener } from '@/core/controller'
 import { getScreenOverPlayer } from '@/core/components/player'
 import * as Interactable from '@/core/components/interactable'
+import * as Permission from '@/core/components/permission'
 
 export const TYPE = {
   DOCUMENT: 'document',
@@ -114,6 +115,10 @@ export const exists = (id) => {
 }
 
 export const remove = (id) => {
+  if (!Permission.canEdit(id)) {
+    console.warn(`No permission to delete Screen [${id}]`)
+    return
+  }
   return Interactable.remove('screen', id)
 }
 
@@ -198,10 +203,15 @@ export const createBook = (id, x, y, url, name) => {
 export const updateScreen = (id, values) => {
   const store = getRemoteStore()
   let screen = store.getDocument('screen', id)
-  if (screen !== null) {
-    store.setDocument('screen', id, {
-      ...screen, ...values
-    })
+  if (screen == null) return
+
+  if (!Permission.canEdit(id)) {
+    console.warn(`No permission to update Screen [${id}]`)
+    return
   }
+  
+  store.setDocument('screen', id, {
+    ...screen, ...values
+  })
 }
 

@@ -1,4 +1,4 @@
-import { getRemoteStore } from '@/core/singleton'
+import { getRemoteStore, getLocalStore } from '@/core/singleton'
 import * as Interactable from '@/core/components/interactable'
 
 export const exists = (id) => {
@@ -15,6 +15,9 @@ export const canView = (id, didAddress) => {
   if (!permission) {
     return true
   }
+  if (didAddress === undefined) {
+    didAddress = getLocalStore().getDocument('user', 'VeridaUser')?.getDidAddress() ?? null
+  }
   return (permission.visible || permission.owner == didAddress)
 }
 
@@ -23,6 +26,9 @@ export const canEdit = (id, didAddress) => {
   const permission = store.getDocument('permission', id)
   if (!permission) {
     return true
+  }
+  if (didAddress === undefined) {
+    didAddress = getLocalStore().getDocument('user', 'VeridaUser')?.getDidAddress() ?? null
   }
   return (permission.public || permission.owner == didAddress)
 }
