@@ -60,7 +60,8 @@ const DocumentPage = () => {
         </Heading>
         <Box border='1px' borderRadius='4px'>
           <Textarea
-            value={screen?.content ?? null}
+            value={screen?.content ?? `Screen [${screenId}] not found`}
+            disabled={!screen}
             onChange={(e) => _handleInputChange(e)}
           />
           <Box p='4'>
