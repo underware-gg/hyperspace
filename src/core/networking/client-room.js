@@ -15,7 +15,7 @@ class ClientRoom extends EventEmitter {
 		this.store = getRemoteStore()
 		this.store.on(null, this.handleStoreChange)
 		this.uri = uri
-		this.slug = slug
+		this.slug = slug.toLowerCase()
 		this.agentId = getAgentId()
 		this.agentIds = [
 			this.agentId,
