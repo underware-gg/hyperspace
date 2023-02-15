@@ -73,15 +73,15 @@ export const init = (canvas, id) => {
     // id is the agent id.
   })
 
-  addActionDownListener('createPortal', (slug) => {
+  addActionDownListener('createPortal', (slug, entryTileX, entryTileY) => {
     if (!slug) return
 
     if (!canPlaceOverPlayer(id)) {
       return
     }
 
-    const { tileX, tileY } = getCreateTile(id)
-    Portal.create(nanoid(), tileX, tileY, slug)
+    const { x, y } = getCreateTile(id)
+    Portal.create(nanoid(), x, y, slug, entryTileX, entryTileY)
   })
 
   addActionDownListener('createScreen', () => {

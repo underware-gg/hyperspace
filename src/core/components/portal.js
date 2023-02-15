@@ -1,4 +1,6 @@
 import * as THREE from 'three'
+import * as Room from '@/core/networking'
+import * as Map from '@/core/components/map'
 import * as Interactable from '@/core/components/interactable'
 import * as Permission from '@/core/components/permission'
 import { getTextureImageByName } from '@/core/textures'
@@ -125,9 +127,13 @@ export const init = () => {
   })
 }
 
-export const create = (id, x, y, slug) => {
+export const create = (id, x, y, slug, entryTileX, entryTileY) => {
   const portal = {
     slug,
+    tile: {
+      x: entryTileX,
+      y: entryTileY,
+    }
   }
   Interactable.create('portal', id, x, y, portal)
   return portal
@@ -170,7 +176,18 @@ export const travel = (id) => {
     return
   }
 
-  window.location.href = `/${portal.slug}`
+  // Travel to the same room
+  const room = Room.get()
+  if (room.slug == portal.slug) {
+    const position = Map.fromTileToCanvasPosition(portal.tile?.x, portal.tile?.y)
+    let player = store.getDocument('player', room.agentId)
+    player.position.x = position.x
+    player.position.y = position.y
+    store.setDocument('player', room.agentId, player)
+  } else {
+    // Travel to other Room
+    window.location.href = `/${portal.slug}`
+  }
 }
 
 export const getCollisionRect = (id) => {

@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { getTextureImageByName } from '@/core/textures'
 import { getRemoteStore, getLocalStore } from '@/core/singleton'
 import { defaultTileset } from '@/core/texture-data'
+import { defaultEntryTile } from './player'
 
 export const MAP_WIDTH = 20
 export const MAP_HEIGHT = 15
@@ -327,6 +328,11 @@ export const getTileAtCanvasPosition = (id, x, y) => {
 }
 
 export const fromTileToCanvasPosition = (tileX, tileY) => {
+  // prevent to spawn outside the map, and old Portals dont have tile
+  if (tileX == null || tileX < 0 || tileX >= MAP_WIDTH || tileY == null || tileY < 0 || tileY >= MAP_HEIGHT) {
+    tileX = defaultEntryTile.x
+    tileY = defaultEntryTile.y
+  }
   const x = Math.floor((tileX + 0.5) * 32)
   const y = Math.floor((tileY + 0.5) * 32)
   return { x, y }

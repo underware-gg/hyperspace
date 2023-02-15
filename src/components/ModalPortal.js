@@ -16,6 +16,7 @@ import {
 import { useDocument } from '@/hooks/useDocument'
 import { getGameCanvasElement } from '@/core/game-canvas'
 import Button from '@/components/Button'
+import * as Player from '@/core/components/player'
 
 const ModalPortal = ({
   disclosure,
@@ -24,6 +25,8 @@ const ModalPortal = ({
 }) => {
   const { isOpen, onOpen, onClose } = disclosure
   const [roomName, setRoomName] = useState('');
+  const [tileX, setTileX] = useState(Player.defaultEntryTile.x);
+  const [tileY, setTileY] = useState(Player.defaultEntryTile.y);
   const roomNameRef = useRef()
   const finalRef = useRef(null)
 
@@ -36,11 +39,27 @@ const ModalPortal = ({
   useEffect(() => {
     if (isOpen) {
       setRoomName(portal?.slug ?? '')
+      setTileX(portal?.tile?.x ?? Player.defaultEntryTile.x)
+      setTileY(portal?.tile?.y ?? Player.defaultEntryTile.y)
     }
   }, [portal, isOpen])
 
+  const _onChangeX = (value) => {
+    const v = parseInt(value)
+    if (!isNaN(v)) {
+      setTileX(v)
+    }
+  }
+
+  const _onChangeY = (value) => {
+    const v = parseInt(value)
+    if (!isNaN(v)) {
+      setTileY(v)
+    }
+  }
+
   const _onSave = () => {
-    onSubmit(roomName)
+    onSubmit(roomName, tileX, tileY)
     onClose()
   }
 
@@ -66,12 +85,28 @@ const ModalPortal = ({
             <HStack>
               <Text w='100px'>To Room:</Text>
               <Input
-                w='100%'
                 focusBorderColor='teal.500'
                 placeholder=''
                 ref={roomNameRef}
                 value={roomName}
                 onChange={(e) => setRoomName(e.target.value)}
+              />
+            </HStack>
+            <HStack>
+              <Text w='170px'>Entry</Text>
+              <Text>X:</Text>
+              <Input
+                focusBorderColor='teal.500'
+                placeholder=''
+                value={tileX}
+                onChange={(e) => _onChangeX(e.target.value)}
+              />
+              <Text>Y:</Text>
+              <Input
+                focusBorderColor='teal.500'
+                placeholder=''
+                value={tileY}
+                onChange={(e) => _onChangeY(e.target.value)}
               />
             </HStack>
           </VStack>

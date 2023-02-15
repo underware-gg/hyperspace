@@ -28,6 +28,7 @@ const InteractMenu = ({
 
   const editor = useDocument('editor', agentId)
   const screen = useDocument('screen', screenId)
+  const portal = useDocument('portal', portalId)
   const { permission, isOwner, canEdit, canView } = usePermission(screenId)
 
   const portalDisclosure = useDisclosure()
@@ -41,7 +42,7 @@ const InteractMenu = ({
 
   const enterPortalDisclosure = useConfirmDisclosure({
     header: 'Enter Portal',
-    message: <>Enter Portal to Room <span className='Important'>{portalName}</span>?</>,
+    message: <>Enter Portal to Room <span className='Important'>{portalName}</span>{portal?.tile && `@[${portal.tile.x},${portal.tile.y}]`} ?</>,
     confirmLabel: 'Enter',
     onConfirm: () => emitAction('interact'),
   })
@@ -53,13 +54,16 @@ const InteractMenu = ({
     onConfirm: () => emitAction('delete'),
   })
 
-  const _savePortal = (roomName) => {
-    const entryTile = Player.defaultEntryTile
+  const _savePortal = (roomName, tileX, tileY) => {
     if (canPlace && !overPortal) {
-      emitAction('createPortal', roomName, entryTile.x, entryTile.y)
+      emitAction('createPortal', roomName, tileX, tileY)
     } else {
       Portal.updatePortal(portalId, {
         slug: roomName,
+        tile: {
+          x: tileX,
+          y: tileY,
+        }
       })
     }
   }

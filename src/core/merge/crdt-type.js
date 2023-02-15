@@ -170,6 +170,10 @@ export const portal = {
     z: 'number',
   },
   slug: 'string',
+  tile: {
+    x: 'number',
+    y: 'number',
+  },
 }
 
 export const tileset = {
