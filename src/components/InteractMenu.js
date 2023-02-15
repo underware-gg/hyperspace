@@ -28,9 +28,16 @@ const InteractMenu = ({
 
   const deletePortalDisclosure = useConfirmDisclosure({
     header: 'Delete Portal',
-    message: <>Delete Portal to <span className='Important'>{portalName}</span>?</>,
+    message: <>Delete Portal to Room <span className='Important'>{portalName}</span>?</>,
     confirmLabel: 'Delete',
     onConfirm:() => emitAction('delete'),
+  })
+
+  const enterPortalDisclosure = useConfirmDisclosure({
+    header: 'Enter Portal',
+    message: <>Enter Portal to Room <span className='Important'>{portalName}</span>?</>,
+    confirmLabel: 'Enter',
+    onConfirm: () => emitAction('interact'),
   })
 
   const deleteScreenDisclosure = useConfirmDisclosure({
@@ -63,12 +70,16 @@ const InteractMenu = ({
       {overPortal &&
         <>
           Portal to&nbsp;<Text color='important'>{portalName}</Text>
-          <Button size='sm' disabled={!canEdit} onClick={() => emitAction('interact')}>
+          <Button size='sm' disabled={!canEdit} onClick={() => enterPortalDisclosure.openConfirmDialog()}>
             [E]nter
+          </Button>
+          <Button size='sm' disabled={!canEdit} onClick={() => emitAction('createPortal')}>
+            Edit [P]ortal
           </Button>
           <Button size='sm' disabled={!canEdit} onClick={() => deletePortalDisclosure.openConfirmDialog()}>
             [Del]ete
           </Button>
+          <DialogConfirm confirmDisclosure={enterPortalDisclosure} />
           <DialogConfirm confirmDisclosure={deletePortalDisclosure} />
         </>
       }

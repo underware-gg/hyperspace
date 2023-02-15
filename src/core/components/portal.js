@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import * as Interactable from '@/core/components/interactable'
+import * as Permission from '@/core/components/permission'
 import { getTextureImageByName } from '@/core/textures'
 import { getLocalStore, getRemoteStore } from '@/core/singleton'
 import { getTile, floors } from '@/core/components/map'
