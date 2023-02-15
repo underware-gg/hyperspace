@@ -179,8 +179,6 @@ export const init = async (slug, canvas, canvas3d) => {
   if (!Player.exists(room.agentId)) {
     Player.create(
       room.agentId,
-      50,
-      50,
     )
   }
 

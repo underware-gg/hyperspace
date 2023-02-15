@@ -187,7 +187,7 @@ export const init = () => {
           stack3: wallStack3,
         },
       }
-      let pos = fromTileToCanvasPosition(x,y)
+      let pos = fromTileToCellPosition(x,y)
 
       gridCell3D.position.x = pos.x
       gridCell3D.position.y = pos.y + cellWidth
@@ -327,12 +327,15 @@ export const getTileAtCanvasPosition = (id, x, y) => {
 }
 
 export const fromTileToCanvasPosition = (tileX, tileY) => {
+  const x = Math.floor((tileX + 0.5) * 32)
+  const y = Math.floor((tileY + 0.5) * 32)
+  return { x, y }
+}
+
+export const fromTileToCellPosition = (tileX, tileY) => {
   const x = tileX * cellWidth + cellWidth * 0.5
   const y = tileY * cellWidth -MAP_HEIGHT * cellWidth - cellWidth * 0.5
-  return {
-    x,
-    y,
-  }
+  return { x, y }
 }
 
 export const render3D = (id) => {

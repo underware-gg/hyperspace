@@ -3,7 +3,6 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
-import Button from '@/components/Button'
 import useRoom from '@/hooks/useRoom'
 import usePlayer from '@/hooks/usePlayer'
 import usePermission from '@/hooks/usePermission'
@@ -11,7 +10,9 @@ import { useDocument } from '@/hooks/useDocument'
 import { emitAction } from '@/core/controller'
 import { DialogConfirm, useConfirmDisclosure } from '@/components/DialogConfirm'
 import ModalPortal from '@/components/ModalPortal'
+import Button from '@/components/Button'
 import * as Portal from '@/core/components/portal'
+import * as Player from '@/core/components/player'
 
 const InteractMenu = ({
   customTileset,
@@ -53,8 +54,9 @@ const InteractMenu = ({
   })
 
   const _savePortal = (roomName) => {
+    const entryTile = Player.defaultEntryTile
     if (canPlace && !overPortal) {
-      emitAction('createPortal', roomName)
+      emitAction('createPortal', roomName, entryTile.x, entryTile.y)
     } else {
       Portal.updatePortal(portalId, {
         slug: roomName,

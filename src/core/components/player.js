@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import * as Room from '@/core/networking'
+import * as Map from '@/core/components/map'
 import * as Portal from '@/core/components/portal'
 import * as Screen from '@/core/components/screen'
 import * as Interactable from '@/core/components/interactable'
@@ -11,6 +12,11 @@ import { CONST, clamp, clampRadians, deepCompare, deepCopy } from '@/core/utils'
 import { floors, getTile } from '@/core/components/map'
 import { strokeCircle, strokeRect } from '@/core/rendering/debug-render'
 import { getOverlappingTiles, rectanglesOverlap } from '@/core/collisions'
+
+export const defaultEntryTile = {
+  x: 9,
+  y: 3,
+}
 
 const SPEED = 125
 const PLAYER_BOX = 16
@@ -170,16 +176,18 @@ export const update3d = (id) => {
 
 }
 
-export const create = (id, x, y, z = 0) => {
+export const create = (id) => {
+  const entryPosition = Map.fromTileToCanvasPosition(defaultEntryTile.x, defaultEntryTile.y)
+  console.log(`NEW`, defaultEntryTile, entryPosition)
   const player = {
     position: {
-      x,
-      y,
-      z,
+      x: entryPosition.x,
+      y: entryPosition.y,
+      z: 0,
     },
     rotation: {
       x: 0,
-      y: 0,
+      y: Math.PI,
       z: 0,
     }
   }
