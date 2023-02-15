@@ -1,17 +1,23 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { nanoid } from 'nanoid'
-import { VStack, Heading, Text, Box } from '@chakra-ui/react'
+import {
+  VStack,
+  Heading,
+  Text,
+  Box,
+  useDisclosure,
+} from '@chakra-ui/react'
 import Button from '@/components/Button'
 import Layout from '@/components/Layout'
 import ModalRoom from '@/components/ModalRoom'
 
 const HomePage = ({ slug }) => {
+  const disclosure = useDisclosure()
   const router = useRouter();
-  const [roomModal, setRoomModal] = useState(false);
 
   function enterRoom(roomName) {
-    setRoomModal(false);
+    disclosure.onClose();
     const url = roomName?.length > 0 ? `/${roomName}` : slug;
     // router.push(url);
 
@@ -35,7 +41,7 @@ const HomePage = ({ slug }) => {
           <Button
             size='sm'
             variant='outline'
-            onClick={() => setRoomModal(true)}
+            onClick={() => disclosure.onOpen()}
           >
             Create / Enter Room
           </Button>
@@ -43,8 +49,7 @@ const HomePage = ({ slug }) => {
       </Box>
 
       <ModalRoom
-        isOpen={roomModal}
-        onClose={() => setRoomModal(false)}
+        disclosure={disclosure}
         onSubmit={(roomName) => enterRoom(roomName)}
       />
 

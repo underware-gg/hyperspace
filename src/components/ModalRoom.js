@@ -13,10 +13,10 @@ import {
 import Button from '@/components/Button'
 
 const ModalRoom = ({
-  isOpen,
-  onClose,
+  disclosure,
   onSubmit,
 }) => {
+  const { isOpen, onOpen, onClose } = disclosure
   const [roomName, setRoomName] = useState('');
   const roomNameRef = useRef()
 
