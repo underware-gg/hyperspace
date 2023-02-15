@@ -73,13 +73,10 @@ export const init = (canvas, id) => {
     // id is the agent id.
   })
 
-  addActionDownListener('createPortal', () => {
-    if (!canPlaceOverPlayer(id)) {
-      return
-    }
+  addActionDownListener('createPortal', (slug) => {
+    if (!slug) return
 
-    const slug = window.prompt('The portal leads to...', 'test')
-    if (slug === null) {
+    if (!canPlaceOverPlayer(id)) {
       return
     }
 

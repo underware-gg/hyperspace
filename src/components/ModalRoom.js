@@ -23,7 +23,6 @@ const ModalRoom = ({
   return (
     <Modal
       isOpen={isOpen}
-      // onAfterOpen={() => onAfterOpen()}
       onClose={() => onClose()}
       initialFocusRef={roomNameRef}
       isCentered

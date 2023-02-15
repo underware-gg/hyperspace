@@ -48,7 +48,6 @@ export const ModalPermissions = ({
       // initialFocusRef={initialRef}
       // finalFocusRef={finalRef}
       isOpen={isOpen}
-      // onAfterOpen={() => _onAfterOpen()}
       onClose={onClose}
       isCentered
       size='lg'

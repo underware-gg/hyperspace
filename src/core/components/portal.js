@@ -133,6 +133,21 @@ export const create = (id, x, y, slug) => {
   return portal
 }
 
+export const updatePortal = (id, values) => {
+  const store = getRemoteStore()
+  let portal = store.getDocument('portal', id)
+  if (portal == null) return
+
+  if (!Permission.canEdit(id)) {
+    console.warn(`No permission to update Portal [${id}] to [${portal.slug}]`)
+    return
+  }
+
+  store.setDocument('portal', id, {
+    ...portal, ...values
+  })
+}
+
 export const exists = (id) => {
   return Interactable.exists('portal', id)
 }

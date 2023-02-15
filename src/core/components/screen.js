@@ -212,7 +212,7 @@ export const updateScreen = (id, values) => {
   if (screen == null) return
 
   if (!Permission.canEdit(id)) {
-    console.warn(`No permission to update Screen [${id}]`)
+    console.warn(`No permission to update Screen [${id}] [${screen.name}]`)
     return
   }
 

@@ -35,11 +35,11 @@ const ModalScreenEdit = ({
   const { permission, isOwner, canEdit, canView } = usePermission(screenId)
   const screen = useDocument('screen', screenId)
 
-  const initialFocusRef = useRef(null)
-  const finalRef = useRef(null)
-
   const router = useRouter()
   const { slug } = router.query
+
+  const initialFocusRef = useRef(null)
+  const finalRef = useRef(null)
 
   useEffect(() => {
     finalRef.current = getGameCanvasElement()
@@ -67,7 +67,6 @@ const ModalScreenEdit = ({
       initialFocusRef={initialFocusRef}
       finalFocusRef={finalRef}
       isOpen={isOpen}
-      // onAfterOpen={() => _onAfterOpen()}
       onClose={() => _handleClose()}
       isCentered
       size='xl'

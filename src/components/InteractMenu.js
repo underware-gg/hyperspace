@@ -1,6 +1,7 @@
 import {
   HStack,
   Text,
+  useDisclosure,
 } from '@chakra-ui/react'
 import Button from '@/components/Button'
 import useRoom from '@/hooks/useRoom'
@@ -9,6 +10,8 @@ import usePermission from '@/hooks/usePermission'
 import { useDocument } from '@/hooks/useDocument'
 import { emitAction } from '@/core/controller'
 import { DialogConfirm, useConfirmDisclosure } from '@/components/DialogConfirm'
+import ModalPortal from '@/components/ModalPortal'
+import * as Portal from '@/core/components/portal'
 
 const InteractMenu = ({
   customTileset,
@@ -26,11 +29,13 @@ const InteractMenu = ({
   const screen = useDocument('screen', screenId)
   const { permission, isOwner, canEdit, canView } = usePermission(screenId)
 
+  const portalDisclosure = useDisclosure()
+
   const deletePortalDisclosure = useConfirmDisclosure({
     header: 'Delete Portal',
     message: <>Delete Portal to Room <span className='Important'>{portalName}</span>?</>,
     confirmLabel: 'Delete',
-    onConfirm:() => emitAction('delete'),
+    onConfirm: () => emitAction('delete'),
   })
 
   const enterPortalDisclosure = useConfirmDisclosure({
@@ -47,6 +52,16 @@ const InteractMenu = ({
     onConfirm: () => emitAction('delete'),
   })
 
+  const _savePortal = (roomName) => {
+    if (canPlace && !overPortal) {
+      emitAction('createPortal', roomName)
+    } else {
+      Portal.updatePortal(portalId, {
+        slug: roomName,
+      })
+    }
+  }
+
   return (
     <HStack>
       {canPlace &&
@@ -55,7 +70,7 @@ const InteractMenu = ({
             ? <>Edit@[{editor.position.x},{editor.position.y}]&nbsp;</>
             : <>Player@[{tileX},{tileY}]&nbsp;</>
           }
-          <Button size='sm' onClick={() => emitAction('createPortal')}>
+          <Button size='sm' onClick={() => portalDisclosure.onOpen()}>
             New [P]ortal
           </Button>
           <Button size='sm' onClick={() => emitAction('createScreen')}>
@@ -73,7 +88,7 @@ const InteractMenu = ({
           <Button size='sm' disabled={!canEdit} onClick={() => enterPortalDisclosure.openConfirmDialog()}>
             [E]nter
           </Button>
-          <Button size='sm' disabled={!canEdit} onClick={() => emitAction('createPortal')}>
+          <Button size='sm' disabled={!canEdit} onClick={() => portalDisclosure.onOpen()}>
             Edit [P]ortal
           </Button>
           <Button size='sm' disabled={!canEdit} onClick={() => deletePortalDisclosure.openConfirmDialog()}>
@@ -83,6 +98,8 @@ const InteractMenu = ({
           <DialogConfirm confirmDisclosure={deletePortalDisclosure} />
         </>
       }
+
+      <ModalPortal portalId={portalId} disclosure={portalDisclosure} onSubmit={_savePortal} />
 
       {overScreen &&
         <>
