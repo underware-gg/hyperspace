@@ -11,8 +11,6 @@ import { emitAction } from '@/core/controller'
 import { DialogConfirm, useConfirmDisclosure } from '@/components/DialogConfirm'
 import ModalPortal from '@/components/ModalPortal'
 import Button from '@/components/Button'
-import * as Portal from '@/core/components/portal'
-import * as Player from '@/core/components/player'
 
 const InteractMenu = ({
   customTileset,
@@ -54,22 +52,6 @@ const InteractMenu = ({
     onConfirm: () => emitAction('delete'),
   })
 
-  const _savePortal = (slug, tileX, tileY) => {
-    const options = {
-      slug,
-      tile: {
-        x: tileX,
-        y: tileY,
-      }
-    }
-    if (canPlace && !overPortal) {
-      console.log(`EMIT portal`, options)
-      emitAction('createPortal', options)
-    } else {
-      Portal.updatePortal(portalId, options)
-    }
-  }
-
   return (
     <HStack>
       {canPlace &&
@@ -107,7 +89,7 @@ const InteractMenu = ({
         </>
       }
 
-      <ModalPortal portalId={portalId} disclosure={portalDisclosure} onSubmit={_savePortal} />
+      <ModalPortal portalId={portalId} disclosure={portalDisclosure} newPortal={canPlace && !overPortal} />
 
       {overScreen &&
         <>

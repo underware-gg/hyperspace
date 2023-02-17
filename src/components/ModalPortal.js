@@ -15,13 +15,15 @@ import {
 } from '@chakra-ui/react'
 import { useDocument } from '@/hooks/useDocument'
 import { getGameCanvasElement } from '@/core/game-canvas'
+import { TileField } from '@/components/ModalSettings'
 import Button from '@/components/Button'
+import * as Portal from '@/core/components/portal'
 import * as Settings from '@/core/components/settings'
 
 const ModalPortal = ({
   disclosure,
   portalId,
-  onSubmit,
+  newPortal=false
 }) => {
   const { isOpen, onOpen, onClose } = disclosure
   const [roomName, setRoomName] = useState('');
@@ -44,22 +46,20 @@ const ModalPortal = ({
     }
   }, [portal, isOpen])
 
-  const _onChangeX = (value) => {
-    const v = parseInt(value)
-    if (!isNaN(v)) {
-      setTileX(v)
-    }
-  }
-
-  const _onChangeY = (value) => {
-    const v = parseInt(value)
-    if (!isNaN(v)) {
-      setTileY(v)
-    }
-  }
-
   const _onSave = () => {
-    onSubmit(roomName, tileX, tileY)
+    const options = {
+      slug: roomName,
+      tile: {
+        x: tileX,
+        y: tileY,
+      }
+    }
+    if (newPortal) {
+      console.log(`EMIT portal`, options)
+      emitAction('createPortal', options)
+    } else {
+      Portal.updatePortal(portalId, options)
+    }
     onClose()
   }
 
@@ -83,7 +83,7 @@ const ModalPortal = ({
         <ModalBody pb={4}>
           <VStack spacing={4} align='stretch'>
             <HStack>
-              <Text w='100px'>To Room:</Text>
+              <Text w='125px'>To Room:</Text>
               <Input
                 focusBorderColor='teal.500'
                 placeholder=''
@@ -92,23 +92,13 @@ const ModalPortal = ({
                 onChange={(e) => setRoomName(e.target.value)}
               />
             </HStack>
-            <HStack>
-              <Text w='170px'>Entry</Text>
-              <Text>X:</Text>
-              <Input
-                focusBorderColor='teal.500'
-                placeholder=''
-                value={tileX}
-                onChange={(e) => _onChangeX(e.target.value)}
-              />
-              <Text>Y:</Text>
-              <Input
-                focusBorderColor='teal.500'
-                placeholder=''
-                value={tileY}
-                onChange={(e) => _onChangeY(e.target.value)}
-              />
-            </HStack>
+            <TileField
+              name='Entry'
+              valueX={tileX}
+              valueY={tileY}
+              onChangeX={setTileX}
+              onChangeY={setTileY}
+            />
           </VStack>
         </ModalBody>
         <ModalFooter>

@@ -5,6 +5,7 @@ import * as Permission from '@/core/components/permission'
 import * as Player from '@/core/components/player'
 import { getTextureImageByName } from '@/core/textures'
 import { getLocalStore, getRemoteStore } from '@/core/singleton'
+import { getPortalOverPlayer } from '@/core/components/player'
 import { getTile, floors } from '@/core/components/map'
 import Cookies from 'universal-cookie';
 
@@ -208,7 +209,13 @@ export const render2d = (id, context) => {
 
   const portalTexture = getTextureImageByName('portal')
 
-  const t = new Date().getTime() / 10000;
+  const room = Room.get()
+
+  let t = 0
+  if (getPortalOverPlayer(room.agentId) == id) {
+    t = new Date().getTime() / 10000;
+  }
+
   context.save()
   context.translate(Math.round(x * 32 + 16), Math.round(y * 32 + 16));
   context.rotate((t % 1) * Math.PI * 2);

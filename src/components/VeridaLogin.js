@@ -7,7 +7,7 @@ import {
 import useVerida from '@/hooks/useVerida'
 import Button from '@/components/Button'
 import { DialogConfirm, useConfirmDisclosure } from '@/components/DialogConfirm'
-import { ModalPermissions, usePermissionsDisclosure } from '@/components/ModalPermissions'
+import { ModalSettings, useSettingsDisclosure } from '@/components/ModalSettings'
 
 export const VeridaAvatar = ({
   profile,
@@ -49,7 +49,7 @@ export const VeridaAvatarDisconnect = ({
 const VeridaLogin = () => {
   const { veridaIsConnected, veridaIsInitializing, veridaProfile, did } = useVerida()
   const [isConnecting, setIsConnecting] = useState(false)
-  const permissionsDisclosure = usePermissionsDisclosure('world')
+  const settingsDisclosure = useSettingsDisclosure('world')
 
   const _connect = async () => {
     const { VeridaUser } = (await import('src/core/networking/verida'))
@@ -88,8 +88,8 @@ const VeridaLogin = () => {
 
   return (
     <HStack>
-      <Button disabled={disabled} size='sm' onClick={() => permissionsDisclosure.openPermissions()}>
-        Permissions
+      <Button disabled={disabled} size='sm' onClick={() => settingsDisclosure.openSettings()}>
+        Settings
       </Button>
       {veridaIsConnected &&
         <>
@@ -104,7 +104,7 @@ const VeridaLogin = () => {
           {isConnecting ? 'Connecting' : 'Connect'}
         </Button>
       }
-      <ModalPermissions type='Room' permissionsDisclosure={permissionsDisclosure} />
+      <ModalSettings type='Room' settingsDisclosure={settingsDisclosure} />
     </HStack>
   )
 }

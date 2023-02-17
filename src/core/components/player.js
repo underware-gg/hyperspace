@@ -12,6 +12,7 @@ import { CONST, clamp, clampRadians, deepCompare, deepCopy } from '@/core/utils'
 import { floors, getTile } from '@/core/components/map'
 import { strokeCircle, strokeRect } from '@/core/rendering/debug-render'
 import { getOverlappingTiles, rectanglesOverlap } from '@/core/collisions'
+import Cookies from 'universal-cookie';
 
 const SPEED = 125
 const PLAYER_BOX = 16
@@ -28,16 +29,20 @@ export const init = () => {
   // Listen to remote players events
   // managed by client-room, keeping just as an example
   const room = Room.get()
+
   const remoteStore = getRemoteStore()
+  const localStore = getLocalStore()
+
+  localStore.setDocument('joined', room.agentId, false)
 
   const geometry = new THREE.PlaneGeometry(PLAYER_MESH, PLAYER_MESH);
 
   room.on('agent-join', (agentId) => {
     if (agentId === room.agentId) {
+      enterRoom(agentId, room.slug)
       return
     }
 
-    const localStore = getLocalStore()
     const scene = localStore.getDocument('scene', 'scene')
     if (scene === null) {
       return
@@ -52,7 +57,6 @@ export const init = () => {
   })
 
   room.on('agent-leave', (agentId) => {
-    const localStore = getLocalStore()
     const scene = localStore.getDocument('scene', 'scene')
     const playerMesh = localStore.getDocument('player-mesh', agentId)
 
@@ -70,7 +74,6 @@ export const init = () => {
 
   // texture swapping
   remoteStore.on({ type: 'profile', event: 'change' }, (agentId, profile) => {
-    const localStore = getLocalStore()
     const playerMesh = localStore.getDocument('player-mesh', agentId)
 
     if (playerMesh !== null) {
@@ -91,6 +94,30 @@ export const init = () => {
     Portal.remove(getPortalOverPlayer(room.agentId))
     Screen.remove(getScreenOverPlayer(room.agentId))
   })
+}
+
+const enterRoom = (agentId, slug) => {
+  const localStore = getLocalStore()
+  localStore.setDocument('joined', agentId, true)
+
+  // from a portal
+  const cookies = new Cookies();
+  const portalCookie = cookies.get('portal') ?? null
+  if (portalCookie) {
+    cookies.remove('portal')
+    if (portalCookie.agentId == agentId && portalCookie.slug == slug) {
+      moveToTile(agentId, portalCookie.tile)
+      return
+    }
+  }
+
+  // go to default entry
+  // const remoteStore = getRemoteStore()
+  // const settings = remoteStore.getDocument('settings', 'world')
+  // moveToTile(agentId, settings.entry)
+
+  // reset player position
+  create(agentId)
 }
 
 const makePlayerMaterial = (agentId) =>{
@@ -168,11 +195,6 @@ export const update3d = (id) => {
     1.0,
     1
   )
-  addActionDownListener('interact', () => {
-    // const localStore = getLocalStore()
-    // console.log('_INTERACT_')
-    Player.interact(room.agentId)
-  })
 
 }
 
@@ -544,13 +566,14 @@ export const update = (id, dt) => {
 }
 
 export const render2d = (id, context) => {
-  const store = getRemoteStore()
-  const player = store.getDocument('player', id)
+  const remoteStore = getRemoteStore()
+  const localStore = getLocalStore()
 
-  if (player === null) {
-    return
-  }
-  // console.log(`render player:`, id)
+  const player = remoteStore.getDocument('player', id)
+  if (player === null) return
+
+  const joined = localStore.getDocument('joined', id) ?? null
+  if (joined === false) return
 
   const { position: { x, y }, rotation } = player
 

@@ -99,10 +99,9 @@ class ClientRoom extends EventEmitter {
 	}
 
 	addAgentId = (agentId) => {
-		if (this.hasAgentId(agentId)) {
-			return
+		if (!this.hasAgentId(agentId)) {
+      this.agentIds.push(agentId)
 		}
-		this.agentIds.push(agentId)
 		this.emit('agent-join', agentId)
 	}
 
