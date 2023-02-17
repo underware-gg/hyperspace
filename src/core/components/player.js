@@ -13,11 +13,6 @@ import { floors, getTile } from '@/core/components/map'
 import { strokeCircle, strokeRect } from '@/core/rendering/debug-render'
 import { getOverlappingTiles, rectanglesOverlap } from '@/core/collisions'
 
-export const defaultEntryTile = {
-  x: 9,
-  y: 3,
-}
-
 const SPEED = 125
 const PLAYER_BOX = 16
 const PLAYER_RADIUS = 8
@@ -173,12 +168,20 @@ export const update3d = (id) => {
     1.0,
     1
   )
+  addActionDownListener('interact', () => {
+    // const localStore = getLocalStore()
+    // console.log('_INTERACT_')
+    Player.interact(room.agentId)
+  })
 
 }
 
 export const create = (id) => {
-  const entryPosition = Map.fromTileToCanvasPosition(defaultEntryTile.x, defaultEntryTile.y)
-  console.log(`NEW`, defaultEntryTile, entryPosition)
+  const store = getRemoteStore()
+  const settings = store.getDocument('settings', 'world')
+
+  const entryPosition = Map.fromTileToCanvasPosition(settings.entry.x, settings.entry.y)
+
   const player = {
     position: {
       x: entryPosition.x,
@@ -192,7 +195,6 @@ export const create = (id) => {
     }
   }
 
-  const store = getRemoteStore()
   store.setDocument('player', id, player)
 
   return player

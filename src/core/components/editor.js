@@ -8,7 +8,7 @@ import * as Permission from '@/core/components/permission'
 import { getActionState, addActionDownListener } from '@/core/controller'
 import { getLocalStore, getRemoteStore } from '@/core/singleton'
 import { canPlaceOverPlayer, getPortalOverPlayer } from '@/core/components/player'
-import { MAP_SCALE_X, MAP_SCALE_Y } from '@/core/components/map'
+import { getMapScale } from '@/core/components/map'
 import { getPlayerTile } from '@/core/components/player'
 import { roundToNearest, getFilenameFromUrl } from '@/core/utils'
 
@@ -24,9 +24,10 @@ export const getMouseCanvasPosition = (e, canvas) => {
 
 export const getMouseTilePosition = (e, canvas) => {
   const { x, y } = getMouseCanvasPosition(e, canvas);
+  const mapScale = getMapScale()
   return {
-    x: Math.floor(x / MAP_SCALE_X / 32),
-    y: Math.floor(y / MAP_SCALE_Y / 32),
+    x: Math.floor(x / mapScale.x / 32),
+    y: Math.floor(y / mapScale.y / 32),
   }
 }
 

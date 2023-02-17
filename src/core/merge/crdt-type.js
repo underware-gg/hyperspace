@@ -137,6 +137,17 @@ export const profile = {
   blob: 'string',
 }
 
+export const settings = {
+  size: { // map size in tiles
+    width: 'number',
+    height: 'number',
+  },
+  entry: { // default entry tile
+    x: 'number',
+    y: 'number',
+  },
+}
+
 export const map = [
   ['number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number'],
   ['number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number'],
@@ -230,6 +241,7 @@ export const book = { // deprecated
 export const typeDefs = {
   player: createTypeMetadata(player),
   profile: createTypeMetadata(profile),
+  settings: createTypeMetadata(settings),
   map: createTypeMetadata(map),
   editor: createTypeMetadata(editor),
   portal: createTypeMetadata(portal),

@@ -2,12 +2,15 @@ import * as THREE from 'three'
 import { getTextureImageByName } from '@/core/textures'
 import { getRemoteStore, getLocalStore } from '@/core/singleton'
 import { defaultTileset } from '@/core/texture-data'
-import { defaultEntryTile } from './player'
 
-export const MAP_WIDTH = 20
-export const MAP_HEIGHT = 15
-export const MAP_SCALE_X = (process.env.CANVAS_WIDTH / (MAP_WIDTH * 32))
-export const MAP_SCALE_Y = (process.env.CANVAS_HEIGHT / (MAP_HEIGHT * 32))
+export const getMapScale = () => {
+  const remoteStore = getRemoteStore()
+  const settings = remoteStore.getDocument('settings', 'world')
+  return {
+    x: (process.env.CANVAS_WIDTH / (settings.size.width * 32)),
+    y: (process.env.CANVAS_HEIGHT / (settings.size.height * 32)),
+  }
+}
 
 const cellWidth = 1
 
@@ -118,9 +121,12 @@ export const init = () => {
 
   const gridContainer = new THREE.Object3D()
 
-  let map3D = new Array(MAP_WIDTH)
-  for (let x = 0; x < MAP_WIDTH; x++) {
-    map3D[x] = new Array(MAP_HEIGHT)
+  const remoteStore = getRemoteStore()
+  const settings = remoteStore.getDocument('settings', 'world')
+
+  let map3D = new Array(settings.size.width)
+  for (let x = 0; x < settings.size.width; x++) {
+    map3D[x] = new Array(settings.size.height)
   }
 
   const MakeWall = (object3D) => {
@@ -158,8 +164,8 @@ export const init = () => {
     object3D.add(wall3Ds)
   }
 
-  for (let x = 0; x < MAP_WIDTH; x++) {
-    for (let y = 0; y < MAP_HEIGHT; y++) {
+  for (let x = 0; x < settings.size.width; x++) {
+    for (let y = 0; y < settings.size.height; y++) {
       let gridCell3D = new THREE.Mesh(geometryFloor, materialUV)
 
       const wallStack1 = new THREE.Object3D()
@@ -209,7 +215,6 @@ export const init = () => {
   localStore.setDocument('gridContainer', 'gridContainer', gridContainer)
 
   // texture swapping
-  const remoteStore = getRemoteStore()
   remoteStore.on({ type: 'tileset', event: 'change' }, (id, tileset) => {
     if (id === 'world') {
       swapTileset(id, tileset)
@@ -256,7 +261,7 @@ export const update = (id, x, y, value) => {
     return
   }
 
-  if (x < 0 || x >= MAP_WIDTH || y < 0 || y >= MAP_HEIGHT) {
+  if (!validateTile(x, y)) {
     return
   }
 
@@ -275,8 +280,10 @@ export const render2d = (id, context) => {
     return
   }
 
+  const mapScale = getMapScale()
+
   context.setTransform(1, 0, 0, 1, 0, 0);
-  context.scale(MAP_SCALE_X, MAP_SCALE_Y);
+  context.scale(mapScale.x, mapScale.y);
 
   const crdtTileset = store.getDocument('tileset', id)
 
@@ -289,8 +296,10 @@ export const render2d = (id, context) => {
   }
   const sz = image?.height ?? 32
 
-  for (let x = 0; x < MAP_WIDTH; x++) {
-    for (let y = 0; y < MAP_HEIGHT; y++) {
+  const settings = store.getDocument('settings', 'world')
+
+  for (let x = 0; x < settings.size.width; x++) {
+    for (let y = 0; y < settings.size.height; y++) {
       context.drawImage(
         image,
         map[y][x] * sz,
@@ -306,7 +315,7 @@ export const render2d = (id, context) => {
   }
 }
 
-export const getTile = (id, tileX, tileY) => {
+export const getTile = (id, x, y) => {
   const store = getRemoteStore()
   const map = store.getDocument('map', id)
 
@@ -314,11 +323,11 @@ export const getTile = (id, tileX, tileY) => {
     return null
   }
 
-  if (tileX < 0 || tileX >= MAP_WIDTH || tileY < 0 || tileY >= MAP_HEIGHT) {
+  if (!validateTile(x, y)) {
     return null
   }
 
-  return map[tileY][tileX]
+  return map[y][x]
 }
 
 export const getTileAtCanvasPosition = (id, x, y) => {
@@ -327,11 +336,21 @@ export const getTileAtCanvasPosition = (id, x, y) => {
   return getTile(tileX, tileY);
 }
 
+export const validateTile = (x, y) => {
+  const store = getRemoteStore()
+  const settings = store.getDocument('settings', 'world')
+  if (x == null || x < 0 || x >= settings.size.width || y == null || y < 0 || y >= settings.size.height) {
+    return false
+  }
+  return true
+}
+
 export const fromTileToCanvasPosition = (tileX, tileY) => {
-  // prevent to spawn outside the map, and old Portals dont have tile
-  if (tileX == null || tileX < 0 || tileX >= MAP_WIDTH || tileY == null || tileY < 0 || tileY >= MAP_HEIGHT) {
-    tileX = defaultEntryTile.x
-    tileY = defaultEntryTile.y
+  if (!validateTile(tileX, tileY)) {
+    const store = getRemoteStore()
+    const settings = store.getDocument('settings', 'world')
+    tileX = settings.entry.x
+    tileY = settings.entry.y
   }
   const x = Math.floor((tileX + 0.5) * 32)
   const y = Math.floor((tileY + 0.5) * 32)
@@ -339,8 +358,11 @@ export const fromTileToCanvasPosition = (tileX, tileY) => {
 }
 
 export const fromTileToCellPosition = (tileX, tileY) => {
+  const store = getRemoteStore()
+  const settings = store.getDocument('settings', 'world')
+
   const x = tileX * cellWidth + cellWidth * 0.5
-  const y = tileY * cellWidth -MAP_HEIGHT * cellWidth - cellWidth * 0.5
+  const y = tileY * cellWidth - settings.size.height * cellWidth - cellWidth * 0.5
   return { x, y }
 }
 
@@ -372,9 +394,11 @@ export const render3D = (id) => {
     return
   }
 
-  for (let x = 0; x < MAP_WIDTH; x++) {
-    for (let y = 0; y < MAP_HEIGHT; y++) {
-      let mapCell = map3D[MAP_HEIGHT-1-y][x]
+  const settings = remoteStore.getDocument('settings', 'world')
+
+  for (let x = 0; x < settings.size.width; x++) {
+    for (let y = 0; y < settings.size.height; y++) {
+      let mapCell = map3D[settings.size.height -1-y][x]
 
       mapCell.mesh.geometry = floorGeometries[map[y][x]]
 

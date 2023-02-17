@@ -16,7 +16,7 @@ import {
 import { useDocument } from '@/hooks/useDocument'
 import { getGameCanvasElement } from '@/core/game-canvas'
 import Button from '@/components/Button'
-import * as Player from '@/core/components/player'
+import * as Settings from '@/core/components/settings'
 
 const ModalPortal = ({
   disclosure,
@@ -25,8 +25,8 @@ const ModalPortal = ({
 }) => {
   const { isOpen, onOpen, onClose } = disclosure
   const [roomName, setRoomName] = useState('');
-  const [tileX, setTileX] = useState(Player.defaultEntryTile.x);
-  const [tileY, setTileY] = useState(Player.defaultEntryTile.y);
+  const [tileX, setTileX] = useState(Settings.defaultEntryTile.x);
+  const [tileY, setTileY] = useState(Settings.defaultEntryTile.y);
   const roomNameRef = useRef()
   const finalRef = useRef(null)
 
@@ -39,8 +39,8 @@ const ModalPortal = ({
   useEffect(() => {
     if (isOpen) {
       setRoomName(portal?.slug ?? '')
-      setTileX(portal?.tile?.x ?? Player.defaultEntryTile.x)
-      setTileY(portal?.tile?.y ?? Player.defaultEntryTile.y)
+      setTileX(portal?.tile?.x ?? Settings.defaultEntryTile.x)
+      setTileY(portal?.tile?.y ?? Settings.defaultEntryTile.y)
     }
   }, [portal, isOpen])
 

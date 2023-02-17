@@ -5,8 +5,9 @@ import {
   addActionDownListener,
 } from '@/core/controller'
 import * as Room from '@/core/networking'
-import * as Player from '@/core/components/player'
+import * as Settings from '@/core/components/settings'
 import * as Map from '@/core/components/map'
+import * as Player from '@/core/components/player'
 import * as Editor from '@/core/components/editor'
 import * as Portal from '@/core/components/portal'
 import * as Screen from '@/core/components/screen'
@@ -161,12 +162,11 @@ export const init = async (slug, canvas, canvas3d) => {
 
   Room.init(slug)
   const room = Room.get()
+  room.init(slug)
 
-  addActionDownListener('interact', () => {
-    // const localStore = getLocalStore()
-    // console.log('_INTERACT_')
-    Player.interact(room.agentId)
-  })
+  if (!Settings.exists('world')) {
+    Settings.create('world')
+  }
 
   Editor.init(canvas, room.agentId)
   Editor.init3d(canvas3d, room.agentId)
@@ -174,8 +174,6 @@ export const init = async (slug, canvas, canvas3d) => {
   Map.init()
   Portal.init()
   Screen.init()
-
-  room.init(slug)
 
   if (!Map.exists('world')) {
     Map.create('world')
@@ -186,6 +184,12 @@ export const init = async (slug, canvas, canvas3d) => {
       room.agentId,
     )
   }
+
+  addActionDownListener('interact', () => {
+    // const localStore = getLocalStore()
+    // console.log('_INTERACT_')
+    Player.interact(room.agentId)
+  })
 
   const cookies = new Cookies();
   const portalCookie = cookies.get('portal') ?? null
