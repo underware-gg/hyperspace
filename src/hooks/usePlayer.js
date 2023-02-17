@@ -37,8 +37,8 @@ const usePlayer = (id) => {
     overPortal: portalId != null,
     overScreen: screenId != null,
     canPlace: (portalId == null && screenId == null),
-    tileX: playerTile?.tileX ?? null,
-    tileY: playerTile?.tileY ?? null,
+    tileX: playerTile?.x ?? null,
+    tileY: playerTile?.y ?? null,
   }
 }
 

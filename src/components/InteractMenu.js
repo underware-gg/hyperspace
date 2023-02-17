@@ -54,17 +54,19 @@ const InteractMenu = ({
     onConfirm: () => emitAction('delete'),
   })
 
-  const _savePortal = (roomName, tileX, tileY) => {
+  const _savePortal = (slug, tileX, tileY) => {
+    const options = {
+      slug,
+      tile: {
+        x: tileX,
+        y: tileY,
+      }
+    }
     if (canPlace && !overPortal) {
-      emitAction('createPortal', roomName, tileX, tileY)
+      console.log(`EMIT portal`, options)
+      emitAction('createPortal', options)
     } else {
-      Portal.updatePortal(portalId, {
-        slug: roomName,
-        tile: {
-          x: tileX,
-          y: tileY,
-        }
-      })
+      Portal.updatePortal(portalId, options)
     }
   }
 

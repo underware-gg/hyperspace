@@ -1,11 +1,12 @@
 import * as THREE from 'three'
 import * as Room from '@/core/networking'
-import * as Map from '@/core/components/map'
 import * as Interactable from '@/core/components/interactable'
 import * as Permission from '@/core/components/permission'
+import * as Player from '@/core/components/player'
 import { getTextureImageByName } from '@/core/textures'
 import { getLocalStore, getRemoteStore } from '@/core/singleton'
 import { getTile, floors } from '@/core/components/map'
+import Cookies from 'universal-cookie';
 
 // Objects should be pushed up so that they are always on top of the terrain.
 // I feel like portals should be on an entity layer of fixed environmental stuff...
@@ -127,13 +128,10 @@ export const init = () => {
   })
 }
 
-export const create = (id, x, y, slug, entryTileX, entryTileY) => {
+export const create = (id, x, y, slug, tile) => {
   const portal = {
     slug,
-    tile: {
-      x: entryTileX,
-      y: entryTileY,
-    }
+    tile,
   }
   Interactable.create('portal', id, x, y, portal)
   return portal
@@ -179,13 +177,17 @@ export const travel = (id) => {
   // Travel to the same room
   const room = Room.get()
   if (room.slug == portal.slug) {
-    const position = Map.fromTileToCanvasPosition(portal.tile?.x, portal.tile?.y)
-    let player = store.getDocument('player', room.agentId)
-    player.position.x = position.x
-    player.position.y = position.y
-    store.setDocument('player', room.agentId, player)
+    Player.moveToTile(room.agentId, portal.tile)
   } else {
     // Travel to other Room
+    const data = {
+      agentId: room.agentId,
+      from: room.slug,
+      slug: portal.slug,
+      tile: portal.tile ?? null,
+    }
+    const cookies = new Cookies();
+    cookies.set('portal', JSON.stringify(data), { path: '/' });
     window.location.href = `/${portal.slug}`
   }
 }

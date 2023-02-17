@@ -36,10 +36,7 @@ export const getCreateTile = (id) => {
   if (editor) {
     const { interacting, position: { x, y } } = editor
     if (interacting) {
-      return {
-        tileX: x,
-        tileY: y,
-      }
+      return { x, y }
     }
   }
   return getPlayerTile(id)
@@ -73,7 +70,9 @@ export const init = (canvas, id) => {
     // id is the agent id.
   })
 
-  addActionDownListener('createPortal', (slug, entryTileX, entryTileY) => {
+  addActionDownListener('createPortal', (options) => {
+    const { slug, tile } = options
+    console.log(`create_portal_`, options, slug, tile)
     if (!slug) return
 
     if (!canPlaceOverPlayer(id)) {
@@ -81,7 +80,8 @@ export const init = (canvas, id) => {
     }
 
     const { x, y } = getCreateTile(id)
-    Portal.create(nanoid(), x, y, slug, entryTileX, entryTileY)
+    console.log(`create_portal`, id, x, y, slug, tile, getCreateTile(id))
+    Portal.create(nanoid(), x, y, slug, tile)
   })
 
   addActionDownListener('createScreen', () => {
@@ -97,8 +97,8 @@ export const init = (canvas, id) => {
     const screenId = nanoid()
     const text = `# Screen: ${name}\n\nThis is a MarkDown shared document\n\nid: ${screenId}`
 
-    const { tileX, tileY } = getCreateTile(id)
-    Screen.createDocument(screenId, tileX, tileY, text, name)
+    const { x, y } = getCreateTile(id)
+    Screen.createDocument(screenId, x, y, text, name)
   })
 
   addActionDownListener('createBook', () => {
@@ -115,8 +115,8 @@ export const init = (canvas, id) => {
     console.log(url, name)
 
     const screenId = nanoid()
-    const { tileX, tileY } = getCreateTile(id)
-    Screen.createBook(screenId, tileX, tileY, url, name)
+    const { x, y } = getCreateTile(id)
+    Screen.createBook(screenId, x, y, url, name)
   })
 
   canvas.addEventListener('mousemove', handleMouseMove)

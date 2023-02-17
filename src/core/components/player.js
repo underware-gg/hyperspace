@@ -264,6 +264,19 @@ export const exists = (id) => {
   return player !== null
 }
 
+export const moveToTile = (id, tile) => {
+  const store = getRemoteStore()
+  let player = store.getDocument('player', id)
+  if (player === null) {
+    return null
+  }
+  
+  const position = Map.fromTileToCanvasPosition(tile?.x, tile?.y)
+  player.position.x = position.x
+  player.position.y = position.y
+  store.setDocument('player', id, player)
+}
+
 export const getCollisionCircle = (id) => {
   const store = getRemoteStore()
   const player = store.getDocument('player', id)
@@ -292,8 +305,8 @@ export const getPlayerTile = (id) => {
   const { x, y } = player.position
 
   return {
-    tileX: Math.floor(x / 32),
-    tileY: Math.floor(y / 32),
+    x: Math.floor(x / 32),
+    y: Math.floor(y / 32),
   }
 }
 

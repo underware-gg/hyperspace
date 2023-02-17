@@ -11,6 +11,7 @@ import * as Editor from '@/core/components/editor'
 import * as Portal from '@/core/components/portal'
 import * as Screen from '@/core/components/screen'
 import { getRemoteStore, getLocalStore } from '@/core/singleton'
+import Cookies from 'universal-cookie';
 
 export const init = async (slug, canvas, canvas3d) => {
   registerActions([
@@ -176,14 +177,23 @@ export const init = async (slug, canvas, canvas3d) => {
 
   room.init(slug)
 
+  if (!Map.exists('world')) {
+    Map.create('world')
+  }
+
   if (!Player.exists(room.agentId)) {
     Player.create(
       room.agentId,
     )
   }
 
-  if (!Map.exists('world')) {
-    Map.create('world')
+  const cookies = new Cookies();
+  const portalCookie = cookies.get('portal') ?? null
+  if (portalCookie) {
+    if (portalCookie.agentId == room.agentId && portalCookie.slug == room.slug) {
+      Player.moveToTile(room.agentId, portalCookie.tile)
+    }
+    cookies.remove('portal')
   }
 
   const { VeridaUser } = (await import('src/core/networking/verida'))

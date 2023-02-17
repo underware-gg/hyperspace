@@ -15,6 +15,7 @@
     "search.exclude": {
       "/package-lock.json": true,
       "/yarn.lock": true,
+      "/yarn-error.log": true,
     },
     "editor.tabSize": 2,
     "editor.insertSpaces": true,
