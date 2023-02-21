@@ -13,7 +13,7 @@ export const defaultTileset = tilesets[0];
 // Character spritesheets
 //
 const schoolSet = {
-  scale: 1.25,
+  scale: 1,
   rows: 4,
   columns: 3,
   cycles: {
@@ -83,17 +83,11 @@ export const spritesheets = [
   { sprites: ghostSet, src: '/spritesheets/ghost/Clyde.png' },
   // { src: '/spritesheets/ghost/ghost2.png', scale: 2 }, // flat image works too!
 ]
-export const defaultSpritesheet = spritesheets[0];
 
 //-------------------------------
 // Character spritesheets
 //
 export const textureData = {
-  // 'player': {
-  //   src: '/spritesheets/ghost/ghost2.png',
-  //   // scale: 2,
-  // },
-  'player': defaultSpritesheet,
   'tileset': {
     src: defaultTileset,
   },

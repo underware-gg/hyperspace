@@ -10,9 +10,11 @@ import { getTextureByName, getSprite } from '@/core/textures'
 import { getRemoteStore, getLocalStore } from '@/core/singleton'
 import { CONST, clamp, clampRadians, deepCompare, deepCopy } from '@/core/utils'
 import { floors, getTile } from '@/core/components/map'
-import { strokeCircle, strokeRect } from '@/core/rendering/debug-render'
+import { strokeRect } from '@/core/rendering/debug-render'
 import { getOverlappingTiles, rectanglesOverlap } from '@/core/collisions'
-import Cookies from 'universal-cookie';
+import { spritesheets } from '@/core/texture-data'
+import { hashCode } from '@/core/utils'
+import Cookies from 'universal-cookie'
 
 const SPEED = 125
 const PLAYER_BOX = 16
@@ -121,8 +123,7 @@ const enterRoom = (agentId, slug) => {
 }
 
 const makePlayerMaterial = (agentId) =>{
-  const textureName = getPlayerTextureName(agentId);
-  const texture = getTextureByName(textureName, 'player')
+  const texture = getPlayerTexture(agentId)
   const materialTexture = new THREE.TextureLoader().load(texture.src);
   materialTexture.minFilter = THREE.NearestFilter;
   materialTexture.magFilter = THREE.NearestFilter;
@@ -170,11 +171,10 @@ export const update3d = (id) => {
   )
 
   // UV
-  const textureName = getPlayerTextureName(id);
-  const texture = getTextureByName(textureName, 'player')
+  const texture = getPlayerTexture(id)
 
   const rot = -(player.rotation.y + rotToThisPlayer + CONST.PI);
-  const { uv } = getPlayerSprite(textureName, x, y, rot);
+  const { uv } = getPlayerSprite(texture.spritesheet, x, y, rot);
   
   var geometryUv = playerMesh.geometry.getAttribute('uv');
 
@@ -586,12 +586,8 @@ export const render2d = (id, context) => {
 
   const { position: { x, y }, rotation } = player
 
-  const textureName = getPlayerTextureName(id);
-  const texture = getTextureByName(textureName, 'player')
-
-  // if (texture === null) {
-  //   return
-  // }
+  const texture = getPlayerTexture(id)
+  if (!texture) return // texture not loaded yet
 
   // strokeCircle(context, getCollisionCircle(id))
   strokeRect(context, getPlayerCollisionRect(id))
@@ -607,7 +603,7 @@ export const render2d = (id, context) => {
     sWidth = texture.sprites.width;
     sHeight = texture.sprites.height;
 
-    const { pixel } = getPlayerSprite(textureName, x, y, rotation.y);
+    const { pixel } = getPlayerSprite(texture.src, x, y, rotation.y);
 
     sx = pixel.start[0];
     sy = pixel.start[1];
@@ -628,11 +624,24 @@ export const render2d = (id, context) => {
 
 }
 
-const getPlayerTextureName = (agentId) => {
+export const getPlayerTexture = (agentId = '') => {
   const store = getRemoteStore()
   const profile = store.getDocument('profile', agentId)
-  return profile?.spritesheet ?? null;
+
+  let texture = getTextureByName(profile?.spritesheet)
+
+  if(!texture) {
+    texture = getTextureByName(getPlayerTextureName(agentId))
+  }
+
+  return texture
 }
+
+export const getPlayerTextureName = (agentId = '') => {
+  const index = Math.abs(hashCode(agentId)) % spritesheets.length
+  return spritesheets[index].src
+}
+
 
 const getPlayerSprite = (textureName, x, y, rot) => {
   let cycleName;

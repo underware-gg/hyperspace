@@ -60,7 +60,7 @@ export const getTextureByName = (name, fallback) => textures[name] ?? textures[f
 export const getTextureImageByName = name => textures[name]?.image ?? null
 
 export const getSprite = (textureName, stepX = 0.0, stepY = 0.0, cycleName = 'idle') => {
-  const texture = getTextureByName(textureName, 'player')
+  const texture = getTextureByName(textureName)
 
   if (!texture) {
     return null

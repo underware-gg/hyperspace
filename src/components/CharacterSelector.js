@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react'
-import { HStack, Select, Spacer, useTableStyles } from '@chakra-ui/react'
-import { spritesheets, defaultSpritesheet } from '@/core/texture-data'
+import { HStack, Select, Spacer } from '@chakra-ui/react'
+import { spritesheets } from '@/core/texture-data'
 import { focusGameCanvas } from '@/core/game-canvas'
 import { deepMerge } from '@/core/utils'
 import useRoom from '@/hooks/useRoom'
 import { useDocument } from '@/hooks/useDocument'
 import useTexture from '@/hooks/useTexture'
 import * as Profile from '@/core/components/profile'
+import * as Player from '@/core/components/player'
 
 const CharacterSelector = ({}) => {
   const { agentId } = useRoom();
   const profile = useDocument('profile', agentId)
-
 
   const [selectedValue, setSelectedValue] = useState('')
   const [imageName, setImageName] = useState(null)
@@ -20,7 +20,7 @@ const CharacterSelector = ({}) => {
   const { sprite } = useTexture(imageName)
 
   useEffect(() => {
-    let _imageName = profile?.spritesheet ?? defaultSpritesheet.src
+    let _imageName = Player.getPlayerTexture(agentId)?.src ?? ''
     let _selectedValue = ''
     let _options = []
     for (const sheet of spritesheets) {
@@ -42,7 +42,7 @@ const CharacterSelector = ({}) => {
     setSelectedValue(_selectedValue)
     setImageName(_imageName)
     setOptions(_options)
-  }, [profile?.spritesheet])
+  }, [agentId, profile?.spritesheet])
 
   useEffect(() => {
     if (sprite) {
