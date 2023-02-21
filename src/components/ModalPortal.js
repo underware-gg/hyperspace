@@ -17,6 +17,7 @@ import { useDocument } from '@/hooks/useDocument'
 import { getGameCanvasElement } from '@/core/game-canvas'
 import { TileField } from '@/components/ModalSettings'
 import Button from '@/components/Button'
+import { emitAction } from '@/core/controller'
 import * as Portal from '@/core/components/portal'
 import * as Settings from '@/core/components/settings'
 
@@ -55,7 +56,6 @@ const ModalPortal = ({
       }
     }
     if (newPortal) {
-      console.log(`EMIT portal`, options)
       emitAction('createPortal', options)
     } else {
       Portal.updatePortal(portalId, options)

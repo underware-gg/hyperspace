@@ -71,17 +71,19 @@ export const init = (canvas, id) => {
     // id is the agent id.
   })
 
-  addActionDownListener('createPortal', (options) => {
+  addActionDownListener('createPortal', (options={}) => {
     const { slug, tile } = options
-    console.log(`create_portal_`, options, slug, tile)
-    if (!slug) return
+    if (!slug) {
+      console.warn(`createPortal: missing slug`)
+      return
+    }
 
     if (!canPlaceOverPlayer(id)) {
       return
     }
 
     const { x, y } = getCreateTile(id)
-    console.log(`create_portal`, id, x, y, slug, tile, getCreateTile(id))
+    console.log(`create_portal`, id, x, y, slug, tile)
     Portal.create(nanoid(), x, y, slug, tile)
   })
 

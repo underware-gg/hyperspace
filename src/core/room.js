@@ -100,7 +100,8 @@ export const init = async (slug, canvas, canvas3d) => {
       keycode: '75', // k
     },
     {
-      name: 'createPortal',
+      // name: 'createPortal',
+      name: 'editPortal',
       keycode: '80', // p
     },
     {

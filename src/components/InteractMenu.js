@@ -6,6 +6,7 @@ import {
 import useRoom from '@/hooks/useRoom'
 import usePlayer from '@/hooks/usePlayer'
 import usePermission from '@/hooks/usePermission'
+import useActionDownListener from '@/hooks/useActionDownListener'
 import { useDocument } from '@/hooks/useDocument'
 import { emitAction } from '@/core/controller'
 import { DialogConfirm, useConfirmDisclosure } from '@/components/DialogConfirm'
@@ -30,6 +31,10 @@ const InteractMenu = ({
   const { permission, isOwner, canEdit, canView } = usePermission(screenId)
 
   const portalDisclosure = useDisclosure()
+
+  useActionDownListener('editPortal', () => {
+    portalDisclosure.onOpen()
+  })
 
   const deletePortalDisclosure = useConfirmDisclosure({
     header: 'Delete Portal',
