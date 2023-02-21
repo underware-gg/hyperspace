@@ -1,30 +1,48 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   HStack,
   VStack,
   Text,
 } from '@chakra-ui/react'
+import { useDocument } from '@/hooks/useDocument'
+import useRoom from '@/hooks/useRoom'
+import useProfile from '@/hooks/useProfile'
 import useVerida from '@/hooks/useVerida'
 import Button from '@/components/Button'
 import { DialogConfirm, useConfirmDisclosure } from '@/components/DialogConfirm'
 import { ModalSettings, useSettingsDisclosure } from '@/components/ModalSettings'
 
-export const VeridaAvatar = ({
-  profile,
+export const Avatar = ({
+  name,
+  imageUrl,
 }) => {
-  const avatarUri = profile?.avatarUri ?? profile?.avatar?.uri ?? '/nosignal_noise.gif'
-  const avatarName = profile?.name ?? null
+  const { agentId } = useRoom()
+  const { profileName, profileImageUrl, defaultImageUrl } = useProfile(agentId)
+  const [playerName, setPlayerName] = useState(null)
+  const [playerImageUrl, setPlayerImageUrl] = useState(null)
+
+  useEffect(() => {
+    if (!name) {
+      setPlayerName(profileName)
+    }
+    if (!imageUrl) {
+      // setPlayerImageUrl(profileImageUrl)
+      setPlayerImageUrl(defaultImageUrl)
+    }
+
+  }, [agentId, profileName, profileImageUrl])
 
   return (
     <VStack>
-      <img src={avatarUri} width='40' height='40' />
-      <Text className='NoMargin'>{avatarName}</Text>
+      <img src={imageUrl ?? playerImageUrl} width='40' height='40' />
+      <Text className='NoMargin'>{name ?? playerName}</Text>
     </VStack>
   )
 }
 
-export const VeridaAvatarDisconnect = ({
-  profile,
+
+export const VeridaAvatar = ({
+  veridaProfile,
 }) => {
   const _disconnect = async () => {
     const { VeridaUser } = (await import('src/core/networking/verida'))
@@ -33,14 +51,17 @@ export const VeridaAvatarDisconnect = ({
 
   const confirmDisclosure = useConfirmDisclosure({
     header: 'Verida',
-    message: <>Disconnect {profile.name}?</>,
+    message: <>Disconnect {veridaProfile.name}?</>,
     confirmLabel: 'Disconnect',
     onConfirm: _disconnect,
   })
 
+  const avatarUri = veridaProfile?.avatarUri ?? veridaProfile?.avatar?.uri ?? '/nosignal_noise.gif'
+  const avatarName = veridaProfile?.name ?? '...'
+
   return (
     <div style={{ cursor: 'pointer' }} onClick={() => confirmDisclosure.openConfirmDialog()}>
-      <VeridaAvatar profile={profile} />
+      <Avatar name={avatarName} imageUrl={avatarUri} />
       <DialogConfirm confirmDisclosure={confirmDisclosure} />
     </div>
   )
@@ -91,18 +112,20 @@ const VeridaLogin = () => {
       <Button disabled={disabled} size='sm' onClick={() => settingsDisclosure.openSettings()}>
         Settings
       </Button>
-      {veridaIsConnected &&
+      {(veridaIsInitializing || veridaIsConnected) ?
         <>
-          <Button size='sm' onClick={() => _inviteFriend()}>
+          <Button disabled={disabled} size='sm' onClick={() => _inviteFriend()}>
             Invite Friend
           </Button>
-          <VeridaAvatarDisconnect profile={veridaProfile} />
+          <VeridaAvatar veridaProfile={veridaProfile} />
         </>
-      }
-      {!veridaIsConnected &&
-        <Button disabled={disabled} size='sm' onClick={() => _connect()}>
-          {isConnecting ? 'Connecting' : 'Connect'}
-        </Button>
+        :
+        <>
+          <Button disabled={disabled} size='sm' onClick={() => _connect()}>
+            {isConnecting ? 'Connecting' : 'Connect'}
+          </Button>
+          <Avatar />
+        </>
       }
       <ModalSettings type='Room' settingsDisclosure={settingsDisclosure} />
     </HStack>

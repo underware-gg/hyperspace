@@ -4,14 +4,13 @@ import { spritesheets } from '@/core/texture-data'
 import { focusGameCanvas } from '@/core/game-canvas'
 import { deepMerge } from '@/core/utils'
 import useRoom from '@/hooks/useRoom'
-import { useDocument } from '@/hooks/useDocument'
+import useProfile from '@/hooks/useProfile'
 import useTexture from '@/hooks/useTexture'
 import * as Profile from '@/core/components/profile'
-import * as Player from '@/core/components/player'
 
 const CharacterSelector = ({}) => {
   const { agentId } = useRoom();
-  const profile = useDocument('profile', agentId)
+  const { profileImageUrl } = useProfile(agentId)
 
   const [selectedValue, setSelectedValue] = useState('')
   const [imageName, setImageName] = useState(null)
@@ -20,7 +19,7 @@ const CharacterSelector = ({}) => {
   const { sprite } = useTexture(imageName)
 
   useEffect(() => {
-    let _imageName = Player.getPlayerTexture(agentId)?.src ?? ''
+    let _imageName = profileImageUrl ?? ''
     let _selectedValue = ''
     let _options = []
     for (const sheet of spritesheets) {
@@ -42,7 +41,7 @@ const CharacterSelector = ({}) => {
     setSelectedValue(_selectedValue)
     setImageName(_imageName)
     setOptions(_options)
-  }, [agentId, profile?.spritesheet])
+  }, [agentId, profileImageUrl])
 
   useEffect(() => {
     if (sprite) {
