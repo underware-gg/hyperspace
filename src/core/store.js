@@ -4,7 +4,7 @@ import { setValueAtPath, deepCopy } from '@/core/merge/tiny-merge'
 
 class Store {
   collections = {}
-  eventEmitter = new EventEmitter()
+  eventEmitter = new EventEmitter().setMaxListeners(20)
 
   // If we also include a source it can be used for updating the crdts.
   setDocument(type, id, document, source = 'local', triggerChange = true) {

@@ -130,7 +130,7 @@ export const VeridaUser = new HyperboxWebUser({
     name: CONTEXT_NAME
   },
   debug: true
-})
+}).setMaxListeners(20)
 
 
 // client setup: https://developers.verida.network/docs/client-sdk/authentication

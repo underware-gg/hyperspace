@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events'
 
-const actionDownEmitter = new EventEmitter()
-const actionUpEmitter = new EventEmitter()
+const actionDownEmitter = new EventEmitter().setMaxListeners(20)
+const actionUpEmitter = new EventEmitter().setMaxListeners(20)
 
 // Stores the state of each action as a true or false value
 // e.g. forward: true

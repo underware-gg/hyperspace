@@ -24,6 +24,8 @@ class Client extends EventEmitter {
 			this.sendMessages()
 		}, SEND_RATE)
 
+    this.setMaxListeners(20)
+
 		this.heartbeat()
 	}
 
