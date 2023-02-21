@@ -247,12 +247,12 @@ export const interact = (id) => {
 }
 
 export const getPortalOverPlayer = (id) => {
-  const portalId = getInteractableOverPlayer('portal', id)
+  const portalId = getInteractableOfTypeOverPlayer(id, 'portal')
   return portalId && Permission.canView(portalId) ? portalId : null
 }
 
 export const getScreenOverPlayer = (id) => {
-  const screenId = getInteractableOverPlayer('screen', id)
+  const screenId = getInteractableOfTypeOverPlayer(id, 'screen')
   return screenId && Permission.canView(screenId) ? screenId : null
 }
 
@@ -263,18 +263,27 @@ export const canPlaceOverPlayer = (id) => {
   );
 }
 
-export const getInteractableOverPlayer = (type, id) => {
+const getInteractableOfTypeOverPlayer = (id, type) => {
+  const target = getInteractableOverPlayer(id)
+  return target?.type == type ? target.id : null
+}
+
+const getInteractableOverPlayer = (id) => {
   const playerRect = getPlayerCollisionRect(id);
   if (playerRect == null) {
     return
   }
 
   const store = getRemoteStore()
-  const ids = store.getIds(type)
-
-  for (const targetId of ids) {
-    if (rectanglesOverlap(playerRect, Interactable.getCollisionRect(type, targetId))) {
-      return targetId
+  for (const type of ['portal', 'screen']) {
+    const ids = store.getIds(type)
+    for (const id of ids) {
+      if (rectanglesOverlap(playerRect, Interactable.getCollisionRect(type, id))) {
+        return {
+          type,
+          id,
+        }
+      }
     }
   }
   return null;
