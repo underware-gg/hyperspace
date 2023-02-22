@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { useVeridaProfile } from './useVeridaProfile'
 
 const useVerida = () => {
   const [isConnected, setIsConnected] = useState(false)
@@ -95,10 +96,9 @@ const useVerida = () => {
     veridaIsConnecting: isConnecting,
     veridaIsConnected: isConnected,
     veridaProfile: profile,
-    avatarName: profile?.name ?? null,
-    avatarUri: profile?.avatarUri ?? profile?.avatar?.uri ?? null,
     did,
     didAddress,
+    ...useVeridaProfile(profile),
   }
 }
 

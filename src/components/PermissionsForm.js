@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react'
 import usePermission from '@/hooks/usePermission'
 import useVerida from '@/hooks/useVerida'
-import useVeridaPublicProfile from '@/hooks/useVeridaPublicProfile'
+import { useVeridaPublicProfile } from '@/hooks/useVeridaProfile'
 import { Avatar } from '@/components/Avatar'
 import * as Permission from '@/core/components/permission'
 
@@ -23,7 +23,7 @@ export const PermissionsForm = ({
   const { veridaIsConnected, veridaProfile, did, didAddress } = useVerida()
 
   const { permission, isOwner, canEdit } = usePermission(id)
-  const { publicProfile } = useVeridaPublicProfile(permission?.owner);
+  const { hasVeridaProfile, veridaProfileName, veridaAvatarUri } = useVeridaPublicProfile(permission?.owner);
 
   const _canView = (value) => {
     Permission.updatePermission(id, didAddress, {
@@ -44,6 +44,8 @@ export const PermissionsForm = ({
       <VStack align='stretch'>
 
         <HStack>
+          <Avatar name={veridaProfileName ?? '...'} avatarUri={veridaAvatarUri ?? null} />
+          
           <VStack align='stretch'>
             <Text>{type}: {name}</Text>
             <Text>Document id: {id}</Text>
@@ -52,16 +54,6 @@ export const PermissionsForm = ({
               <Text>(connect to Verida for user profile)</Text>
             }
           </VStack>
-
-          {publicProfile &&
-            <>
-              <Spacer />
-            {publicProfile &&
-              <Avatar name={publicProfile.avatarName ?? '...'} />
-
-            }
-            </>
-          }
         </HStack>
 
         <Divider />

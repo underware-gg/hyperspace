@@ -10,7 +10,7 @@ import * as Profile from '@/core/components/profile'
 
 const CharacterSelector = ({}) => {
   const { agentId } = useRoom();
-  const { profileImageUrl } = useProfile(agentId)
+  const { profileCharacterUrl } = useProfile(agentId)
 
   const [selectedValue, setSelectedValue] = useState('')
   const [imageName, setImageName] = useState(null)
@@ -19,7 +19,7 @@ const CharacterSelector = ({}) => {
   const { sprite } = useTexture(imageName)
 
   useEffect(() => {
-    let _imageName = profileImageUrl ?? ''
+    let _imageName = profileCharacterUrl ?? ''
     let _selectedValue = ''
     let _options = []
     for (const sheet of spritesheets) {
@@ -41,7 +41,7 @@ const CharacterSelector = ({}) => {
     setSelectedValue(_selectedValue)
     setImageName(_imageName)
     setOptions(_options)
-  }, [agentId, profileImageUrl])
+  }, [agentId, profileCharacterUrl])
 
   useEffect(() => {
     if (sprite) {

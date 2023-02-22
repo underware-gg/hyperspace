@@ -62,7 +62,7 @@ const InteractMenu = ({
       {canPlace &&
         <>
           {editor?.interacting
-            ? <>Edit@[{editor.position.x},{editor.position.y}]&nbsp;</>
+            ? <>Cursor@[{editor.position.x},{editor.position.y}]&nbsp;</>
             : <>Player@[{tileX},{tileY}]&nbsp;</>
           }
           <Button size='sm' onClick={() => portalDisclosure.onOpen()}>

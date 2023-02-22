@@ -12,6 +12,7 @@ import {
   Input,
   Spacer, Flex,
   Text,
+  Box,
 } from '@chakra-ui/react'
 import { useDocument } from '@/hooks/useDocument'
 import useProfile from '@/hooks/useProfile'
@@ -30,15 +31,19 @@ const ModalProfile = ({
   const nameRef = useRef()
   const finalRef = useRef(null)
 
-  const { profileName, profileImageUrl, defaultImageUrl } = useProfile(agentId)
+  const { profileName, profileAvatarUrl, defaultAvatarUrl } = useProfile(agentId)
 
-  const { connect, disconnect, inviteFriend, veridaIsConnected, veridaIsConnecting, avatarName, did } = useVerida()
+  const {
+    connect, disconnect, inviteFriend,
+    veridaIsConnected, veridaIsConnecting,
+    hasVeridaProfile, veridaProfileName, veridaAvatarUri
+  } = useVerida()
 
   useEffect(() => {
     finalRef.current = getGameCanvasElement()
   }, [])
 
-  const disabled = (veridaIsConnecting || veridaIsConnecting)
+  const disabled = (veridaIsConnecting)
 
   return (
     <Modal
@@ -54,33 +59,37 @@ const ModalProfile = ({
         backgroundColor='#000a'
       >
         <ModalHeader>
-          User Profile
+          User Profile {hasVeridaProfile && '(Verida)'}
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={4}>
           <HStack>
-            <Avatar width={100} />
-            <VStack>
-              <Text>{avatarName ?? profileName}</Text>
-            </VStack>
+            <Avatar width={100} avatarUri={veridaAvatarUri ?? null} />
+            <Box style={{height: '100px'}}>
+              <h2>{veridaProfileName ?? profileName ?? '...'}</h2>
+            </Box>
           </HStack>
         </ModalBody>
         <ModalFooter>
 
-          {(veridaIsConnecting || veridaIsConnected) ?
+          {veridaIsConnected ?
             <>
-              <Button disabled={disabled} size='sm' onClick={() => disconnect()}>
-                Disconnect Verida
-              </Button>
-              &nbsp;
               <Button disabled={disabled} size='sm' onClick={() => inviteFriend()}>
                 Invite Friend
+              </Button>
+              &nbsp;
+              <Button disabled={disabled} size='sm' onClick={() => disconnect()}>
+                Disconnect
               </Button>
             </>
             :
             <>
+              <Button disabled={disabled} size='sm' onClick={() => window.open('https://www.verida.io/', '_blank', 'noreferrer')}>
+                Download Verida
+              </Button>
+              &nbsp;
               <Button disabled={disabled} size='sm' onClick={() => connect()}>
-                {veridaIsConnecting ? 'Connecting' : 'Connect with Verida'}
+                {veridaIsConnecting ? 'Connecting' : 'Connect'}
               </Button>
             </>
           }

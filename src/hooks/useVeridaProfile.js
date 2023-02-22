@@ -1,7 +1,15 @@
 import { useState, useEffect, useMemo } from 'react'
 import useVerida from '@/hooks/useVerida'
 
-const useVeridaPublicProfile = (didAddress) => {
+export const useVeridaProfile = (profile) => {
+  return {
+    hasVeridaProfile: profile != null,
+    veridaProfileName: profile?.name ?? null,
+    veridaAvatarUri: profile?.avatarUri ?? profile?.avatar?.uri ?? null,
+  }
+}
+
+export const useVeridaPublicProfile = (didAddress) => {
   const { veridaIsConnected } = useVerida()
   const [profile, setProfile] = useState(null)
 
@@ -27,11 +35,5 @@ const useVeridaPublicProfile = (didAddress) => {
     }
   }, [veridaIsConnected, didAddress])
 
-  return {
-    publicProfile: profile,
-    avatarName: profile?.name ?? '...',
-    avatarUri: profile?.avatarUri ?? profile?.avatar?.uri ?? null,
-  }
+  return useVeridaProfile(profile)
 }
-
-export default useVeridaPublicProfile

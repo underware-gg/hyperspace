@@ -11,27 +11,19 @@ import useVerida from '@/hooks/useVerida'
 import ModalProfile from '@/components/ModalProfile'
 
 export const Avatar = ({
+  name=null,
+  avatarUri=null,
   width = 60,
-  displayName = false
 }) => {
-  const { agentId } = useRoom()
-  const { profileName, profileImageUrl, defaultImageUrl } = useProfile(agentId)
 
-  const { avatarName, avatarUri } = useVerida()
-
-  const [playerName, setPlayerName] = useState(null)
-  const [playerImageUrl, setPlayerImageUrl] = useState(null)
-
-  useEffect(() => {
-    setPlayerName(avatarName ?? profileName)
-    setPlayerImageUrl(avatarUri ?? defaultImageUrl)
-  }, [agentId, profileName, avatarName, avatarUri])
+  // const defaultAvatarUrl = '/nosignal_noise.gif'
+  const defaultAvatarUrl = '/avatar.png'
 
   return (
     <VStack>
-      <img src={playerImageUrl} width={width} height={width} />
-      {displayName &&
-        <Text className='NoMargin'>{playerName}</Text>
+      <img src={avatarUri ?? defaultAvatarUrl} width={width} height={width} />
+      {name &&
+        <Text className='NoMargin'>{name}</Text>
       }
     </VStack>
   )
@@ -39,7 +31,10 @@ export const Avatar = ({
 
 
 export const AvatarButton = () => {
-  const { veridaIsConnecting } = useVerida()
+  const { agentId } = useRoom()
+  const { profileName, profileAvatarUrl } = useProfile(agentId)
+
+  const { veridaIsConnecting, veridaProfileName, veridaAvatarUri } = useVerida()
 
   const disclosure = useDisclosure()
 
@@ -51,7 +46,7 @@ export const AvatarButton = () => {
 
   return (
     <div className='AvatarContainer' onClick={() => _openModal()}>
-      <Avatar displayName />
+      <Avatar name={veridaProfileName ?? profileName ?? '...'} avatarUri={veridaAvatarUri ?? profileAvatarUrl} />
       <ModalProfile disclosure={disclosure} />
     </div>
   )
