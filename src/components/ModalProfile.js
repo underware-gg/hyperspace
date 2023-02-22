@@ -14,13 +14,14 @@ import {
   Text,
   Box,
 } from '@chakra-ui/react'
+import { getGameCanvasElement } from '@/core/game-canvas'
 import { useDocument } from '@/hooks/useDocument'
 import useProfile from '@/hooks/useProfile'
 import useVerida from '@/hooks/useVerida'
 import useRoom from '@/hooks/useRoom'
 import Button from '@/components/Button'
+import CharacterSelector from '@/components/CharacterSelector'
 import { Avatar } from '@/components/Avatar'
-import { getGameCanvasElement } from '@/core/game-canvas'
 
 const ModalProfile = ({
   disclosure,
@@ -71,6 +72,7 @@ const ModalProfile = ({
             <Box style={{height: '100px'}}>
               <h2>{veridaProfileName ?? profileName ?? '...'}</h2>
             </Box>
+            <CharacterSelector />
           </HStack>
         </ModalBody>
         <ModalFooter>

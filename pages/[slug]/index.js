@@ -7,20 +7,21 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react'
+import { useLocalDocument } from '@/hooks/useDocument'
+import { focusGameCanvas } from '@/core/game-canvas'
+import { emitAction } from '@/core/controller'
 import Layout from '@/components/Layout'
 import Button from '@/components/Button'
-import { AvatarButton } from '@/components/Avatar'
 import TilesetSelector from '@/components/TilesetSelector'
-import CharacterSelector from '@/components/CharacterSelector'
 import ModalHelp from '@/components/ModalHelp'
 import InteractMenu from '@/components/InteractMenu'
 import Screens from '@/components/Screens'
 import RoomDownloadMenu from '@/components/RoomDownloadMenu'
 import VeridaMenu from '@/components/VeridaMenu'
 import useRoom from '@/hooks/useRoom'
-import { useLocalDocument } from '@/hooks/useDocument'
-import { focusGameCanvas } from '@/core/game-canvas'
-import { emitAction } from '@/core/controller'
+import usePermission from '@/hooks/usePermission'
+import { AvatarButton } from '@/components/Avatar'
+import { ModalSettings, useSettingsDisclosure } from '@/components/ModalSettings'
 
 const RoomPage = () => {
   const { agentId } = useRoom();
@@ -30,6 +31,9 @@ const RoomPage = () => {
   const canvasRef = useRef()
   const canvas3dRef = useRef()
   const { slug } = router.query
+
+  const { canEdit } = usePermission('world')
+  const settingsDisclosure = useSettingsDisclosure('world')
 
   useEffect(() => {
     focusGameCanvas()
@@ -55,7 +59,9 @@ const RoomPage = () => {
             
             <VStack align='stretch' className='Stretch'>
               <HStack>
-                <CharacterSelector />
+                <Button disabled={!canEdit} size='sm' onClick={() => settingsDisclosure.openSettings()}>
+                  Room Settings
+                </Button>
                 <Button size='sm' onClick={() => emitAction('toggle3d')}>
                   2D/3D
                 </Button>
@@ -127,6 +133,8 @@ const RoomPage = () => {
           isOpen={showHelp}
           handleClose={() => setShowHelp(false)}
         />
+
+        <ModalSettings type='Room' settingsDisclosure={settingsDisclosure} />
 
       </Container>
     </Layout>

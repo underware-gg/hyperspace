@@ -6,8 +6,6 @@ import { focusGameCanvas } from '@/core/game-canvas'
 import FileSelectButton from '@/components/FileSelectButton'
 import { useDocument } from '@/hooks/useDocument'
 import usePermission from '@/hooks/usePermission'
-import { ModalSettings, useSettingsDisclosure } from '@/components/ModalSettings'
-import Button from '@/components/Button'
 import * as Tileset from '@/core/components/tileset'
 
 
@@ -16,7 +14,6 @@ const TilesetSelector = ({ }) => {
   const tileset = useDocument('tileset', 'world')
   const [selectedValue, setSelectedValue] = useState('')
   const [options, setOptions] = useState([])
-  const settingsDisclosure = useSettingsDisclosure('world')
 
   // Chamge current tileset
   useEffect(() => {
@@ -117,12 +114,6 @@ const TilesetSelector = ({ }) => {
       />
 
       <Spacer />
-
-      <Button disabled={!canEdit} size='sm' onClick={() => settingsDisclosure.openSettings()}>
-        Room Settings
-      </Button>
-      <ModalSettings type='Room' settingsDisclosure={settingsDisclosure} />
-
     </HStack>
   )
 }
