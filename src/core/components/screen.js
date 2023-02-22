@@ -1,3 +1,4 @@
+import * as THREE from 'three'
 import { HTMLMesh } from '@/core/rendering/HTMLMesh'
 import { getTextureImageByName } from '@/core/textures'
 import { getLocalStore, getRemoteStore } from '@/core/singleton'
@@ -16,9 +17,16 @@ export const init = () => {
   const localStore = getLocalStore()
   const remoteStore = getRemoteStore()
 
+  const scene = localStore.getDocument('scene', 'scene')
+  if (scene) {
+    const screenMeshes = new THREE.Object3D()
+    scene.add(screenMeshes)
+    localStore.setDocument('screen-meshes', 'screen-meshes', screenMeshes)
+  }
+
   const _createScreen = (screenId, screen) => {
-    const scene = localStore.getDocument('scene', 'scene')
-    if (scene === null) return
+    const screenMeshes = localStore.getDocument('screen-meshes', 'screen-meshes')
+    if (screenMeshes === null) return
 
     const { position: { x, y }, rotation: { x: rotation } } = screen
 
@@ -34,11 +42,13 @@ export const init = () => {
     // console.log(`HTML Screen [${screenId}]:`, screenElement)
 
     const screenMesh = new HTMLMesh(screenElement, cellWidth, cellHeight, true)
-    
+
+    screenMesh.name = screenId
+
     screenMesh.position.set(Math.floor(x) + 0.5, -Math.floor(y) - 0.5, .75)
     screenMesh.rotation.set(Math.PI / 2, rotation, 0)
 
-    scene.add(screenMesh)
+    screenMeshes.add(screenMesh)
 
     localStore.setDocument('screen-mesh', screenId, screenMesh)
 
@@ -46,19 +56,19 @@ export const init = () => {
   }
 
   const _deleteScreen = (screenId) => {
-    const scene = localStore.getDocument('scene', 'scene')
-    if (scene === null) return
+    const screenMeshes = localStore.getDocument('screen-meshes', 'screen-meshes')
+    if (screenMeshes === null) return
 
     const screenMesh = localStore.getDocument('screen-mesh', screenId)
     if (screenMesh === null) return
 
     localStore.setDocument('screen-mesh', screenId, null)
-    scene.remove(screenMesh)
+    screenMeshes.remove(screenMesh)
   }
 
   const _updatePermission = (screenId) => {
-    const scene = localStore.getDocument('scene', 'scene')
-    if (scene === null) return
+    const screenMeshes = localStore.getDocument('screen-meshes', 'screen-meshes')
+    if (screenMeshes === null) return
 
     const screenMesh = localStore.getDocument('screen-mesh', screenId)
     if (screenMesh === null) return
@@ -104,6 +114,10 @@ export const init = () => {
     _updatePermission(screenId)
   })
 
+  remoteStore.on({ type: 'player', event: 'update' }, (agentId, player) => {
+    doScreenPicking();
+  })
+
   addActionDownListener('syncScreens', async () => {
     const screenIds = remoteStore.getIds('screen')
     for (const screenId of screenIds) {
@@ -115,6 +129,34 @@ export const init = () => {
     }
   })
 }
+
+const doScreenPicking = () => {
+  const localStore = getLocalStore()
+
+  const screenMeshes = localStore.getDocument('screen-meshes', 'screen-meshes')
+  const camera = localStore.getDocument('camera', 'camera')
+
+  if (camera === null || screenMeshes === null) {
+    return
+  }
+
+  const pointer = new THREE.Vector2() // 0,0 is center of camera
+
+  const raycaster = new THREE.Raycaster()
+
+  raycaster.setFromCamera(pointer, camera)
+
+  const intersects = raycaster.intersectObjects(screenMeshes.children)
+  if (intersects.length > 0) {
+    const screen = intersects[0].object
+    const screenId = screen.name
+    // console.log(`Intersect screen:`, screenId)
+    localStore.setDocument('screens', 'facing-3d', screenId)
+  } else {
+    localStore.setDocument('screens', 'facing-3d', null)
+  }
+}
+
 
 export const exists = (id) => {
   return Interactable.exists('screen', id)

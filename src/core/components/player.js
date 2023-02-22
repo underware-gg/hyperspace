@@ -255,7 +255,21 @@ export const getPortalOverPlayer = (id) => {
 }
 
 export const getScreenOverPlayer = (id) => {
-  const screenId = getInteractableOfTypeOverPlayer(id, 'screen')
+  if (getPortalOverPlayer(id)) {
+    return null
+  }
+
+  const localStore = getLocalStore()
+
+  let screenId = null
+
+  const is3d = localStore.getDocument('show-3d', 'world')
+  if (is3d) {
+    screenId = localStore.getDocument('screens', 'facing-3d')
+  } else {
+    screenId = getInteractableOfTypeOverPlayer(id, 'screen')
+  }
+
   return screenId && Permission.canView(screenId) ? screenId : null
 }
 

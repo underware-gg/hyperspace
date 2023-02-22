@@ -12,13 +12,15 @@ const Screens = ({ }) => {
   const screenIds = useDocumentIds('screen')
   const is3d = useLocalDocument('show-3d', 'world') ?? false
   const editingScreenId = useLocalDocument('screens', 'editing')
+  const facingScreenId = useLocalDocument('screens', 'facing-3d')
   const { permission, isOwner, canEdit, canView } = usePermission(editingScreenId)
 
   const screensComponents = useMemo(() => {
     let result = []
     const localStore = getLocalStore()
     for (const screenId of screenIds) {
-      const overlayScreen = (screenId == editingScreenId)// && !is3d
+      const overlayScreen = (screenId == editingScreenId && !is3d)
+      const selectedScreen = (screenId == editingScreenId || screenId == facingScreenId)
       result.push(
         <div key={screenId}
           className='FillParent Absolute'
@@ -27,18 +29,20 @@ const Screens = ({ }) => {
           }}
         >
           <div id={screenId}
-            className='FillParent ScreenBackground Clickable'
+            className={`FillParent Clickable ${selectedScreen ? 'ScreenBackground' : 'ClearBackground'}`}
             onClick={() => localStore.setDocument('screens', 'editing', null)}
           >
             <ScreenComponent screenId={screenId} />
-            <div className='ScreenBorder' />
+            {selectedScreen &&
+              <div className='ScreenBorder' />
+            }
           </div>
         </div>
       )
     }
 
     return result
-  }, [screenIds.length, editingScreenId, is3d, canEdit, canView])
+  }, [screenIds.length, editingScreenId, facingScreenId, is3d, canEdit, canView])
 
   useEffect(() => {
     emitAction('syncScreens')

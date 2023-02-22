@@ -38,6 +38,9 @@ $color-error: #F34000;
 .Stretch {
   width: 100%;
 }
+.ClearBackground {
+  background-color: #0000;
+}
 
 //-----------------------------------
 // Hyperbox
@@ -52,7 +55,7 @@ $color-error: #F34000;
 .ScreenBorder {
   @extend .FillParent;
   @extend .Absolute;
-  border: solid 5px #fffa;
+  border: solid 5px #ffff;
 }
 .ScreenBackground {
   background-color: rgba($color-important, 0.5);
@@ -67,7 +70,6 @@ $color-error: #F34000;
 
 .MarkdownScreen {
   @extend .FillParent;
-  @extend .ScreenBackground;
   background-color: $color-important;
   border: solid 2px #fff8;
   padding: 1em;

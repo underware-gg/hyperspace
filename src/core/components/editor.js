@@ -146,13 +146,16 @@ export const init3d = (canvas, id) => {
 
   localStore.setDocument('raycastPointer', 'raycastPointer', selectionMesh)
 
-  const handleMouseMove = (e) => {
+  const updatePointerVector = (e) => {
     const pointer = new THREE.Vector2()
     const rect = canvas.getBoundingClientRect()
-
     pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1
     pointer.y = - ((e.clientY - rect.top) / rect.height) * 2 + 1
     localStore.setDocument('pointer', 'pointer', pointer)
+  }
+
+  const handleMouseMove = (e) => {
+    updatePointerVector(e)
 
     doPicking()
 
@@ -170,12 +173,7 @@ export const init3d = (canvas, id) => {
   }
 
   const handleMouseOver = (e) => {
-    const pointer = new THREE.Vector2()
-    const rect = canvas.getBoundingClientRect()
-
-    pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1
-    pointer.y = - ((e.clientY - rect.top) / rect.height) * 2 + 1
-    localStore.setDocument('pointer', 'pointer', pointer)
+    updatePointerVector(e)
 
     doPicking()
 
@@ -193,12 +191,7 @@ export const init3d = (canvas, id) => {
   }
 
   const handleMouseOut = (e) => {
-    const pointer = new THREE.Vector2()
-    const rect = canvas.getBoundingClientRect()
-
-    pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1
-    pointer.y = - ((e.clientY - rect.top) / rect.height) * 2 + 1
-    localStore.setDocument('pointer', 'pointer', pointer)
+    updatePointerVector(e)
 
     doPicking()
 

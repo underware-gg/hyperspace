@@ -24,7 +24,6 @@ export const PermissionsForm = ({
 
   const { permission, isOwner, canEdit } = usePermission(id)
   const { veridaProfileName, veridaAvatarUri, veridaProfileUrl } = useVeridaPublicProfile(permission?.owner);
-  console.log(`PERM`, veridaProfileUrl)
 
   const _canView = (value) => {
     Permission.updatePermission(id, didAddress, {

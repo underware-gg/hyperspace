@@ -1,12 +1,11 @@
 import { getLocalStore } from '@/core/singleton'
 
-export const getGameCanvasElement = () => {
-  const localStore = getLocalStore()
-  const is3d = localStore.getDocument('show-3d', 'world') ?? false
-  if (is3d) {
-    return document.getElementById('game3D')
+export const getGameCanvasElement = (is3d = null) => {
+  if (is3d === null) {
+    const localStore = getLocalStore()
+    is3d = localStore.getDocument('show-3d', 'world') ?? false
   }
-  return document.getElementById('game')
+  return document.getElementById(is3d ? 'game3D' : 'game')
 }
 
 export const focusGameCanvas = () => {
