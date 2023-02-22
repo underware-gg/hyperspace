@@ -122,8 +122,11 @@ export const getSprite = (textureName, stepX = 0.0, stepY = 0.0, cycleName = 'id
   const scaleY = (1 / dy);
   const scaleX = scaleY * texture.aspect;
   const imgStyle = {
-    transform: ` translate(-50%, -50%) scale(${scaleX}, ${scaleY}) translate(50%, 50%) translate(${left}%, ${top}%)`,
+    transform: `translate(-50%, -50%) scale(${scaleX}, ${scaleY}) translate(50%, 50%) translate(${left}%, ${top}%)`,
     clipPath: `inset(${top}% ${right}% ${bottom}% ${left}%)`,
+    imageRendering: 'pixelated',
+    width: '100%',
+    height: '100%',
   }
 
   return {

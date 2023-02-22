@@ -4,7 +4,7 @@ import { useVeridaProfile } from './useVeridaProfile'
 const useVerida = () => {
   const [isConnected, setIsConnected] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false)
-  const [profile, setProfile] = useState({})
+  const [profile, setProfile] = useState(null)
   const [playerName, setPlayerName] = useState(null)
   const [playerImageUrl, setPlayerImageUrl] = useState(null)
   const [did, setDid] = useState(null)
@@ -53,7 +53,7 @@ const useVerida = () => {
     const _veridaDisconnected = () => {
       setIsConnected(false)
       setIsConnecting(false)
-      setProfile({})
+      setProfile(null)
       setDid(null)
       setDidAddress(null)
     }

@@ -8,25 +8,22 @@ import useProfile from '@/hooks/useProfile'
 import useTexture from '@/hooks/useTexture'
 import * as Profile from '@/core/components/profile'
 
-const CharacterSelector = ({}) => {
+const CharacterSelector = ({ }) => {
   const { agentId } = useRoom();
   const { profileCharacterUrl } = useProfile(agentId)
 
   const [selectedValue, setSelectedValue] = useState('')
-  const [imageName, setImageName] = useState(null)
-  const [imageStyle, setImageStyle] = useState({ display: 'none' })
   const [options, setOptions] = useState([])
-  const { sprite } = useTexture(imageName)
+  const { sprite } = useTexture(profileCharacterUrl ?? null)
 
   useEffect(() => {
-    let _imageName = profileCharacterUrl ?? ''
     let _selectedValue = ''
     let _options = []
     for (const sheet of spritesheets) {
       const src = sheet.src;
       const label = src.split('/').slice(-1)[0].split('.')[0]
       _options.push(<option key={label} value={src}>{label}</option>)
-      if (src === _imageName) {
+      if (src === profileCharacterUrl) {
         _selectedValue = src
       }
     }
@@ -39,21 +36,8 @@ const CharacterSelector = ({}) => {
     // }
 
     setSelectedValue(_selectedValue)
-    setImageName(_imageName)
     setOptions(_options)
   }, [agentId, profileCharacterUrl])
-
-  useEffect(() => {
-    if (sprite) {
-      let _imageStyle = {
-        imageRendering: 'pixelated',
-        width: '100%',
-        height: '100%',
-      }
-      _imageStyle = deepMerge(_imageStyle, sprite.imgStyle);
-      setImageStyle(_imageStyle);
-    }
-  }, [sprite])
 
   const _handleSelectSpritesheet = (e => {
     const fileName = e.target.value
@@ -74,7 +58,9 @@ const CharacterSelector = ({}) => {
   return (
     <HStack>
       <div style={containerStyle}>
-        <img src={imageName} style={imageStyle} alt='spritesheet-preview' />
+        {sprite?.imgStyle &&
+          <img src={profileCharacterUrl} style={sprite?.imgStyle} alt='sprite' />
+        }
       </div>
       <Spacer />
       <Select

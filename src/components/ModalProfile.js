@@ -31,7 +31,7 @@ const ModalProfile = ({
   const nameRef = useRef()
   const finalRef = useRef(null)
 
-  const { profileName, profileAvatarUrl, defaultAvatarUrl } = useProfile(agentId)
+  const { profileName, profileAvatarUrl, profileCharacterUrl } = useProfile(agentId)
 
   const {
     connect, disconnect, inviteFriend,
@@ -64,7 +64,10 @@ const ModalProfile = ({
         <ModalCloseButton />
         <ModalBody pb={4}>
           <HStack>
-            <Avatar width={100} avatarUri={veridaAvatarUri ?? null} />
+            <Avatar width={100}
+              avatarUri={veridaAvatarUri ?? profileAvatarUrl}
+              spriteUrl={profileCharacterUrl}
+            />
             <Box style={{height: '100px'}}>
               <h2>{veridaProfileName ?? profileName ?? '...'}</h2>
             </Box>

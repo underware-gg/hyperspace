@@ -8,20 +8,35 @@ import {
 import useRoom from '@/hooks/useRoom'
 import useProfile from '@/hooks/useProfile'
 import useVerida from '@/hooks/useVerida'
+import useTexture from '@/hooks/useTexture'
 import ModalProfile from '@/components/ModalProfile'
 
 export const Avatar = ({
-  name=null,
-  avatarUri=null,
+  name = null,
+  avatarUri = null,
+  spriteUrl = null,
   width = 60,
 }) => {
+  const { sprite } = useTexture(spriteUrl ?? null)
 
   // const defaultAvatarUrl = '/nosignal_noise.gif'
   const defaultAvatarUrl = '/avatar.png'
 
+  const avatarStyle = {
+    width: `${width}px`,
+    height: `${width}px`,
+    // border: `1px solid #fff3`,
+  }
+
   return (
     <VStack>
-      <img src={avatarUri ?? defaultAvatarUrl} width={width} height={width} />
+      <div style={avatarStyle}>
+        {sprite ?
+          <img src={spriteUrl} style={sprite.imgStyle} alt='sprite' />
+          : <img src={avatarUri ?? defaultAvatarUrl} width={width} height={width} alt='avatar' />
+        }
+
+      </div>
       {name &&
         <Text className='NoMargin'>{name}</Text>
       }
@@ -32,7 +47,7 @@ export const Avatar = ({
 
 export const AvatarButton = () => {
   const { agentId } = useRoom()
-  const { profileName, profileAvatarUrl } = useProfile(agentId)
+  const { profileName, profileAvatarUrl, profileCharacterUrl } = useProfile(agentId)
 
   const { veridaIsConnecting, veridaProfileName, veridaAvatarUri } = useVerida()
 
@@ -46,7 +61,11 @@ export const AvatarButton = () => {
 
   return (
     <div className='AvatarContainer' onClick={() => _openModal()}>
-      <Avatar name={veridaProfileName ?? profileName ?? '...'} avatarUri={veridaAvatarUri ?? profileAvatarUrl} />
+      <Avatar 
+        name={veridaProfileName ?? profileName ?? '...'}
+        avatarUri={veridaAvatarUri ?? profileAvatarUrl}
+        spriteUrl={profileCharacterUrl}
+      />
       <ModalProfile disclosure={disclosure} />
     </div>
   )

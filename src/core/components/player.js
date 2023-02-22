@@ -174,7 +174,10 @@ export const update3d = (id) => {
   const texture = getPlayerTexture(id)
 
   const rot = -(player.rotation.y + rotToThisPlayer + CONST.PI);
-  const { uv } = getPlayerSprite(texture.spritesheet, x, y, rot);
+  const sprite = getPlayerSprite(texture.src, x, y, rot);
+  if(!sprite) return
+
+  const { uv } = sprite
   
   var geometryUv = playerMesh.geometry.getAttribute('uv');
 
