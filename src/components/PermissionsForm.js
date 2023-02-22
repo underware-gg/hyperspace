@@ -23,7 +23,8 @@ export const PermissionsForm = ({
   const { veridaIsConnected, veridaProfile, did, didAddress } = useVerida()
 
   const { permission, isOwner, canEdit } = usePermission(id)
-  const { hasVeridaProfile, veridaProfileName, veridaAvatarUri } = useVeridaPublicProfile(permission?.owner);
+  const { veridaProfileName, veridaAvatarUri, veridaProfileUrl } = useVeridaPublicProfile(permission?.owner);
+  console.log(`PERM`, veridaProfileUrl)
 
   const _canView = (value) => {
     Permission.updatePermission(id, didAddress, {
@@ -44,8 +45,12 @@ export const PermissionsForm = ({
       <VStack align='stretch'>
 
         <HStack>
-          <Avatar name={veridaProfileName ?? '...'} avatarUri={veridaAvatarUri ?? null} />
-          
+          <Avatar
+            name={veridaProfileName ?? '...'}
+            avatarUri={veridaAvatarUri ?? null}
+            externalProfileUrl={veridaProfileUrl}
+          />
+
           <VStack align='stretch'>
             <Text>{type}: {name}</Text>
             <Text>Document id: {id}</Text>

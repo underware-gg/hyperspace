@@ -98,7 +98,7 @@ const useVerida = () => {
     veridaProfile: profile,
     did,
     didAddress,
-    ...useVeridaProfile(profile),
+    ...useVeridaProfile(profile, did),
   }
 }
 

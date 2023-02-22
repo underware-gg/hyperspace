@@ -13,7 +13,9 @@ import {
   Spacer, Flex,
   Text,
   Box,
+  Link,
 } from '@chakra-ui/react'
+import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { getGameCanvasElement } from '@/core/game-canvas'
 import { useDocument } from '@/hooks/useDocument'
 import useProfile from '@/hooks/useProfile'
@@ -39,7 +41,7 @@ const ModalProfile = ({
   const {
     connect, disconnect, inviteFriend,
     veridaIsConnected, veridaIsConnecting,
-    hasVeridaProfile, veridaProfileName, veridaAvatarUri
+    hasVeridaProfile, veridaProfileName, veridaAvatarUri, veridaProfileUrl,
   } = useVerida()
 
   useEffect(() => {
@@ -76,8 +78,9 @@ const ModalProfile = ({
             <Avatar width={100}
               avatarUri={veridaAvatarUri ?? profileAvatarUrl}
               spriteUrl={profileCharacterUrl}
+              externalProfileUrl={veridaProfileUrl}
             />
-            <Box style={{height: '100px'}}>
+            <Box style={{ height: '100px' }}>
               <HStack>
                 <Text>User Name:</Text>
                 <Editable
@@ -85,6 +88,11 @@ const ModalProfile = ({
                   onSubmit={(value) => _renameUser(value)}
                   disabled={hasVeridaProfile}
                 />
+                {hasVeridaProfile &&
+                  <Link href={veridaProfileUrl} isExternal>
+                    <ExternalLinkIcon mx='2px' />
+                  </Link>
+                }
               </HStack>
 
               <HStack>
