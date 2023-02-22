@@ -50,27 +50,30 @@ const CharacterSelector = ({ }) => {
   })
 
   const containerStyle = {
-    width: '32px',
-    height: '32px',
+    width: '60px',
+    height: '60px',
+    margin: '0',
     // border: '0.5px solid gray',
   }
 
   return (
     <HStack>
+      <div style={{ width: '120px' }}>
+        <Select
+          size='sm'
+          value={selectedValue}
+          placeholder={null}
+          onChange={(e) => _handleSelectSpritesheet(e)}
+        >
+          {options}
+        </Select>
+      </div>
+      <Spacer />
       <div style={containerStyle}>
         {sprite?.imgStyle &&
           <img src={profileCharacterUrl} style={sprite?.imgStyle} alt='sprite' />
         }
       </div>
-      <Spacer />
-      <Select
-        size='sm'
-        value={selectedValue}
-        placeholder={null}
-        onChange={(e) => _handleSelectSpritesheet(e)}
-      >
-        {options}
-      </Select>
     </HStack>
   )
 }

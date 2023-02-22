@@ -31,11 +31,10 @@ export const Avatar = ({
   return (
     <VStack>
       <div style={avatarStyle}>
-        {sprite ?
-          <img src={spriteUrl} style={sprite.imgStyle} alt='sprite' />
-          : <img src={avatarUri ?? defaultAvatarUrl} width={width} height={width} alt='avatar' />
+        {avatarUri ? <img src={avatarUri ?? defaultAvatarUrl} width={width} height={width} alt='avatar' />
+          : sprite ? <img src={spriteUrl} style={sprite.imgStyle} alt='sprite' />
+            : <img src={defaultAvatarUrl} width={width} height={width} alt='avatar' />
         }
-
       </div>
       {name &&
         <Text className='NoMargin'>{name}</Text>

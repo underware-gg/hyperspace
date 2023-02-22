@@ -50,6 +50,7 @@ const ModalScreenEdit = ({
       name: value,
     })
   }
+  
   const _openDocumentLink = () => {
     const url = `/${slug}/documents/${screen?.name}`
     window.open(url, '_blank', 'noreferrer')

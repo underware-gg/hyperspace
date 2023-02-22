@@ -19,9 +19,11 @@ import { useDocument } from '@/hooks/useDocument'
 import useProfile from '@/hooks/useProfile'
 import useVerida from '@/hooks/useVerida'
 import useRoom from '@/hooks/useRoom'
-import Button from '@/components/Button'
 import CharacterSelector from '@/components/CharacterSelector'
+import Editable from '@/components/Editable'
+import Button from '@/components/Button'
 import { Avatar } from '@/components/Avatar'
+import * as Profile from '@/core/components/profile'
 
 const ModalProfile = ({
   disclosure,
@@ -43,6 +45,12 @@ const ModalProfile = ({
   useEffect(() => {
     finalRef.current = getGameCanvasElement()
   }, [])
+
+  const _renameUser = (value) => {
+    Profile.update(agentId, {
+      name: value,
+    })
+  }
 
   const disabled = (veridaIsConnecting)
 
@@ -70,9 +78,21 @@ const ModalProfile = ({
               spriteUrl={profileCharacterUrl}
             />
             <Box style={{height: '100px'}}>
-              <h2>{veridaProfileName ?? profileName ?? '...'}</h2>
+              <HStack>
+                <Text>User Name:</Text>
+                <Editable
+                  currentValue={veridaProfileName ?? profileName ?? '...'}
+                  onSubmit={(value) => _renameUser(value)}
+                  disabled={hasVeridaProfile}
+                />
+              </HStack>
+
+              <HStack>
+                <Text>Character:</Text>
+                <CharacterSelector />
+              </HStack>
+
             </Box>
-            <CharacterSelector />
           </HStack>
         </ModalBody>
         <ModalFooter>

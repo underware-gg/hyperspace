@@ -7,10 +7,10 @@ export const create = (id, name, spritesheet) => {
   return profile
 }
 
-export const update = (id, newProfile) => {
+export const update = (id, values) => {
   const store = getRemoteStore()
   let profile = store.getDocument('profile', id) ?? {}
-  store.setDocument('profile', id, { ...profile, ...newProfile })
+  store.setDocument('profile', id, { ...profile, ...values })
 }
 
 export const remove = (id) => {

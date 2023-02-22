@@ -42,6 +42,7 @@ function EditableControls() {
 const Editable = ({
   currentValue,
   onSubmit,
+  disabled=false,
 }) => {
   const [value, setValue] = useState(currentValue)
 
@@ -67,7 +68,9 @@ const Editable = ({
       <HStack>
         <EditablePreview color='important' />
         <Input as={EditableInput} />
-        <EditableControls />
+        {!disabled &&
+          <EditableControls />
+        }
       </HStack>
     </ChakraEditable>
   )
