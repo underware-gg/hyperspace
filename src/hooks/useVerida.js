@@ -4,8 +4,38 @@ const useVerida = () => {
   const [isConnected, setIsConnected] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false)
   const [profile, setProfile] = useState({})
+  const [playerName, setPlayerName] = useState(null)
+  const [playerImageUrl, setPlayerImageUrl] = useState(null)
   const [did, setDid] = useState(null)
   const [didAddress, setDidAddress] = useState(null)
+
+  const connect = async () => {
+    const { VeridaUser } = (await import('src/core/networking/verida'))
+    console.log(`connect...`)
+    setIsConnecting(true);
+    const success = await VeridaUser.connect()
+    setIsConnecting(false);
+    console.log(`connect status:`, success)
+  }
+
+  const disconnect = async () => {
+    const { VeridaUser } = (await import('src/core/networking/verida'))
+    await VeridaUser.disconnect()
+  }
+
+  const inviteFriend = async () => {
+    const recipientDid = window.prompt('DID to invite', 'did:vda:....')
+    if (!recipientDid) {
+      return
+    }
+    const subject = `Hyperbox invite!`
+    const message = `Join me in ${slug} on Hyperbox`
+    // @todo: Get app URL from next.js
+    const url = `http://192.168.68.124:3000/${slug}`
+    const text = `Open (${slug})`
+    const { VeridaUser } = (await import('src/core/networking/verida'))
+    await VeridaUser.sendMessage(recipientDid, subject, message, url, text)
+  }
 
   useEffect(() => {
     let _mounted = true
@@ -61,9 +91,12 @@ const useVerida = () => {
   }, [])
 
   return {
+    connect, disconnect, inviteFriend,
+    veridaIsConnecting: isConnecting,
     veridaIsConnected: isConnected,
-    veridaIsInitializing: isConnecting,
     veridaProfile: profile,
+    avatarName: profile?.name ?? null,
+    avatarUri: profile?.avatarUri ?? profile?.avatar?.uri ?? null,
     did,
     didAddress,
   }

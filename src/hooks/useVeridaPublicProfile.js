@@ -29,6 +29,8 @@ const useVeridaPublicProfile = (didAddress) => {
 
   return {
     publicProfile: profile,
+    avatarName: profile?.name ?? '...',
+    avatarUri: profile?.avatarUri ?? profile?.avatar?.uri ?? null,
   }
 }
 

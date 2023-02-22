@@ -1,15 +1,21 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
-import { Container, Box, VStack, HStack, Text, Spacer } from '@chakra-ui/react'
+import {
+  Container,
+  Box,
+  VStack, HStack, Flex,
+  Spacer,
+  Text,
+} from '@chakra-ui/react'
 import Layout from '@/components/Layout'
 import Button from '@/components/Button'
+import { AvatarButton } from '@/components/Avatar'
 import TilesetSelector from '@/components/TilesetSelector'
 import CharacterSelector from '@/components/CharacterSelector'
 import ModalHelp from '@/components/ModalHelp'
 import InteractMenu from '@/components/InteractMenu'
 import Screens from '@/components/Screens'
 import RoomDownloadMenu from '@/components/RoomDownloadMenu'
-import VeridaLogin from '@/components/VeridaLogin'
 import VeridaMenu from '@/components/VeridaMenu'
 import useRoom from '@/hooks/useRoom'
 import { useLocalDocument } from '@/hooks/useDocument'
@@ -43,22 +49,26 @@ const RoomPage = () => {
       <Container maxW='full'>
 
         <VStack align='stretch' spacing={4} shouldWrapChildren >
+          
           <HStack>
-            <CharacterSelector />
-            <Button size='sm' onClick={() => emitAction('toggle3d')}>
-              2D/3D
-            </Button>
-            <Button size='sm' onClick={() => setShowHelp(!showHelp)}>
-              Help
-            </Button>
-            <Spacer />
-            <InteractMenu />
-          </HStack>
+            <AvatarButton />
+            
+            <VStack align='stretch' className='Stretch'>
+              <HStack>
+                <CharacterSelector />
+                <Button size='sm' onClick={() => emitAction('toggle3d')}>
+                  2D/3D
+                </Button>
+                <Button size='sm' onClick={() => setShowHelp(!showHelp)}>
+                  Help
+                </Button>
+                <Spacer />
+                <InteractMenu />
+              </HStack>
 
-          <HStack>
-            <TilesetSelector />
-            <Spacer />
-            <VeridaLogin />
+              <TilesetSelector />
+            </VStack>
+
           </HStack>
 
           <Box

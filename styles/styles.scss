@@ -35,6 +35,9 @@ $color-error: #F34000;
 .Clickable {
   cursor: pointer;
 }
+.Stretch {
+  width: 100%;
+}
 
 //-----------------------------------
 // Hyperbox
@@ -74,5 +77,9 @@ $color-error: #F34000;
   background-color: #fff0;
 }
 
+.AvatarContainer {
+  cursor: pointer;
+  margin: 0 0.5em;
+}
 
 

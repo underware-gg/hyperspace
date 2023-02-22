@@ -11,7 +11,7 @@ import {
 import usePermission from '@/hooks/usePermission'
 import useVerida from '@/hooks/useVerida'
 import useVeridaPublicProfile from '@/hooks/useVeridaPublicProfile'
-import { VeridaAvatar } from './VeridaLogin'
+import { Avatar } from '@/components/Avatar'
 import * as Permission from '@/core/components/permission'
 
 export const PermissionsForm = ({
@@ -56,7 +56,10 @@ export const PermissionsForm = ({
           {publicProfile &&
             <>
               <Spacer />
-              <VeridaAvatar profile={publicProfile} />
+            {publicProfile &&
+              <Avatar name={publicProfile.avatarName ?? '...'} />
+
+            }
             </>
           }
         </HStack>

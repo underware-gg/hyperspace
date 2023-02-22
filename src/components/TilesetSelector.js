@@ -6,13 +6,17 @@ import { focusGameCanvas } from '@/core/game-canvas'
 import FileSelectButton from '@/components/FileSelectButton'
 import { useDocument } from '@/hooks/useDocument'
 import usePermission from '@/hooks/usePermission'
+import { ModalSettings, useSettingsDisclosure } from '@/components/ModalSettings'
+import Button from '@/components/Button'
 import * as Tileset from '@/core/components/tileset'
+
 
 const TilesetSelector = ({ }) => {
   const { canEdit } = usePermission('world')
   const tileset = useDocument('tileset', 'world')
   const [selectedValue, setSelectedValue] = useState('')
   const [options, setOptions] = useState([])
+  const settingsDisclosure = useSettingsDisclosure('world')
 
   // Chamge current tileset
   useEffect(() => {
@@ -93,16 +97,17 @@ const TilesetSelector = ({ }) => {
           <span style={shortcutsStyle}>1234567890</span>
         }
       </div>
-      <Spacer />
-      <Select
-        size='sm'
-        value={selectedValue}
-        placeholder={null}
-        disabled={!canEdit}
-        onChange={(e) => _handleSelectTileset(e)}
-      >
-        {options}
-      </Select>
+      <div style={{ width: '120px' }}>
+        <Select
+          size='sm'
+          value={selectedValue}
+          placeholder={null}
+          disabled={!canEdit}
+          onChange={(e) => _handleSelectTileset(e)}
+        >
+          {options}
+        </Select>
+      </div>
       <FileSelectButton
         label='Upload Tileset'
         id='tileset-image'
@@ -110,6 +115,14 @@ const TilesetSelector = ({ }) => {
         disabled={!canEdit}
         onSelect={(fileObject) => _handleUploadTileset(fileObject)}
       />
+
+      <Spacer />
+
+      <Button disabled={!canEdit} size='sm' onClick={() => settingsDisclosure.openSettings()}>
+        Room Settings
+      </Button>
+      <ModalSettings type='Room' settingsDisclosure={settingsDisclosure} />
+
     </HStack>
   )
 }
