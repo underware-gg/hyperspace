@@ -139,6 +139,8 @@ export const init3d = (canvas, id) => {
     color: 0x0000FF,
     transparent: true,
     opacity: 0.23,
+    depthWrite: false,
+    depthTest: false,
   })
   const selectionMesh = new THREE.Mesh(selectionGeometry, selectionMat)
 

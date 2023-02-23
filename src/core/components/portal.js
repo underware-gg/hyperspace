@@ -30,6 +30,7 @@ export const init = () => {
     color: '#fff',
     transparent: true,
     opacity: 0.3,
+    depthWrite: false,
   })
   
   remoteStore.on({ type: 'portal', event: 'create' }, (portalId, portal) => {
