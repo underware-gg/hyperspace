@@ -1,12 +1,13 @@
 import * as THREE from 'three'
+import * as Room from '@/core/networking'
+import * as Interactable from '@/core/components/interactable'
+import * as Permission from '@/core/components/permission'
 import { HTMLMesh } from '@/core/rendering/HTMLMesh'
 import { getTextureImageByName } from '@/core/textures'
 import { getLocalStore, getRemoteStore } from '@/core/singleton'
 import { getTile, floors } from '@/core/components/map'
 import { addActionDownListener } from '@/core/controller'
 import { getScreenOverPlayer } from '@/core/components/player'
-import * as Interactable from '@/core/components/interactable'
-import * as Permission from '@/core/components/permission'
 
 export const TYPE = {
   DOCUMENT: 'document',
@@ -14,6 +15,7 @@ export const TYPE = {
 }
 
 export const init = () => {
+  const room = Room.get()
   const localStore = getLocalStore()
   const remoteStore = getRemoteStore()
 
@@ -115,7 +117,9 @@ export const init = () => {
   })
 
   remoteStore.on({ type: 'player', event: 'update' }, (agentId, player) => {
-    doScreenPicking();
+    if(agentId == room.agentId) {
+      doScreenPicking();
+    }
   })
 
   addActionDownListener('syncScreens', async () => {
@@ -140,20 +144,25 @@ const doScreenPicking = () => {
     return
   }
 
+  screenMeshes.updateMatrixWorld();
+
   const pointer = new THREE.Vector2() // 0,0 is center of camera
 
   const raycaster = new THREE.Raycaster()
 
   raycaster.setFromCamera(pointer, camera)
 
+  const newScreenId = null
+  
   const intersects = raycaster.intersectObjects(screenMeshes.children)
-  if (intersects.length > 0) {
+  if (intersects.length > 0 && intersects[0].distance <= 2.5) {
     const screen = intersects[0].object
-    const screenId = screen.name
-    // console.log(`Intersect screen:`, screenId)
-    localStore.setDocument('screens', 'facing-3d', screenId)
-  } else {
-    localStore.setDocument('screens', 'facing-3d', null)
+    newScreenId = screen.name
+  }
+
+  if (newScreenId != localStore.getDocument('screens', 'facing-3d')) {
+    // console.log(`Intersect screen:`, intersects.length, newScreenId)
+    localStore.setDocument('screens', 'facing-3d', newScreenId)
   }
 }
 
