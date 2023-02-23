@@ -24,25 +24,6 @@ export const init = () => {
 
   const portalGeometry = new THREE.CylinderGeometry(0.5, 0.5, 4, 32, 1, true)
 
-  // animate texture???
-  // https://pierfrancesco-soffritti.medium.com/animations-with-alpha-textures-in-three-js-52a33654e137
-  // https://r105.threejsfundamentals.org/threejs/lessons/threejs-custom-buffergeometry.html
-  // const portalTexture = getTextureImageByName('portal')
-  // const loader = new THREE.TextureLoader()
-  // const portalMaterial = new THREE.MeshBasicMaterial({
-  //   map: loader.load(portalTexture?.src),
-  //   blending: THREE.AdditiveBlending,
-  //   side: THREE.DoubleSide,
-  //   transparent: true,
-  //   opacity: 0.5,
-  // })
-  // const uvs = portalGeometry.attributes.uv.array
-  // for (let i = 0; i < uvs.length; i += 2) {
-  //   if (uvs[i] == 1) {
-  //     uvs[i] = 0.5
-  //   }
-  // }
-
   const portalMaterial = new THREE.MeshLambertMaterial({
     blending: THREE.AdditiveBlending,
     side: THREE.DoubleSide,
@@ -51,7 +32,7 @@ export const init = () => {
     opacity: 0.3,
   })
   
-  remoteStore.on({ type: 'portal', event: 'create' }, (id, portal) => {
+  remoteStore.on({ type: 'portal', event: 'create' }, (portalId, portal) => {
     const portalMesh = new THREE.Mesh(portalGeometry, portalMaterial)
 
     const map = remoteStore.getDocument('map', 'world')
@@ -71,12 +52,21 @@ export const init = () => {
     portalMesh.position.set(
       (Math.floor(portal.position.x)) + 0.5,
       (-Math.floor(portal.position.y)) - 0.5,
-      0,
+      currentFloorHeight + .9,
     )
     portalMesh.rotation.set(Math.PI / 2, 0, 0);
 
     scene.add(portalMesh)
-    localStore.setDocument('portal-mesh', id, portalMesh)
+    localStore.setDocument('portal-mesh', portalId, portalMesh)
+  })
+
+  remoteStore.on({ type: 'portal', event: 'delete' }, (portalId) => {
+    const portalMesh = localStore.getDocument('portal-mesh', portalId)
+    if (portalMesh === null) {
+      return
+    }
+    scene.remove(portalMesh)
+    localStore.setDocument('portal-mesh', portalId, null)
   })
 
   // If we had something that said "how the data has changed" it would help a lot.
@@ -117,15 +107,6 @@ export const init = () => {
         currentFloorHeight + .9,
       )
     }
-  })
-
-  remoteStore.on({ type: 'portal', event: 'delete' }, (id) => {
-    const portalMesh = localStore.getDocument('portal-mesh', id)
-    if (portalMesh === null) {
-      return
-    }
-    scene.remove(portalMesh)
-    localStore.setDocument('portal-mesh', id, null)
   })
 }
 

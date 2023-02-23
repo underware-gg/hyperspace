@@ -162,6 +162,12 @@ export const init = async (slug, canvas, canvas3d) => {
 
   Room.init(slug)
   const room = Room.get()
+
+  // before room.init() to listen snapshot 'create' events
+  Portal.init()
+  Screen.init()
+
+  // loads snapshot
   room.init(slug)
 
   if (!Settings.exists('world')) {
@@ -172,8 +178,6 @@ export const init = async (slug, canvas, canvas3d) => {
   Editor.init3d(canvas3d, room.agentId)
   Player.init()
   Map.init()
-  Portal.init()
-  Screen.init()
 
   if (!Map.exists('world')) {
     Map.create('world')
