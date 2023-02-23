@@ -75,12 +75,12 @@ const ModalProfile = ({
         <ModalCloseButton />
         <ModalBody pb={4}>
           <HStack>
-            <Avatar width={100}
+            <Avatar width={120}
               avatarUri={veridaAvatarUri ?? profileAvatarUrl}
               spriteUrl={profileCharacterUrl}
               externalProfileUrl={veridaProfileUrl}
             />
-            <Box style={{ height: '100px' }}>
+            <Box style={{ height: '120px' }}>
               <HStack>
                 <Text>User Name:</Text>
                 <Editable
@@ -99,6 +99,10 @@ const ModalProfile = ({
                 <Text>Character:</Text>
                 <CharacterSelector />
               </HStack>
+
+              <Text>
+                Agent ID: {agentId}
+              </Text>
 
             </Box>
           </HStack>

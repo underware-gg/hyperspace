@@ -56,7 +56,6 @@ export const Avatar = ({
 export const AvatarButton = () => {
   const { agentId } = useRoom()
   const { profileName, profileAvatarUrl, profileCharacterUrl } = useProfile(agentId)
-
   const { veridaIsConnecting, veridaProfileName, veridaAvatarUri } = useVerida()
 
   const disclosure = useDisclosure()

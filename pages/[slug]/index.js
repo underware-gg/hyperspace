@@ -12,6 +12,7 @@ import { focusGameCanvas } from '@/core/game-canvas'
 import { emitAction } from '@/core/controller'
 import Layout from '@/components/Layout'
 import Button from '@/components/Button'
+import ChatBox from '@/components/ChatBox'
 import TilesetSelector from '@/components/TilesetSelector'
 import ModalHelp from '@/components/ModalHelp'
 import InteractMenu from '@/components/InteractMenu'
@@ -49,38 +50,46 @@ const RoomPage = () => {
   }, [slug, canvasRef.current, canvas3dRef.current, agentId])
 
   return (
-    <Layout>
-      <Container maxW='full'>
+    <Layout height='100vh'>
 
-        <VStack align='stretch' spacing={4} shouldWrapChildren >
-          
-          <HStack>
-            <AvatarButton />
-            
-            <VStack align='stretch' className='Stretch'>
-              <HStack>
-                <Button disabled={!canEdit} size='sm' onClick={() => settingsDisclosure.openSettings()}>
-                  Room Settings
-                </Button>
-                <Button size='sm' onClick={() => emitAction('toggle3d')}>
-                  2D/3D
-                </Button>
-                <Button size='sm' onClick={() => setShowHelp(!showHelp)}>
-                  Help
-                </Button>
-                <Spacer />
-                <InteractMenu />
-              </HStack>
+      <VStack align='stretch' spacing={4} shouldWrapChildren >
 
-              <TilesetSelector />
-            </VStack>
+        <HStack>
+          <AvatarButton />
 
-          </HStack>
+          <VStack align='stretch' className='Stretch'>
+            <HStack>
+              <Button disabled={!canEdit} size='sm' onClick={() => settingsDisclosure.openSettings()}>
+                Room Settings
+              </Button>
+              <Button size='sm' onClick={() => emitAction('toggle3d')}>
+                2D/3D
+              </Button>
+              <Button size='sm' onClick={() => setShowHelp(!showHelp)}>
+                Help
+              </Button>
+              <Spacer />
+              <InteractMenu />
+            </HStack>
+
+            <TilesetSelector />
+          </VStack>
+
+        </HStack>
+
+        <HStack className='Relative'>
+          <Box
+            className='Relative'
+            border='1px'
+            borderRadius='2px'
+          >
+            <ChatBox />
+          </Box>
 
           <Box
-            style={{ position: 'relative' }}
+            className='Relative'
             border='1px'
-            borderRadius='4px'
+            borderRadius='2px'
           >
             <canvas
               id='game'
@@ -119,24 +128,24 @@ const RoomPage = () => {
 
             <Screens />
           </Box>
+        </HStack>
 
-          <HStack>
-            <RoomDownloadMenu />
-            <Spacer />
-            <VeridaMenu />
-          </HStack>
+        <HStack>
+          <RoomDownloadMenu />
+          <Spacer />
+          <VeridaMenu />
+        </HStack>
 
-          {process.env.ENV == 'desenv' && <div>Agent ID: {agentId}</div>}
-        </VStack>
+        {process.env.ENV == 'desenv' && <div>Agent ID: {agentId}</div>}
+      </VStack>
 
-        <ModalHelp
-          isOpen={showHelp}
-          handleClose={() => setShowHelp(false)}
-        />
+      <ModalHelp
+        isOpen={showHelp}
+        handleClose={() => setShowHelp(false)}
+      />
 
-        <ModalSettings type='Room' settingsDisclosure={settingsDisclosure} />
+      <ModalSettings type='Room' settingsDisclosure={settingsDisclosure} />
 
-      </Container>
     </Layout>
   )
 }

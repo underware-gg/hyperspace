@@ -97,9 +97,10 @@ const components = {
 
 const Markdown = ({
   children = '',
+  className = 'MarkdownScreen',
 }) => {
   return (
-    <div className='MarkdownScreen'>
+    <div className={className}>
       <ReactMarkdown components={components}>{children}</ReactMarkdown>
     </div>
   )

@@ -19,7 +19,7 @@ const Layout = ({
       >
         <Container
           as='main'
-          maxW='container.lg'
+          maxW='1200'
           centerContent
           pt='1.5em'
           pb='1.5em'
