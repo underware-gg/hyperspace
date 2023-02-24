@@ -53,7 +53,7 @@ const ChatBox = () => {
   }
 
   return (
-    <VStack className='ChatDrawer'>
+    <VStack className='ChatDrawer' h='700'>
       <Box className='ChatRow' align='center'>
         <HStack>
           <b>PUBLIC CHAT</b>
@@ -62,13 +62,14 @@ const ChatBox = () => {
             <DeleteIcon className='Clickable' onClick={() => _onDump()} />
           }
         </HStack>
-
       </Box>
+
       <Box className='ChatContent' overflowY='scroll'>
         <Markdown className=''>
           {document?.content ?? ''}
         </Markdown>
       </Box>
+
       <Box className='ChatRow'>
         <HStack>
           <Input

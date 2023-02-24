@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import {
-  Container,
   Box,
-  VStack, HStack, Flex,
+  Grid, GridItem,
+  VStack, HStack,
   Spacer,
   Text,
 } from '@chakra-ui/react'
@@ -52,16 +52,15 @@ const RoomPage = () => {
   return (
     <Layout height='100vh'>
 
-      <VStack align='stretch' spacing={4} shouldWrapChildren >
+      <Grid templateColumns='repeat(5, 1fr)' gap={2}>
 
-        <HStack>
+        <GridItem>
           <AvatarButton />
+        </GridItem>
 
+        <GridItem colSpan={4}>
           <VStack align='stretch' className='Stretch'>
             <HStack>
-              <Button disabled={!canEdit} size='sm' onClick={() => settingsDisclosure.openSettings()}>
-                Room Settings
-              </Button>
               <Button size='sm' onClick={() => emitAction('toggle3d')}>
                 2D/3D
               </Button>
@@ -72,12 +71,18 @@ const RoomPage = () => {
               <InteractMenu />
             </HStack>
 
-            <TilesetSelector />
+            <HStack>
+              <TilesetSelector />
+              <Spacer />
+              <Button disabled={!canEdit} size='sm' onClick={() => settingsDisclosure.openSettings()}>
+                Room Settings
+              </Button>
+            </HStack>
           </VStack>
+        </GridItem>
 
-        </HStack>
 
-        <HStack className='Relative'>
+        <GridItem>
           <Box
             className='Relative'
             border='1px'
@@ -85,7 +90,9 @@ const RoomPage = () => {
           >
             <ChatBox />
           </Box>
+        </GridItem>
 
+        <GridItem colSpan={4}>
           <Box
             className='Relative'
             border='1px'
@@ -101,8 +108,6 @@ const RoomPage = () => {
               style={{
                 width: '100%',
                 height: '100%',
-                borderTop: '1px solid white',
-                borderBottom: '1px solid white',
                 display: is3d ? 'none' : 'block',
               }}
               tabIndex='1'
@@ -128,16 +133,23 @@ const RoomPage = () => {
 
             <Screens />
           </Box>
-        </HStack>
+        </GridItem>
 
-        <HStack>
-          <RoomDownloadMenu />
-          <Spacer />
-          <VeridaMenu />
-        </HStack>
 
-        {process.env.ENV == 'desenv' && <div>Agent ID: {agentId}</div>}
-      </VStack>
+
+        <GridItem>
+          {process.env.ENV == 'desenv' && <p>Agent ID: {agentId}</p>}
+        </GridItem>
+
+        <GridItem colSpan={4}>
+          <HStack>
+            <RoomDownloadMenu />
+            <Spacer />
+            <VeridaMenu />
+          </HStack>
+        </GridItem>
+
+      </Grid>
 
       <ModalHelp
         isOpen={showHelp}

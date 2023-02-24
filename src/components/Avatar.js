@@ -17,7 +17,7 @@ export const Avatar = ({
   avatarUri = null,
   spriteUrl = null,
   externalProfileUrl = null,
-  width = 60,
+  width = 50,
 }) => {
   const { sprite } = useTexture(spriteUrl ?? null)
 
