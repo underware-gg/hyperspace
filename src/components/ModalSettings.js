@@ -1,19 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  useDisclosure,
+  Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
   Tabs, TabList, TabPanels, Tab, TabPanel,
   HStack,
   Spacer,
   Input,
   Text,
+  useDisclosure,
 } from '@chakra-ui/react'
 import { useDocument } from '@/hooks/useDocument'
 import { PermissionsForm } from '@/components/PermissionsForm'

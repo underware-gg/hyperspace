@@ -1,14 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import {
-  VStack,
-  HStack,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
+  Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
+  VStack, HStack,
   Input,
   Spacer,
   Text,

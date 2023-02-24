@@ -99,6 +99,10 @@ class Store {
     return this.collections[type]?.[id] !== undefined
   }
 
+  getTypes() {
+    return Object.keys(this.collections)
+  }
+
   getIds(type) {
     return Object.keys(this.collections[type] ?? {})
   }

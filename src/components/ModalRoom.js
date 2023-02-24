@@ -1,13 +1,7 @@
 import React, { useState, useRef } from 'react'
 import {
+  Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
   VStack,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
   Input,
 } from '@chakra-ui/react'
 import Button from '@/components/Button'

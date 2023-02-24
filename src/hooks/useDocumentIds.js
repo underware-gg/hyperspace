@@ -3,22 +3,22 @@ import { getRemoteStore } from '@/core/singleton'
 
 const remoteStore = getRemoteStore()
 
-const useDocumentIds = (type) => {
+const useDocumentIds = (type, store = remoteStore) => {
   const [ids, setIds] = useState([])
 
   useEffect(() => {
     function _handleChange(innerId, document) {
-      setIds(remoteStore.getIds(type))
+      setIds(store.getIds(type))
     }
 
-    setIds(remoteStore.getIds(type))
+    setIds(store.getIds(type))
 
-    remoteStore.on({ type, event: 'create' }, _handleChange)
-    remoteStore.on({ type, event: 'delete' }, _handleChange)
+    store.on({ type, event: 'create' }, _handleChange)
+    store.on({ type, event: 'delete' }, _handleChange)
 
     return () => {
-      remoteStore.off({ type, event: 'create' }, _handleChange)
-      remoteStore.off({ type, event: 'delete' }, _handleChange)
+      store.off({ type, event: 'create' }, _handleChange)
+      store.off({ type, event: 'delete' }, _handleChange)
     }
   }, [type])
 

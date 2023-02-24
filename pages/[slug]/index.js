@@ -6,6 +6,7 @@ import {
   VStack, HStack,
   Spacer,
   Text,
+  useDisclosure,
 } from '@chakra-ui/react'
 import { useLocalDocument } from '@/hooks/useDocument'
 import { focusGameCanvas } from '@/core/game-canvas'
@@ -15,6 +16,7 @@ import Button from '@/components/Button'
 import ChatBox from '@/components/ChatBox'
 import TilesetSelector from '@/components/TilesetSelector'
 import ModalHelp from '@/components/ModalHelp'
+import ModalSnapshots from '@/components/ModalSnapshots'
 import InteractMenu from '@/components/InteractMenu'
 import Screens from '@/components/Screens'
 import RoomDownloadMenu from '@/components/RoomDownloadMenu'
@@ -35,6 +37,8 @@ const RoomPage = () => {
 
   const { canEdit } = usePermission('world')
   const settingsDisclosure = useSettingsDisclosure('world')
+
+  const snapshotDisclosure = useDisclosure()
 
   useEffect(() => {
     focusGameCanvas()
@@ -76,6 +80,9 @@ const RoomPage = () => {
               <Spacer />
               <Button disabled={!canEdit} size='sm' onClick={() => settingsDisclosure.openSettings()}>
                 Room Settings
+              </Button>
+              <Button size='sm' onClick={() => snapshotDisclosure.onOpen()}>
+                Snapshots
               </Button>
             </HStack>
           </VStack>
@@ -157,6 +164,8 @@ const RoomPage = () => {
       />
 
       <ModalSettings type='Room' settingsDisclosure={settingsDisclosure} />
+
+      <ModalSnapshots disclosure={snapshotDisclosure} />
 
     </Layout>
   )
