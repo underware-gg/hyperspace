@@ -28,7 +28,7 @@ export const useSettingsDisclosure = (id) => {
 export const ModalSettings = ({
   type,
   settingsDisclosure,
-  newRoom=false
+  newRoom = false
 }) => {
   const router = useRouter()
   const { slug } = router.query
@@ -38,6 +38,8 @@ export const ModalSettings = ({
   const [sizeY, setSizeY] = useState(Settings.defaultMapSize.height);
   const [tileX, setTileX] = useState(Settings.defaultEntryTile.x);
   const [tileY, setTileY] = useState(Settings.defaultEntryTile.y);
+  const [validSize, setValidSize] = useState(true);
+  const [validEntry, setValidEntry] = useState(true);
 
   const settings = useDocument('settings', id)
 
@@ -107,6 +109,7 @@ export const ModalSettings = ({
                   valueY={sizeY}
                   onChangeX={setSizeX}
                   onChangeY={setSizeY}
+                  // onValidated={setValidSize}
                   disabled={!newRoom}
                 />
                 <Spacer pt={3} />
@@ -116,6 +119,7 @@ export const ModalSettings = ({
                   valueY={tileY}
                   onChangeX={setTileX}
                   onChangeY={setTileY}
+                  onValidated={setValidEntry}
                 />
               </TabPanel>
               <TabPanel>
@@ -128,6 +132,7 @@ export const ModalSettings = ({
           <Button
             variant='outline'
             value='Save'
+            disabled={!validSize || !validEntry}
             onClick={() => _onSave()}
           />
         </ModalFooter>
@@ -140,43 +145,45 @@ export const TileField = ({
   name = 'Tile',
   valueX,
   valueY,
-  onChangeX,
-  onChangeY,
-  disabled=false,
+  onChangeX = (value) => { },
+  onChangeY = (value) => { },
+  onValidated = (isValid) => { },
+  disabled = false,
 }) => {
+  const [validX, setValidX] = useState(true)
+  const [validY, setValidY] = useState(true)
 
-  const _onChangeX = (value) => {
-    const v = parseInt(value)
-    if (!isNaN(v)) {
-      onChangeX(v)
-    }
-  }
+  const settings = useDocument('settings', 'world')
 
-  const _onChangeY = (value) => {
-    const v = parseInt(value)
-    if (!isNaN(v)) {
-      onChangeY(v)
-    }
-  }
+  useEffect(() => {
+    const _validate = (v, max) => (v != '' && !isNaN(v) && v >= 0 && v < max)
+    setValidX(_validate(valueX, settings?.size?.width ?? Settings.defaultMapSize.width))
+    setValidY(_validate(valueY, settings?.size?.height ?? Settings.defaultMapSize.height))
+  }, [valueX, valueY])
+
+  useEffect(() => {
+    console.log(validX, validY)
+    onValidated(validX && validY)
+  }, [validX, validY])
 
   return (
     <HStack>
       <Text w='220px'>{name}</Text>
       <Text>X:</Text>
       <Input
-        focusBorderColor='teal.500'
+        focusBorderColor={validX ? 'teal.500' : 'crimson'}
         placeholder=''
         value={valueX}
         disabled={disabled}
-        onChange={(e) => _onChangeX(e.target.value)}
+        onChange={(e) => onChangeX(e.target.value)}
       />
       <Text>Y:</Text>
       <Input
-        focusBorderColor='teal.500'
+        focusBorderColor={validY ? 'teal.500' : 'crimson'}
         placeholder=''
         value={valueY}
         disabled={disabled}
-        onChange={(e) => _onChangeY(e.target.value)}
+        onChange={(e) => onChangeY(e.target.value)}
       />
     </HStack>
   )

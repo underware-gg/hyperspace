@@ -23,6 +23,7 @@ const ModalPortal = ({
   const [roomName, setRoomName] = useState('');
   const [tileX, setTileX] = useState(Settings.defaultEntryTile.x);
   const [tileY, setTileY] = useState(Settings.defaultEntryTile.y);
+  const [validTile, setValidTile] = useState(true);
   const roomNameRef = useRef()
   const finalRef = useRef(null)
 
@@ -91,6 +92,7 @@ const ModalPortal = ({
               valueY={tileY}
               onChangeX={setTileX}
               onChangeY={setTileY}
+              onValidated={setValidTile}
             />
           </VStack>
         </ModalBody>
@@ -106,6 +108,7 @@ const ModalPortal = ({
           <Button
             variant='outline'
             value='Save'
+            disabled={!validTile}
             onClick={() => _onSave()}
           />
         </ModalFooter>
