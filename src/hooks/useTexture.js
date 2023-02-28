@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { getTextureByName, getSprite } from '@/core/textures'
+import { getTextureByName, getTextureSprite } from '@/core/textures'
 
 const useTexture = (textureName) => {
   const [texture, setTexture] = useState(null)
@@ -10,7 +10,7 @@ const useTexture = (textureName) => {
       const tex = getTextureByName(textureName)
       if (tex) {
         setTexture(tex)
-        setSprite(getSprite(textureName))
+        setSprite(getTextureSprite(tex))
       } else {
         setTimeout(_getTexture, 100)
       }

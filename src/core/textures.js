@@ -59,8 +59,7 @@ export const loadTextures = async () =>
 export const getTextureByName = (name, fallback) => textures[name] ?? textures[fallback] ?? null
 export const getTextureImageByName = name => textures[name]?.image ?? null
 
-export const getSprite = (textureName, stepX = 0.0, stepY = 0.0, cycleName = 'idle') => {
-  const texture = getTextureByName(textureName)
+export const getTextureSprite = (texture, stepX = 0.0, stepY = 0.0, cycleName = 'idle') => {
 
   if (!texture) {
     return null

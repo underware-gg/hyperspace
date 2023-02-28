@@ -6,7 +6,7 @@ import * as Screen from '@/core/components/screen'
 import * as Interactable from '@/core/components/interactable'
 import * as Permission from '@/core/components/permission'
 import { getActionState, addActionDownListener } from '@/core/controller'
-import { getTextureByName, getSprite } from '@/core/textures'
+import { getTextureByName, getTextureSprite } from '@/core/textures'
 import { getRemoteStore, getLocalStore } from '@/core/singleton'
 import { CONST, clamp, clampRadians, deepCompare, deepCopy } from '@/core/utils'
 import { floors, getTile } from '@/core/components/map'
@@ -37,8 +37,6 @@ export const init = () => {
 
   localStore.setDocument('joined', room.agentId, false)
 
-  const geometry = new THREE.PlaneGeometry(PLAYER_MESH, PLAYER_MESH);
-
   room.on('agent-join', (agentId) => {
     if (agentId === room.agentId) {
       enterRoom(agentId, room.slug)
@@ -51,6 +49,7 @@ export const init = () => {
     }
 
     const material = makePlayerMaterial(agentId)
+    const geometry = new THREE.PlaneGeometry(PLAYER_MESH, PLAYER_MESH);
     const playerMesh = new THREE.Mesh(geometry, material);
     scene.add(playerMesh);
 
@@ -174,7 +173,7 @@ export const update3d = (id) => {
   const texture = getPlayerTexture(id)
 
   const rot = -(player.rotation.y + rotToThisPlayer + CONST.PI);
-  const sprite = getPlayerSprite(texture.src, x, y, rot);
+  const sprite = getPlayerSprite(texture, x, y, rot);
   if(!sprite) return
 
   const { uv } = sprite
@@ -620,7 +619,7 @@ export const render2d = (id, context) => {
     sWidth = texture.sprites.width;
     sHeight = texture.sprites.height;
 
-    const { pixel } = getPlayerSprite(texture.src, x, y, rotation.y);
+    const { pixel } = getPlayerSprite(texture, x, y, rotation.y);
 
     sx = pixel.start[0];
     sy = pixel.start[1];
@@ -660,7 +659,7 @@ export const getPlayerTextureName = (agentId = '') => {
 }
 
 
-const getPlayerSprite = (textureName, x, y, rot) => {
+const getPlayerSprite = (texture, x, y, rot) => {
   let cycleName;
 
   rot = clampRadians(rot);
@@ -677,6 +676,6 @@ const getPlayerSprite = (textureName, x, y, rot) => {
   const stepX = x / 32.0;
   const stepY = y / 32.0;
 
-  return getSprite(textureName, stepX, stepY, cycleName)
+  return getTextureSprite(texture, stepX, stepY, cycleName)
 }
 
