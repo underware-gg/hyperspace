@@ -22,7 +22,7 @@ export const init = () => {
     return
   }
 
-  const portalGeometry = new THREE.CylinderGeometry(0.5, 0.5, 4, 32, 1, true)
+  const portalGeometry = new THREE.CylinderGeometry(0.5, 0.5, 3, 32, 1, true)
 
   const portalMaterial = new THREE.MeshLambertMaterial({
     blending: THREE.AdditiveBlending,

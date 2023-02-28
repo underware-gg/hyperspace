@@ -140,7 +140,6 @@ export const init3d = (canvas, id) => {
     transparent: true,
     opacity: 0.23,
     depthWrite: false,
-    depthTest: false,
   })
   const selectionMesh = new THREE.Mesh(selectionGeometry, selectionMat)
 
@@ -156,7 +155,7 @@ export const init3d = (canvas, id) => {
     localStore.setDocument('pointer', 'pointer', pointer)
   }
 
-  const handleMouseMove = (e) => {
+  const _updatePickingLocation = (e) => {
     updatePointerVector(e)
 
     doPicking()
@@ -169,45 +168,21 @@ export const init3d = (canvas, id) => {
           x: Math.floor(pickingLocation.x),
           y: Math.floor(-pickingLocation.y - 1),
         },
-        interacting: true,
+        interacting: Permission.canEdit('world'),
       })
     }
+  }
+
+  const handleMouseMove = (e) => {
+    _updatePickingLocation(e)
   }
 
   const handleMouseOver = (e) => {
-    updatePointerVector(e)
-
-    doPicking()
-
-    const pickingLocation = localStore.getDocument('pickingLocation', 'pickingLocation')
-
-    if (pickingLocation !== null) {
-      remoteStore.setDocument('editor', id, {
-        position: {
-          x: Math.floor(pickingLocation.x),
-          y: Math.floor(-pickingLocation.y - 1),
-        },
-        interacting: true,
-      })
-    }
+    _updatePickingLocation(e)
   }
 
   const handleMouseOut = (e) => {
-    updatePointerVector(e)
-
-    doPicking()
-
-    const pickingLocation = localStore.getDocument('pickingLocation', 'pickingLocation')
-
-    if (pickingLocation !== null) {
-      remoteStore.setDocument('editor', id, {
-        position: {
-          x: Math.floor(pickingLocation.x),
-          y: Math.floor(-pickingLocation.y - 1),
-        },
-        interacting: false,
-      })
-    }
+    _updatePickingLocation(e)
   }
 
   canvas.addEventListener('mousemove', handleMouseMove)
