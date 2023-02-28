@@ -205,15 +205,6 @@ export const update = (dt) => {
   const room = Room.get()
   Player.update(room.agentId, dt)
   Editor.update(room.agentId, dt)
-  // Only do this when you are interacting with it.
-  // Map.update('world', x, y, 3)
-  const store = getRemoteStore()
-  const playerIds = store.getIds('player')
-  for (const playerId of playerIds) {
-    if (room.hasAgentId(playerId)) {
-      Player.update3d(playerId)
-    }
-  }
 }
 
 export const render = (canvas, context) => {

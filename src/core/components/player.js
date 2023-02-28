@@ -71,6 +71,19 @@ export const init = () => {
 
   remoteStore.on({ type: 'player', event: 'update' }, (agentId, player) => {
     // console.log(`agent-update:`, agentId)
+    if (agentId == room.agentId) {
+      // we moved: update all other players
+      const playerIds = remoteStore.getIds('player')
+      for (const id of playerIds) {
+        if (id != room.agentId && room.hasAgentId(id)) {
+          update3dSprite(id)
+        }
+      }
+    } else {
+      // another player moved
+      update3dSprite(agentId)
+    }
+
   })
 
   // texture swapping
@@ -134,7 +147,7 @@ const makePlayerMaterial = (agentId) =>{
   return material;
 }
 
-export const update3d = (id) => {
+export const update3dSprite = (id) => {
   const room = Room.get()
   if (id === room.agentId) {
     return;
@@ -160,7 +173,7 @@ export const update3d = (id) => {
     z + PLAYER_MESH / 2,
   )
 
-  // Rotation (biillboard) 
+  // Rotation (billboard) 
   const thisPlayer = remoteStore.getDocument('player', room.agentId)
   const rotToThisPlayer = Math.atan2(y - thisPlayer.position.y, x - thisPlayer.position.x) - CONST.HALF_PI;
   playerMesh.rotation.set(
