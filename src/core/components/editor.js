@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { nanoid } from 'nanoid'
-import * as Room from '@/core/networking'
+import * as ClientRoom from '@/core/networking'
 import * as Map from '@/core/components/map'
 import * as Portal from '@/core/components/portal'
 import * as Screen from '@/core/components/screen'
@@ -303,7 +303,7 @@ export const update = (id, dt) => {
 }
 
 export const render2d = (id, context) => {
-  const room = Room.get()
+  const room = ClientRoom.get()
   const store = getRemoteStore()
   const editor = store.getDocument('editor', id)
 

@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import * as Room from '@/core/networking'
+import * as ClientRoom from '@/core/networking'
 import * as Interactable from '@/core/components/interactable'
 import * as Permission from '@/core/components/permission'
 import { HTMLMesh } from '@/core/rendering/HTMLMesh'
@@ -15,7 +15,7 @@ export const TYPE = {
 }
 
 export const init = () => {
-  const room = Room.get()
+  const room = ClientRoom.get()
   const localStore = getLocalStore()
   const remoteStore = getRemoteStore()
 

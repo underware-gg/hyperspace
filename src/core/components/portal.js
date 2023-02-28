@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import * as Room from '@/core/networking'
+import * as ClientRoom from '@/core/networking'
 import * as Interactable from '@/core/components/interactable'
 import * as Permission from '@/core/components/permission'
 import * as Player from '@/core/components/player'
@@ -158,7 +158,7 @@ export const travel = (id) => {
   }
 
   // Travel to the same room
-  const room = Room.get()
+  const room = ClientRoom.get()
   if (room.slug == portal.slug) {
     Player.moveToTile(room.agentId, portal.tile)
   } else {
@@ -191,7 +191,7 @@ export const render2d = (id, context) => {
 
   const portalTexture = getTextureImageByName('portal')
 
-  const room = Room.get()
+  const room = ClientRoom.get()
 
   let t = 0
   if (getPortalOverPlayer(room.agentId) == id) {

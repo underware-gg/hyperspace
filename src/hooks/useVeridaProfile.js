@@ -19,7 +19,7 @@ export const useVeridaPublicProfile = (didAddress) => {
     let _mounted = true
 
     const _getProfile = async () => {
-      const { getPublicProfile } = (await import('src/core/networking/verida'))
+      const { getPublicProfile } = (await import('@/core/verida'))
       const publicProfile = await getPublicProfile(didAddress);
       if (_mounted) {
         setProfile(publicProfile)

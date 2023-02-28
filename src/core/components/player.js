@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import * as Room from '@/core/networking'
+import * as ClientRoom from '@/core/networking'
 import * as Map from '@/core/components/map'
 import * as Portal from '@/core/components/portal'
 import * as Screen from '@/core/components/screen'
@@ -30,7 +30,7 @@ let grounded = false
 export const init = () => {
   // Listen to remote players events
   // managed by client-room, keeping just as an example
-  const room = Room.get()
+  const room = ClientRoom.get()
 
   const remoteStore = getRemoteStore()
   const localStore = getLocalStore()
@@ -148,7 +148,7 @@ const makePlayerMaterial = (agentId) =>{
 }
 
 export const update3dSprite = (id) => {
-  const room = Room.get()
+  const room = ClientRoom.get()
   if (id === room.agentId) {
     return;
   }

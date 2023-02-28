@@ -1,7 +1,6 @@
 import { EnvironmentType } from '@verida/types'
 import { Client } from '@verida/client-ts'
 import { WebUser } from '@verida/account-web-vault';
-import { getRemoteStore } from '@/core/singleton'
 
 // (optional) Import WalletConnect if required
 //import WalletConnect from '@walletconnect/client';
@@ -12,7 +11,6 @@ import { getRemoteStore } from '@/core/singleton'
 const VERIDA_ENVIRONMENT = EnvironmentType.TESTNET
 const CONTEXT_NAME = 'funDAOmental: Hyperbox'
 const SNAPSPHOT_DB_NAME = 'room_snapshots'
-
 const LOGO_URL = '/oathring_512x512.png';
 
 class HyperboxWebUser extends WebUser {

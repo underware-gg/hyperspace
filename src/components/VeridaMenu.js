@@ -20,7 +20,7 @@ const VeridaMenu = () => {
       return
     }
     const snapshotOps = room.getSnapshotOps()
-    const { VeridaUser } = (await import('src/core/networking/verida'))
+    const { VeridaUser } = (await import('@/core/verida'))
     await VeridaUser.saveRoom(slug, snapshotOps)
   }
 
@@ -30,7 +30,7 @@ const VeridaMenu = () => {
       return
     }
 
-    const { VeridaUser } = (await import('src/core/networking/verida'))
+    const { VeridaUser } = (await import('@/core/verida'))
     const snapshot = await VeridaUser.getRoom(room.slug)
 
     if (snapshot) {

@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
-import * as Room from '@/core/networking'
+import * as ClientRoom from '@/core/networking'
 
 const useRoom = () => {
   const [room, setRoom] = useState({})
 
   useEffect(() => {
     async function _getRoom() {
-      const room = Room.get();
+      const room = ClientRoom.get();
       if (room) {
         setRoom(room)
       } else {

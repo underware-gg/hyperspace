@@ -175,7 +175,7 @@ const ScreenEditorDocument = ({
   const [isFetchingTweet, setIsFetchingTweet] = useState(false)
   const _lastTweet = async () => {
     setIsFetchingTweet(true)
-    const { VeridaUser } = (await import('src/core/networking/verida'))
+    const { VeridaUser } = (await import('@/core/verida'))
     await VeridaUser.retrieveLastTweet((content) => {
       setIsFetchingTweet(false)
       console.log(content)

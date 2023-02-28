@@ -4,7 +4,7 @@ import {
   handleKeyUp,
   addActionDownListener,
 } from '@/core/controller'
-import * as Room from '@/core/networking'
+import * as ClientRoom from '@/core/networking'
 import * as Settings from '@/core/components/settings'
 import * as Map from '@/core/components/map'
 import * as Player from '@/core/components/player'
@@ -160,8 +160,8 @@ export const init = async (slug, canvas, canvas3d) => {
     handleKeyUp(e)
   }, false)
 
-  Room.init(slug)
-  const room = Room.get()
+  ClientRoom.init(slug)
+  const room = ClientRoom.get()
 
   // before room.init() to listen snapshot 'create' events
   Portal.init()
@@ -195,14 +195,14 @@ export const init = async (slug, canvas, canvas3d) => {
     Player.interact(room.agentId)
   })
 
-  const { VeridaUser } = (await import('src/core/networking/verida'))
+  const { VeridaUser } = (await import('@/core/verida'))
 
   const localStore = getLocalStore()
   localStore.setDocument('user', 'VeridaUser', VeridaUser)
 }
 
 export const update = (dt) => {
-  const room = Room.get()
+  const room = ClientRoom.get()
   Player.update(room.agentId, dt)
   Editor.update(room.agentId, dt)
 }
@@ -215,7 +215,7 @@ export const render = (canvas, context) => {
 
   Map.render2d('world', context)
 
-  const room = Room.get()
+  const room = ClientRoom.get()
 
   for (const portalId of portalIds) {
     Portal.render2d(portalId, context)

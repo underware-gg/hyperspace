@@ -11,7 +11,7 @@ const useVerida = () => {
   const [didAddress, setDidAddress] = useState(null)
 
   const connect = async () => {
-    const { VeridaUser } = (await import('src/core/networking/verida'))
+    const { VeridaUser } = (await import('@/core/verida'))
     console.log(`connect...`)
     setIsConnecting(true);
     const success = await VeridaUser.connect()
@@ -20,7 +20,7 @@ const useVerida = () => {
   }
 
   const disconnect = async () => {
-    const { VeridaUser } = (await import('src/core/networking/verida'))
+    const { VeridaUser } = (await import('@/core/verida'))
     await VeridaUser.disconnect()
   }
 
@@ -34,7 +34,7 @@ const useVerida = () => {
     // @todo: Get app URL from next.js
     const url = `http://192.168.68.124:3000/${slug}`
     const text = `Open (${slug})`
-    const { VeridaUser } = (await import('src/core/networking/verida'))
+    const { VeridaUser } = (await import('@/core/verida'))
     await VeridaUser.sendMessage(recipientDid, subject, message, url, text)
   }
 
@@ -42,7 +42,7 @@ const useVerida = () => {
     let _mounted = true
 
     const _veridaConnected = async (profile) => {
-      const { VeridaUser } = (await import('src/core/networking/verida'))
+      const { VeridaUser } = (await import('@/core/verida'))
       setIsConnected(true)
       setIsConnecting(false)
       setProfile(profile)
@@ -64,7 +64,7 @@ const useVerida = () => {
 
     const _initVerida = async () => {
       setIsConnecting(true)
-      const { VeridaUser } = (await import('src/core/networking/verida'))
+      const { VeridaUser } = (await import('@/core/verida'))
       const isConnected = await VeridaUser.isConnected()
       if (isConnected) {
         const profile = await VeridaUser.getPublicProfile()
@@ -84,7 +84,7 @@ const useVerida = () => {
 
     return async () => {
       _mounted = false
-      const { VeridaUser } = (await import('src/core/networking/verida'))
+      const { VeridaUser } = (await import('@/core/verida'))
       VeridaUser.off('connected', _veridaConnected)
       VeridaUser.off('disconnected', _veridaDisconnected)
       VeridaUser.off('profileChanged', _veridaProfileChanged)
