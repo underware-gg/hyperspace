@@ -3,11 +3,11 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
-import useRoom from '@/hooks/useRoom'
+import { useRoom } from '@/hooks/useRoom'
+import { useDocument } from '@/hooks/useDocument'
 import usePlayer from '@/hooks/usePlayer'
 import usePermission from '@/hooks/usePermission'
 import useActionDownListener from '@/hooks/useActionDownListener'
-import { useDocument } from '@/hooks/useDocument'
 import { emitAction } from '@/core/controller'
 import { DialogConfirm, useConfirmDisclosure } from '@/components/DialogConfirm'
 import ModalPortal from '@/components/ModalPortal'

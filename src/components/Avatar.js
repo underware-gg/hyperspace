@@ -5,7 +5,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
-import useRoom from '@/hooks/useRoom'
+import { useRoom } from '@/hooks/useRoom'
 import useProfile from '@/hooks/useProfile'
 import useVerida from '@/hooks/useVerida'
 import useTexture from '@/hooks/useTexture'

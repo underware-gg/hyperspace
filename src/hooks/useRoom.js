@@ -19,4 +19,6 @@ const useRoom = () => {
   return room
 }
 
-export default useRoom
+export {
+  useRoom,
+} 

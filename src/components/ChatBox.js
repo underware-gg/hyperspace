@@ -10,9 +10,9 @@ import {
   ArrowForwardIcon,
   DeleteIcon,
 } from '@chakra-ui/icons'
-import { useDocument } from '@/hooks/useDocument'
 import { getRemoteStore } from '@/core/singleton'
-import useRoom from '@/hooks/useRoom'
+import { useDocument } from '@/hooks/useDocument'
+import { useRoom } from '@/hooks/useRoom'
 import useProfile from '@/hooks/useProfile'
 import useVerida from '@/hooks/useVerida'
 import usePermission from '@/hooks/usePermission'
