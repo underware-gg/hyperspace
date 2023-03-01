@@ -2,14 +2,14 @@ import { useEffect, useMemo } from 'react'
 import { getLocalStore } from '@/core/singleton'
 import { emitAction } from '@/core/controller'
 import { useDocument, useLocalDocument } from '@/hooks/useDocument'
-import useDocumentIds from '@/hooks/useDocumentIds'
+import { useRemoteDocumentIds } from '@/hooks/useDocumentIds'
 import usePermission from '@/hooks/usePermission'
 import ModalScreenEdit from '@/components/ModalScreenEdit'
 import { ScreenBook } from '@/components/ScreenBook'
 import * as Screen from '@/core/components/screen'
 
 const Screens = ({ }) => {
-  const screenIds = useDocumentIds('screen')
+  const screenIds = useRemoteDocumentIds('screen')
   const is3d = useLocalDocument('show-3d', 'world') ?? false
   const editingScreenId = useLocalDocument('screens', 'editing')
   const facingScreenId = useLocalDocument('screens', 'facing-3d')

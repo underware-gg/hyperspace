@@ -5,7 +5,7 @@ import {
   getPlayerTile,
 } from '@/core/components/player'
 import { useDocument, useLocalDocument } from '@/hooks/useDocument'
-import useDocumentIds from '@/hooks/useDocumentIds'
+import { useRemoteDocumentIds } from '@/hooks/useDocumentIds'
 
 const usePlayer = (id) => {
   const player = useDocument('player', id)
@@ -16,8 +16,8 @@ const usePlayer = (id) => {
   const portal = useDocument('portal', portalId)
   const is3D = useLocalDocument('show-3d', 'world')
 
-  const portalIds = useDocumentIds('portal')
-  const screenIds = useDocumentIds('screen')
+  const portalIds = useRemoteDocumentIds('portal')
+  const screenIds = useRemoteDocumentIds('screen')
 
   useEffect(() => {
     if (player) {

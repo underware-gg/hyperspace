@@ -162,7 +162,6 @@ export const TileField = ({
   }, [valueX, valueY])
 
   useEffect(() => {
-    console.log(validX, validY)
     onValidated(validX && validY)
   }, [validX, validY])
 

@@ -5,7 +5,7 @@ import Layout from '@/components/Layout'
 import Markdown from '@/components/Markdown'
 import Textarea from '@/components/Textarea'
 import { useDocument } from '@/hooks/useDocument'
-import useDocumentIds from '@/hooks/useDocumentIds'
+import { useRemoteDocumentIds } from '@/hooks/useDocumentIds'
 import { getRemoteStore } from '@/core/singleton'
 import * as Screen from '@/core/components/screen'
 
@@ -13,7 +13,7 @@ const DocumentPage = () => {
   const router = useRouter()
   const { slug, name } = router.query
 
-  const screenIds = useDocumentIds('screen')
+  const screenIds = useRemoteDocumentIds('screen')
   const [screenId, setScreenId] = useState(null)
   const screen = useDocument('screen', screenId)
 

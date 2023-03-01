@@ -1,28 +1,46 @@
 import { useState, useEffect } from 'react'
-import { getRemoteStore } from '@/core/singleton'
+import { getRemoteStore, getLocalStore } from '@/core/singleton'
 
 const remoteStore = getRemoteStore()
+const localStore = getLocalStore()
 
-const useDocumentIds = (type, store = remoteStore) => {
+const useRemoteDocumentIds = (type) => {
+  return useDocumentIds(type, remoteStore)
+}
+
+const useLocalDocumentIds = (type) => {
+  return useDocumentIds(type, localStore)
+}
+
+const useDocumentIds = (type, store) => {
   const [ids, setIds] = useState([])
 
   useEffect(() => {
-    function _handleChange(innerId, document) {
-      setIds(store.getIds(type))
+    let _mounted = true
+
+    function _updateIds() {
+      const _ids = store?.getIds(type) ?? []
+      setIds(_ids)
     }
 
-    setIds(store.getIds(type))
+    _updateIds()
 
-    store.on({ type, event: 'create' }, _handleChange)
-    store.on({ type, event: 'delete' }, _handleChange)
-
-    return () => {
-      store.off({ type, event: 'create' }, _handleChange)
-      store.off({ type, event: 'delete' }, _handleChange)
+    if (store) {
+      store.on({ type, event: 'create' }, _updateIds)
+      store.on({ type, event: 'delete' }, _updateIds)
+      return () => {
+        store.off({ type, event: 'create' }, _updateIds)
+        store.off({ type, event: 'delete' }, _updateIds)
+        _mounted = false
+      }
     }
   }, [type])
 
   return ids
 }
 
-export default useDocumentIds
+export {
+  useRemoteDocumentIds,
+  useLocalDocumentIds,
+  useDocumentIds,
+}
