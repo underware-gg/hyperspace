@@ -63,10 +63,10 @@ export const init = () => {
 
     if (scene !== null && playerMesh !== null) {
       scene.remove(playerMesh)
-      console.log(`agent-leave:`, agentId)
     }
 
     localStore.setDocument('player-mesh', agentId, null)
+    console.log(`agent-leave:`, agentId)
   })
 
   remoteStore.on({ type: 'player', event: 'update' }, (agentId, player) => {

@@ -22,9 +22,8 @@ const SlugSelector = ({
 
   return (
     <Select
-      // size='sm'
       value={selectedValue}
-      placeholder='Slug'
+      placeholder='<document slug>'
       onChange={(e) => onChange(e.target.value)}
     >
       {options}
