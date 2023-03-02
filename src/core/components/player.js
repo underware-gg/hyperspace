@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import * as ClientRoom from '@/core/networking'
+import * as Settings from '@/core/components/settings'
 import * as Map from '@/core/components/map'
 import * as Portal from '@/core/components/portal'
 import * as Screen from '@/core/components/screen'
@@ -127,7 +128,7 @@ const enterRoom = (agentId, slug) => {
 
   // go to default entry
   // const remoteStore = getRemoteStore()
-  // const settings = remoteStore.getDocument('settings', 'world')
+  // const settings = remoteStore.getDocument('settings', 'world') ?? Settings.defaultSettings
   // moveToTile(agentId, settings.entry)
 
   // reset player position
@@ -215,7 +216,7 @@ export const update3dSprite = (id) => {
 
 export const create = (id) => {
   const store = getRemoteStore()
-  const settings = store.getDocument('settings', 'world')
+  const settings = store.getDocument('settings', 'world') ?? Settings.defaultSettings
 
   const entryPosition = Map.fromTileToCanvasPosition(settings.entry.x, settings.entry.y)
 

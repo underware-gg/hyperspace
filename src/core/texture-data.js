@@ -2,10 +2,10 @@
 // World tilesets
 //
 export const tilesets = [
-  '/tilesets/castle.png',
-  '/tilesets/library.png',
-  '/tilesets/dungeon.png',
-  '/tilesets/warehouse.png',
+  { src: '/tilesets/castle.png' },
+  { src: '/tilesets/library.png' },
+  { src: '/tilesets/dungeon.png' },
+  { src: '/tilesets/warehouse.png' },
 ]
 export const defaultTileset = tilesets[0];
 
@@ -87,9 +87,7 @@ export const spritesheets = [
 // Character spritesheets
 //
 export const textureData = {
-  'tileset': {
-    src: defaultTileset,
-  },
+  'tileset': defaultTileset,
   'portal': {
     src: '/tiles/portal.png',
   },

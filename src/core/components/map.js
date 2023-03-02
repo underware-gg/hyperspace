@@ -2,10 +2,11 @@ import * as THREE from 'three'
 import { getTextureImageByName } from '@/core/textures'
 import { getRemoteStore, getLocalStore } from '@/core/singleton'
 import { defaultTileset } from '@/core/texture-data'
+import * as Settings from '@/core/components/settings'
 
 export const getMapScale = () => {
   const remoteStore = getRemoteStore()
-  const settings = remoteStore.getDocument('settings', 'world')
+  const settings = remoteStore.getDocument('settings', 'world') ?? Settings.defaultSettings
   return {
     x: (process.env.CANVAS_WIDTH / (settings.size.width * 32)),
     y: (process.env.CANVAS_HEIGHT / (settings.size.height * 32)),
@@ -72,7 +73,7 @@ export const init = () => {
   const loader = new THREE.TextureLoader()
 
   const materialUV = new THREE.MeshLambertMaterial({
-    map: loader.load(defaultTileset),
+    map: loader.load(defaultTileset.src),
   })
   materialUV.map.minFilter = THREE.NearestFilter
   materialUV.map.magFilter = THREE.NearestFilter
@@ -122,7 +123,7 @@ export const init = () => {
   const gridContainer = new THREE.Object3D()
 
   const remoteStore = getRemoteStore()
-  const settings = remoteStore.getDocument('settings', 'world')
+  const settings = remoteStore.getDocument('settings', 'world') ?? Settings.defaultSettings
 
   let map3D = new Array(settings.size.width)
   for (let x = 0; x < settings.size.width; x++) {
@@ -272,11 +273,11 @@ export const update = (id, x, y, value) => {
   store.setValueAtPath('map', id, `/${y}.${x}`, value)
 }
 
-export const render2d = (id, context) => {
-  const store = getRemoteStore()
+export const render2d = (id, context, store) => {
   const map = store.getDocument('map', id)
 
   if (map === null) {
+    console.log(`Map.render2d() Map is null`, id)
     return
   }
 
@@ -288,15 +289,20 @@ export const render2d = (id, context) => {
   const crdtTileset = store.getDocument('tileset', id)
 
   let image
-  if (crdtTileset === null) {
-    image = getTextureImageByName('tileset')
-  } else {
-    image = new Image()
-    image.src = crdtTileset.blob ?? crdtTileset.name
-  }
-  const sz = image?.height ?? 32
+  let sz
 
-  const settings = store.getDocument('settings', 'world')
+  if (crdtTileset?.blob) {
+    image = new Image()
+    image.src = crdtTileset.blob
+    sz = crdtTileset.size.height ?? 32
+  } else {
+    image = getTextureImageByName(crdtTileset?.name ?? 'tileset')
+    sz = image?.height ?? 32
+  }
+
+  const settings = store.getDocument('settings', 'world') ?? Settings.defaultSettings
+
+  // console.log(`render`, crdtTileset, image, sz, settings)
 
   for (let x = 0; x < settings.size.width; x++) {
     for (let y = 0; y < settings.size.height; y++) {
@@ -338,7 +344,7 @@ export const getTileAtCanvasPosition = (id, x, y) => {
 
 export const validateTile = (x, y) => {
   const store = getRemoteStore()
-  const settings = store.getDocument('settings', 'world')
+  const settings = store.getDocument('settings', 'world') ?? Settings.defaultSettings
   if (x == null || x < 0 || x >= settings.size.width || y == null || y < 0 || y >= settings.size.height) {
     return false
   }
@@ -348,7 +354,7 @@ export const validateTile = (x, y) => {
 export const fromTileToCanvasPosition = (tileX, tileY) => {
   if (!validateTile(tileX, tileY)) {
     const store = getRemoteStore()
-    const settings = store.getDocument('settings', 'world')
+    const settings = store.getDocument('settings', 'world') ?? Settings.defaultSettings
     tileX = settings.entry.x
     tileY = settings.entry.y
   }
@@ -359,7 +365,7 @@ export const fromTileToCanvasPosition = (tileX, tileY) => {
 
 export const fromTileToCellPosition = (tileX, tileY) => {
   const store = getRemoteStore()
-  const settings = store.getDocument('settings', 'world')
+  const settings = store.getDocument('settings', 'world') ?? Settings.defaultSettings
 
   const x = tileX * cellWidth + cellWidth * 0.5
   const y = tileY * cellWidth - settings.size.height * cellWidth - cellWidth * 0.5
@@ -394,7 +400,7 @@ export const render3D = (id) => {
     return
   }
 
-  const settings = remoteStore.getDocument('settings', 'world')
+  const settings = remoteStore.getDocument('settings', 'world') ?? Settings.defaultSettings
 
   for (let x = 0; x < settings.size.width; x++) {
     for (let y = 0; y < settings.size.height; y++) {
@@ -431,7 +437,7 @@ export const swapTileset = (id, tileset) => {
 
   const loader = new THREE.TextureLoader()
 
-  materialUV.map = loader.load(tileset?.blob ?? tileset?.name ?? defaultTileset)
+  materialUV.map = loader.load(tileset?.blob ?? tileset?.name ?? defaultTileset.src)
   materialUV.map.magFilter = THREE.NearestFilter
   materialUV.map.minFilter = THREE.NearestFilter
 

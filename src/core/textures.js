@@ -1,14 +1,21 @@
 import * as THREE from 'three'
-import { textureData, spritesheets } from '@/core/texture-data'
+import { textureData, tilesets, spritesheets } from '@/core/texture-data'
 import { deepCopy } from '@/core/merge/tiny-merge'
 
-const textures = {}
+let textures = {}
+let texturesLoaded = false
 
-export const loadTextures = async () =>
-  new Promise((resolve, reject) => {
+export const loadTextures = async () => {
+  if (texturesLoaded) {
+    return
+  }
+  return new Promise((resolve, reject) => {
     let _textureData = deepCopy(textureData)
-    for (const sheet of spritesheets) {
-      _textureData[sheet.src] = sheet
+    for (const t of tilesets) {
+      _textureData[t.src] = t
+    }
+    for (const t of spritesheets) {
+      _textureData[t.src] = t
     }
     let imagesToLoad = Object.keys(_textureData).length
     Object.keys(_textureData).forEach((name) => {
@@ -43,18 +50,22 @@ export const loadTextures = async () =>
             boxes,
           }
         }
+        // console.log(`loadTextures(${td.src}) OK`)
         if (--imagesToLoad == 0) {
+          texturesLoaded = true
           resolve()
         }
       }
       image.onerror = (e) => {
-        console.warn(`loadTextures(${td.src}) NOT FOUND!`, e);
+        console.warn(`loadTextures(${td.src}) NOT FOUND!`, e)
         if (--imagesToLoad == 0) {
+          texturesLoaded = true
           resolve()
         }
       }
     })
   })
+}
 
 export const getTextureByName = (name, fallback) => textures[name] ?? textures[fallback] ?? null
 export const getTextureImageByName = name => textures[name]?.image ?? null
@@ -78,7 +89,7 @@ export const getTextureSprite = (texture, stepX = 0.0, stepY = 0.0, cycleName = 
     }
   }
 
-  const stepScale = texture.sprites.stepScale ?? 1;
+  const stepScale = texture.sprites.stepScale ?? 1
   let stepValue = 0.0
 
   if (cycleName == 'walkRight') {
@@ -96,7 +107,7 @@ export const getTextureSprite = (texture, stepX = 0.0, stepY = 0.0, cycleName = 
   const cycle = texture.sprites.cycles?.[cycleName] ?? null
   step = Math.floor(step * (cycle?.length ?? 1))
 
-  const aspect = texture.sprites.width / texture.sprites.height;
+  const aspect = texture.sprites.width / texture.sprites.height
 
   const dx = 1.0 / texture.sprites.columns
   const dy = 1.0 / texture.sprites.rows
@@ -114,12 +125,12 @@ export const getTextureSprite = (texture, stepX = 0.0, stepY = 0.0, cycleName = 
   }
 
   // css img clip-path
-  const left = Math.floor(uv.start[0] * 100);
-  const right = Math.floor((1.0 - uv.end[0]) * 100);
-  const top = Math.floor(uv.start[1] * 100);
-  const bottom = Math.floor((1.0 - uv.end[1]) * 100);
-  const scaleY = (1 / dy);
-  const scaleX = scaleY * texture.aspect;
+  const left = Math.floor(uv.start[0] * 100)
+  const right = Math.floor((1.0 - uv.end[0]) * 100)
+  const top = Math.floor(uv.start[1] * 100)
+  const bottom = Math.floor((1.0 - uv.end[1]) * 100)
+  const scaleY = (1 / dy)
+  const scaleX = scaleY * texture.aspect
   const imgStyle = {
     transform: `translate(-50%, -50%) scale(${scaleX}, ${scaleY}) translate(50%, 50%) translate(${left}%, ${top}%)`,
     clipPath: `inset(${top}% ${right}% ${bottom}% ${left}%)`,

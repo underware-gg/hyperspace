@@ -213,7 +213,7 @@ export const render = (canvas, context) => {
   const portalIds = store.getIds('portal')
   const screenIds = store.getIds('screen')
 
-  Map.render2d('world', context)
+  Map.render2d('world', context, store)
 
   const room = ClientRoom.get()
 

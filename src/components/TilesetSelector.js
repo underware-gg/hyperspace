@@ -17,14 +17,15 @@ const TilesetSelector = ({ }) => {
 
   // Chamge current tileset
   useEffect(() => {
-    const selectedTilesetName = tileset?.name ?? defaultTileset
+    const selectedTilesetName = tileset?.name ?? defaultTileset.src
     let _selectedValue = ''
     let _options = []
-    for (const value of tilesets) {
-      const label = value.split('/').slice(-1)[0].split('.')[0]
-      _options.push(<option key={label} value={value}>{label}</option>)
-      if (value === selectedTilesetName) {
-        _selectedValue = value
+    for (const t of tilesets) {
+      const src = t.src
+      const label = src.split('/').slice(-1)[0].split('.')[0]
+      _options.push(<option key={label} value={src}>{label}</option>)
+      if (src === selectedTilesetName) {
+        _selectedValue = src
       }
     }
     if (tileset?.blob) {
@@ -38,12 +39,16 @@ const TilesetSelector = ({ }) => {
 
   const _handleSelectTileset = (e => {
     const fileName = e.target.value
-    if (tilesets.includes(fileName)) {
-      Tileset.create('world', {
-        blob: null,
-        name: fileName,
-        size: { width: 320, height: 32 },
-      })
+    const src = tilesets[fileName]
+    for (const t of tilesets) {
+      const src = t.src
+      if (fileName == src) {
+        Tileset.create('world', {
+          blob: null,
+          name: fileName,
+          size: { width: 320, height: 32 },
+        })
+      }
     }
     focusGameCanvas()
   })
@@ -89,7 +94,7 @@ const TilesetSelector = ({ }) => {
   return (
     <HStack>
       <div style={imgStyle}>
-        <img src={tileset?.blob ?? tileset?.name ?? defaultTileset} style={imgStyle} alt='tileset-preview' />
+        <img src={tileset?.blob ?? tileset?.name ?? defaultTileset.src} style={imgStyle} alt='tileset-preview' />
         {canEdit &&
           <span style={shortcutsStyle}>1234567890</span>
         }

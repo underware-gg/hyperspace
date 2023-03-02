@@ -34,10 +34,10 @@ export const ModalSettings = ({
   const { slug } = router.query
   const { id, isOpen, onClose } = settingsDisclosure
 
-  const [sizeX, setSizeX] = useState(Settings.defaultMapSize.width);
-  const [sizeY, setSizeY] = useState(Settings.defaultMapSize.height);
-  const [tileX, setTileX] = useState(Settings.defaultEntryTile.x);
-  const [tileY, setTileY] = useState(Settings.defaultEntryTile.y);
+  const [sizeX, setSizeX] = useState(Settings.defaultSettings.size.width);
+  const [sizeY, setSizeY] = useState(Settings.defaultSettings.size.height);
+  const [tileX, setTileX] = useState(Settings.defaultSettings.entry.x);
+  const [tileY, setTileY] = useState(Settings.defaultSettings.entry.y);
   const [validSize, setValidSize] = useState(true);
   const [validEntry, setValidEntry] = useState(true);
 
@@ -157,8 +157,8 @@ export const TileField = ({
 
   useEffect(() => {
     const _validate = (v, max) => (v != '' && !isNaN(v) && v >= 0 && v < max)
-    setValidX(_validate(valueX, settings?.size?.width ?? Settings.defaultMapSize.width))
-    setValidY(_validate(valueY, settings?.size?.height ?? Settings.defaultMapSize.height))
+    setValidX(_validate(valueX, settings?.size?.width ?? Settings.defaultSettings.size.width))
+    setValidY(_validate(valueY, settings?.size?.height ?? Settings.defaultSettings.size.height))
   }, [valueX, valueY])
 
   useEffect(() => {

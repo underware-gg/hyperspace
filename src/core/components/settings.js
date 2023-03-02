@@ -1,28 +1,25 @@
 import { getRemoteStore } from '@/core/singleton'
 
-export const defaultMapSize = {
-  width: 20,
-  height: 15,
+export const defaultSettings = {
+  size: {
+    width: 20,
+    height: 15,
+  },
+  entry: {
+    x: 9,
+    y: 3,
+  },
 }
 
-export const defaultEntryTile = {
-  x: 9,
-  y: 3,
-}
-
-export const create = (id, name) => {
+export const create = (id) => {
   const store = getRemoteStore()
-  const settings = {
-    size: defaultMapSize,
-    entry: defaultEntryTile,
-  }
-  store.setDocument('settings', id, settings)
-  return settings
+  store.setDocument('settings', id, defaultSettings)
+  return defaultSettings
 }
 
 export const update = (id, newSettings) => {
   const store = getRemoteStore()
-  let settings = store.getDocument('settings', id) ?? {}
+  let settings = store.getDocument('settings', id) ?? defaultSettings
   store.setDocument('settings', id, { ...settings, ...newSettings })
 }
 

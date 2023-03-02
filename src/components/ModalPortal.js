@@ -21,8 +21,8 @@ const ModalPortal = ({
 }) => {
   const { isOpen, onOpen, onClose } = disclosure
   const [roomName, setRoomName] = useState('');
-  const [tileX, setTileX] = useState(Settings.defaultEntryTile.x);
-  const [tileY, setTileY] = useState(Settings.defaultEntryTile.y);
+  const [tileX, setTileX] = useState(Settings.defaultSettings.entry.x);
+  const [tileY, setTileY] = useState(Settings.defaultSettings.entry.y);
   const [validTile, setValidTile] = useState(true);
   const roomNameRef = useRef()
   const finalRef = useRef(null)
@@ -36,8 +36,8 @@ const ModalPortal = ({
   useEffect(() => {
     if (isOpen) {
       setRoomName(portal?.slug ?? '')
-      setTileX(portal?.tile?.x ?? Settings.defaultEntryTile.x)
-      setTileY(portal?.tile?.y ?? Settings.defaultEntryTile.y)
+      setTileX(portal?.tile?.x ?? Settings.defaultSettings.entry.x)
+      setTileY(portal?.tile?.y ?? Settings.defaultSettings.entry.y)
     }
   }, [portal, isOpen])
 

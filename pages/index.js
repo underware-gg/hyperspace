@@ -2,18 +2,21 @@ import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { nanoid } from 'nanoid'
 import {
-  VStack,
+  VStack, HStack,
   Heading,
   Text,
   Box,
+  Spacer,
   useDisclosure,
 } from '@chakra-ui/react'
 import Button from '@/components/Button'
 import Layout from '@/components/Layout'
 import ModalRoom from '@/components/ModalRoom'
+import ModalRoomSelector from '@/components/ModalRoomSelector'
 
 const HomePage = ({ slug }) => {
   const disclosure = useDisclosure()
+  const disclosureSelector = useDisclosure()
   const router = useRouter();
 
   function enterRoom(roomName) {
@@ -38,18 +41,34 @@ const HomePage = ({ slug }) => {
             <br />
             using CRDTs for state synchronisation
           </Text>
-          <Button
-            size='sm'
-            variant='outline'
-            onClick={() => disclosure.onOpen()}
-          >
-            Create / Enter Room
-          </Button>
+
+          <HStack>
+            <Button
+              size='sm'
+              variant='outline'
+              onClick={() => disclosureSelector.onOpen()}
+            >
+              Select Room
+            </Button>
+            <Spacer />
+            <Button
+              size='sm'
+              variant='outline'
+              onClick={() => disclosure.onOpen()}
+            >
+              Create Room
+            </Button>
+          </HStack>
         </VStack>
       </Box>
 
       <ModalRoom
         disclosure={disclosure}
+        onSubmit={(roomName) => enterRoom(roomName)}
+      />
+
+      <ModalRoomSelector
+        disclosure={disclosureSelector}
         onSubmit={(roomName) => enterRoom(roomName)}
       />
 
