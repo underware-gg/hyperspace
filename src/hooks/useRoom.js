@@ -34,24 +34,29 @@ const useClientRoom = (slug) => {
     if (!agentId) {
       return
     }
+
     let _room = null
     if (slug) {
       const _store = new Store()
-      const _room = ClientRoom.create(slug, _store, agentId)
+      _room = ClientRoom.create(slug, _store, agentId)
       _room.init()
       _room.on('agent-join', (id) => {
         if (id === agentId) {
-          // console.log(`useClientRoom(${_room.slug}) joined`)
           setStore(_store)
         }
       })
       _store.on(null, (source, type, id, path, value) => {
-        // console.log(`useClientRoom() CHANGE:`, source, type, id)
       })
-      // console.log(`useClientRoom(${_room.slug}) agent[${_room.agentId}]`)
     }
+    
     setRoom(_room)
     setStore(null)
+
+    if (_room) {
+      return () => {
+        _room.disconnect()
+      }
+    }
   }, [agentId, slug])
 
   return {

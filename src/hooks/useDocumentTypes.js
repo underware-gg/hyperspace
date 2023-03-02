@@ -20,9 +20,7 @@ const useDocumentTypes = (store) => {
 
     function _updateTypes() {
       const _types = store?.getTypes() ?? []
-      console.log(`_updateTypes`, _types)
       if (_types.length != types.length && _mounted) {
-        console.log(`_updateTypes SET`)
         setTypes(_types)
       }
     }
@@ -38,7 +36,6 @@ const useDocumentTypes = (store) => {
     }
   }, [store])
 
-  // console.log(`_updateTypes TYPES:`, types)
   return types
 }
 

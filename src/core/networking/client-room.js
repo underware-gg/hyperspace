@@ -37,6 +37,10 @@ class ClientRoom extends EventEmitter {
     this.client.addListener('message', this.handleMessage)
   }
 
+  disconnect = () => {
+    this.client?.connection?.close()
+  }
+
   sendMessage(message) {
     this.client.addMessage(message)
   }
