@@ -198,15 +198,15 @@ export const render2d = (id, context, agentId) => {
   if (agentId && id == getScreenOverPlayer(agentId)) {
     textureNameOver += `_over`
   }
-  let screenTexture = getTextureImageByName(textureNameOver, textureName)
+  let texture = getTextureImageByName(textureNameOver, textureName)
 
-  if (screenTexture == null) {
+  if (texture == null) {
     console.warn(`Screen texture not found`, textureNameOver, textureName)
     return
   }
 
   context.drawImage(
-    screenTexture,
+    texture,
     Math.round(x * 32),
     Math.round(y * 32),
     32,

@@ -3,6 +3,7 @@ import * as ClientRoom from '@/core/networking'
 import * as Settings from '@/core/components/settings'
 import * as Map from '@/core/components/map'
 import * as Portal from '@/core/components/portal'
+import * as Trigger from '@/core/components/trigger'
 import * as Screen from '@/core/components/screen'
 import * as Interactable from '@/core/components/interactable'
 import * as Permission from '@/core/components/permission'
@@ -107,6 +108,7 @@ export const init = () => {
     }
 
     Portal.remove(getPortalOverPlayer(room.agentId))
+    Trigger.remove(getTriggerOverPlayer(room.agentId))
     Screen.remove(getScreenOverPlayer(room.agentId))
   })
 }
@@ -246,6 +248,12 @@ export const interact = (id) => {
     return
   }
 
+  const triggerId = getTriggerOverPlayer(id)
+  if (triggerId) {
+    Trigger.switchState(triggerId)
+    return
+  }
+
   const localStore = getLocalStore()
 
   const screenId = getScreenOverPlayer(id)
@@ -267,10 +275,14 @@ export const getPortalOverPlayer = (id) => {
   return portalId && Permission.canView(portalId) ? portalId : null
 }
 
+export const getTriggerOverPlayer = (id) => {
+  const triggerId = getInteractableOfTypeOverPlayer(id, 'trigger')
+  return triggerId && Permission.canView(triggerId) ? triggerId : null
+}
+
 export const getScreenOverPlayer = (id) => {
-  if (getPortalOverPlayer(id)) {
-    return null
-  }
+  if (getPortalOverPlayer(id)) return null
+  if (getTriggerOverPlayer(id)) return null
 
   const localStore = getLocalStore()
 
@@ -289,7 +301,8 @@ export const getScreenOverPlayer = (id) => {
 export const canPlaceOverPlayer = (id) => {
   return (
     getPortalOverPlayer(id) == null && 
-    getScreenOverPlayer(id) == null
+    getScreenOverPlayer(id) == null &&
+    getTriggerOverPlayer(id) == null
   );
 }
 
@@ -305,7 +318,7 @@ const getInteractableOverPlayer = (id) => {
   }
 
   const store = getRemoteStore()
-  for (const type of ['portal', 'screen']) {
+  for (const type of ['portal', 'trigger', 'screen']) {
     const ids = store.getIds(type)
     for (const id of ids) {
       if (rectanglesOverlap(playerRect, Interactable.getCollisionRect(type, id))) {

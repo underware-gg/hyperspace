@@ -104,4 +104,10 @@ export const textureData = {
   'pdf_book_over': {
     src: '/tiles/screen_book2.png',
   },
+  'trigger_0': {
+    src: '/tiles/trigger_0.png',
+  },
+  'trigger_1': {
+    src: '/tiles/trigger_1.png',
+  },
 }

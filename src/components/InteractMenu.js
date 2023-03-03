@@ -20,25 +20,36 @@ const InteractMenu = ({
   const { agentId } = useRoom();
   const {
     canPlace,
-    overPortal, portalId, portalName,
-    overScreen, screenId,
+    overPortal, portalId, portalName, portal,
+    overTrigger, triggerId, triggerName, trigger,
+    overScreen, screenId, screen,
     tileX, tileY,
   } = usePlayer(agentId)
 
   const editor = useDocument('editor', agentId)
-  const screen = useDocument('screen', screenId)
-  const portal = useDocument('portal', portalId)
   const { permission, isOwner, canEdit, canView } = usePermission(screenId)
 
   const portalDisclosure = useDisclosure()
+  const triggerDisclosure = useDisclosure()
 
   useActionDownListener('editPortal', () => {
     portalDisclosure.onOpen()
   })
 
+  useActionDownListener('editTrigger', () => {
+    triggerDisclosure.onOpen()
+  })
+
   const deletePortalDisclosure = useConfirmDisclosure({
     header: 'Delete Portal',
     message: <>Delete Portal to Room <span className='Important'>{portalName}</span>?</>,
+    confirmLabel: 'Delete',
+    onConfirm: () => emitAction('delete'),
+  })
+
+  const deleteTriggerDisclosure = useConfirmDisclosure({
+    header: 'Delete Trigger',
+    message: <>Delete Trigger <span className='Important'>{triggerName}</span>?</>,
     confirmLabel: 'Delete',
     onConfirm: () => emitAction('delete'),
   })
@@ -65,7 +76,7 @@ const InteractMenu = ({
             ? <>Cursor@[{editor.position.x},{editor.position.y}]&nbsp;</>
             : <>Player@[{tileX},{tileY}]&nbsp;</>
           }
-          <Button size='sm' onClick={() => portalDisclosure.onOpen()}>
+          <Button size='sm' onClick={() => emitAction('editPortal')}>
             New [P]ortal
           </Button>
           <Button size='sm' onClick={() => emitAction('createScreen')}>
@@ -73,6 +84,9 @@ const InteractMenu = ({
           </Button>
           <Button size='sm' onClick={() => emitAction('createBook')}>
             New [B]ook
+          </Button>
+          <Button size='sm' onClick={() => emitAction('createTrigger')}>
+            New Trigger
           </Button>
         </>
       }
@@ -95,6 +109,24 @@ const InteractMenu = ({
       }
 
       <ModalPortal portalId={portalId} disclosure={portalDisclosure} newPortal={canPlace && !overPortal} />
+
+      {overTrigger &&
+        <>
+          Trigger&nbsp;<Text color='important'>{triggerName}</Text>
+          <Button size='sm' disabled={!canEdit} onClick={() => emitAction('interact')}>
+            [E]xecute
+          </Button>
+          <Button size='sm' disabled={!canEdit} onClick={() => triggerDisclosure.onOpen()}>
+            Edit Trigger
+          </Button>
+          <Button size='sm' disabled={!canEdit} onClick={() => deleteTriggerDisclosure.openConfirmDialog()}>
+            [Del]ete
+          </Button>
+          <DialogConfirm confirmDisclosure={deleteTriggerDisclosure} />
+        </>
+      }
+
+      {/* <ModalPortal portalId={portalId} disclosure={portalDisclosure} newPortal={canPlace && !overPortal} /> */}
 
       {overScreen &&
         <>

@@ -10,6 +10,7 @@ import * as Map from '@/core/components/map'
 import * as Player from '@/core/components/player'
 import * as Editor from '@/core/components/editor'
 import * as Portal from '@/core/components/portal'
+import * as Trigger from '@/core/components/trigger'
 import * as Screen from '@/core/components/screen'
 import { getRemoteStore, getLocalStore } from '@/core/singleton'
 
@@ -165,6 +166,7 @@ export const init = async (slug, canvas, canvas3d) => {
 
   // before room.init() to listen snapshot 'create' events
   Portal.init()
+  Trigger.init()
   Screen.init()
 
   // loads snapshot
@@ -211,17 +213,21 @@ export const render = (canvas, context) => {
   const store = getRemoteStore()
   const playerIds = store.getIds('player')
   const portalIds = store.getIds('portal')
+  const triggerIds = store.getIds('trigger')
   const screenIds = store.getIds('screen')
 
   Map.render2d('world', context, store)
 
   const room = ClientRoom.get()
 
-  for (const portalId of portalIds) {
-    Portal.render2d(portalId, context)
+  for (const id of portalIds) {
+    Portal.render2d(id, context)
   }
-  for (const screenId of screenIds) {
-    Screen.render2d(screenId, context, room.agentId)
+  for (const id of triggerIds) {
+    Trigger.render2d(id, context)
+  }
+  for (const id of screenIds) {
+    Screen.render2d(id, context, room.agentId)
   }
 
   // Should probably be able to just get them directly.

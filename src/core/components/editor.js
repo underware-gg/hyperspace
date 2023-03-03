@@ -3,11 +3,12 @@ import { nanoid } from 'nanoid'
 import * as ClientRoom from '@/core/networking'
 import * as Map from '@/core/components/map'
 import * as Portal from '@/core/components/portal'
+import * as Trigger from '@/core/components/trigger'
 import * as Screen from '@/core/components/screen'
 import * as Permission from '@/core/components/permission'
 import { getActionState, addActionDownListener } from '@/core/controller'
 import { getLocalStore, getRemoteStore } from '@/core/singleton'
-import { canPlaceOverPlayer, getPortalOverPlayer } from '@/core/components/player'
+import { canPlaceOverPlayer } from '@/core/components/player'
 import { getMapScale } from '@/core/components/map'
 import { getPlayerTileRotation } from '@/core/components/player'
 import { roundToNearest, getFilenameFromUrl } from '@/core/utils'
@@ -89,6 +90,21 @@ export const init = (canvas, id) => {
     const { x, y } = getCreateTileRotation(id)
     console.log(`create_portal`, id, x, y, slug, tile)
     Portal.create(nanoid(), x, y, slug, tile)
+  })
+
+  addActionDownListener('createTrigger', (options = {}) => {
+    const trigger = {
+      name: options?.name ?? 'Trigger',
+      state: options?.state ?? 0,
+      data: options?.data ?? {},
+    }
+
+    if (!canPlaceOverPlayer(id)) {
+      return
+    }
+
+    const { x, y } = getCreateTileRotation(id)
+    Trigger.create(nanoid(), x, y, trigger)
   })
 
   addActionDownListener('createScreen', () => {

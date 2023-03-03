@@ -22,7 +22,7 @@ export const init = () => {
     return
   }
 
-  const portalGeometry = new THREE.CylinderGeometry(0.5, 0.5, 3, 32, 1, true)
+  const portalGeometry = new THREE.CylinderGeometry(0.5, 0.5, 2.5, 32, 1, true)
 
   const portalMaterial = new THREE.MeshLambertMaterial({
     blending: THREE.AdditiveBlending,
@@ -32,30 +32,38 @@ export const init = () => {
     opacity: 0.3,
     depthWrite: false,
   })
+
+  const _updatePortalPosition = (portalMesh, portal) => {
+    if (portalMesh === null) return
+
+    const tile = getTile('world', portal.position.x, portal.position.y)
+    if (tile === null) return
+
+    const currentFloorHeight = floors[tile]
+
+    // maybe we should be updating the y position of the portal but
+    // for now we will just update where the render happens.
+    portalMesh.position.set(
+      (Math.floor(portal.position.x)) + 0.5,
+      (-Math.floor(portal.position.y)) - 0.5,
+      currentFloorHeight + .5,
+    )
+  }
   
   remoteStore.on({ type: 'portal', event: 'create' }, (portalId, portal) => {
     const portalMesh = new THREE.Mesh(portalGeometry, portalMaterial)
 
     const map = remoteStore.getDocument('map', 'world')
-
-    if (map === null) {
-      return
-    }
-
-    const tile = getTile('world', portal.position.x, portal.position.y)
-
-    if (tile === null) {
-      return
-    }
-
-    const currentFloorHeight = floors[tile]
+    if (map === null) return
 
     portalMesh.position.set(
       (Math.floor(portal.position.x)) + 0.5,
       (-Math.floor(portal.position.y)) - 0.5,
-      currentFloorHeight + .9,
+      0,
     )
     portalMesh.rotation.set(Math.PI / 2, 0, 0);
+
+    _updatePortalPosition(portalMesh, portal)
 
     scene.add(portalMesh)
     localStore.setDocument('portal-mesh', portalId, portalMesh)
@@ -80,33 +88,10 @@ export const init = () => {
 
     for (const portalId of portalIds) {
       const portal = remoteStore.getDocument('portal', portalId)
-
-      if (portal === null) {
-        continue
-      }
-
-      // if the portal exists, get the tile that it is sitting on
-      const tile = getTile('world', portal.position.x, portal.position.y)
-
-      if (tile === null) {
-        continue
-      }
-
-      const currentFloorHeight = floors[tile]
+      if (portal === null) continue
 
       const portalMesh = localStore.getDocument('portal-mesh', portalId)
-
-      if (portalMesh === null) {
-        return
-      }
-
-      // maybe we should be updating the y position of the portal but
-      // for now we will just update where the render happens.
-      portalMesh.position.set(
-        (Math.floor(portal.position.x)) +0.5,
-        (-Math.floor(portal.position.y))-0.5,
-        currentFloorHeight + .9,
-      )
+      _updatePortalPosition(portalMesh, portal)
     }
   })
 }
@@ -189,7 +174,7 @@ export const render2d = (id, context) => {
 
   const { position: { x, y } } = portal
 
-  const portalTexture = getTextureImageByName('portal')
+  const texture = getTextureImageByName('portal')
 
   const room = ClientRoom.get()
 
@@ -203,7 +188,7 @@ export const render2d = (id, context) => {
   context.rotate((t % 1) * Math.PI * 2);
   context.translate(-16, -16);
   context.drawImage(
-    portalTexture,
+    texture,
     0,
     0,
     32,
