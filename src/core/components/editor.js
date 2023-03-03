@@ -96,7 +96,7 @@ export const init = (canvas, id) => {
     const trigger = {
       name: options?.name ?? 'Trigger',
       state: options?.state ?? 0,
-      data: options?.data ?? {},
+      data: JSON.stringify(options?.data ?? []),
     }
 
     if (!canPlaceOverPlayer(id)) {

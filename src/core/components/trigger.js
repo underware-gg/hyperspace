@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import * as Interactable from '@/core/components/interactable'
 import * as Permission from '@/core/components/permission'
+import * as Map from '@/core/components/map'
 import { getTextureImageByName } from '@/core/textures'
 import { getLocalStore, getRemoteStore } from '@/core/singleton'
 import { getTile, floors } from '@/core/components/map'
@@ -44,7 +45,7 @@ export const init = () => {
       side: THREE.DoubleSide,
       color: '#f00',
       transparent: true,
-      opacity: 0.5,
+      opacity: 0.4,
       depthWrite: false,
     })
 
@@ -133,9 +134,23 @@ export const switchState = (id) => {
     return
   }
 
+  const state = (trigger.state + 1) % 2
+
   updateTrigger(id, {
-    state: (trigger.state + 1) % 2
+    state,
   })
+
+  const data = JSON.parse(trigger.data)
+  // console.log(data)
+
+  for(const i of data) {
+    if(i.type == 'map') {
+      console.log(`switch map:`, i)
+      const tile = state == 0 ? i.stateOff : i.stateOn
+      Map.update('world', parseInt(i.x), parseInt(i.y), tile - 1)
+    }
+  }
+
 }
 
 export const getCollisionRect = (id) => {

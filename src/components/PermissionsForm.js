@@ -53,7 +53,9 @@ export const PermissionsForm = ({
           <VStack align='stretch'>
             <Text>{type}: {name}</Text>
             <Text>Document id: {id}</Text>
-            <Text>Owner: {permission?.owner ?? <span className='Important'>Unclaimed</span>}</Text>
+            {type == 'Room' &&
+              <Text>Owner: {permission?.owner ?? <span className='Important'>Unclaimed</span>}</Text>
+            }
             {!veridaIsConnected &&
               <Text>(connect to Verida for user profile)</Text>
             }

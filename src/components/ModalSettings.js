@@ -53,8 +53,8 @@ export const ModalSettings = ({
   const _onSave = () => {
     let options = {
       entry: {
-        x: tileX,
-        y: tileY,
+        x: parseInt(tileX),
+        y: parseInt(tileY),
       }
     }
     if (newRoom) {
@@ -149,6 +149,7 @@ export const TileField = ({
   onChangeY = (value) => { },
   onValidated = (isValid) => { },
   disabled = false,
+  children,
 }) => {
   const [validX, setValidX] = useState(true)
   const [validY, setValidY] = useState(true)
@@ -184,6 +185,7 @@ export const TileField = ({
         disabled={disabled}
         onChange={(e) => onChangeY(e.target.value)}
       />
+      {children}
     </HStack>
   )
 }

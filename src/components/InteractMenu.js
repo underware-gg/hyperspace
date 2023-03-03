@@ -11,6 +11,7 @@ import useActionDownListener from '@/hooks/useActionDownListener'
 import { emitAction } from '@/core/controller'
 import { DialogConfirm, useConfirmDisclosure } from '@/components/DialogConfirm'
 import ModalPortal from '@/components/ModalPortal'
+import ModalTrigger from '@/components/ModalTrigger'
 import Button from '@/components/Button'
 
 const InteractMenu = ({
@@ -126,7 +127,7 @@ const InteractMenu = ({
         </>
       }
 
-      {/* <ModalPortal portalId={portalId} disclosure={portalDisclosure} newPortal={canPlace && !overPortal} /> */}
+      <ModalTrigger triggerId={triggerId} disclosure={triggerDisclosure} />
 
       {overScreen &&
         <>
