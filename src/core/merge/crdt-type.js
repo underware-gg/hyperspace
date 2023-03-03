@@ -220,13 +220,20 @@ export const permission = {
   public: 'boolean',  // anyone can edit
 }
 
-export const document = { // deprecated
-  content: 'string',
+export const trigger = {
+  name: 'string',
+  state: 'number',
+  data: 'string', // serialized json
+  position: {
+    x: 'number',
+    y: 'number',
+    z: 'number',
+  },
 }
 
-export const presentation = { // deprecated
-  visible: 'boolean',
-  slide: 'number',
+// generic document
+export const document = {
+  content: 'string',
 }
 
 export const book = { // deprecated
@@ -248,8 +255,8 @@ export const typeDefs = {
   tileset: createTypeMetadata(tileset),
   screen: createTypeMetadata(screen),
   permission: createTypeMetadata(permission),
-  // deprecated
+  trigger: createTypeMetadata(trigger),
   document: createTypeMetadata(document),
+  // deprecated
   book: createTypeMetadata(book),
-  presentation: createTypeMetadata(presentation),
 }
