@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import {
   getPortalOverPlayer,
   getScreenOverPlayer,
-  getPlayerTile,
+  getPlayerTileRotation,
 } from '@/core/components/player'
 import { useDocument, useLocalDocument } from '@/hooks/useDocument'
 import { useRemoteDocumentIds } from '@/hooks/useDocumentIds'
@@ -23,7 +23,7 @@ const usePlayer = (id) => {
     if (player) {
       setPortalId(getPortalOverPlayer(id))
       setScreenId(getScreenOverPlayer(id))
-      setPlayerTile(getPlayerTile(id))
+      setPlayerTile(getPlayerTileRotation(id))
     } else {
       setPortalId(null)
       setScreenId(null)
@@ -40,6 +40,7 @@ const usePlayer = (id) => {
     canPlace: (portalId == null && screenId == null),
     tileX: playerTile?.x ?? null,
     tileY: playerTile?.y ?? null,
+    rotation: playerTile?.rot ?? null,
   }
 }
 

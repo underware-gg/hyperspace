@@ -358,7 +358,7 @@ export const getCollisionCircle = (id) => {
   }
 }
 
-export const getPlayerTile = (id) => {
+export const getPlayerTileRotation = (id) => {
   const store = getRemoteStore()
   const player = store.getDocument('player', id)
   if (player === null) {
@@ -366,10 +366,12 @@ export const getPlayerTile = (id) => {
   }
   
   const { x, y } = player.position
+  const { y: rot } = player.rotation
 
   return {
     x: Math.floor(x / 32),
     y: Math.floor(y / 32),
+    rot,
   }
 }
 

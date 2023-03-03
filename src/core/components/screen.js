@@ -30,7 +30,7 @@ export const init = () => {
     const screenMeshes = localStore.getDocument('screen-meshes', 'screen-meshes')
     if (screenMeshes === null) return
 
-    const { position: { x, y }, rotation: { x: rotation } } = screen
+    const { position: { x, y }, rotation: { y: rot } } = screen
 
     const aspect = process.env.BASE_WIDTH / process.env.BASE_HEIGHT
     const cellHeight = 1.5 //1.2
@@ -48,7 +48,7 @@ export const init = () => {
     screenMesh.name = screenId
 
     screenMesh.position.set(Math.floor(x) + 0.5, -Math.floor(y) - 0.5, .75)
-    screenMesh.rotation.set(Math.PI / 2, rotation, 0)
+    screenMesh.rotation.set(Math.PI / 2, rot, 0)
 
     screenMeshes.add(screenMesh)
 
@@ -94,7 +94,7 @@ export const init = () => {
       const screen = remoteStore.getDocument('screen', screenId)
       if (screen === null) continue
 
-      const { position: { x, y } } = screen
+      const { position: { x, y }, rotation: { y: rot } } = screen
 
       const tile = getTile('world', x, y)
       if (tile === null) continue
@@ -220,7 +220,7 @@ export const render2d = (id, context, agentId) => {
 // Actions
 //
 
-const makeScreen = (type, x, y, content, name = null) => {
+const makeScreen = (type, x, y, rot, content, name = null) => {
   return {
     name: name ?? type,
     type,
@@ -233,27 +233,29 @@ const makeScreen = (type, x, y, content, name = null) => {
     },
     rotation: {
       x: 0,
-      y: 0,
+      y: rot,
       z: 0,
     },
   }
 }
 
-export const createDocument = (id, x, y, text, name) => {
+export const createDocument = (id, x, y, rot, text, name) => {
   const screen = {
-    ...makeScreen(TYPE.DOCUMENT, x, y, text, name),
+    ...makeScreen(TYPE.DOCUMENT, x, y, rot, text, name),
   }
   console.log(`New screen:`, screen)
-  Interactable.create('screen', id, x, y, screen)
+  const store = getRemoteStore()
+  store.setDocument('screen', id, screen)
   return screen
 }
 
-export const createBook = (id, x, y, url, name) => {
+export const createBook = (id, x, y, rot, url, name) => {
   const screen = {
-    ...makeScreen(TYPE.PDF_BOOK, x, y, url, name),
+    ...makeScreen(TYPE.PDF_BOOK, x, y, rot, url, name),
   }
-  console.log(`New screen:`, screen)
-  Interactable.create('screen', id, x, y, screen)
+  console.log(`New Book:`, screen)
+  const store = getRemoteStore()
+  store.setDocument('screen', id, screen)
   return screen
 }
 

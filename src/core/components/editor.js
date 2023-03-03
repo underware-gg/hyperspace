@@ -9,7 +9,7 @@ import { getActionState, addActionDownListener } from '@/core/controller'
 import { getLocalStore, getRemoteStore } from '@/core/singleton'
 import { canPlaceOverPlayer, getPortalOverPlayer } from '@/core/components/player'
 import { getMapScale } from '@/core/components/map'
-import { getPlayerTile } from '@/core/components/player'
+import { getPlayerTileRotation } from '@/core/components/player'
 import { roundToNearest, getFilenameFromUrl } from '@/core/utils'
 
 export const getMouseCanvasPosition = (e, canvas) => {
@@ -31,16 +31,20 @@ export const getMouseTilePosition = (e, canvas) => {
   }
 }
 
-export const getCreateTile = (id) => {
+export const getCreateTileRotation = (id) => {
   const store = getRemoteStore()
   const editor = store.getDocument('editor', id)
+
+  let { x, y, rot } = getPlayerTileRotation(id)
+
   if (editor) {
-    const { interacting, position: { x, y } } = editor
+    const { interacting, position } = editor
     if (interacting) {
-      return { x, y }
+      x = position.x
+      y = position.y
     }
   }
-  return getPlayerTile(id)
+  return { x, y, rot }
 }
 
 export const init = (canvas, id) => {
@@ -82,7 +86,7 @@ export const init = (canvas, id) => {
       return
     }
 
-    const { x, y } = getCreateTile(id)
+    const { x, y } = getCreateTileRotation(id)
     console.log(`create_portal`, id, x, y, slug, tile)
     Portal.create(nanoid(), x, y, slug, tile)
   })
@@ -100,8 +104,8 @@ export const init = (canvas, id) => {
     const screenId = nanoid()
     const text = `# Screen: ${name}\n\nThis is a MarkDown shared document\n\nid: ${screenId}`
 
-    const { x, y } = getCreateTile(id)
-    Screen.createDocument(screenId, x, y, text, name)
+    const { x, y, rot } = getCreateTileRotation(id)
+    Screen.createDocument(screenId, x, y, rot, text, name)
   })
 
   addActionDownListener('createBook', () => {
@@ -118,8 +122,8 @@ export const init = (canvas, id) => {
     console.log(url, name)
 
     const screenId = nanoid()
-    const { x, y } = getCreateTile(id)
-    Screen.createBook(screenId, x, y, url, name)
+    const { x, y, rot } = getCreateTileRotation(id)
+    Screen.createBook(screenId, x, y, rot, url, name)
   })
 
   canvas.addEventListener('mousemove', handleMouseMove)

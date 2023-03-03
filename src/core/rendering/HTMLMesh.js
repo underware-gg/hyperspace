@@ -231,7 +231,7 @@ function html2canvas(element) {
       if (element.style.display === 'none') return;
 
       if (element.width === 0 || element.height === 0) {
-        console.warn(`HTMLMesh lost this cavas!`, element)
+        // console.warn(`HTMLMesh lost this cavas!`, element)
         return;
       }
 
