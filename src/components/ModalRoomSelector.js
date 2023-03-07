@@ -38,7 +38,7 @@ const ModalRoom = ({
         <ModalCloseButton />
         <ModalBody pb={4}>
           <VStack spacing={4}>
-            <SlugSelector onChange={setSlug} />
+            <SlugSelector selectedValue={slug} onChange={setSlug} />
             <Map2D slug={slug} onLoaded={setLoaded} />
           </VStack>
         </ModalBody>

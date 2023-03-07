@@ -12,7 +12,7 @@ const SnapshotSlug = () => {
 
   return (
     <div className='FillParent'>
-      <SlugSelector onChange={setSlug} />
+      <SlugSelector selectedValue={slug} onChange={setSlug} />
       <br />
       <Snapshot store={store} />
     </div>

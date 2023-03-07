@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useEffect } from 'react'
 import {
   Select,
   Text,
@@ -9,8 +9,15 @@ import { useDbRooms } from '@/hooks/useApi'
 const SlugSelector = ({
   selectedValue,
   onChange,
+  resetOnMount = true,
 }) => {
   const { rooms } = useDbRooms()
+
+  useEffect(() => {
+    if (resetOnMount) {
+      onChange('')
+    }
+  }, [])
 
   const options = useMemo(() => {
     let result = []
@@ -22,7 +29,7 @@ const SlugSelector = ({
 
   return (
     <Select
-      value={selectedValue}
+      value={selectedValue ?? ''}
       placeholder='<document slug>'
       onChange={(e) => onChange(e.target.value)}
     >
