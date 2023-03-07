@@ -16,7 +16,7 @@ import useTrigger from '@/hooks/useTrigger'
 import usePermission from '@/hooks/usePermission'
 import Button from '@/components/Button'
 import Editable from '@/components/Editable'
-import { TileField } from '@/components/ModalSettings'
+import { TileInput, ValidatedInput, useInputValidator } from '@/components/Inputs'
 import { PermissionsForm } from '@/components/PermissionsForm'
 import * as Trigger from '@/core/components/trigger'
 
@@ -125,73 +125,67 @@ const ModalTrigger = ({
 export default ModalTrigger
 
 
+const _tileIndexToNumber = (value) => {
+  return value == 10 ? 0 : value + 1
+}
+const _tileNumberToIndex = (value) => {
+  let tile = parseInt(value)
+  if (tile == 0) tile = 10
+  return tile - 1
+}
+
 const MapTileSwitch = ({
   data,
   onChanged,
   disabled = false
 }) => {
+  const validator = useInputValidator()
   const [x, setX] = useState(data.x ?? 0);
   const [y, setY] = useState(data.y ?? 0);
-  const [validTile, setValidTile] = useState(true);
-
-  const [stateOff, setStateOff] = useState(data.stateOff ?? 5);
-  const [stateOn, setStateOn] = useState(data.stateOn ?? 5);
-
-  const _validTile = (t) => (parseInt(t) >= 0 && parseInt(t) < 10)
-
-  const validated = useMemo(() => (validTile
-    && _validTile(stateOff)
-    && _validTile(stateOn)
-  ), [validTile, x, y, stateOn, stateOff])
-
-  const _convertTile = (value) => {
-    let tile = parseInt(value)
-    if (tile == 0) tile = 10
-    return tile - 1
-  }
+  const [stateOff, setStateOff] = useState(_tileIndexToNumber(data.stateOff ?? 4));
+  const [stateOn, setStateOn] = useState(_tileIndexToNumber(data.stateOn ?? 4));
 
   useEffect(() => {
     let result = null
-    if (validated) {
+    if (validator.isValid) {
       result = {
         type: 'map',
         x: parseInt(x),
         y: parseInt(y),
-        stateOff: _convertTile(stateOff),
-        stateOn: _convertTile(stateOn),
+        stateOff: _tileNumberToIndex(stateOff),
+        stateOn: _tileNumberToIndex(stateOn),
       }
     }
     onChanged(result)
-  }, [validated, x, y, stateOn, stateOff])
+  }, [x, y, stateOn, stateOff])
 
   return (
     <div>
-      <TileField
+      <TileInput
         name='Tile'
         valueX={x}
         valueY={y}
         onChangeX={setX}
         onChangeY={setY}
-        onValidated={setValidTile}
+        validator={validator}
       >
         <Text>OFF:</Text>
-        <Input
-          focusBorderColor={_validTile(stateOff) ? 'teal.500' : 'crimson'}
-          placeholder=''
+        <ValidatedInput
           value={stateOff}
+          maxValue={9}
           disabled={disabled}
-          onChange={(e) => setStateOff(e.target.value)}
+          onChange={setStateOff}
+          validator={validator}
         />
         <Text>ON:</Text>
-        <Input
-          focusBorderColor={_validTile(stateOn) ? 'teal.500' : 'crimson'}
-          placeholder=''
+        <ValidatedInput
           value={stateOn}
+          maxValue={9}
           disabled={disabled}
-          onChange={(e) => setStateOn(e.target.value)}
+          onChange={setStateOn}
+          validator={validator}
         />
-
-      </TileField>
+      </TileInput>
 
     </div>
   )

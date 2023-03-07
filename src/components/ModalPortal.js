@@ -8,7 +8,7 @@ import {
 } from '@chakra-ui/react'
 import { useDocument } from '@/hooks/useDocument'
 import { getGameCanvasElement } from '@/core/game-canvas'
-import { TileField } from '@/components/ModalSettings'
+import { TileInput, useInputValidator } from '@/components/Inputs'
 import Button from '@/components/Button'
 import { emitAction } from '@/core/controller'
 import * as Portal from '@/core/components/portal'
@@ -23,9 +23,10 @@ const ModalPortal = ({
   const [roomName, setRoomName] = useState('');
   const [tileX, setTileX] = useState(Settings.defaultSettings.entry.x);
   const [tileY, setTileY] = useState(Settings.defaultSettings.entry.y);
-  const [validTile, setValidTile] = useState(true);
+  const validator = useInputValidator()
   const roomNameRef = useRef()
   const finalRef = useRef(null)
+
 
   useEffect(() => {
     finalRef.current = getGameCanvasElement()
@@ -86,13 +87,13 @@ const ModalPortal = ({
                 onChange={(e) => setRoomName(e.target.value)}
               />
             </HStack>
-            <TileField
+            <TileInput
               name='Entry'
               valueX={tileX}
               valueY={tileY}
               onChangeX={setTileX}
               onChangeY={setTileY}
-              onValidated={setValidTile}
+              validator={validator}
             />
           </VStack>
         </ModalBody>
@@ -108,7 +109,7 @@ const ModalPortal = ({
           <Button
             variant='outline'
             value='Save'
-            disabled={!validTile}
+            disabled={!validator.isValid}
             onClick={() => _onSave()}
           />
         </ModalFooter>

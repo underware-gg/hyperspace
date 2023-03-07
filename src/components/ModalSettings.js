@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react'
 import { useDocument } from '@/hooks/useDocument'
 import { PermissionsForm } from '@/components/PermissionsForm'
+import { TileInput, useInputValidator } from '@/components/Inputs'
 import Button from '@/components/Button'
 import * as Settings from '@/core/components/settings'
 
@@ -38,8 +39,7 @@ export const ModalSettings = ({
   const [sizeY, setSizeY] = useState(Settings.defaultSettings.size.height);
   const [tileX, setTileX] = useState(Settings.defaultSettings.entry.x);
   const [tileY, setTileY] = useState(Settings.defaultSettings.entry.y);
-  const [validSize, setValidSize] = useState(true);
-  const [validEntry, setValidEntry] = useState(true);
+  const validator = useInputValidator()
 
   const settings = useDocument('settings', id)
 
@@ -103,23 +103,23 @@ export const ModalSettings = ({
                   />
                 </HStack>
                 <Spacer pt={3} />
-                <TileField
+                <TileInput
                   name='Map Size'
                   valueX={sizeX}
                   valueY={sizeY}
                   onChangeX={setSizeX}
                   onChangeY={setSizeY}
-                  // onValidated={setValidSize}
+                  validator={validator}
                   disabled={!newRoom}
                 />
                 <Spacer pt={3} />
-                <TileField
+                <TileInput
                   name='Entry'
                   valueX={tileX}
                   valueY={tileY}
                   onChangeX={setTileX}
                   onChangeY={setTileY}
-                  onValidated={setValidEntry}
+                  validator={validator}
                 />
               </TabPanel>
               <TabPanel>
@@ -132,7 +132,7 @@ export const ModalSettings = ({
           <Button
             variant='outline'
             value='Save'
-            disabled={!validSize || !validEntry}
+            disabled={!validator.isValid}
             onClick={() => _onSave()}
           />
         </ModalFooter>
@@ -141,51 +141,3 @@ export const ModalSettings = ({
   )
 }
 
-export const TileField = ({
-  name = 'Tile',
-  valueX,
-  valueY,
-  onChangeX = (value) => { },
-  onChangeY = (value) => { },
-  onValidated = (isValid) => { },
-  disabled = false,
-  children,
-}) => {
-  const [validX, setValidX] = useState(true)
-  const [validY, setValidY] = useState(true)
-
-  const settings = useDocument('settings', 'world')
-
-  useEffect(() => {
-    const _validate = (v, max) => (v != '' && !isNaN(v) && v >= 0 && v < max)
-    setValidX(_validate(valueX, settings?.size?.width ?? Settings.defaultSettings.size.width))
-    setValidY(_validate(valueY, settings?.size?.height ?? Settings.defaultSettings.size.height))
-  }, [valueX, valueY])
-
-  useEffect(() => {
-    onValidated(validX && validY)
-  }, [validX, validY])
-
-  return (
-    <HStack>
-      <Text w='220px'>{name}</Text>
-      <Text>X:</Text>
-      <Input
-        focusBorderColor={validX ? 'teal.500' : 'crimson'}
-        placeholder=''
-        value={valueX}
-        disabled={disabled}
-        onChange={(e) => onChangeX(e.target.value)}
-      />
-      <Text>Y:</Text>
-      <Input
-        focusBorderColor={validY ? 'teal.500' : 'crimson'}
-        placeholder=''
-        value={valueY}
-        disabled={disabled}
-        onChange={(e) => onChangeY(e.target.value)}
-      />
-      {children}
-    </HStack>
-  )
-}
