@@ -4,7 +4,7 @@ import {
   Text,
   Box,
 } from '@chakra-ui/react'
-import { useDbRooms } from '@/hooks/useDb'
+import { useDbRooms } from '@/hooks/useApi'
 
 const SlugSelector = ({
   selectedValue,

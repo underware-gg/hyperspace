@@ -12,6 +12,16 @@ const useDbRooms = (id) => {
   }
 }
 
+const useGetUrl = (url) => {
+  const { data, error, isLoading } = useSWR(`/api/geturl/${url}`, fetcher)
+  return {
+    rooms: (data && !error) ? data.filter(n => n) : [],
+    isLoading,
+    error
+  }
+}
+
 export {
-  useDbRooms
+  useDbRooms,
+  useGetUrl,
 }

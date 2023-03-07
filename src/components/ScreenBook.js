@@ -11,13 +11,19 @@ export const ScreenBook = ({
   url,
 }) => {
   const extension = useMemo(() => getFilenameExtensionFromUrl(url), [url]);
+  const bookUrl = useMemo(() => {
+    if (typeof url == 'string' && (url.startsWith('https://') || url.startsWith('http://'))) {
+      return `/api/geturl/${url}`
+    }
+    return url
+  }, [url])
 
   if (extension == 'pdf') {
-    return <ScreenBookPdf screenId={screenId} url={url} />
+    return <ScreenBookPdf screenId={screenId} url={bookUrl} />
   }
 
   if (extension == 'jpg' || extension == 'jpeg' || extension == 'png' || extension == 'gif' || extension == 'svg') {
-    return <ScreenBookImage screenId={screenId} url={url} />
+    return <ScreenBookImage screenId={screenId} url={bookUrl} />
   }
 
   return (
@@ -50,7 +56,7 @@ export const ScreenBookImage = ({
 
   return (
     <ScreenCenteredContainer width={imageSize?.width ?? 100} height={imageSize?.height ?? 100}>
-      <img src={url} ref={imageRef} onLoad={() => _loaded(true)} onError={() => _loaded(false)} />
+      <img src={url} ref={imageRef} onLoad={() => _loaded(true)} onError={() => _loaded(false)} crossOrigin='anonymous' />
     </ScreenCenteredContainer>
   )
 }
