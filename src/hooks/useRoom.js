@@ -31,17 +31,20 @@ const useClientRoom = (slug) => {
   }, [])
 
   useEffect(() => {
-    if (!agentId) {
-      return
-    }
-
+    let _mounted = true
     let _room = null
-    if (slug) {
+
+    if (slug && agentId) {
       const _store = new Store()
       _room = ClientRoom.create(slug, _store, agentId)
       _room.init()
-      _room.on('agent-join', (id) => {
-        if (id === agentId) {
+      // _room.on('agent-join', (id) => {
+      //   if (id === agentId && _mounted) {
+      //     setStore(_store)
+      //   }
+      // })
+      _room.on('patched', (patched) => {
+        if (patched && _mounted) {
           setStore(_store)
         }
       })
@@ -52,12 +55,13 @@ const useClientRoom = (slug) => {
     setRoom(_room)
     setStore(null)
 
-    if (_room) {
-      return () => {
+    return () => {
+      _mounted = false
+      if (_room) {
         _room.disconnect()
       }
     }
-  }, [agentId, slug])
+  }, [slug, agentId])
 
   return {
     agentId,

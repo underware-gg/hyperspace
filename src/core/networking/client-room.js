@@ -119,21 +119,28 @@ class ClientRoom extends EventEmitter {
     return this.agentIds.some((id) => id === agentId)
   }
 
+  applyMessageOps = (ops) => {
+    this.kernal.applyOps(ops, 'remote')
+    this.emit('patched', ops.length > 0)
+  }
+
   handleMessage = (message) => {
     switch (message.type) {
       case 'connect': {
-        this.kernal.applyOps(message.ops, 'remote')
+        this.applyMessageOps(message.ops)
         break
       }
       case 'patch': {
-        this.kernal.applyOps(message.ops, 'remote')
+        this.applyMessageOps(message.ops)
         break
       }
       case 'connected': {
+        console.log(`connected:`, message.agentId)
         this.addAgentId(message.agentId)
         break
       }
       case 'disconnected': {
+        console.log(`disconnected:`, message.agentId)
         this.removeAgentId(message.agentId)
         break
       }
