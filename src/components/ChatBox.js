@@ -53,7 +53,7 @@ const ChatBox = () => {
   }
 
   return (
-    <VStack className='ChatDrawer' h='700'>
+    <VStack className='ChatDrawer'>
       <Box className='ChatRow' align='center'>
         <HStack>
           <b>PUBLIC CHAT</b>

@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { getTextureImageByName } from '@/core/textures'
 import { getRemoteStore, getLocalStore } from '@/core/singleton'
 import { defaultTileset } from '@/core/texture-data'
+import { clamp } from '@/core/utils'
 import * as Settings from '@/core/components/settings'
 
 export const getMapScale = () => {
@@ -306,9 +307,10 @@ export const render2d = (id, context, store) => {
 
   for (let x = 0; x < settings.size.width; x++) {
     for (let y = 0; y < settings.size.height; y++) {
+      const tile = clamp(map[y][x], 0, 9)
       context.drawImage(
         image,
-        map[y][x] * sz,
+        tile * sz,
         0,
         sz,
         sz,
@@ -333,7 +335,9 @@ export const getTile = (id, x, y) => {
     return null
   }
 
-  return map[y][x]
+  const tile = map[y][x]
+
+  return clamp(tile, 0, 9)
 }
 
 export const getTileAtCanvasPosition = (id, x, y) => {
@@ -406,13 +410,15 @@ export const render3D = (id) => {
     for (let y = 0; y < settings.size.height; y++) {
       let mapCell = map3D[settings.size.height -1-y][x]
 
-      mapCell.mesh.geometry = floorGeometries[map[y][x]]
+      const tile = clamp(map[y][x], 0, 9)
 
-      mapCell.mesh.position.z = walls[map[y][x]]
+      mapCell.mesh.geometry = floorGeometries[tile]
+
+      mapCell.mesh.position.z = walls[tile]
 
       const updateGeometries = (wallStack) => {
         wallStack.children.forEach(element => {
-          element.geometry = wallGeometries[map[y][x]]
+          element.geometry = wallGeometries[tile]
         })
       }
       updateGeometries(mapCell.walls.stack1)

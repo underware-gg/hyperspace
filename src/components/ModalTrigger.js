@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react'
 import { getLocalStore, getRemoteStore } from '@/core/singleton'
 import { getGameCanvasElement } from '@/core/game-canvas'
-import { useDocument, useLocalDocument } from '@/hooks/useDocument'
+import useTrigger from '@/hooks/useTrigger'
 import usePermission from '@/hooks/usePermission'
 import Button from '@/components/Button'
 import Editable from '@/components/Editable'
@@ -27,9 +27,8 @@ const ModalTrigger = ({
   const { isOpen, onOpen, onClose } = disclosure
 
   const { permission, isOwner, canEdit, canView } = usePermission(triggerId)
-  const trigger = useDocument('trigger', triggerId)
-
-  const [data, setData] = useState([]);
+  const { trigger, data } = useTrigger(triggerId)
+  const [newData, setNewData] = useState([]);
 
   const initialFocusRef = useRef(null)
   const finalRef = useRef(null)
@@ -39,8 +38,8 @@ const ModalTrigger = ({
   }, [])
 
   useEffect(() => {
-    setData(trigger?.data ? JSON.parse(trigger.data) : [])
-  }, [trigger])
+    setNewData(data)
+  }, [data])
 
   const _renameTrigger = (value) => {
     if (value && value != '') {
@@ -52,20 +51,15 @@ const ModalTrigger = ({
 
   const _onChanged = (value) => {
     if (value) {
-      const _data = [value]
-      console.log(`SET:`, trigger, '+', _data)
-      setData(_data)
+      console.log(`SET:`, trigger, '+', [value])
+      setNewData([value])
     }
   }
 
-
   const _save = () => {
-    if (data) {
-      const _data = JSON.stringify(data)
-      Trigger.updateTrigger(triggerId, {
-        data: _data,
-      })
-    }
+    Trigger.updateTrigger(triggerId, {
+      data: JSON.stringify(newData),
+    })
     onClose()
   }
   return (
@@ -150,6 +144,12 @@ const MapTileSwitch = ({
     && _validTile(stateOn)
   ), [validTile, x, y, stateOn, stateOff])
 
+  const _convertTile = (value) => {
+    let tile = parseInt(value)
+    if (tile == 0) tile = 10
+    return tile - 1
+  }
+
   useEffect(() => {
     let result = null
     if (validated) {
@@ -157,8 +157,8 @@ const MapTileSwitch = ({
         type: 'map',
         x: parseInt(x),
         y: parseInt(y),
-        stateOff: parseInt(stateOff),
-        stateOn: parseInt(stateOn),
+        stateOff: _convertTile(stateOff),
+        stateOn: _convertTile(stateOn),
       }
     }
     onChanged(result)

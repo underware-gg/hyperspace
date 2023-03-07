@@ -15,7 +15,7 @@ export const init = () => {
     return
   }
 
-  const triggerGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 32, 1, true)
+  const triggerGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1.25, 32, 1, true)
 
   const _updateTriggerState = (triggerMesh, trigger) => {
     if (triggerMesh === null) return
@@ -146,8 +146,8 @@ export const switchState = (id) => {
   for(const i of data) {
     if(i.type == 'map') {
       console.log(`switch map:`, i)
-      const tile = state == 0 ? i.stateOff : i.stateOn
-      Map.update('world', parseInt(i.x), parseInt(i.y), tile - 1)
+      let tile = state == 0 ? i.stateOff : i.stateOn
+      Map.update('world', parseInt(i.x), parseInt(i.y), tile)
     }
   }
 

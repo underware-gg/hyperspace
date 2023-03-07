@@ -94,6 +94,7 @@ const RoomPage = () => {
             className='Relative'
             border='1px'
             borderRadius='2px'
+            h='700'
           >
             <ChatBox />
           </Box>
@@ -104,6 +105,8 @@ const RoomPage = () => {
             className='Relative'
             border='1px'
             borderRadius='2px'
+            maxH='700'
+            // h='700'
           >
             <canvas
               id='game'
