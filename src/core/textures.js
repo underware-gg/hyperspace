@@ -3,12 +3,13 @@ import { textureData, tilesets, spritesheets } from '@/core/texture-data'
 import { deepCopy } from '@/core/merge/tiny-merge'
 
 let textures = {}
-let texturesLoaded = false
+let texturesLoaded
 
 export const loadTextures = async () => {
-  if (texturesLoaded) {
+  if (texturesLoaded !== undefined) {
     return
   }
+  texturesLoaded = false
   return new Promise((resolve, reject) => {
     let _textureData = deepCopy(textureData)
     for (const t of tilesets) {

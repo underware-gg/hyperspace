@@ -12,23 +12,25 @@ const Map2D = ({
 }) => {
   const canvasRef = useRef()
   const { store } = useClientRoom(slug)
+  const [context, setContext] = useState(null)
 
   useEffect(() => {
-    async function _loadTextures() {
-      await loadTextures()
-    }
-    _loadTextures()
+    loadTextures()
   }, [])
 
   useEffect(() => {
-    if (canvasRef.current) {
-      const context = canvasRef.current?.getContext('2d') ?? null
+    const _context = canvasRef.current?.getContext('2d') ?? null
+    setContext(_context)
+  }, [canvasRef.current])
+
+  useEffect(() => {
+    if (context) {
       if (store) {
-        // console.log(`<Map2D> render`)
+        // console.log(`<Map2D> render`, slug)
         Map.render2d('world', context, store)
         onLoaded(true)
       } else {
-        // console.log(`<Map2D> clear`)
+        // console.log(`<Map2D> clear`, slug)
         context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
         onLoaded(false)
       }
