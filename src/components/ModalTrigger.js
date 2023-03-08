@@ -29,6 +29,7 @@ const ModalTrigger = ({
   const { permission, isOwner, canEdit, canView } = usePermission(triggerId)
   const { trigger, data } = useTrigger(triggerId)
   const [newData, setNewData] = useState([]);
+  const validator = useInputValidator()
 
   const initialFocusRef = useRef(null)
   const finalRef = useRef(null)
@@ -51,7 +52,6 @@ const ModalTrigger = ({
 
   const _onChanged = (value) => {
     if (value) {
-      console.log(`SET:`, trigger, '+', [value])
       setNewData([value])
     }
   }
@@ -95,7 +95,7 @@ const ModalTrigger = ({
             </TabList>
             <TabPanels>
               <TabPanel>
-                <MapTileSwitch data={data[0] ?? {}} onChanged={_onChanged} />
+                <MapTileSwitch data={data[0] ?? {}} onChanged={_onChanged} validator={validator} />
               </TabPanel>
               <TabPanel>
                 <PermissionsForm
@@ -114,6 +114,7 @@ const ModalTrigger = ({
           <Button
             variant='outline'
             value='Save'
+            disabled={!validator.isValid}
             onClick={() => _save()}
           />
         </ModalFooter>
@@ -125,25 +126,16 @@ const ModalTrigger = ({
 export default ModalTrigger
 
 
-const _tileIndexToNumber = (value) => {
-  return value == 10 ? 0 : value + 1
-}
-const _tileNumberToIndex = (value) => {
-  let tile = parseInt(value)
-  if (tile == 0) tile = 10
-  return tile - 1
-}
-
 const MapTileSwitch = ({
   data,
   onChanged,
-  disabled = false
+  disabled = false,
+  validator,
 }) => {
-  const validator = useInputValidator()
   const [x, setX] = useState(data.x ?? 0);
   const [y, setY] = useState(data.y ?? 0);
-  const [stateOff, setStateOff] = useState(_tileIndexToNumber(data.stateOff ?? 4));
-  const [stateOn, setStateOn] = useState(_tileIndexToNumber(data.stateOn ?? 4));
+  const [stateOff, setStateOff] = useState(data.stateOff ?? 5);
+  const [stateOn, setStateOn] = useState(data.stateOn ?? 5);
 
   useEffect(() => {
     let result = null
@@ -152,8 +144,8 @@ const MapTileSwitch = ({
         type: 'map',
         x: parseInt(x),
         y: parseInt(y),
-        stateOff: _tileNumberToIndex(stateOff),
-        stateOn: _tileNumberToIndex(stateOn),
+        stateOff,
+        stateOn,
       }
     }
     onChanged(result)

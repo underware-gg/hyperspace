@@ -1,5 +1,6 @@
 import {
   HStack,
+  Spacer,
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
@@ -71,12 +72,13 @@ const InteractMenu = ({
 
   return (
     <HStack>
+      {editor?.interacting
+        ? <>Cursor@[{editor.position.x},{editor.position.y}]&nbsp;</>
+        : <>Player@[{tileX},{tileY}]&nbsp;</>
+      }
+      
       {canPlace &&
         <>
-          {editor?.interacting
-            ? <>Cursor@[{editor.position.x},{editor.position.y}]&nbsp;</>
-            : <>Player@[{tileX},{tileY}]&nbsp;</>
-          }
           <Button size='sm' onClick={() => emitAction('editPortal')}>
             New [P]ortal
           </Button>

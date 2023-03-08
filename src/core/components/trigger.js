@@ -124,6 +124,12 @@ export const remove = (id) => {
   return Interactable.remove('trigger', id)
 }
 
+const _tileNumberToIndex = (value) => {
+  let tile = parseInt(value)
+  if (tile == 0) tile = 10
+  return tile - 1
+}
+
 export const switchState = (id) => {
   const store = getRemoteStore()
   let trigger = store.getDocument('trigger', id)
@@ -146,8 +152,9 @@ export const switchState = (id) => {
   for(const i of data) {
     if(i.type == 'map') {
       console.log(`switch map:`, i)
-      let tile = state == 0 ? i.stateOff : i.stateOn
-      Map.update('world', parseInt(i.x), parseInt(i.y), tile)
+      let tileNumber = state == 0 ? i.stateOff : i.stateOn
+      let tileIndex = _tileNumberToIndex(tileNumber)
+      Map.update('world', parseInt(i.x), parseInt(i.y), tileIndex)
     }
   }
 

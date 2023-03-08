@@ -58,7 +58,7 @@ const ValidatedInput = ({
 
   useEffect(() => {
     if (id) {
-      const _valid = (value != '' && !isNaN(value) && value >= minValue && value <= maxValue)
+      const _valid = (value !== '' && !isNaN(value) && value >= minValue && value <= maxValue)
       setIsValid(_valid)
       onValidated(id, _valid)
     }
