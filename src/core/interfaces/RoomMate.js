@@ -26,6 +26,10 @@ class RoomMate {
     return this.#room.Player
   }
 
+  get Profile() {
+    return this.#room.Profile
+  }
+
   get Portal() {
     return this.#room.Portal
   }

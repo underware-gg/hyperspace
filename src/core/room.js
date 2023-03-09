@@ -11,6 +11,7 @@ import Portal from '@/core/components/portal'
 import Trigger from '@/core/components/trigger'
 import Screen from '@/core/components/screen'
 import Player from '@/core/components/player'
+import Profile from '@/core/components/profile'
 import * as Settings from '@/core/components/settings'
 import * as Map from '@/core/components/map'
 import * as Editor from '@/core/components/editor'
@@ -157,10 +158,12 @@ class Room {
     ClientRoom.init(slug)
     this.clientRoom = ClientRoom.get() // TODO: remove
 
-    // before this.clientRoom.init() to listen snapshot 'create' events
+    // before this.clientRoom.init() to listen snapshot events
     this.Portal = new Portal(this)
     this.Trigger = new Trigger(this)
     this.Screen = new Screen(this)
+    this.Player = new Player(this)
+    this.Profile = new Profile(this)
 
     // loads snapshot
     this.clientRoom.init(slug)
@@ -172,7 +175,6 @@ class Room {
     Editor.init(canvas, this.clientRoom.agentId)
     Editor.init3d(canvas3d, this.clientRoom.agentId)
 
-    this.Player = new Player(this)
     Map.init()
 
     if (!Map.exists('world')) {

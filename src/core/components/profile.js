@@ -1,25 +1,29 @@
-import { getRemoteStore } from '@/core/singleton'
+import RoomMate from '@/core/interfaces/RoomMate'
 
-export const create = (id, name, spritesheet) => {
-  const store = getRemoteStore()
-  const profile = { name, spritesheet }
-  store.setDocument('profile', id, profile)
-  return profile
+class Permission extends RoomMate {
+  constructor(room) {
+    super(room)
+  }
+
+  create(id, name, spritesheet) {
+    const profile = { name, spritesheet }
+    this.remoteStore.setDocument('profile', id, profile)
+    return profile
+  }
+
+  update(id, values) {
+    let profile = this.remoteStore.getDocument('profile', id) ?? {}
+    this.remoteStore.setDocument('profile', id, { ...profile, ...values })
+  }
+
+  remove(id) {
+    this.remoteStore.setDocument('profile', id, null)
+  }
+
+  exists(id) {
+    const profile = this.remoteStore.getDocument('profile', id)
+    return profile !== null
+  }
 }
 
-export const update = (id, values) => {
-  const store = getRemoteStore()
-  let profile = store.getDocument('profile', id) ?? {}
-  store.setDocument('profile', id, { ...profile, ...values })
-}
-
-export const remove = (id) => {
-  const store = getRemoteStore()
-  store.setDocument('profile', id, null)
-}
-
-export const exists = (id) => {
-  const store = getRemoteStore()
-  const profile = store.getDocument('profile', id)
-  return profile !== null
-}
+export default Permission
