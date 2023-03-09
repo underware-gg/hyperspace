@@ -5,14 +5,6 @@ import { defaultTileset } from '@/core/texture-data'
 import { clamp } from '@/core/utils'
 import { defaultSettings } from '@/core/components/settings'
 
-export const getMapScale = (store) => {
-  const settings = store.getDocument('settings', 'world') ?? defaultSettings
-  return {
-    x: (process.env.CANVAS_WIDTH / (settings.size.width * 32)),
-    y: (process.env.CANVAS_HEIGHT / (settings.size.height * 32)),
-  }
-}
-
 const cellWidth = 1
 
 export const walls = [
@@ -265,6 +257,14 @@ class Map extends RoomCollection {
     this.remoteStore.setValueAtPath('map', id, `/${y}.${x}`, value)
   }
 
+  getMapScale(id) {
+    const settings = this.remoteStore.getDocument('settings', id) ?? defaultSettings
+    return {
+      x: (process.env.CANVAS_WIDTH / (settings.size.width * 32)),
+      y: (process.env.CANVAS_HEIGHT / (settings.size.height * 32)),
+    }
+  }
+
   render2d(id, context, store) {
     const map = store.getDocument('map', id)
 
@@ -273,7 +273,7 @@ class Map extends RoomCollection {
       return
     }
 
-    const mapScale = getMapScale(this.remoteStore)
+    const mapScale = this.getMapScale('world')
 
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.scale(mapScale.x, mapScale.y);

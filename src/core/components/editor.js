@@ -3,7 +3,6 @@ import * as THREE from 'three'
 import RoomCollection from '@/core/interfaces/RoomCollection'
 import { getActionState, addActionDownListener } from '@/core/controller'
 import { canPlaceOverPlayer } from '@/core/components/player'
-import { getMapScale } from '@/core/components/map'
 import { getPlayerTileRotation } from '@/core/components/player'
 import { roundToNearest, getFilenameFromUrl } from '@/core/utils'
 
@@ -321,7 +320,7 @@ class Editor extends RoomCollection {
 
   getMouseTilePosition(e, canvas, store) {
     const { x, y } = this.getMouseCanvasPosition(e, canvas);
-    const mapScale = getMapScale(store)
+    const mapScale = this.Map.getMapScale('world')
     return {
       x: Math.floor(x / mapScale.x / 32),
       y: Math.floor(y / mapScale.y / 32),
