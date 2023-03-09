@@ -8,11 +8,11 @@ import * as ClientRoom from '@/core/networking'
 import Renderer2D from '@/core/rendering/renderer2D'
 import Renderer3D from '@/core/rendering/renderer3D'
 import Portal from '@/core/components/portal'
+import Trigger from '@/core/components/trigger'
 import * as Settings from '@/core/components/settings'
 import * as Map from '@/core/components/map'
 import * as Player from '@/core/components/player'
 import * as Editor from '@/core/components/editor'
-import * as Trigger from '@/core/components/trigger'
 import * as Screen from '@/core/components/screen'
 import { getRemoteStore, getLocalStore } from '@/core/singleton'
 
@@ -159,7 +159,7 @@ class Room {
 
     // before room.init() to listen snapshot 'create' events
     this.Portal = new Portal(this)
-    Trigger.init()
+    this.Trigger = new Trigger(this)
     Screen.init()
 
     // loads snapshot
@@ -243,7 +243,7 @@ class Room {
       this.Portal.render2d(id, context)
     }
     for (const id of triggerIds) {
-      Trigger.render2d(id, context)
+      this.Trigger.render2d(id, context)
     }
     for (const id of screenIds) {
       Screen.render2d(id, context, this.clientRoom.agentId)

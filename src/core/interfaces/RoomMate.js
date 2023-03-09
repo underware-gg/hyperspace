@@ -7,19 +7,23 @@ class RoomMate {
   }
 
   get remoteStore() {
-    return this.#room.remoteStore;
+    return this.#room.remoteStore
   }
 
   get localStore() {
-    return this.#room.localStore;
+    return this.#room.localStore
   }
 
   get agentId() {
-    return this.#room.clientRoom.agentId;
+    return this.#room.clientRoom.agentId
   }
 
   get Portal() {
-    return this.#room.Portal;
+    return this.#room.Portal
+  }
+
+  get Trigger() {
+    return this.#room.Trigger
   }
 
 }
