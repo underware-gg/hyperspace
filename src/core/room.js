@@ -15,7 +15,7 @@ import Profile from '@/core/components/profile'
 import Permission from '@/core/components/permission'
 import Settings from '@/core/components/settings'
 import Tileset from '@/core/components/tileset'
-import * as Map from '@/core/components/map'
+import Map from '@/core/components/map'
 import * as Editor from '@/core/components/editor'
 import { getRemoteStore, getLocalStore } from '@/core/singleton'
 
@@ -180,14 +180,13 @@ class Room {
     Editor.init(canvas, this.clientRoom.agentId)
     Editor.init3d(canvas3d, this.clientRoom.agentId)
 
-    Map.init()
-
-    if (!Map.exists('world')) {
-      Map.create('world')
+    this.Map = new Map(this)
+    if (!this.Map.exists('world')) {
+      this.Map.create('world')
     }
 
-    if (!Player.exists(this.clientRoom.agentId)) {
-      Player.create(
+    if (!this.Player.exists(this.clientRoom.agentId)) {
+      this.Player.create(
         this.clientRoom.agentId,
       )
     }
@@ -204,7 +203,7 @@ class Room {
     })
 
     addActionDownListener('interact', () => {
-      Player.interact(this.clientRoom.agentId)
+      this.Player.interact(this.clientRoom.agentId)
     })
 
     canvas.addEventListener('keydown', (e) => {
@@ -231,7 +230,7 @@ class Room {
   update(dt) {
     this.renderer2D.update(dt)
     this.renderer3D.update(dt)
-    Player.update(this.clientRoom.agentId, dt)
+    this.Player.update(this.clientRoom.agentId, dt)
     Editor.update(this.clientRoom.agentId, dt)
   }
 
@@ -245,7 +244,7 @@ class Room {
     const triggerIds = this.remoteStore.getIds('trigger')
     const screenIds = this.remoteStore.getIds('screen')
 
-    Map.render2d('world', context, this.remoteStore)
+    this.Map.render2d('world', context, this.remoteStore)
 
     for (const id of portalIds) {
       this.Portal.render2d(id, context)
@@ -260,12 +259,12 @@ class Room {
     // Should probably be able to just get them directly.
     for (const playerId of playerIds) {
       if (this.clientRoom.hasAgentId(playerId)) {
-        Player.render2d(playerId, context)
+        this.Player.render2d(playerId, context)
         Editor.render2d(playerId, context)
       }
     }
 
-    Map.render3D('world')
+    this.Map.render3D('world')
   }
 
 }

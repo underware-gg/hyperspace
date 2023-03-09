@@ -54,6 +54,10 @@ class RoomMate {
     return this.#room.Screen
   }
 
+  get Map() {
+    return this.#room.Map
+  }
+
 }
 
 export default RoomMate
