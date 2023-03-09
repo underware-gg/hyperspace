@@ -17,6 +17,11 @@ class RoomMate {
   get agentId() {
     return this.#room.clientRoom.agentId;
   }
+
+  get Portal() {
+    return this.#room.Portal;
+  }
+
 }
 
 export default RoomMate
