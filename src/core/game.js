@@ -1,7 +1,7 @@
 import { loadTextures } from '@/core/textures'
 import Renderer2D from '@/core/rendering/renderer2D'
 import Renderer3D from '@/core/rendering/renderer3D'
-import * as Room from '@/core/room'
+import Room from '@/core/room'
 
 class Game {
   constructor() {
@@ -15,6 +15,7 @@ class Game {
     this.render = this.render.bind(this)
     this.renderer2D = new Renderer2D()
     this.renderer3D = new Renderer3D()
+    this.room = new Room()
   }
 
   async init(slug, canvas, canvas3d) {
@@ -26,7 +27,7 @@ class Game {
 
     this.renderer2D.init(this.context)
     this.renderer3D.init(canvas3d)
-    Room.init(slug, canvas, canvas3d)
+    this.room.init(slug, canvas, canvas3d)
 
     this.lastTime = (new Date()).getTime()
     this.currentTime = 0
@@ -46,7 +47,7 @@ class Game {
 
     this.renderer2D.update(this.dt)
     this.renderer3D.update(this.dt)
-    Room.update(this.dt)
+    this.room.update(this.dt)
   
     this.render()
   
@@ -60,7 +61,7 @@ class Game {
   render() {
     this.renderer2D.render(this.canvas, this.context)
     this.renderer3D.render()
-    Room.render(this.canvas, this.context)
+    this.room.render(this.canvas, this.context)
   }
 }
 

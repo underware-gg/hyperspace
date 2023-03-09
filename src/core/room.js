@@ -14,229 +14,239 @@ import * as Trigger from '@/core/components/trigger'
 import * as Screen from '@/core/components/screen'
 import { getRemoteStore, getLocalStore } from '@/core/singleton'
 
-export const init = async (slug, canvas, canvas3d) => {
-  registerActions([
-    {
-      name: 'left',
-      keycode: '65', // a
-    },
-    {
-      name: 'right',
-      keycode: '68', // d
-    },
-    {
-      name: 'up',
-      keycode: '87', // w
-    },
-    {
-      name: 'down',
-      keycode: '83', // s
-    },
-    {
-      name: '1',
-      keycode: '49',
-    },
-    {
-      name: '2',
-      keycode: '50',
-    },
-    {
-      name: '3',
-      keycode: '51',
-    },
-    {
-      name: '4',
-      keycode: '52',
-    },
-    {
-      name: '5',
-      keycode: '53',
-    },
-    {
-      name: '6',
-      keycode: '54',
-    },
-    {
-      name: '7',
-      keycode: '55',
-    },
-    {
-      name: '8',
-      keycode: '56',
-    },
-    {
-      name: '9',
-      keycode: '57',
-    },
-    {
-      name: '0',
-      keycode: '48',
-    },
-    {
-      name: 'createScreen',
-      keycode: '78', // n
-    },
-    {
-      name: 'createBook',
-      keycode: '66', // b
-    },
-    {
-      name: 'interact',
-      keycode: '69', // e (enter)
-    },
-    {
-      name: 'moveForward',
-      keycode: '73', // i
-    },
-    {
-      name: 'turnLeft',
-      keycode: '74', // j
-    },
-    {
-      name: 'turnRight',
-      keycode: '76', // l
-    },
-    {
-      name: 'moveBack',
-      keycode: '75', // k
-    },
-    {
-      // name: 'createPortal',
-      name: 'editPortal',
-      keycode: '80', // p
-    },
-    {
-      name: 'toggle3d',
-      keycode: '84', // t
-    },
-    {
-      name: 'jump',
-      keycode: '32', // space
-    },
-    {
-      name: 'delete',
-      keycode: '46', // delete
-    },
-    {
-      name: 'turnLeft',
-      keycode: '37', // right
-    },
-    {
-      name: 'up',
-      keycode: '38', // up
-    },
-    {
-      name: 'turnRight',
-      keycode: '39', // left
-    },
-    {
-      name: 'down',
-      keycode: '40', // down
-    },
-  ])
+const _actions = [
+  {
+    name: 'left',
+    keycode: '65', // a
+  },
+  {
+    name: 'right',
+    keycode: '68', // d
+  },
+  {
+    name: 'up',
+    keycode: '87', // w
+  },
+  {
+    name: 'down',
+    keycode: '83', // s
+  },
+  {
+    name: '1',
+    keycode: '49',
+  },
+  {
+    name: '2',
+    keycode: '50',
+  },
+  {
+    name: '3',
+    keycode: '51',
+  },
+  {
+    name: '4',
+    keycode: '52',
+  },
+  {
+    name: '5',
+    keycode: '53',
+  },
+  {
+    name: '6',
+    keycode: '54',
+  },
+  {
+    name: '7',
+    keycode: '55',
+  },
+  {
+    name: '8',
+    keycode: '56',
+  },
+  {
+    name: '9',
+    keycode: '57',
+  },
+  {
+    name: '0',
+    keycode: '48',
+  },
+  {
+    name: 'createScreen',
+    keycode: '78', // n
+  },
+  {
+    name: 'createBook',
+    keycode: '66', // b
+  },
+  {
+    name: 'interact',
+    keycode: '69', // e (enter)
+  },
+  {
+    name: 'moveForward',
+    keycode: '73', // i
+  },
+  {
+    name: 'turnLeft',
+    keycode: '74', // j
+  },
+  {
+    name: 'turnRight',
+    keycode: '76', // l
+  },
+  {
+    name: 'moveBack',
+    keycode: '75', // k
+  },
+  {
+    // name: 'createPortal',
+    name: 'editPortal',
+    keycode: '80', // p
+  },
+  {
+    name: 'toggle3d',
+    keycode: '84', // t
+  },
+  {
+    name: 'jump',
+    keycode: '32', // space
+  },
+  {
+    name: 'delete',
+    keycode: '46', // delete
+  },
+  {
+    name: 'turnLeft',
+    keycode: '37', // right
+  },
+  {
+    name: 'up',
+    keycode: '38', // up
+  },
+  {
+    name: 'turnRight',
+    keycode: '39', // left
+  },
+  {
+    name: 'down',
+    keycode: '40', // down
+  },
+]
 
-  addActionDownListener('toggle3d', () => {
-    const localStore = getLocalStore()
-    const is3d = localStore.getDocument('show-3d', 'world')
-    localStore.setDocument('show-3d', 'world', !is3d)
-  })
+class Room {
 
-  canvas.addEventListener('keydown', (e) => {
-    e.preventDefault()
-    handleKeyDown(e)
-  }, false)
-
-  canvas3d.addEventListener('keydown', (e) => {
-    e.preventDefault()
-    handleKeyDown(e)
-  }, false)
-  
-  canvas.addEventListener('keyup', e => {
-    e.preventDefault()
-    handleKeyUp(e)
-  }, false)
-
-  canvas3d.addEventListener('keyup', e => {
-    e.preventDefault()
-    handleKeyUp(e)
-  }, false)
-
-  ClientRoom.init(slug)
-  const room = ClientRoom.get()
-
-  // before room.init() to listen snapshot 'create' events
-  Portal.init()
-  Trigger.init()
-  Screen.init()
-
-  // loads snapshot
-  room.init(slug)
-
-  if (!Settings.exists('world')) {
-    Settings.create('world')
+  constructor() {
+    // TODO: Move singletons here
+    this.remoteStore = getRemoteStore()
+    this.localStore = getLocalStore()
+    // TODO: Instantiate ClientRoom here
+    // this.clientRoom = ClientRoom.create()
   }
 
-  Editor.init(canvas, room.agentId)
-  Editor.init3d(canvas3d, room.agentId)
-  Player.init()
-  Map.init()
+  async init(slug, canvas, canvas3d) {
+    ClientRoom.init(slug)
+    this.clientRoom = ClientRoom.get() // TODO: remove
 
-  if (!Map.exists('world')) {
-    Map.create('world')
-  }
+    // before room.init() to listen snapshot 'create' events
+    Portal.init()
+    Trigger.init()
+    Screen.init()
 
-  if (!Player.exists(room.agentId)) {
-    Player.create(
-      room.agentId,
-    )
-  }
+    // loads snapshot
+    this.clientRoom.init(slug)
 
-  addActionDownListener('interact', () => {
-    // const localStore = getLocalStore()
-    // console.log('_INTERACT_')
-    Player.interact(room.agentId)
-  })
-
-  const { VeridaUser } = (await import('@/core/verida'))
-
-  const localStore = getLocalStore()
-  localStore.setDocument('user', 'VeridaUser', VeridaUser)
-}
-
-export const update = (dt) => {
-  const room = ClientRoom.get()
-  Player.update(room.agentId, dt)
-  Editor.update(room.agentId, dt)
-}
-
-export const render = (canvas, context) => {
-  const store = getRemoteStore()
-  const playerIds = store.getIds('player')
-  const portalIds = store.getIds('portal')
-  const triggerIds = store.getIds('trigger')
-  const screenIds = store.getIds('screen')
-
-  Map.render2d('world', context, store)
-
-  const room = ClientRoom.get()
-
-  for (const id of portalIds) {
-    Portal.render2d(id, context)
-  }
-  for (const id of triggerIds) {
-    Trigger.render2d(id, context)
-  }
-  for (const id of screenIds) {
-    Screen.render2d(id, context, room.agentId)
-  }
-
-  // Should probably be able to just get them directly.
-  for (const playerId of playerIds) {
-    if (room.hasAgentId(playerId)) {
-      Player.render2d(playerId, context)
-      Editor.render2d(playerId, context)
+    if (!Settings.exists('world')) {
+      Settings.create('world')
     }
+
+    Editor.init(canvas, this.clientRoom.agentId)
+    Editor.init3d(canvas3d, this.clientRoom.agentId)
+    Player.init()
+    Map.init()
+
+    if (!Map.exists('world')) {
+      Map.create('world')
+    }
+
+    if (!Player.exists(this.clientRoom.agentId)) {
+      Player.create(
+        this.clientRoom.agentId,
+      )
+    }
+
+    const { VeridaUser } = (await import('@/core/verida'))
+    this.localStore.setDocument('user', 'VeridaUser', VeridaUser)
+
+    // Event listeners
+    registerActions(_actions)
+
+    addActionDownListener('toggle3d', () => {
+      const is3d = this.localStore.getDocument('show-3d', 'world')
+      this.localStore.setDocument('show-3d', 'world', !is3d)
+    })
+
+    addActionDownListener('interact', () => {
+      Player.interact(this.clientRoom.agentId)
+    })
+
+    canvas.addEventListener('keydown', (e) => {
+      e.preventDefault()
+      handleKeyDown(e)
+    }, false)
+
+    canvas3d.addEventListener('keydown', (e) => {
+      e.preventDefault()
+      handleKeyDown(e)
+    }, false)
+
+    canvas.addEventListener('keyup', e => {
+      e.preventDefault()
+      handleKeyUp(e)
+    }, false)
+
+    canvas3d.addEventListener('keyup', e => {
+      e.preventDefault()
+      handleKeyUp(e)
+    }, false)
   }
 
-  Map.render3D('world')
+  update(dt) {
+    Player.update(this.clientRoom.agentId, dt)
+    Editor.update(this.clientRoom.agentId, dt)
+  }
+
+  render(canvas, context) {
+    const playerIds = this.remoteStore.getIds('player')
+    const portalIds = this.remoteStore.getIds('portal')
+    const triggerIds = this.remoteStore.getIds('trigger')
+    const screenIds = this.remoteStore.getIds('screen')
+
+    Map.render2d('world', context, this.remoteStore)
+
+    for (const id of portalIds) {
+      Portal.render2d(id, context)
+    }
+    for (const id of triggerIds) {
+      Trigger.render2d(id, context)
+    }
+    for (const id of screenIds) {
+      Screen.render2d(id, context, this.clientRoom.agentId)
+    }
+
+    // Should probably be able to just get them directly.
+    for (const playerId of playerIds) {
+      if (this.clientRoom.hasAgentId(playerId)) {
+        Player.render2d(playerId, context)
+        Editor.render2d(playerId, context)
+      }
+    }
+
+    Map.render3D('world')
+  }
+
 }
+
+export default Room
+
+
