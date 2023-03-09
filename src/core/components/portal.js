@@ -1,8 +1,6 @@
 import * as THREE from 'three'
 import RoomMate from '@/core/interfaces/RoomMate'
 import * as Interactable from '@/core/components/interactable'
-import * as Permission from '@/core/components/permission'
-import * as Player from '@/core/components/player'
 import { getTextureImageByName } from '@/core/textures'
 import { getPortalOverPlayer } from '@/core/components/player'
 import { getTile, floors } from '@/core/components/map'
@@ -103,7 +101,7 @@ class Portal extends RoomMate {
     let portal = this.remoteStore.getDocument('portal', id)
     if (portal == null) return
 
-    if (!Permission.canEdit(id)) {
+    if (!this.Permission.canEdit(id)) {
       console.warn(`No permission to update Portal [${id}] to [${portal.slug}]`)
       return
     }
@@ -118,7 +116,7 @@ class Portal extends RoomMate {
   }
 
   remove(id) {
-    if (!Permission.canEdit(id)) {
+    if (!this.Permission.canEdit(id)) {
       console.warn(`No permission to delete Portal [${id}]`)
       return
     }
@@ -129,14 +127,14 @@ class Portal extends RoomMate {
     const portal = this.remoteStore.getDocument('portal', id)
     if (portal == null) return
 
-    if (!Permission.canView(id)) {
+    if (!this.Permission.canView(id)) {
       console.warn(`No permission to enter Portal [${id}]`)
       return
     }
 
     // Travel to the same room
     if (this.slug == portal.slug) {
-      Player.moveToTile(this.agentId, portal.tile)
+      this.Player.moveToTile(this.agentId, portal.tile)
     } else {
       // Travel to other Room
       const data = {

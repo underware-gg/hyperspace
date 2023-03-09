@@ -6,7 +6,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { useDocument } from '@/hooks/useDocument'
-import * as Settings from '@/core/components/settings'
+import { defaultSettings } from '@/core/components/settings'
 
 const useInputValidator = () => {
   const [inputs, setInputs] = useState({})
@@ -103,7 +103,7 @@ const TileInput = ({
       <Text>X:</Text>
       <ValidatedInput
         value={valueX}
-        maxValue={settings?.size?.width ?? Settings.defaultSettings.size.width}
+        maxValue={settings?.size?.width ?? defaultSettings.size.width}
         disabled={disabled}
         onChange={onChangeX}
         validator={validator}
@@ -111,7 +111,7 @@ const TileInput = ({
       <Text>Y:</Text>
       <ValidatedInput
         value={valueY}
-        maxValue={settings?.size?.height ?? Settings.defaultSettings.size.height}
+        maxValue={settings?.size?.height ?? defaultSettings.size.height}
         disabled={disabled}
         onChange={onChangeY}
         validator={validator}

@@ -14,6 +14,7 @@ import { PermissionsForm } from '@/components/PermissionsForm'
 import { TileInput, useInputValidator } from '@/components/Inputs'
 import Button from '@/components/Button'
 import * as Settings from '@/core/components/settings'
+import { defaultSettings } from '@/core/components/settings'
 
 
 export const useSettingsDisclosure = (id) => {
@@ -35,10 +36,10 @@ export const ModalSettings = ({
   const { slug } = router.query
   const { id, isOpen, onClose } = settingsDisclosure
 
-  const [sizeX, setSizeX] = useState(Settings.defaultSettings.size.width);
-  const [sizeY, setSizeY] = useState(Settings.defaultSettings.size.height);
-  const [tileX, setTileX] = useState(Settings.defaultSettings.entry.x);
-  const [tileY, setTileY] = useState(Settings.defaultSettings.entry.y);
+  const [sizeX, setSizeX] = useState(defaultSettings.size.width);
+  const [sizeY, setSizeY] = useState(defaultSettings.size.height);
+  const [tileX, setTileX] = useState(defaultSettings.entry.x);
+  const [tileY, setTileY] = useState(defaultSettings.entry.y);
   const validator = useInputValidator()
 
   const settings = useDocument('settings', id)

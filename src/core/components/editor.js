@@ -1,11 +1,6 @@
 import { nanoid } from 'nanoid'
 import * as THREE from 'three'
 import RoomMate from '@/core/interfaces/RoomMate'
-import * as Map from '@/core/components/map'
-import * as Portal from '@/core/components/portal'
-import * as Trigger from '@/core/components/trigger'
-import * as Screen from '@/core/components/screen'
-import * as Permission from '@/core/components/permission'
 import { getActionState, addActionDownListener } from '@/core/controller'
 import { canPlaceOverPlayer } from '@/core/components/player'
 import { getMapScale } from '@/core/components/map'
@@ -55,7 +50,7 @@ class Editor extends RoomMate {
 
       const { x, y } = this.getCreateTileRotation(id)
       console.log(`create_portal`, id, x, y, slug, tile)
-      Portal.create(nanoid(), x, y, slug, tile)
+      this.Portal.create(nanoid(), x, y, slug, tile)
     })
 
     addActionDownListener('createTrigger', (options = {}) => {
@@ -70,7 +65,7 @@ class Editor extends RoomMate {
       }
 
       const { x, y } = this.getCreateTileRotation(id)
-      Trigger.create(nanoid(), x, y, trigger)
+      this.Trigger.create(nanoid(), x, y, trigger)
     })
 
     addActionDownListener('createScreen', () => {
@@ -87,7 +82,7 @@ class Editor extends RoomMate {
       const text = `# Screen: ${name}\n\nThis is a MarkDown shared document\n\nid: ${screenId}`
 
       const { x, y, rot } = this.getCreateTileRotation(id)
-      Screen.createDocument(screenId, x, y, rot, text, name)
+      this.Screen.createDocument(screenId, x, y, rot, text, name)
     })
 
     addActionDownListener('createBook', () => {
@@ -105,7 +100,7 @@ class Editor extends RoomMate {
 
       const screenId = nanoid()
       const { x, y, rot } = this.getCreateTileRotation(id)
-      Screen.createBook(screenId, x, y, rot, url, name)
+      this.Screen.createBook(screenId, x, y, rot, url, name)
     })
 
     canvas.addEventListener('mousemove', handleMouseMove)
@@ -151,7 +146,7 @@ class Editor extends RoomMate {
             x: Math.floor(pickingLocation.x),
             y: Math.floor(-pickingLocation.y - 1),
           },
-          interacting: Permission.canEdit('world'),
+          interacting: this.Permission.canEdit('world'),
         })
       }
     }
@@ -234,48 +229,48 @@ class Editor extends RoomMate {
       return
     }
 
-    if (!Permission.canEdit('world')) {
+    if (!this.Permission.canEdit('world')) {
       return
     }
 
     if (getActionState('1')) {
-      Map.update('world', x, y, 0)
+      this.Map.update('world', x, y, 0)
     }
 
     if (getActionState('2')) {
-      Map.update('world', x, y, 1)
+      this.Map.update('world', x, y, 1)
     }
 
     if (getActionState('3')) {
-      Map.update('world', x, y, 2)
+      this.Map.update('world', x, y, 2)
     }
 
     if (getActionState('4')) {
-      Map.update('world', x, y, 3)
+      this.Map.update('world', x, y, 3)
     }
 
     if (getActionState('5')) {
-      Map.update('world', x, y, 4)
+      this.Map.update('world', x, y, 4)
     }
 
     if (getActionState('6')) {
-      Map.update('world', x, y, 5)
+      this.Map.update('world', x, y, 5)
     }
 
     if (getActionState('7')) {
-      Map.update('world', x, y, 6)
+      this.Map.update('world', x, y, 6)
     }
 
     if (getActionState('8')) {
-      Map.update('world', x, y, 7)
+      this.Map.update('world', x, y, 7)
     }
 
     if (getActionState('9')) {
-      Map.update('world', x, y, 8)
+      this.Map.update('world', x, y, 8)
     }
 
     if (getActionState('0')) {
-      Map.update('world', x, y, 9)
+      this.Map.update('world', x, y, 9)
     }
   }
 
@@ -293,13 +288,13 @@ class Editor extends RoomMate {
     }
 
     // do not draw cursor for if I cant edit
-    if (!Permission.canEdit('world')) {
+    if (!this.Permission.canEdit('world')) {
       return
     }
 
     // do not draw cursor for remote users if room is not editable
     const isRemoteUser = (this.agentId !== id)
-    if (isRemoteUser && !Permission.canEdit('world', null)) {
+    if (isRemoteUser && !this.Permission.canEdit('world', null)) {
       return
     }
 

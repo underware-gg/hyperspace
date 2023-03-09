@@ -1,5 +1,5 @@
-import { useEffect, useState, useMemo } from 'react'
-import { AbsoluteCenter, HStack, Select, Spacer } from '@chakra-ui/react'
+import { useEffect, useState } from 'react'
+import { HStack, Select, Spacer } from '@chakra-ui/react'
 import { tilesets, defaultTileset } from '@/core/texture-data'
 import { fromSourceToDataURL } from '@/core/textures'
 import { focusGameCanvas } from '@/core/game-canvas'

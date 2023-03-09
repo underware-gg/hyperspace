@@ -3,10 +3,10 @@ import RoomMate from '@/core/interfaces/RoomMate'
 import { getTextureImageByName } from '@/core/textures'
 import { defaultTileset } from '@/core/texture-data'
 import { clamp } from '@/core/utils'
-import * as Settings from '@/core/components/settings'
+import { defaultSettings } from '@/core/components/settings'
 
 export const getMapScale = (store) => {
-  const settings = store.getDocument('settings', 'world') ?? Settings.defaultSettings
+  const settings = store.getDocument('settings', 'world') ?? defaultSettings
   return {
     x: (process.env.CANVAS_WIDTH / (settings.size.width * 32)),
     y: (process.env.CANVAS_HEIGHT / (settings.size.height * 32)),
@@ -125,7 +125,7 @@ class Map extends RoomMate {
 
     const gridContainer = new THREE.Object3D()
 
-    const settings = this.remoteStore.getDocument('settings', 'world') ?? Settings.defaultSettings
+    const settings = this.remoteStore.getDocument('settings', 'world') ?? defaultSettings
 
     let map3D = new Array(settings.size.width)
     for (let x = 0; x < settings.size.width; x++) {
@@ -296,7 +296,7 @@ class Map extends RoomMate {
       sz = image?.height ?? 32
     }
 
-    const settings = store.getDocument('settings', 'world') ?? Settings.defaultSettings
+    const settings = store.getDocument('settings', 'world') ?? defaultSettings
 
     // console.log(`render`, crdtTileset, image, sz, settings)
 
@@ -341,7 +341,7 @@ class Map extends RoomMate {
   }
 
   validateTile(x, y) {
-    const settings = this.remoteStore.getDocument('settings', 'world') ?? Settings.defaultSettings
+    const settings = this.remoteStore.getDocument('settings', 'world') ?? defaultSettings
     if (x == null || x < 0 || x >= settings.size.width || y == null || y < 0 || y >= settings.size.height) {
       return false
     }
@@ -350,7 +350,7 @@ class Map extends RoomMate {
 
   fromTileToCanvasPosition(tileX, tileY) {
     if (!this.validateTile(tileX, tileY)) {
-      const settings = this.remoteStore.getDocument('settings', 'world') ?? Settings.defaultSettings
+      const settings = this.remoteStore.getDocument('settings', 'world') ?? defaultSettings
       tileX = settings.entry.x
       tileY = settings.entry.y
     }
@@ -360,7 +360,7 @@ class Map extends RoomMate {
   }
 
   fromTileToCellPosition(tileX, tileY) {
-    const settings = this.remoteStore.getDocument('settings', 'world') ?? Settings.defaultSettings
+    const settings = this.remoteStore.getDocument('settings', 'world') ?? defaultSettings
 
     const x = tileX * cellWidth + cellWidth * 0.5
     const y = tileY * cellWidth - settings.size.height * cellWidth - cellWidth * 0.5
@@ -392,7 +392,7 @@ class Map extends RoomMate {
       return
     }
 
-    const settings = this.remoteStore.getDocument('settings', 'world') ?? Settings.defaultSettings
+    const settings = this.remoteStore.getDocument('settings', 'world') ?? defaultSettings
 
     for (let x = 0; x < settings.size.width; x++) {
       for (let y = 0; y < settings.size.height; y++) {

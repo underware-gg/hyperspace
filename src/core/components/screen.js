@@ -1,7 +1,6 @@
 import * as THREE from 'three'
 import RoomMate from '@/core/interfaces/RoomMate'
 import * as Interactable from '@/core/components/interactable'
-import * as Permission from '@/core/components/permission'
 import { HTMLMesh } from '@/core/rendering/HTMLMesh'
 import { getTextureImageByName } from '@/core/textures'
 import { getTile, floors } from '@/core/components/map'
@@ -74,7 +73,7 @@ class Screen extends RoomMate {
       const screenMesh = this.localStore.getDocument('screen-mesh', screenId)
       if (screenMesh === null) return
 
-      screenMesh.visible = Permission.canView(screenId)
+      screenMesh.visible = this.Permission.canView(screenId)
     }
 
     this.remoteStore.on({ type: 'screen', event: 'create' }, (screenId, screen) => {
@@ -168,7 +167,7 @@ class Screen extends RoomMate {
   }
 
   remove(id) {
-    if (!Permission.canEdit(id)) {
+    if (!this.Permission.canEdit(id)) {
       console.warn(`No permission to delete Screen [${id}]`)
       return
     }
@@ -256,7 +255,7 @@ class Screen extends RoomMate {
     let screen = this.remoteStore.getDocument('screen', id)
     if (screen == null) return
 
-    if (!Permission.canEdit(id)) {
+    if (!this.Permission.canEdit(id)) {
       console.warn(`No permission to update Screen [${id}] [${screen.name}]`)
       return
     }

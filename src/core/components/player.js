@@ -1,12 +1,7 @@
 import * as THREE from 'three'
 import RoomMate from '@/core/interfaces/RoomMate'
-import * as Settings from '@/core/components/settings'
-import * as Map from '@/core/components/map'
-import * as Portal from '@/core/components/portal'
-import * as Trigger from '@/core/components/trigger'
-import * as Screen from '@/core/components/screen'
+import { defaultSettings } from '@/core/components/settings'
 import * as Interactable from '@/core/components/interactable'
-import * as Permission from '@/core/components/permission'
 import { getActionState, addActionDownListener } from '@/core/controller'
 import { getTextureByName, getTextureSprite } from '@/core/textures'
 import { CONST, clamp, clampRadians, deepCompare, deepCopy } from '@/core/utils'
@@ -101,9 +96,9 @@ class Player extends RoomMate {
         return
       }
 
-      Portal.remove(getPortalOverPlayer(this.agentId))
-      Trigger.remove(getTriggerOverPlayer(this.agentId))
-      Screen.remove(getScreenOverPlayer(this.agentId))
+      this.Portal.remove(getPortalOverPlayer(this.agentId))
+      this.Trigger.remove(getTriggerOverPlayer(this.agentId))
+      this.Screen.remove(getScreenOverPlayer(this.agentId))
     })
   }
 
@@ -122,7 +117,7 @@ class Player extends RoomMate {
     }
 
     // go to default entry
-    // const settings = this.remoteStore.getDocument('settings', 'world') ?? Settings.defaultSettings
+    // const settings = this.remoteStore.getDocument('settings', 'world') ?? defaultSettings
     // moveToTile(agentId, settings.entry)
 
     // reset player position
@@ -206,9 +201,9 @@ class Player extends RoomMate {
   }
 
   create(id) {
-    const settings = this.remoteStore.getDocument('settings', 'world') ?? Settings.defaultSettings
+    const settings = this.remoteStore.getDocument('settings', 'world') ?? defaultSettings
 
-    const entryPosition = Map.fromTileToCanvasPosition(settings.entry.x, settings.entry.y)
+    const entryPosition = this.Map.fromTileToCanvasPosition(settings.entry.x, settings.entry.y)
 
     const player = {
       position: {
@@ -232,13 +227,13 @@ class Player extends RoomMate {
   interact(id) {
     const portalId = getPortalOverPlayer(id)
     if (portalId) {
-      Portal.travel(portalId)
+      this.Portal.travel(portalId)
       return
     }
 
     const triggerId = getTriggerOverPlayer(id)
     if (triggerId) {
-      Trigger.switchState(triggerId)
+      this.Trigger.switchState(triggerId)
       return
     }
 
@@ -247,7 +242,7 @@ class Player extends RoomMate {
       const currentScreenId = this.localStore.getDocument('screens', 'editing')
       const newScreenId = screenId != currentScreenId ? screenId : null
 
-      if (newScreenId && !Permission.canView(newScreenId)) {
+      if (newScreenId && !this.Permission.canView(newScreenId)) {
         return
       }
 
@@ -258,12 +253,12 @@ class Player extends RoomMate {
 
   getPortalOverPlayer(id) {
     const portalId = getInteractableOfTypeOverPlayer(id, 'portal')
-    return portalId && Permission.canView(portalId) ? portalId : null
+    return portalId && this.Permission.canView(portalId) ? portalId : null
   }
 
   getTriggerOverPlayer(id) {
     const triggerId = getInteractableOfTypeOverPlayer(id, 'trigger')
-    return triggerId && Permission.canView(triggerId) ? triggerId : null
+    return triggerId && this.Permission.canView(triggerId) ? triggerId : null
   }
 
   getScreenOverPlayer(id) {
@@ -279,7 +274,7 @@ class Player extends RoomMate {
       screenId = getInteractableOfTypeOverPlayer(id, 'screen')
     }
 
-    return screenId && Permission.canView(screenId) ? screenId : null
+    return screenId && this.Permission.canView(screenId) ? screenId : null
   }
 
   canPlaceOverPlayer(id) {
@@ -325,7 +320,7 @@ class Player extends RoomMate {
       return null
     }
 
-    const position = Map.fromTileToCanvasPosition(tile?.x, tile?.y)
+    const position = this.Map.fromTileToCanvasPosition(tile?.x, tile?.y)
     player.position.x = position.x
     player.position.y = position.y
     this.remoteStore.setDocument('player', id, player)

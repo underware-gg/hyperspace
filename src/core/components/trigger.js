@@ -1,8 +1,6 @@
 import * as THREE from 'three'
 import RoomMate from '@/core/interfaces/RoomMate'
 import * as Interactable from '@/core/components/interactable'
-import * as Permission from '@/core/components/permission'
-import * as Map from '@/core/components/map'
 import { getTextureImageByName } from '@/core/textures'
 import { getTile, floors } from '@/core/components/map'
 
@@ -102,7 +100,7 @@ class Trigger extends RoomMate {
     let trigger = this.remoteStore.getDocument('trigger', id)
     if (trigger == null) return
 
-    if (!Permission.canEdit(id)) {
+    if (!this.Permission.canEdit(id)) {
       console.warn(`No permission to update Trigger [${id}] to [${trigger.slug}]`)
       return
     }
@@ -117,7 +115,7 @@ class Trigger extends RoomMate {
   }
 
   remove = (id) => {
-    if (!Permission.canEdit(id)) {
+    if (!this.Permission.canEdit(id)) {
       console.warn(`No permission to delete Trigger [${id}]`)
       return
     }
@@ -134,7 +132,7 @@ class Trigger extends RoomMate {
     let trigger = this.remoteStore.getDocument('trigger', id)
     if (trigger == null) return
 
-    if (!Permission.canView(id)) {
+    if (!this.Permission.canView(id)) {
       console.warn(`No permission to switch Trigger [${id}]`)
       return
     }
@@ -153,7 +151,7 @@ class Trigger extends RoomMate {
         console.log(`switch map:`, i)
         let tileNumber = state == 0 ? i.stateOff : i.stateOn
         let tileIndex = _tileNumberToIndex(tileNumber)
-        Map.update('world', parseInt(i.x), parseInt(i.y), tileIndex)
+        this.Map.update('world', parseInt(i.x), parseInt(i.y), tileIndex)
       }
     }
 

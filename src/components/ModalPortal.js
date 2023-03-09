@@ -11,8 +11,8 @@ import { getGameCanvasElement } from '@/core/game-canvas'
 import { TileInput, useInputValidator } from '@/components/Inputs'
 import Button from '@/components/Button'
 import { emitAction } from '@/core/controller'
+import { defaultSettings } from '@/core/components/settings'
 import * as Portal from '@/core/components/portal'
-import * as Settings from '@/core/components/settings'
 
 const ModalPortal = ({
   disclosure,
@@ -21,8 +21,8 @@ const ModalPortal = ({
 }) => {
   const { isOpen, onOpen, onClose } = disclosure
   const [roomName, setRoomName] = useState('');
-  const [tileX, setTileX] = useState(Settings.defaultSettings.entry.x);
-  const [tileY, setTileY] = useState(Settings.defaultSettings.entry.y);
+  const [tileX, setTileX] = useState(defaultSettings.entry.x);
+  const [tileY, setTileY] = useState(defaultSettings.entry.y);
   const validator = useInputValidator()
   const roomNameRef = useRef()
   const finalRef = useRef(null)
@@ -37,8 +37,8 @@ const ModalPortal = ({
   useEffect(() => {
     if (isOpen) {
       setRoomName(portal?.slug ?? '')
-      setTileX(portal?.tile?.x ?? Settings.defaultSettings.entry.x)
-      setTileY(portal?.tile?.y ?? Settings.defaultSettings.entry.y)
+      setTileX(portal?.tile?.x ?? defaultSettings.entry.x)
+      setTileY(portal?.tile?.y ?? defaultSettings.entry.y)
     }
   }, [portal, isOpen])
 
