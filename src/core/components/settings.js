@@ -1,4 +1,4 @@
-import { getRemoteStore } from '@/core/singleton'
+import RoomMate from '@/core/interfaces/RoomMate'
 
 export const defaultSettings = {
   size: {
@@ -11,25 +11,30 @@ export const defaultSettings = {
   },
 }
 
-export const create = (id) => {
-  const store = getRemoteStore()
-  store.setDocument('settings', id, defaultSettings)
-  return defaultSettings
+class Settings extends RoomMate {
+  constructor(room) {
+    super(room)
+  }
+
+  create(id) {
+    this.remoteStore.setDocument('settings', id, defaultSettings)
+    return defaultSettings
+  }
+
+  update(id, newSettings) {
+    let settings = this.remoteStore.getDocument('settings', id) ?? defaultSettings
+    this.remoteStore.setDocument('settings', id, { ...settings, ...newSettings })
+  }
+
+  remove(id) {
+    this.remoteStore.setDocument('settings', id, null)
+  }
+
+  exists(id) {
+    const settings = this.remoteStore.getDocument('settings', id)
+    return settings !== null
+  }
+
 }
 
-export const update = (id, newSettings) => {
-  const store = getRemoteStore()
-  let settings = store.getDocument('settings', id) ?? defaultSettings
-  store.setDocument('settings', id, { ...settings, ...newSettings })
-}
-
-export const remove = (id) => {
-  const store = getRemoteStore()
-  store.setDocument('settings', id, null)
-}
-
-export const exists = (id) => {
-  const store = getRemoteStore()
-  const settings = store.getDocument('settings', id)
-  return settings !== null
-}
+export default Settings

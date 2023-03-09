@@ -34,6 +34,10 @@ class RoomMate {
     return this.#room.Permission
   }
 
+  get Settings() {
+    return this.#room.Settings
+  }
+
   get Portal() {
     return this.#room.Portal
   }

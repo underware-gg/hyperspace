@@ -13,7 +13,7 @@ import Screen from '@/core/components/screen'
 import Player from '@/core/components/player'
 import Profile from '@/core/components/profile'
 import Permission from '@/core/components/permission'
-import * as Settings from '@/core/components/settings'
+import Settings from '@/core/components/settings'
 import * as Map from '@/core/components/map'
 import * as Editor from '@/core/components/editor'
 import { getRemoteStore, getLocalStore } from '@/core/singleton'
@@ -166,12 +166,13 @@ class Room {
     this.Player = new Player(this)
     this.Profile = new Profile(this)
     this.Permission = new Permission(this)
+    this.Settings = new Settings(this)
 
     // loads snapshot
     this.clientRoom.init(slug)
 
-    if (!Settings.exists('world')) {
-      Settings.create('world')
+    if (!this.Settings.exists('world')) {
+      this.Settings.create('world')
     }
 
     Editor.init(canvas, this.clientRoom.agentId)
