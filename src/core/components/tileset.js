@@ -1,21 +1,24 @@
-import { getRemoteStore } from '@/core/singleton'
+import RoomMate from '@/core/interfaces/RoomMate'
 
-export const create = (id, tileset) => {
-  const store = getRemoteStore()
+class Tileset extends RoomMate {
+  constructor(room) {
+    super(room)
+  }
 
-  store.setDocument('tileset', id, tileset)
+  create(id, tileset) {
+    this.remoteStore.setDocument('tileset', id, tileset)
+    return tileset
+  }
 
-  return tileset
+  remove(id) {
+    this.remoteStore.setDocument('tileset', id, null)
+  }
+
+  exists(id) {
+    const tileset = this.remoteStore.getDocument('tileset', id)
+    return tileset !== null
+  }
+
 }
 
-export const remove = (id) => {
-  const store = getRemoteStore()
-  store.setDocument('tileset', id, null)
-}
-
-export const exists = (id) => {
-  const store = getRemoteStore()
-  const tileset = store.getDocument('tileset', id)
-
-  return tileset !== null
-}
+export default Tileset

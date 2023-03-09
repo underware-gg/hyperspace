@@ -14,6 +14,7 @@ import Player from '@/core/components/player'
 import Profile from '@/core/components/profile'
 import Permission from '@/core/components/permission'
 import Settings from '@/core/components/settings'
+import Tileset from '@/core/components/tileset'
 import * as Map from '@/core/components/map'
 import * as Editor from '@/core/components/editor'
 import { getRemoteStore, getLocalStore } from '@/core/singleton'
@@ -167,6 +168,7 @@ class Room {
     this.Profile = new Profile(this)
     this.Permission = new Permission(this)
     this.Settings = new Settings(this)
+    this.Tileset = new Tileset(this)
 
     // loads snapshot
     this.clientRoom.init(slug)

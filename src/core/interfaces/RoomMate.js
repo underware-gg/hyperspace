@@ -38,6 +38,10 @@ class RoomMate {
     return this.#room.Settings
   }
 
+  get Tileset() {
+    return this.#room.Tileset
+  }
+
   get Portal() {
     return this.#room.Portal
   }
