@@ -57,7 +57,7 @@ const RoomDownloadMenu = () => {
           for (let y = 0; y < 15; ++y) {
             const i = y * 16 + x
             const bit = bitmap.and(new BN('1').shln(255-i)).eq(new BN('0')) ? 0 : 1
-            Map.update('world', x, y, bit ? 8 : 5)
+            map.updateTile('world', x, y, bit ? 8 : 5)
           }
         }
         return

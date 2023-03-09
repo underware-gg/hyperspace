@@ -22,7 +22,7 @@ class Settings extends RoomCollection {
     }
   }
 
-  update(id, newSettings) {
+  updateSettings(id, newSettings) {
     let settings = this.remoteStore.getDocument('settings', id) ?? defaultSettings
     this.remoteStore.setDocument('settings', id, { ...settings, ...newSettings })
   }

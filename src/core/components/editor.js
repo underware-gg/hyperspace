@@ -234,43 +234,43 @@ class Editor extends RoomCollection {
     }
 
     if (getActionState('1')) {
-      this.Map.update('world', x, y, 0)
+      this.map.updateTile('world', x, y, 0)
     }
 
     if (getActionState('2')) {
-      this.Map.update('world', x, y, 1)
+      this.map.updateTile('world', x, y, 1)
     }
 
     if (getActionState('3')) {
-      this.Map.update('world', x, y, 2)
+      this.map.updateTile('world', x, y, 2)
     }
 
     if (getActionState('4')) {
-      this.Map.update('world', x, y, 3)
+      this.map.updateTile('world', x, y, 3)
     }
 
     if (getActionState('5')) {
-      this.Map.update('world', x, y, 4)
+      this.map.updateTile('world', x, y, 4)
     }
 
     if (getActionState('6')) {
-      this.Map.update('world', x, y, 5)
+      this.map.updateTile('world', x, y, 5)
     }
 
     if (getActionState('7')) {
-      this.Map.update('world', x, y, 6)
+      this.map.updateTile('world', x, y, 6)
     }
 
     if (getActionState('8')) {
-      this.Map.update('world', x, y, 7)
+      this.map.updateTile('world', x, y, 7)
     }
 
     if (getActionState('9')) {
-      this.Map.update('world', x, y, 8)
+      this.map.updateTile('world', x, y, 8)
     }
 
     if (getActionState('0')) {
-      this.Map.update('world', x, y, 9)
+      this.map.updateTile('world', x, y, 9)
     }
   }
 

@@ -65,7 +65,7 @@ export const ModalSettings = ({
         height: sizeY,
       }
     } else {
-      Settings.update(id, options)
+      Settings.updateSettings(id, options)
     }
     onClose()
   }

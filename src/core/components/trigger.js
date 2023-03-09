@@ -133,7 +133,7 @@ class Trigger extends RoomCollection {
         console.log(`switch map:`, i)
         let tileNumber = state == 0 ? i.stateOff : i.stateOn
         let tileIndex = _tileNumberToIndex(tileNumber)
-        this.Map.update('world', parseInt(i.x), parseInt(i.y), tileIndex)
+        this.map.updateTile('world', parseInt(i.x), parseInt(i.y), tileIndex)
       }
     }
 

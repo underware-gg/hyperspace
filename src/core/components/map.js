@@ -247,7 +247,7 @@ class Map extends RoomCollection {
     this.create(id, map)
   }
 
-  update(id, x, y, value) {
+  updateTile(id, x, y, value) {
     const map = this.remoteStore.getDocument('map', id)
 
     if (map === null) {
