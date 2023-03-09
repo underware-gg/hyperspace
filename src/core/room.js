@@ -10,9 +10,9 @@ import Renderer3D from '@/core/rendering/renderer3D'
 import Portal from '@/core/components/portal'
 import Trigger from '@/core/components/trigger'
 import Screen from '@/core/components/screen'
+import Player from '@/core/components/player'
 import * as Settings from '@/core/components/settings'
 import * as Map from '@/core/components/map'
-import * as Player from '@/core/components/player'
 import * as Editor from '@/core/components/editor'
 import { getRemoteStore, getLocalStore } from '@/core/singleton'
 
@@ -157,7 +157,7 @@ class Room {
     ClientRoom.init(slug)
     this.clientRoom = ClientRoom.get() // TODO: remove
 
-    // before room.init() to listen snapshot 'create' events
+    // before this.clientRoom.init() to listen snapshot 'create' events
     this.Portal = new Portal(this)
     this.Trigger = new Trigger(this)
     this.Screen = new Screen(this)
@@ -171,7 +171,8 @@ class Room {
 
     Editor.init(canvas, this.clientRoom.agentId)
     Editor.init3d(canvas3d, this.clientRoom.agentId)
-    Player.init()
+
+    this.Player = new Player(this)
     Map.init()
 
     if (!Map.exists('world')) {
