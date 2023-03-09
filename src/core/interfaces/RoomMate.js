@@ -58,6 +58,10 @@ class RoomMate {
     return this.#room.Map
   }
 
+  get Editor() {
+    return this.#room.Editor
+  }
+
 }
 
 export default RoomMate

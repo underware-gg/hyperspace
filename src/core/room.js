@@ -16,7 +16,7 @@ import Permission from '@/core/components/permission'
 import Settings from '@/core/components/settings'
 import Tileset from '@/core/components/tileset'
 import Map from '@/core/components/map'
-import * as Editor from '@/core/components/editor'
+import Editor from '@/core/components/editor'
 import { getRemoteStore, getLocalStore } from '@/core/singleton'
 
 const _actions = [
@@ -177,8 +177,9 @@ class Room {
       this.Settings.create('world')
     }
 
-    Editor.init(canvas, this.clientRoom.agentId)
-    Editor.init3d(canvas3d, this.clientRoom.agentId)
+    this.Editor = new Editor(this)
+    this.Editor.init(canvas, this.clientRoom.agentId)
+    this.Editor.init3d(canvas3d, this.clientRoom.agentId)
 
     this.Map = new Map(this)
     if (!this.Map.exists('world')) {
@@ -231,7 +232,7 @@ class Room {
     this.renderer2D.update(dt)
     this.renderer3D.update(dt)
     this.Player.update(this.clientRoom.agentId, dt)
-    Editor.update(this.clientRoom.agentId, dt)
+    this.Editor.update(this.clientRoom.agentId, dt)
   }
 
   render(canvas) {
@@ -260,7 +261,7 @@ class Room {
     for (const playerId of playerIds) {
       if (this.clientRoom.hasAgentId(playerId)) {
         this.Player.render2d(playerId, context)
-        Editor.render2d(playerId, context)
+        this.Editor.render2d(playerId, context)
       }
     }
 
