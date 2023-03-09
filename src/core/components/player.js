@@ -1,7 +1,6 @@
 import * as THREE from 'three'
 import RoomCollection from '@/core/interfaces/RoomCollection'
 import { defaultSettings } from '@/core/components/settings'
-import * as Interactable from '@/core/components/interactable'
 import { getActionState, addActionDownListener } from '@/core/controller'
 import { getTextureByName, getTextureSprite } from '@/core/textures'
 import { CONST, clamp, clampRadians, deepCompare, deepCopy } from '@/core/utils'
@@ -96,9 +95,9 @@ class Player extends RoomCollection {
         return
       }
 
-      this.Portal.remove(getPortalOverPlayer(this.agentId))
-      this.Trigger.remove(getTriggerOverPlayer(this.agentId))
-      this.Screen.remove(getScreenOverPlayer(this.agentId))
+      this.Portal.remove(getPortalOverPlayer(this.agentId), true)
+      this.Trigger.remove(getTriggerOverPlayer(this.agentId), true)
+      this.Screen.remove(getScreenOverPlayer(this.agentId), true)
     })
   }
 
@@ -121,7 +120,7 @@ class Player extends RoomCollection {
     // moveToTile(agentId, settings.entry)
 
     // reset player position
-    create(agentId)
+    createPlayer(agentId)
   }
 
   makePlayerMaterial(agentId) {
@@ -200,7 +199,7 @@ class Player extends RoomCollection {
 
   }
 
-  create(id) {
+  createPlayer(id) {
     const settings = this.remoteStore.getDocument('settings', 'world') ?? defaultSettings
 
     const entryPosition = this.Map.fromTileToCanvasPosition(settings.entry.x, settings.entry.y)
@@ -252,12 +251,12 @@ class Player extends RoomCollection {
   }
 
   getPortalOverPlayer(id) {
-    const portalId = getInteractableOfTypeOverPlayer(id, 'portal')
+    const portalId = this.getObjectOfTypeOverPlayer(id, 'portal')
     return portalId && this.Permission.canView(portalId) ? portalId : null
   }
 
   getTriggerOverPlayer(id) {
-    const triggerId = getInteractableOfTypeOverPlayer(id, 'trigger')
+    const triggerId = this.getObjectOfTypeOverPlayer(id, 'trigger')
     return triggerId && this.Permission.canView(triggerId) ? triggerId : null
   }
 
@@ -271,7 +270,7 @@ class Player extends RoomCollection {
     if (is3d) {
       screenId = this.localStore.getDocument('screens', 'facing-3d')
     } else {
-      screenId = getInteractableOfTypeOverPlayer(id, 'screen')
+      screenId = this.getObjectOfTypeOverPlayer(id, 'screen')
     }
 
     return screenId && this.Permission.canView(screenId) ? screenId : null
@@ -285,19 +284,19 @@ class Player extends RoomCollection {
     );
   }
 
-  getInteractableOfTypeOverPlayer(id, type) {
-    const target = getInteractableOverPlayer(id)
+  getObjectOfTypeOverPlayer(id, type) {
+    const target = this.getObjectOverPlayer(id)
     return target?.type == type ? target.id : null
   }
 
-  getInteractableOverPlayer(id) {
+  getObjectOverPlayer(id) {
     const playerRect = getPlayerCollisionRect(id);
     if (playerRect == null) return
 
     for (const type of ['portal', 'trigger', 'screen']) {
       const ids = this.remoteStore.getIds(type)
       for (const id of ids) {
-        if (rectanglesOverlap(playerRect, Interactable.getCollisionRect(type, id))) {
+        if (rectanglesOverlap(playerRect, this.getCollisionRect(id))) {
           return {
             type,
             id,
@@ -306,12 +305,6 @@ class Player extends RoomCollection {
       }
     }
     return null;
-  }
-
-
-  exists(id) {
-    const player = this.remoteStore.getDocument('player', id)
-    return player !== null
   }
 
   moveToTile(id, tile) {
@@ -668,7 +661,6 @@ class Player extends RoomCollection {
 
     return getTextureSprite(texture, stepX, stepY, cycleName)
   }
-
 }
 
 export default Player

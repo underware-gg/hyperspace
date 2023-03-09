@@ -223,7 +223,9 @@ class Map extends RoomCollection {
     })
   }
 
-  create(id) {
+  initializeMap(id) {
+    if (this.exists(id)) return
+
     const map = [
       [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
       [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
@@ -242,13 +244,7 @@ class Map extends RoomCollection {
       [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
     ]
 
-    this.remoteStore.setDocument('map', id, map)
-
-    return map
-  }
-
-  exists(id) {
-    return this.remoteStore.hasDocument('map', id)
+    this.create(id, map)
   }
 
   update(id, x, y, value) {

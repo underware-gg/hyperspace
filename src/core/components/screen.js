@@ -1,6 +1,5 @@
 import * as THREE from 'three'
 import RoomCollection from '@/core/interfaces/RoomCollection'
-import * as Interactable from '@/core/components/interactable'
 import { HTMLMesh } from '@/core/rendering/HTMLMesh'
 import { getTextureImageByName } from '@/core/textures'
 import { getTile, floors } from '@/core/components/map'
@@ -160,22 +159,6 @@ class Screen extends RoomCollection {
       // console.log(`Intersect screen:`, intersects.length, newScreenId)
       this.localStore.setDocument('screens', 'facing-3d', newScreenId)
     }
-  }
-
-  exists(id) {
-    return Interactable.exists('screen', id)
-  }
-
-  remove(id) {
-    if (!this.Permission.canEdit(id)) {
-      console.warn(`No permission to delete Screen [${id}]`)
-      return
-    }
-    return Interactable.remove('screen', id)
-  }
-
-  getCollisionRect(id) {
-    return Interactable.getCollisionRect('screen', id)
   }
 
   render2d(id, context, agentId) {

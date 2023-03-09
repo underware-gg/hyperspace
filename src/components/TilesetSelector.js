@@ -43,11 +43,7 @@ const TilesetSelector = ({ }) => {
     for (const t of tilesets) {
       const src = t.src
       if (fileName == src) {
-        Tileset.create('world', {
-          blob: null,
-          name: fileName,
-          size: { width: 320, height: 32 },
-        })
+        Tileset.createTileset('world', fileName, 32, 32, null)
       }
     }
     focusGameCanvas()
@@ -57,11 +53,7 @@ const TilesetSelector = ({ }) => {
     try {
       const { dataUrl, width, height } = await fromSourceToDataURL(URL.createObjectURL(fileObject))
       if (width === 320 && height === 32) {
-        Tileset.create('world', {
-          blob: dataUrl,
-          name: fileObject.name,
-          size: { width, height },
-        })
+        Tileset.createTileset('world', fileObject.name, width, height, dataUrl)
       } else {
         Tileset.remove('world')
       }

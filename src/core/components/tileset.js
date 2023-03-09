@@ -5,18 +5,12 @@ class Tileset extends RoomCollection {
     super(room, 'tileset')
   }
 
-  create(id, tileset) {
-    this.remoteStore.setDocument('tileset', id, tileset)
-    return tileset
-  }
-
-  remove(id) {
-    this.remoteStore.setDocument('tileset', id, null)
-  }
-
-  exists(id) {
-    const tileset = this.remoteStore.getDocument('tileset', id)
-    return tileset !== null
+  createTileset(id, name, width, height, blob) {
+    return this.create(id, {
+      name,
+      blob,
+      size: { width, height },
+    })
   }
 
 }

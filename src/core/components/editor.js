@@ -50,7 +50,7 @@ class Editor extends RoomCollection {
 
       const { x, y } = this.getCreateTileRotation(id)
       console.log(`create_portal`, id, x, y, slug, tile)
-      this.Portal.create(nanoid(), x, y, slug, tile)
+      this.Portal.createPortal(slug, tile, x, y)
     })
 
     addActionDownListener('createTrigger', (options = {}) => {
@@ -65,7 +65,7 @@ class Editor extends RoomCollection {
       }
 
       const { x, y } = this.getCreateTileRotation(id)
-      this.Trigger.create(nanoid(), x, y, trigger)
+      this.Trigger.createAtPosition(nanoid(), trigger, x, y)
     })
 
     addActionDownListener('createScreen', () => {

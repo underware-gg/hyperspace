@@ -11,28 +11,33 @@ class RoomCollection extends RoomMate {
     this.type = type
   }
 
-  create(id, x, y, data) {
-    if (id == null) return null
-    data = {
-      ...data,
-      position: { x, y, z: 0 },
-    }
-    this.remoteStore.setDocument(this.type, id, data)
-    return data
-  }
-
   exists(id) {
     if (id == null) return false
     const data = this.remoteStore.getDocument(this.type, id)
     return data !== null
   }
 
-  remove(id) {
+  remove(id, checkPermission = false) {
     if (id == null) return
     const data = this.remoteStore.getDocument(this.type, id)
-    if (data !== null) {
-      this.remoteStore.setDocument(this.type, id, null)
+    if (data == null) return
+    if (checkPermission && !this.Permission.canEdit(id)) {
+      console.warn(`No permission to delete [${this.type}] (${id})`)
+      return
     }
+    this.remoteStore.setDocument(this.type, id, null)
+  }
+
+  create(id, data) {
+    if (id == null) return null
+    return this.remoteStore.setDocument(this.type, id, data)
+  }
+
+  createAtPosition(id, data, x, y, z=0) {
+    return this.create(id, {
+      ...data,
+      position: { x, y, z },
+    })
   }
 
   getCollisionRect(id) {

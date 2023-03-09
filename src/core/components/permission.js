@@ -1,17 +1,8 @@
 import RoomCollection from '@/core/interfaces/RoomCollection'
-import * as Interactable from '@/core/components/interactable'
 
 class Permission extends RoomCollection {
   constructor(room) {
     super(room, 'permission')
-  }
-
-  exists(id) {
-    return Interactable.exists('permission', id)
-  }
-
-  remove(id) {
-    return Interactable.remove('permission', id)
   }
 
   canView(id, didAddress) {

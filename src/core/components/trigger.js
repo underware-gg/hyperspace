@@ -1,6 +1,5 @@
 import * as THREE from 'three'
 import RoomCollection from '@/core/interfaces/RoomCollection'
-import * as Interactable from '@/core/components/interactable'
 import { getTextureImageByName } from '@/core/textures'
 import { getTile, floors } from '@/core/components/map'
 
@@ -91,11 +90,6 @@ class Trigger extends RoomCollection {
     })
   }
 
-  create(id, x, y, trigger) {
-    Interactable.create('trigger', id, x, y, trigger)
-    return trigger
-  }
-
   updateTrigger(id, values) {
     let trigger = this.remoteStore.getDocument('trigger', id)
     if (trigger == null) return
@@ -108,18 +102,6 @@ class Trigger extends RoomCollection {
     this.remoteStore.setDocument('trigger', id, {
       ...trigger, ...values
     })
-  }
-
-  exists(id) {
-    return Interactable.exists('trigger', id)
-  }
-
-  remove = (id) => {
-    if (!this.Permission.canEdit(id)) {
-      console.warn(`No permission to delete Trigger [${id}]`)
-      return
-    }
-    return Interactable.remove('trigger', id)
   }
 
   static _tileNumberToIndex = (value) => {
@@ -155,10 +137,6 @@ class Trigger extends RoomCollection {
       }
     }
 
-  }
-
-  getCollisionRect(id) {
-    return Interactable.getCollisionRect('trigger', id)
   }
 
   render2d(id, context) {

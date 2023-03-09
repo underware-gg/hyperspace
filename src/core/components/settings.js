@@ -16,23 +16,15 @@ class Settings extends RoomCollection {
     super(room, 'settings')
   }
 
-  create(id) {
-    this.remoteStore.setDocument('settings', id, defaultSettings)
-    return defaultSettings
+  initializeSettings(id) {
+    if (!this.exists(id)) {
+      return this.create(id, defaultSettings)
+    }
   }
 
   update(id, newSettings) {
     let settings = this.remoteStore.getDocument('settings', id) ?? defaultSettings
     this.remoteStore.setDocument('settings', id, { ...settings, ...newSettings })
-  }
-
-  remove(id) {
-    this.remoteStore.setDocument('settings', id, null)
-  }
-
-  exists(id) {
-    const settings = this.remoteStore.getDocument('settings', id)
-    return settings !== null
   }
 
 }

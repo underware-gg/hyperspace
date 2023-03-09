@@ -41,7 +41,7 @@ const CharacterSelector = ({ }) => {
   const _handleSelectSpritesheet = (e => {
     const fileName = e.target.value
     if (agentId && fileName) {
-      Profile.update(agentId, {
+      Profile.updateProfile(agentId, {
         spritesheet: fileName,
       })
     }

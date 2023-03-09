@@ -158,9 +158,9 @@ class Room {
     this.renderer3D.init(canvas3d)
 
     ClientRoom.init(slug)
-    this.clientRoom = ClientRoom.get() // TODO: remove
+    this.clientRoom = ClientRoom.get() // TODO: remove singleton
 
-    // before this.clientRoom.init() to listen snapshot events
+    // instantiate before this.clientRoom.init() to listen to snapshot loading events
     this.Portal = new Portal(this)
     this.Trigger = new Trigger(this)
     this.Screen = new Screen(this)
@@ -169,28 +169,17 @@ class Room {
     this.Permission = new Permission(this)
     this.Settings = new Settings(this)
     this.Tileset = new Tileset(this)
+    this.Map = new Map(this)
+    this.Editor = new Editor(this)
 
     // loads snapshot
     this.clientRoom.init(slug)
 
-    if (!this.Settings.exists('world')) {
-      this.Settings.create('world')
-    }
+    this.Settings.initializeSettings('world')
+    this.Map.initializeMap('world')
 
-    this.Editor = new Editor(this)
     this.Editor.init(canvas, this.clientRoom.agentId)
     this.Editor.init3d(canvas3d, this.clientRoom.agentId)
-
-    this.Map = new Map(this)
-    if (!this.Map.exists('world')) {
-      this.Map.create('world')
-    }
-
-    if (!this.Player.exists(this.clientRoom.agentId)) {
-      this.Player.create(
-        this.clientRoom.agentId,
-      )
-    }
 
     const { VeridaUser } = (await import('@/core/verida'))
     this.localStore.setDocument('user', 'VeridaUser', VeridaUser)

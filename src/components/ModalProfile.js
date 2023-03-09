@@ -41,7 +41,7 @@ const ModalProfile = ({
   }, [])
 
   const _renameUser = (value) => {
-    Profile.update(agentId, {
+    Profile.updateProfile(agentId, {
       name: value,
     })
   }

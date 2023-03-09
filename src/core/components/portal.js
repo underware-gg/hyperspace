@@ -1,6 +1,6 @@
+import { nanoid } from 'nanoid'
 import * as THREE from 'three'
 import RoomCollection from '@/core/interfaces/RoomCollection'
-import * as Interactable from '@/core/components/interactable'
 import { getTextureImageByName } from '@/core/textures'
 import { getPortalOverPlayer } from '@/core/components/player'
 import { getTile, floors } from '@/core/components/map'
@@ -88,12 +88,12 @@ class Portal extends RoomCollection {
     })
   }
 
-  create(id, x, y, slug, tile) {
+  createPortal(slug, tile, x, y) {
     const portal = {
       slug,
       tile,
     }
-    Interactable.create('portal', id, x, y, portal)
+    this.createAtPosition(nanoid(), portal, x, y)
     return portal
   }
 
@@ -109,18 +109,6 @@ class Portal extends RoomCollection {
     this.remoteStore.setDocument('portal', id, {
       ...portal, ...values
     })
-  }
-
-  exists(id) {
-    return Interactable.exists('portal', id)
-  }
-
-  remove(id) {
-    if (!this.Permission.canEdit(id)) {
-      console.warn(`No permission to delete Portal [${id}]`)
-      return
-    }
-    return Interactable.remove('portal', id)
   }
 
   travel(id) {
@@ -147,10 +135,6 @@ class Portal extends RoomCollection {
       cookies.set('portal', JSON.stringify(data), { path: '/' });
       window.location.href = `/${portal.slug}`
     }
-  }
-
-  getCollisionRect(id) {
-    return Interactable.getCollisionRect('portal', id)
   }
 
   render2d(id, context) {
