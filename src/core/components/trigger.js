@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import RoomCollection from '@/core/interfaces/RoomCollection'
 import { getTextureImageByName } from '@/core/textures'
-import { getTile, floors } from '@/core/components/map'
+import { floors } from '@/core/components/map'
 
 class Trigger extends RoomCollection {
   constructor(room) {
@@ -23,7 +23,7 @@ class Trigger extends RoomCollection {
     const _updateTriggerPosition = (triggerMesh, trigger) => {
       if (triggerMesh === null) return
 
-      const tile = getTile('world', trigger.position.x, trigger.position.y)
+      const tile = this.Map.getTile('world', trigger.position.x, trigger.position.y)
       if (tile === null) return
 
       const currentFloorHeight = floors[tile]
@@ -133,7 +133,7 @@ class Trigger extends RoomCollection {
         console.log(`switch map:`, i)
         let tileNumber = state == 0 ? i.stateOff : i.stateOn
         let tileIndex = _tileNumberToIndex(tileNumber)
-        this.map.updateTile('world', parseInt(i.x), parseInt(i.y), tileIndex)
+        this.Map.updateTile('world', parseInt(i.x), parseInt(i.y), tileIndex)
       }
     }
 

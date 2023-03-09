@@ -2,9 +2,8 @@ import * as THREE from 'three'
 import RoomCollection from '@/core/interfaces/RoomCollection'
 import { HTMLMesh } from '@/core/rendering/HTMLMesh'
 import { getTextureImageByName } from '@/core/textures'
-import { getTile, floors } from '@/core/components/map'
+import { floors } from '@/core/components/map'
 import { addActionDownListener } from '@/core/controller'
-import { getScreenOverPlayer } from '@/core/components/player'
 
 export const TYPE = {
   DOCUMENT: 'document',
@@ -93,7 +92,7 @@ class Screen extends RoomCollection {
 
         const { position: { x, y }, rotation: { y: rot } } = screen
 
-        const tile = getTile('world', x, y)
+        const tile = this.Map.getTile('world', x, y)
         if (tile === null) continue
 
         const currentFloorHeight = floors[tile]
@@ -172,7 +171,7 @@ class Screen extends RoomCollection {
 
     let textureName = screen.type
     let textureNameOver = screen.type
-    if (agentId && id == getScreenOverPlayer(agentId)) {
+    if (agentId && id == this.Player.getScreenOverPlayer(agentId)) {
       textureNameOver += `_over`
     }
     let texture = getTextureImageByName(textureNameOver, textureName)

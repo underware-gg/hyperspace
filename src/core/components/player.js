@@ -4,7 +4,7 @@ import { defaultSettings } from '@/core/components/settings'
 import { getActionState, addActionDownListener } from '@/core/controller'
 import { getTextureByName, getTextureSprite } from '@/core/textures'
 import { CONST, clamp, clampRadians, deepCompare, deepCopy } from '@/core/utils'
-import { floors, getTile } from '@/core/components/map'
+import { floors } from '@/core/components/map'
 import { strokeRect } from '@/core/rendering/debug-render'
 import { getOverlappingTiles, rectanglesOverlap } from '@/core/collisions'
 import { spritesheets } from '@/core/texture-data'
@@ -95,9 +95,9 @@ class Player extends RoomCollection {
         return
       }
 
-      this.Portal.remove(getPortalOverPlayer(this.agentId), true)
-      this.Trigger.remove(getTriggerOverPlayer(this.agentId), true)
-      this.Screen.remove(getScreenOverPlayer(this.agentId), true)
+      this.Portal.remove(this.getPortalOverPlayer(this.agentId), true)
+      this.Trigger.remove(this.getTriggerOverPlayer(this.agentId), true)
+      this.Screen.remove(this.getScreenOverPlayer(this.agentId), true)
     })
   }
 
@@ -120,11 +120,11 @@ class Player extends RoomCollection {
     // moveToTile(agentId, settings.entry)
 
     // reset player position
-    createPlayer(agentId)
+    this.createPlayer(agentId)
   }
 
   makePlayerMaterial(agentId) {
-    const texture = getPlayerTexture(agentId)
+    const texture = this.getPlayerTexture(agentId)
     const materialTexture = new THREE.TextureLoader().load(texture.src);
     materialTexture.minFilter = THREE.NearestFilter;
     materialTexture.magFilter = THREE.NearestFilter;
@@ -169,10 +169,10 @@ class Player extends RoomCollection {
     )
 
     // UV
-    const texture = getPlayerTexture(id)
+    const texture = this.getPlayerTexture(id)
 
     const rot = -(player.rotation.y + rotToThisPlayer + CONST.PI);
-    const sprite = getPlayerSprite(texture, x, y, rot);
+    const sprite = this.getPlayerSprite(texture, x, y, rot);
     if (!sprite) return
 
     const { uv } = sprite
@@ -224,19 +224,19 @@ class Player extends RoomCollection {
 
   // We should add a delete portal button too.
   interact(id) {
-    const portalId = getPortalOverPlayer(id)
+    const portalId = this.getPortalOverPlayer(id)
     if (portalId) {
       this.Portal.travel(portalId)
       return
     }
 
-    const triggerId = getTriggerOverPlayer(id)
+    const triggerId = this.getTriggerOverPlayer(id)
     if (triggerId) {
       this.Trigger.switchState(triggerId)
       return
     }
 
-    const screenId = getScreenOverPlayer(id)
+    const screenId = this.getScreenOverPlayer(id)
     if (screenId) {
       const currentScreenId = this.localStore.getDocument('screens', 'editing')
       const newScreenId = screenId != currentScreenId ? screenId : null
@@ -261,8 +261,8 @@ class Player extends RoomCollection {
   }
 
   getScreenOverPlayer(id) {
-    if (getPortalOverPlayer(id)) return null
-    if (getTriggerOverPlayer(id)) return null
+    if (this.getPortalOverPlayer(id)) return null
+    if (this.getTriggerOverPlayer(id)) return null
 
     let screenId = null
 
@@ -278,9 +278,9 @@ class Player extends RoomCollection {
 
   canPlaceOverPlayer(id) {
     return (
-      getPortalOverPlayer(id) == null &&
-      getScreenOverPlayer(id) == null &&
-      getTriggerOverPlayer(id) == null
+      this.getPortalOverPlayer(id) == null &&
+      this.getScreenOverPlayer(id) == null &&
+      this.getTriggerOverPlayer(id) == null
     );
   }
 
@@ -290,13 +290,14 @@ class Player extends RoomCollection {
   }
 
   getObjectOverPlayer(id) {
-    const playerRect = getPlayerCollisionRect(id);
+    const playerRect = this.getPlayerCollisionRect(id);
     if (playerRect == null) return
 
     for (const type of ['portal', 'trigger', 'screen']) {
       const ids = this.remoteStore.getIds(type)
       for (const id of ids) {
-        if (rectanglesOverlap(playerRect, this.getCollisionRect(id))) {
+        const rect = this.getCollisionRect(id)
+        if (rect && rectanglesOverlap(playerRect, rect)) {
           return {
             type,
             id,
@@ -356,7 +357,7 @@ class Player extends RoomCollection {
 
     const { x, y } = player.position
 
-    return fromPosToRect(x, y)
+    return this.fromPosToRect(x, y)
   }
 
   fromPosToRect(x, y) {
@@ -368,6 +369,24 @@ class Player extends RoomCollection {
       size: {
         width: PLAYER_BOX,
         height: PLAYER_BOX,
+      },
+    }
+  }
+
+  getCollisionRect(id) {
+    if (id == null) return null
+
+    const data = this.remoteStore.getDocument(this.type, id)
+    if (!data || !data.position) return null
+
+    return {
+      position: {
+        x: data.position.x * 32,
+        y: data.position.y * 32,
+      },
+      size: {
+        width: 32,
+        height: 32,
       },
     }
   }
@@ -465,9 +484,9 @@ class Player extends RoomCollection {
       }
     }
 
-    const overlappingTiles = getOverlappingTiles(fromPosToRect(x, player.position.y), 32)
+    const overlappingTiles = getOverlappingTiles(this.fromPosToRect(x, player.position.y), 32)
     for (let i = 0; i < overlappingTiles.length; i++) {
-      const tile = getTile('world', overlappingTiles[i].x, overlappingTiles[i].y)
+      const tile = this.Map.getTile('world', overlappingTiles[i].x, overlappingTiles[i].y)
 
       if (tile !== null) {
         const currentFloorHeight = floors[tile]
@@ -481,9 +500,9 @@ class Player extends RoomCollection {
       }
     }
 
-    const overlappingTiles3 = getOverlappingTiles(fromPosToRect(player.position.x, y), 32)
+    const overlappingTiles3 = getOverlappingTiles(this.fromPosToRect(player.position.x, y), 32)
     for (let i = 0; i < overlappingTiles3.length; i++) {
-      const tile = getTile('world', overlappingTiles3[i].x, overlappingTiles3[i].y)
+      const tile = this.Map.getTile('world', overlappingTiles3[i].x, overlappingTiles3[i].y)
 
       if (tile !== null) {
         const currentFloorHeight = floors[tile]
@@ -500,7 +519,7 @@ class Player extends RoomCollection {
     x = clamp(x, PLAYER_RADIUS, process.env.BASE_WIDTH - PLAYER_RADIUS)
     y = clamp(y, PLAYER_RADIUS, process.env.BASE_HEIGHT - PLAYER_RADIUS)
 
-    // const tile = getTile('world', x, y)
+    // const tile = this.Map.getTile('world', x, y)
 
     zSpeed += GRAVITY * dt
     zSpeed = Math.min(zSpeed, MAX_Z_SPEED)
@@ -520,9 +539,9 @@ class Player extends RoomCollection {
     //   grounded = true
     // }
 
-    const overlappingTiles2 = getOverlappingTiles(fromPosToRect(x, y), 32)
+    const overlappingTiles2 = getOverlappingTiles(this.fromPosToRect(x, y), 32)
     for (let i = 0; i < overlappingTiles2.length; i++) {
-      const tile = getTile('world', overlappingTiles2[i].x, overlappingTiles2[i].y)
+      const tile = this.Map.getTile('world', overlappingTiles2[i].x, overlappingTiles2[i].y)
 
       if (tile !== null) {
         const currentFloorHeight = floors[tile]
@@ -586,11 +605,11 @@ class Player extends RoomCollection {
 
     const { position: { x, y }, rotation } = player
 
-    const texture = getPlayerTexture(id)
+    const texture = this.getPlayerTexture(id)
     if (!texture) return // texture not loaded yet
 
     // strokeCircle(context, getCollisionCircle(id))
-    strokeRect(context, getPlayerCollisionRect(id))
+    strokeRect(context, this.getPlayerCollisionRect(id))
 
     let scale = texture.scale;
     let sWidth = texture.width;
@@ -603,7 +622,7 @@ class Player extends RoomCollection {
       sWidth = texture.sprites.width;
       sHeight = texture.sprites.height;
 
-      const { pixel } = getPlayerSprite(texture, x, y, rotation.y);
+      const { pixel } = this.getPlayerSprite(texture, x, y, rotation.y);
 
       sx = pixel.start[0];
       sy = pixel.start[1];
@@ -630,7 +649,7 @@ class Player extends RoomCollection {
     let texture = getTextureByName(profile?.spritesheet)
 
     if (!texture) {
-      texture = getTextureByName(getPlayerTextureName(agentId))
+      texture = getTextureByName(this.getPlayerTextureName(agentId))
     }
 
     return texture

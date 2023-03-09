@@ -2,8 +2,7 @@ import { nanoid } from 'nanoid'
 import * as THREE from 'three'
 import RoomCollection from '@/core/interfaces/RoomCollection'
 import { getTextureImageByName } from '@/core/textures'
-import { getPortalOverPlayer } from '@/core/components/player'
-import { getTile, floors } from '@/core/components/map'
+import { floors } from '@/core/components/map'
 import Cookies from 'universal-cookie';
 
 class Portal extends RoomCollection {
@@ -31,7 +30,7 @@ class Portal extends RoomCollection {
     const _updatePortalPosition = (portalMesh, portal) => {
       if (portalMesh === null) return
 
-      const tile = getTile('world', portal.position.x, portal.position.y)
+      const tile = this.Map.getTile('world', portal.position.x, portal.position.y)
       if (tile === null) return
 
       const currentFloorHeight = floors[tile]
@@ -146,7 +145,7 @@ class Portal extends RoomCollection {
     const texture = getTextureImageByName('portal')
 
     let t = 0
-    if (getPortalOverPlayer(this.agentId) == id) {
+    if (this.Player.getPortalOverPlayer(this.agentId) == id) {
       t = new Date().getTime() / 10000;
     }
 

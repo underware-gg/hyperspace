@@ -39,25 +39,6 @@ class RoomCollection extends RoomMate {
       position: { x, y, z },
     })
   }
-
-  getCollisionRect(id) {
-    if (id == null) return null
-
-    const data = this.remoteStore.getDocument(this.type, id)
-    if (data === null) return null
-
-    return {
-      position: {
-        x: data.position.x * 32,
-        y: data.position.y * 32,
-      },
-      size: {
-        width: 32,
-        height: 32,
-      },
-    }
-  }
-
 }
 
 export default RoomCollection
