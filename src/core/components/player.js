@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import RoomMate from '@/core/interfaces/RoomMate'
+import RoomCollection from '@/core/interfaces/RoomCollection'
 import { defaultSettings } from '@/core/components/settings'
 import * as Interactable from '@/core/components/interactable'
 import { getActionState, addActionDownListener } from '@/core/controller'
@@ -23,9 +23,9 @@ const JUMP_SPEED = 7.5
 let zSpeed = 0
 let grounded = false
 
-class Player extends RoomMate {
+class Player extends RoomCollection {
   constructor(room) {
-    super(room)
+    super(room, 'player')
 
     this.localStore.setDocument('joined', this.agentId, false)
 

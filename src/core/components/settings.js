@@ -1,4 +1,4 @@
-import RoomMate from '@/core/interfaces/RoomMate'
+import RoomCollection from '@/core/interfaces/RoomCollection'
 
 export const defaultSettings = {
   size: {
@@ -11,9 +11,9 @@ export const defaultSettings = {
   },
 }
 
-class Settings extends RoomMate {
+class Settings extends RoomCollection {
   constructor(room) {
-    super(room)
+    super(room, 'settings')
   }
 
   create(id) {

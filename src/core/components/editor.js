@@ -1,15 +1,15 @@
 import { nanoid } from 'nanoid'
 import * as THREE from 'three'
-import RoomMate from '@/core/interfaces/RoomMate'
+import RoomCollection from '@/core/interfaces/RoomCollection'
 import { getActionState, addActionDownListener } from '@/core/controller'
 import { canPlaceOverPlayer } from '@/core/components/player'
 import { getMapScale } from '@/core/components/map'
 import { getPlayerTileRotation } from '@/core/components/player'
 import { roundToNearest, getFilenameFromUrl } from '@/core/utils'
 
-class Editor extends RoomMate {
+class Editor extends RoomCollection {
   constructor(room) {
-    super(room)
+    super(room, 'editor')
   }
 
   init(canvas, id) {

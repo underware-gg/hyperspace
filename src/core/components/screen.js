@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import RoomMate from '@/core/interfaces/RoomMate'
+import RoomCollection from '@/core/interfaces/RoomCollection'
 import * as Interactable from '@/core/components/interactable'
 import { HTMLMesh } from '@/core/rendering/HTMLMesh'
 import { getTextureImageByName } from '@/core/textures'
@@ -12,9 +12,9 @@ export const TYPE = {
   PDF_BOOK: 'pdf_book',
 }
 
-class Screen extends RoomMate {
+class Screen extends RoomCollection {
   constructor(room) {
-    super(room)
+    super(room, 'screen')
 
     const scene = this.localStore.getDocument('scene', 'scene')
 

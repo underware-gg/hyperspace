@@ -1,9 +1,9 @@
-import RoomMate from '@/core/interfaces/RoomMate'
+import RoomCollection from '@/core/interfaces/RoomCollection'
 import * as Interactable from '@/core/components/interactable'
 
-class Permission extends RoomMate {
+class Permission extends RoomCollection {
   constructor(room) {
-    super(room)
+    super(room, 'permission')
   }
 
   exists(id) {

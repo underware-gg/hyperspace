@@ -1,14 +1,14 @@
 import * as THREE from 'three'
-import RoomMate from '@/core/interfaces/RoomMate'
+import RoomCollection from '@/core/interfaces/RoomCollection'
 import * as Interactable from '@/core/components/interactable'
 import { getTextureImageByName } from '@/core/textures'
 import { getPortalOverPlayer } from '@/core/components/player'
 import { getTile, floors } from '@/core/components/map'
 import Cookies from 'universal-cookie';
 
-class Portal extends RoomMate {
+class Portal extends RoomCollection {
   constructor(room) {
-    super(room)
+    super(room, 'portal')
 
     const scene = this.localStore.getDocument('scene', 'scene')
 

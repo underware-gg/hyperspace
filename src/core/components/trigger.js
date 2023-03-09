@@ -1,12 +1,12 @@
 import * as THREE from 'three'
-import RoomMate from '@/core/interfaces/RoomMate'
+import RoomCollection from '@/core/interfaces/RoomCollection'
 import * as Interactable from '@/core/components/interactable'
 import { getTextureImageByName } from '@/core/textures'
 import { getTile, floors } from '@/core/components/map'
 
-class Trigger extends RoomMate {
+class Trigger extends RoomCollection {
   constructor(room) {
-    super(room)
+    super(room, 'trigger')
 
     const scene = this.localStore.getDocument('scene', 'scene')
 

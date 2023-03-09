@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import RoomMate from '@/core/interfaces/RoomMate'
+import RoomCollection from '@/core/interfaces/RoomCollection'
 import { getTextureImageByName } from '@/core/textures'
 import { defaultTileset } from '@/core/texture-data'
 import { clamp } from '@/core/utils'
@@ -41,9 +41,9 @@ export const floors = [
   1,
 ]
 
-class Map extends RoomMate {
+class Map extends RoomCollection {
   constructor(room) {
-    super(room)
+    super(room, 'map')
 
     ////////////
     //3D STUFF//

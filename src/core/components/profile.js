@@ -1,8 +1,8 @@
-import RoomMate from '@/core/interfaces/RoomMate'
+import RoomCollection from '@/core/interfaces/RoomCollection'
 
-class Permission extends RoomMate {
+class Permission extends RoomCollection {
   constructor(room) {
-    super(room)
+    super(room, 'profile')
   }
 
   create(id, name, spritesheet) {

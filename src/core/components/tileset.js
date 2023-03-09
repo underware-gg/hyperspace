@@ -1,8 +1,8 @@
-import RoomMate from '@/core/interfaces/RoomMate'
+import RoomCollection from '@/core/interfaces/RoomCollection'
 
-class Tileset extends RoomMate {
+class Tileset extends RoomCollection {
   constructor(room) {
-    super(room)
+    super(room, 'tileset')
   }
 
   create(id, tileset) {

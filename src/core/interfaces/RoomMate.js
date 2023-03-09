@@ -1,4 +1,8 @@
 
+// objects created inside Room
+// share the Room client and stores
+// can access to other objects
+
 class RoomMate {
   #room;
 
