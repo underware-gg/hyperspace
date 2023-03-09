@@ -15,7 +15,6 @@ export const TYPE = {
 }
 
 export const init = () => {
-  const room = ClientRoom.get()
   const localStore = getLocalStore()
   const remoteStore = getRemoteStore()
 
@@ -117,6 +116,7 @@ export const init = () => {
   })
 
   remoteStore.on({ type: 'player', event: 'update' }, (agentId, player) => {
+    const room = ClientRoom.get()
     if(agentId == room.agentId) {
       doScreenPicking();
     }

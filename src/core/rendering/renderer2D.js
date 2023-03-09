@@ -1,4 +1,11 @@
-class Renderer2D {
+
+import RoomMate from '@/core/interfaces/RoomMate'
+
+class Renderer2D extends RoomMate {
+  constructor(room) {
+    super(room)
+  }
+  
   init(context) {
     context.mozImageSmoothingEnabled = false
     context.webkitImageSmoothingEnabled = false
@@ -7,7 +14,6 @@ class Renderer2D {
   }
 
   update(dt) {
-
   }
 
   render(canvas, context) {

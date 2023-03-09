@@ -1,7 +1,11 @@
 import * as THREE from 'three'
-import { getLocalStore } from '@/core/singleton'
+import RoomMate from '@/core/interfaces/RoomMate'
 
-class Renderer3D {
+class Renderer3D extends RoomMate {
+  constructor(room) {
+    super(room)
+  }
+
   init(canvas) {
     this.camera = new THREE.PerspectiveCamera(
       70,
@@ -43,14 +47,12 @@ class Renderer3D {
       this.camera.updateProjectionMatrix()
     }
 
-    const localStore = getLocalStore()
-    localStore.setDocument('scene', 'scene', this.scene)
-    localStore.setDocument('camera', 'camera', this.camera)
-    localStore.setDocument('cameraOrbit', 'cameraOrbit', this.cameraOrbit)
+    this.localStore.setDocument('scene', 'scene', this.scene)
+    this.localStore.setDocument('camera', 'camera', this.camera)
+    this.localStore.setDocument('cameraOrbit', 'cameraOrbit', this.cameraOrbit)
   }
 
   update(dt) {
-
   }
 
   render() {

@@ -5,6 +5,8 @@ import {
   addActionDownListener,
 } from '@/core/controller'
 import * as ClientRoom from '@/core/networking'
+import Renderer2D from '@/core/rendering/renderer2D'
+import Renderer3D from '@/core/rendering/renderer3D'
 import * as Settings from '@/core/components/settings'
 import * as Map from '@/core/components/map'
 import * as Player from '@/core/components/player'
@@ -142,9 +144,16 @@ class Room {
     this.localStore = getLocalStore()
     // TODO: Instantiate ClientRoom here
     // this.clientRoom = ClientRoom.create()
+
+    this.renderer2D = new Renderer2D(this)
+    this.renderer3D = new Renderer3D(this)
   }
 
   async init(slug, canvas, canvas3d) {
+    const context = canvas.getContext('2d')
+    this.renderer2D.init(context)
+    this.renderer3D.init(canvas3d)
+
     ClientRoom.init(slug)
     this.clientRoom = ClientRoom.get() // TODO: remove
 
@@ -212,11 +221,17 @@ class Room {
   }
 
   update(dt) {
+    this.renderer2D.update(dt)
+    this.renderer3D.update(dt)
     Player.update(this.clientRoom.agentId, dt)
     Editor.update(this.clientRoom.agentId, dt)
   }
 
-  render(canvas, context) {
+  render(canvas) {
+    const context = canvas.getContext('2d')
+    this.renderer2D.render(canvas, context)
+    this.renderer3D.render()
+
     const playerIds = this.remoteStore.getIds('player')
     const portalIds = this.remoteStore.getIds('portal')
     const triggerIds = this.remoteStore.getIds('trigger')
