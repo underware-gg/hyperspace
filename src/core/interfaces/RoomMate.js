@@ -18,6 +18,10 @@ class RoomMate {
     return this.#room.clientRoom.agentId
   }
 
+  get clientRoom() {
+    return this.#room.clientRoom
+  }
+
   get remoteStore() {
     return this.#room.remoteStore
   }

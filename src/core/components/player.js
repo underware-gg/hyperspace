@@ -28,7 +28,7 @@ class Player extends RoomCollection {
 
     this.localStore.setDocument('joined', this.agentId, false)
 
-    room.on('agent-join', (agentId) => {
+    this.clientRoom.on('agent-join', (agentId) => {
       if (agentId === this.agentId) {
         this.enterRoom(agentId, this.slug)
         return
@@ -48,7 +48,7 @@ class Player extends RoomCollection {
       console.log(`agent-join:`, agentId)
     })
 
-    room.on('agent-leave', (agentId) => {
+    this.clientRoom.on('agent-leave', (agentId) => {
       const scene = this.localStore.getDocument('scene', 'scene')
       const playerMesh = this.localStore.getDocument('player-mesh', agentId)
 
