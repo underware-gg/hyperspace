@@ -26,6 +26,10 @@ class RoomMate {
     return this.#room.Trigger
   }
 
+  get Screen() {
+    return this.#room.Screen
+  }
+
 }
 
 export default RoomMate

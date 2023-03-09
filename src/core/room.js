@@ -9,11 +9,11 @@ import Renderer2D from '@/core/rendering/renderer2D'
 import Renderer3D from '@/core/rendering/renderer3D'
 import Portal from '@/core/components/portal'
 import Trigger from '@/core/components/trigger'
+import Screen from '@/core/components/screen'
 import * as Settings from '@/core/components/settings'
 import * as Map from '@/core/components/map'
 import * as Player from '@/core/components/player'
 import * as Editor from '@/core/components/editor'
-import * as Screen from '@/core/components/screen'
 import { getRemoteStore, getLocalStore } from '@/core/singleton'
 
 const _actions = [
@@ -160,7 +160,7 @@ class Room {
     // before room.init() to listen snapshot 'create' events
     this.Portal = new Portal(this)
     this.Trigger = new Trigger(this)
-    Screen.init()
+    this.Screen = new Screen(this)
 
     // loads snapshot
     this.clientRoom.init(slug)
@@ -246,7 +246,7 @@ class Room {
       this.Trigger.render2d(id, context)
     }
     for (const id of screenIds) {
-      Screen.render2d(id, context, this.clientRoom.agentId)
+      this.Screen.render2d(id, context, this.clientRoom.agentId)
     }
 
     // Should probably be able to just get them directly.
