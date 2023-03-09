@@ -12,6 +12,7 @@ import Trigger from '@/core/components/trigger'
 import Screen from '@/core/components/screen'
 import Player from '@/core/components/player'
 import Profile from '@/core/components/profile'
+import Permission from '@/core/components/permission'
 import * as Settings from '@/core/components/settings'
 import * as Map from '@/core/components/map'
 import * as Editor from '@/core/components/editor'
@@ -164,6 +165,7 @@ class Room {
     this.Screen = new Screen(this)
     this.Player = new Player(this)
     this.Profile = new Profile(this)
+    this.Permission = new Permission(this)
 
     // loads snapshot
     this.clientRoom.init(slug)

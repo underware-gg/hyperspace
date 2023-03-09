@@ -1,59 +1,64 @@
-import { getRemoteStore, getLocalStore } from '@/core/singleton'
+import RoomMate from '@/core/interfaces/RoomMate'
 import * as Interactable from '@/core/components/interactable'
 
-export const exists = (id) => {
-  return Interactable.exists('permission', id)
-}
-
-export const remove = (id) => {
-  return Interactable.remove('permission', id)
-}
-
-export const canView = (id, didAddress) => {
-  const store = getRemoteStore()
-  const permission = store.getDocument('permission', id)
-  if (!permission) {
-    return true
+class Permission extends RoomMate {
+  constructor(room) {
+    super(room)
   }
-  if (didAddress === undefined) {
-    didAddress = getLocalStore().getDocument('user', 'VeridaUser')?.getDidAddress() ?? null
-  }
-  return (permission.visible || permission.owner == didAddress)
-}
 
-export const canEdit = (id, didAddress) => {
-  const store = getRemoteStore()
-  const permission = store.getDocument('permission', id)
-  if (!permission) {
-    return true
+  exists(id) {
+    return Interactable.exists('permission', id)
   }
-  if (didAddress === undefined) {
-    didAddress = getLocalStore().getDocument('user', 'VeridaUser')?.getDidAddress() ?? null
-  }
-  return ((permission.visible && permission.public) || permission.owner == didAddress)
-}
 
-export const updatePermission = (id, owner, values) => {
-  const store = getRemoteStore()
-  let permission = store.getDocument('permission', id)
-  
-  if (!permission) {
-    permission = {
-      id,
-      owner,
-      visible: true,
-      public: true,
+  remove(id) {
+    return Interactable.remove('permission', id)
+  }
+
+  canView(id, didAddress) {
+    const permission = this.remoteStore.getDocument('permission', id)
+    if (!permission) {
+      return true
     }
-  } else if (permission.owner != owner) {
-    console.warn(`Not owner!`, id)
-    return
+    if (didAddress === undefined) {
+      didAddress = this.localStore.getDocument('user', 'VeridaUser')?.getDidAddress() ?? null
+    }
+    return (permission.visible || permission.owner == didAddress)
   }
 
-  permission = {
-    ...permission,
-    ...values,
+  canEdit(id, didAddress) {
+    const permission = this.remoteStore.getDocument('permission', id)
+    if (!permission) {
+      return true
+    }
+    if (didAddress === undefined) {
+      didAddress = this.localStore.getDocument('user', 'VeridaUser')?.getDidAddress() ?? null
+    }
+    return ((permission.visible && permission.public) || permission.owner == didAddress)
   }
 
-  store.setDocument('permission', id, permission)
+  updatePermission(id, owner, values) {
+    let permission = this.remoteStore.getDocument('permission', id)
+
+    if (!permission) {
+      permission = {
+        id,
+        owner,
+        visible: true,
+        public: true,
+      }
+    } else if (permission.owner != owner) {
+      console.warn(`Not owner!`, id)
+      return
+    }
+
+    permission = {
+      ...permission,
+      ...values,
+    }
+
+    this.remoteStore.setDocument('permission', id, permission)
+  }
+
 }
 
+export default Permission

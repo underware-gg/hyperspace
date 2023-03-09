@@ -30,6 +30,10 @@ class RoomMate {
     return this.#room.Profile
   }
 
+  get Permission() {
+    return this.#room.Permission
+  }
+
   get Portal() {
     return this.#room.Portal
   }
