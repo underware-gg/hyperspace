@@ -37,6 +37,12 @@ class Map extends RoomCollection {
   constructor(room) {
     super(room, 'map')
 
+    const scene = this.localStore.getDocument('scene', 'scene')
+
+    if (scene == null) {
+      return // no 3d render
+    }
+
     ////////////
     //3D STUFF//
     ////////////
@@ -198,7 +204,6 @@ class Map extends RoomCollection {
       }
     }
 
-    const scene = this.localStore.getDocument('scene', 'scene')
     scene.add(gridContainer)
 
     this.localStore.setDocument('map3d', 'world', map3D)
@@ -363,7 +368,7 @@ class Map extends RoomCollection {
     return { x, y }
   }
 
-  render3D(id) {
+  render3d(id) {
     const map = this.remoteStore.getDocument('map', id)
 
     if (map === null) {

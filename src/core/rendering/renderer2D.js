@@ -6,7 +6,13 @@ class Renderer2D extends RoomMate {
     super(room)
   }
   
-  init(context) {
+  init(canvas) {
+    if (!canvas) {
+      return
+    }
+    
+    const context = canvas.getContext('2d')
+
     context.mozImageSmoothingEnabled = false
     context.webkitImageSmoothingEnabled = false
     context.msImageSmoothingEnabled = false
@@ -16,8 +22,9 @@ class Renderer2D extends RoomMate {
   update(dt) {
   }
 
-  render(canvas, context) {
-    context.clearRect(0, 0, canvas.width, canvas.height)
+  render(canvas) {
+    const context = canvas?.getContext('2d')
+    context?.clearRect(0, 0, canvas.width, canvas.height)
   }
 }
 

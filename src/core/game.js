@@ -14,13 +14,11 @@ class Game {
     this.dt = 0
   }
 
-  async init(slug, canvas, canvas3d) {
-    this.canvas = canvas
-    this.canvas3d = canvas3d
-
+  async init(slug, canvas2d, canvas3d) {
+    
     await loadTextures()
 
-    this.room.init(slug, canvas, canvas3d)
+    this.room.init(slug, canvas2d, canvas3d)
 
     this.lastTime = (new Date()).getTime()
     this.currentTime = 0
@@ -40,7 +38,7 @@ class Game {
 
     this.room.update(this.dt)
   
-    this.room.render(this.canvas)
+    this.room.render()
   
     this.lastTime = this.currentTime
   

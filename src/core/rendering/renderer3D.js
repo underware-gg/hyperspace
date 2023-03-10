@@ -7,6 +7,10 @@ class Renderer3D extends RoomMate {
   }
 
   init(canvas) {
+    if(!canvas) {
+      return
+    }
+    
     this.camera = new THREE.PerspectiveCamera(
       70,
       canvas.width / canvas.height,
@@ -56,7 +60,7 @@ class Renderer3D extends RoomMate {
   }
 
   render() {
-    this.renderer.render(this.scene, this.camera)
+    this.renderer?.render(this.scene, this.camera)
   }
 }
 

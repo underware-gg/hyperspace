@@ -16,11 +16,13 @@ class Screen extends RoomCollection {
 
     const scene = this.localStore.getDocument('scene', 'scene')
 
-    if (scene) {
-      const screenMeshes = new THREE.Object3D()
-      scene.add(screenMeshes)
-      this.localStore.setDocument('screen-meshes', 'screen-meshes', screenMeshes)
+    if (scene == null) {
+      return // no 3d render
     }
+
+    const screenMeshes = new THREE.Object3D()
+    scene.add(screenMeshes)
+    this.localStore.setDocument('screen-meshes', 'screen-meshes', screenMeshes)
 
     const _createScreen = (screenId, screen) => {
       const screenMeshes = this.localStore.getDocument('screen-meshes', 'screen-meshes')

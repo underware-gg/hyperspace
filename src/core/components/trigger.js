@@ -9,8 +9,8 @@ class Trigger extends RoomCollection {
 
     const scene = this.localStore.getDocument('scene', 'scene')
 
-    if (scene === null) {
-      return
+    if (scene == null) {
+      return // no 3d render
     }
 
     const triggerGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1.25, 32, 1, true)

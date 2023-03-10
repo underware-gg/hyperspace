@@ -152,9 +152,11 @@ class Room {
     this.renderer3D = new Renderer3D(this)
   }
 
-  async init(slug, canvas, canvas3d) {
-    const context = canvas.getContext('2d')
-    this.renderer2D.init(context)
+  async init(slug, canvas2d, canvas3d) {
+    this.canvas2d = canvas2d
+    this.canvas3d = canvas3d
+
+    this.renderer2D.init(canvas2d)
     this.renderer3D.init(canvas3d)
 
     this.clientRoom = ClientRoom.create(slug, this.remoteStore)
@@ -177,7 +179,7 @@ class Room {
     this.Settings.initializeSettings('world')
     this.Map.initializeMap('world')
 
-    this.Editor.init(canvas, this.clientRoom.agentId)
+    this.Editor.init2d(canvas2d, this.clientRoom.agentId)
     this.Editor.init3d(canvas3d, this.clientRoom.agentId)
 
     const { VeridaUser } = (await import('@/core/verida'))
@@ -195,22 +197,22 @@ class Room {
       this.Player.interact(this.clientRoom.agentId)
     })
 
-    canvas.addEventListener('keydown', (e) => {
+    canvas2d?.addEventListener('keydown', (e) => {
       e.preventDefault()
       handleKeyDown(e)
     }, false)
 
-    canvas3d.addEventListener('keydown', (e) => {
+    canvas3d?.addEventListener('keydown', (e) => {
       e.preventDefault()
       handleKeyDown(e)
     }, false)
 
-    canvas.addEventListener('keyup', e => {
+    canvas2d?.addEventListener('keyup', e => {
       e.preventDefault()
       handleKeyUp(e)
     }, false)
 
-    canvas3d.addEventListener('keyup', e => {
+    canvas3d?.addEventListener('keyup', e => {
       e.preventDefault()
       handleKeyUp(e)
     }, false)
@@ -223,17 +225,25 @@ class Room {
     this.Editor.update(this.clientRoom.agentId, dt)
   }
 
-  render(canvas) {
-    const context = canvas.getContext('2d')
-    this.renderer2D.render(canvas, context)
-    this.renderer3D.render()
+  render() {
+    this.render2d(this.canvas2d)
+    this.render3d(this.canvas2d)
+  }
+
+  render2d() {
+    if (this.canvas2d == null) {
+      return
+    }
+
+    this.renderer2D.render(this.canvas2d)
+
+    const context = this.canvas2d.getContext('2d')
+    this.Map.render2d('world', context, this.remoteStore)
 
     const playerIds = this.remoteStore.getIds('player')
     const portalIds = this.remoteStore.getIds('portal')
     const triggerIds = this.remoteStore.getIds('trigger')
     const screenIds = this.remoteStore.getIds('screen')
-
-    this.Map.render2d('world', context, this.remoteStore)
 
     for (const id of portalIds) {
       this.Portal.render2d(id, context)
@@ -252,8 +262,14 @@ class Room {
         this.Editor.render2d(playerId, context)
       }
     }
+  }
 
-    this.Map.render3D('world')
+  render3d() {
+    if (this.canvas3d == null) {
+      return
+    }
+    this.renderer3D.render()
+    this.Map.render3d('world')
   }
 
 }

@@ -26,16 +26,27 @@ class Player extends RoomCollection {
   constructor(room) {
     super(room, 'player')
 
+    addActionDownListener('delete', () => {
+      const editor = this.remoteStore.getDocument('editor', this.agentId)
+      if (editor === null) {
+        return
+      }
+      this.Portal.remove(this.getPortalOverPlayer(this.agentId), true)
+      this.Trigger.remove(this.getTriggerOverPlayer(this.agentId), true)
+      this.Screen.remove(this.getScreenOverPlayer(this.agentId), true)
+    })
+
+    const scene = this.localStore.getDocument('scene', 'scene')
+
+    if (scene == null) {
+      return // no 3d render
+    }
+
     this.localStore.setDocument('joined', this.agentId, false)
 
     this.clientRoom.on('agent-join', (agentId) => {
       if (agentId === this.agentId) {
         this.enterRoom(agentId, this.slug)
-        return
-      }
-
-      const scene = this.localStore.getDocument('scene', 'scene')
-      if (scene === null) {
         return
       }
 
@@ -49,7 +60,6 @@ class Player extends RoomCollection {
     })
 
     this.clientRoom.on('agent-leave', (agentId) => {
-      const scene = this.localStore.getDocument('scene', 'scene')
       const playerMesh = this.localStore.getDocument('player-mesh', agentId)
 
       if (scene !== null && playerMesh !== null) {
@@ -74,7 +84,6 @@ class Player extends RoomCollection {
         // another player moved
         this.update3dSprite(agentId)
       }
-
     })
 
     // texture swapping
@@ -87,17 +96,6 @@ class Player extends RoomCollection {
         playerMesh.needsUpdate = true;
         // console.log(`CHANGE MATERIAL`, agentId, material)
       }
-    })
-
-    addActionDownListener('delete', () => {
-      const editor = this.remoteStore.getDocument('editor', this.agentId)
-      if (editor === null) {
-        return
-      }
-
-      this.Portal.remove(this.getPortalOverPlayer(this.agentId), true)
-      this.Trigger.remove(this.getTriggerOverPlayer(this.agentId), true)
-      this.Screen.remove(this.getScreenOverPlayer(this.agentId), true)
     })
   }
 

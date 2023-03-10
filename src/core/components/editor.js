@@ -12,9 +12,13 @@ class Editor extends RoomCollection {
     super(room, 'editor')
   }
 
-  init(canvas, id) {
+  init2d(canvas, agentId) {
+    if (!canvas) {
+      return
+    }
+
     const _handleEditorMove = (position, interacting) => {
-      const editor = this.remoteStore.getDocument('editor', id)
+      const editor = this.remoteStore.getDocument('editor', agentId)
 
       if (editor != null) {
         const { position: { x, y } } = editor
@@ -23,7 +27,7 @@ class Editor extends RoomCollection {
         }
       }
 
-      this.remoteStore.setDocument('editor', id, {
+      this.remoteStore.setDocument('editor', agentId, {
         position,
         interacting,
       })
@@ -44,12 +48,12 @@ class Editor extends RoomCollection {
         return
       }
 
-      if (!this.Player.canPlaceOverPlayer(id)) {
+      if (!this.Player.canPlaceOverPlayer(agentId)) {
         return
       }
 
-      const { x, y } = this.getCreateTileRotation(id)
-      console.log(`create_portal`, id, x, y, slug, tile)
+      const { x, y } = this.getCreateTileRotation(agentId)
+      console.log(`create_portal`, agentId, x, y, slug, tile)
       this.Portal.createPortal(slug, tile, x, y)
     })
 
@@ -60,16 +64,16 @@ class Editor extends RoomCollection {
         data: JSON.stringify(options?.data ?? []),
       }
 
-      if (!this.Player.canPlaceOverPlayer(id)) {
+      if (!this.Player.canPlaceOverPlayer(agentId)) {
         return
       }
 
-      const { x, y } = this.getCreateTileRotation(id)
+      const { x, y } = this.getCreateTileRotation(agentId)
       this.Trigger.createAtPosition(nanoid(), trigger, x, y)
     })
 
     addActionDownListener('createScreen', () => {
-      if (!this.Player.canPlaceOverPlayer(id)) {
+      if (!this.Player.canPlaceOverPlayer(agentId)) {
         return
       }
 
@@ -81,12 +85,12 @@ class Editor extends RoomCollection {
       const screenId = nanoid()
       const text = `# Screen: ${name}\n\nThis is a MarkDown shared document\n\nid: ${screenId}`
 
-      const { x, y, rot } = this.getCreateTileRotation(id)
+      const { x, y, rot } = this.getCreateTileRotation(agentId)
       this.Screen.createDocument(screenId, x, y, rot, text, name)
     })
 
     addActionDownListener('createBook', () => {
-      if (!this.Player.canPlaceOverPlayer(id)) {
+      if (!this.Player.canPlaceOverPlayer(agentId)) {
         return
       }
 
@@ -99,7 +103,7 @@ class Editor extends RoomCollection {
       console.log(url, name)
 
       const screenId = nanoid()
-      const { x, y, rot } = this.getCreateTileRotation(id)
+      const { x, y, rot } = this.getCreateTileRotation(agentId)
       this.Screen.createBook(screenId, x, y, rot, url, name)
     })
 
@@ -108,7 +112,11 @@ class Editor extends RoomCollection {
     canvas.addEventListener('mouseout', handleMouseOut)
   }
 
-  init3d(canvas, id) {
+  init3d(canvas, agentId) {
+    if(!canvas) {
+      return
+    }
+
     const scene = this.localStore.getDocument('scene', 'scene')
 
     const selectionGeometry = new THREE.BoxGeometry(1.2, 1.2, 2.3)
@@ -141,7 +149,7 @@ class Editor extends RoomCollection {
       const pickingLocation = this.localStore.getDocument('pickingLocation', 'pickingLocation')
 
       if (pickingLocation !== null) {
-        this.remoteStore.setDocument('editor', id, {
+        this.remoteStore.setDocument('editor', agentId, {
           position: {
             x: Math.floor(pickingLocation.x),
             y: Math.floor(-pickingLocation.y - 1),
@@ -172,17 +180,17 @@ class Editor extends RoomCollection {
     const pointerMesh = this.localStore.getDocument('raycastPointer', 'raycastPointer')
     const rayTargets = this.localStore.getDocument('gridContainer', 'gridContainer')
     const pointer = this.localStore.getDocument('pointer', 'pointer')
-
     const camera = this.localStore.getDocument('camera', 'camera')
+
+    if (pointerMesh === null || rayTargets === null || pointer === null || camera === null) {
+      return
+    }
+
     const raycaster = new THREE.Raycaster()
 
     const pickingLocation = new THREE.Vector3
     if (this.localStore.getDocument('pickingLocation', 'pickingLocation') === null) {
       this.localStore.setDocument('pickingLocation', 'pickingLocation', pickingLocation)
-    }
-
-    if (pointerMesh === null || rayTargets === null || pointer === null || camera === null) {
-      return
     }
 
     raycaster.setFromCamera(pointer, camera)
@@ -220,6 +228,11 @@ class Editor extends RoomCollection {
     const { position: { x, y }, interacting } = editor
 
     const pointerMesh = this.localStore.getDocument('raycastPointer', 'raycastPointer')
+
+    if (pointerMesh === null) {
+      return
+    }
+
     pointerMesh.visible = interacting
 
     if (!interacting) {
@@ -272,6 +285,10 @@ class Editor extends RoomCollection {
   }
 
   render2d(id, context) {
+    if (!context) {
+      return
+    }
+
     const editor = this.remoteStore.getDocument('editor', id)
 
     if (editor === null) {

@@ -11,9 +11,8 @@ class Portal extends RoomCollection {
 
     const scene = this.localStore.getDocument('scene', 'scene')
 
-    if (scene === null) {
-      console.warn(`Scene is null`)
-      return
+    if (scene == null) {
+      return // no 3d render
     }
 
     const portalGeometry = new THREE.CylinderGeometry(0.5, 0.5, 2.5, 32, 1, true)
