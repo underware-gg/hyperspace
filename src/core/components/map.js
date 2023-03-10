@@ -236,7 +236,7 @@ class Map extends RoomCollection {
       [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
     ]
 
-    this.create(id, map)
+    this.upsert(id, map)
   }
 
   updateTile(id, x, y, value) {

@@ -5,12 +5,14 @@ class Tileset extends RoomCollection {
     super(room, 'tileset')
   }
 
-  createTileset(id, name, width, height, blob) {
-    return this.create(id, {
+  updateTileset(id, name, width, height, blob) {
+    const data = {
       name,
       blob,
       size: { width, height },
-    })
+      blob,
+    }
+    return this.upsert(id, data, true)
   }
 
 }

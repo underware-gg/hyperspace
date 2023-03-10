@@ -91,17 +91,7 @@ class Trigger extends RoomCollection {
   }
 
   updateTrigger(id, values) {
-    let trigger = this.remoteStore.getDocument('trigger', id)
-    if (trigger == null) return
-
-    if (!this.Permission.canEdit(id)) {
-      console.warn(`No permission to update Trigger [${id}] to [${trigger.slug}]`)
-      return
-    }
-
-    this.remoteStore.setDocument('trigger', id, {
-      ...trigger, ...values
-    })
+    this.upsert(id, values, true)
   }
 
   static _tileNumberToIndex = (value) => {
@@ -114,7 +104,7 @@ class Trigger extends RoomCollection {
     let trigger = this.remoteStore.getDocument('trigger', id)
     if (trigger == null) return
 
-    if (!this.Permission.canView(id)) {
+    if (!this.canView(id)) {
       console.warn(`No permission to switch Trigger [${id}]`)
       return
     }

@@ -5,7 +5,7 @@ class Permission extends RoomCollection {
     super(room, 'permission')
   }
 
-  canView(id, didAddress) {
+  hasPermissionToView(id, didAddress) {
     const permission = this.remoteStore.getDocument('permission', id)
     if (!permission) {
       return true
@@ -16,7 +16,7 @@ class Permission extends RoomCollection {
     return (permission.visible || permission.owner == didAddress)
   }
 
-  canEdit(id, didAddress) {
+  hasPermissionToEdit(id, didAddress) {
     const permission = this.remoteStore.getDocument('permission', id)
     if (!permission) {
       return true

@@ -97,24 +97,15 @@ class Portal extends RoomCollection {
   }
 
   updatePortal(id, values) {
-    let portal = this.remoteStore.getDocument('portal', id)
-    if (portal == null) return
-
-    if (!this.Permission.canEdit(id)) {
-      console.warn(`No permission to update Portal [${id}] to [${portal.slug}]`)
-      return
-    }
-
-    this.remoteStore.setDocument('portal', id, {
-      ...portal, ...values
-    })
+    if (!this.exists(id)) return
+    this.upsert(id, values, true)
   }
 
   travel(id) {
     const portal = this.remoteStore.getDocument('portal', id)
     if (portal == null) return
 
-    if (!this.Permission.canView(id)) {
+    if (!this.canView(id)) {
       console.warn(`No permission to enter Portal [${id}]`)
       return
     }

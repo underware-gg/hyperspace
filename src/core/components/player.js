@@ -241,7 +241,7 @@ class Player extends RoomCollection {
       const currentScreenId = this.localStore.getDocument('screens', 'editing')
       const newScreenId = screenId != currentScreenId ? screenId : null
 
-      if (newScreenId && !this.Permission.canView(newScreenId)) {
+      if (newScreenId && !this.canView(newScreenId)) {
         return
       }
 
@@ -252,12 +252,12 @@ class Player extends RoomCollection {
 
   getPortalOverPlayer(id) {
     const portalId = this.getObjectOfTypeOverPlayer(id, 'portal')
-    return portalId && this.Permission.canView(portalId) ? portalId : null
+    return portalId && this.canView(portalId) ? portalId : null
   }
 
   getTriggerOverPlayer(id) {
     const triggerId = this.getObjectOfTypeOverPlayer(id, 'trigger')
-    return triggerId && this.Permission.canView(triggerId) ? triggerId : null
+    return triggerId && this.canView(triggerId) ? triggerId : null
   }
 
   getScreenOverPlayer(id) {
@@ -273,7 +273,7 @@ class Player extends RoomCollection {
       screenId = this.getObjectOfTypeOverPlayer(id, 'screen')
     }
 
-    return screenId && this.Permission.canView(screenId) ? screenId : null
+    return screenId && this.canView(screenId) ? screenId : null
   }
 
   canPlaceOverPlayer(id) {

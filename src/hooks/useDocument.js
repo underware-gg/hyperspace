@@ -14,6 +14,14 @@ const useLocalDocument = (type, id) => {
 const _useDocument = (type, id, store) => {
   const [document, setDocument] = useState(null)
 
+  // initialize
+  useEffect(() => {
+    if (id && store) {
+      setDocument(store.getDocument(type, id))
+    }
+  }, [id, store])
+
+  // listen
   useEffect(() => {
     if (!store) return
 
@@ -30,13 +38,7 @@ const _useDocument = (type, id, store) => {
       store.off({ type, event: 'change' }, _handleChange)
       store.off({ type, event: 'delete' }, _handleChange)
     }
-  }, [type, id])
-
-  useEffect(() => {
-    if (id && store) {
-      setDocument(store.getDocument(type, id))
-    }
-  }, [id, store])
+  }, [type, id, store])
 
   return document
 }

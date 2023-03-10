@@ -18,7 +18,7 @@ class Settings extends RoomCollection {
 
   initializeSettings(id) {
     if (!this.exists(id)) {
-      return this.create(id, defaultSettings)
+      return this.upsert(id, defaultSettings)
     }
   }
 

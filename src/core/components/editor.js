@@ -146,7 +146,7 @@ class Editor extends RoomCollection {
             x: Math.floor(pickingLocation.x),
             y: Math.floor(-pickingLocation.y - 1),
           },
-          interacting: this.Permission.canEdit('world'),
+          interacting: this.canEdit('world'),
         })
       }
     }
@@ -226,7 +226,7 @@ class Editor extends RoomCollection {
       return
     }
 
-    if (!this.Permission.canEdit('world')) {
+    if (!this.canEdit('world')) {
       return
     }
 
@@ -285,13 +285,13 @@ class Editor extends RoomCollection {
     }
 
     // do not draw cursor for if I cant edit
-    if (!this.Permission.canEdit('world')) {
+    if (!this.canEdit('world')) {
       return
     }
 
     // do not draw cursor for remote users if room is not editable
     const isRemoteUser = (this.agentId !== id)
-    if (isRemoteUser && !this.Permission.canEdit('world', null)) {
+    if (isRemoteUser && !this.canEdit('world', null)) {
       return
     }
 

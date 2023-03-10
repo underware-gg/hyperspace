@@ -1,7 +1,4 @@
 import React, { useState } from 'react'
-import {
-  Box,
-} from '@chakra-ui/react'
 import { useClientRoom } from '@/hooks/useClientRoom'
 import SlugSelector from '@/components/SlugSelector'
 import Snapshot from '@/components/Snapshot'

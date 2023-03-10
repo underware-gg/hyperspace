@@ -26,13 +26,13 @@ export const PermissionsForm = ({
   const { permission, isOwner, canEdit } = usePermission(id)
   const { veridaProfileName, veridaAvatarUri, veridaProfileUrl } = useVeridaPublicProfile(permission?.owner);
 
-  const _canView = (value) => {
+  const _setCanView = (value) => {
     Permission.updatePermission(id, didAddress, {
       visible: value,
     })
   }
 
-  const _canEdit = (value) => {
+  const _setCanEdit = (value) => {
     Permission.updatePermission(id, didAddress, {
       public: value,
     })
@@ -65,10 +65,10 @@ export const PermissionsForm = ({
 
         <Divider />
 
-        <Checkbox isChecked={permission?.visible ?? true} isDisabled={isDisabled} onChange={(e) => _canView(e.target.checked)}>
+        <Checkbox isChecked={permission?.visible ?? true} isDisabled={isDisabled} onChange={(e) => _setCanView(e.target.checked)}>
           Anyone can View
         </Checkbox>
-        <Checkbox isChecked={permission?.public ?? true} isDisabled={isDisabled || permission?.visible === false} onChange={(e) => _canEdit(e.target.checked)}>
+        <Checkbox isChecked={permission?.public ?? true} isDisabled={isDisabled || permission?.visible === false} onChange={(e) => _setCanEdit(e.target.checked)}>
           Anyone can Edit
         </Checkbox>
 

@@ -71,7 +71,7 @@ class Screen extends RoomCollection {
       const screenMesh = this.localStore.getDocument('screen-mesh', screenId)
       if (screenMesh === null) return
 
-      screenMesh.visible = this.Permission.canView(screenId)
+      screenMesh.visible = this.canView(screenId)
     }
 
     this.remoteStore.on({ type: 'screen', event: 'create' }, (screenId, screen) => {
@@ -234,17 +234,7 @@ class Screen extends RoomCollection {
   }
 
   updateScreen(id, values) {
-    let screen = this.remoteStore.getDocument('screen', id)
-    if (screen == null) return
-
-    if (!this.Permission.canEdit(id)) {
-      console.warn(`No permission to update Screen [${id}] [${screen.name}]`)
-      return
-    }
-
-    this.remoteStore.setDocument('screen', id, {
-      ...screen, ...values
-    })
+    this.upsert(id, values, true)
   }
 
 }

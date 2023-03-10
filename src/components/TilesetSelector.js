@@ -35,8 +35,7 @@ const TilesetSelector = ({ }) => {
     }
     setSelectedValue(_selectedValue)
     setOptions(_options)
-  }, [tileset])
-
+  }, [tileset?.name])
 
   const _handleSelectTileset = (e => {
     const fileName = e.target.value
@@ -44,7 +43,7 @@ const TilesetSelector = ({ }) => {
     for (const t of tilesets) {
       const src = t.src
       if (fileName == src) {
-        Tileset.createTileset('world', fileName, 32, 32, null)
+        Tileset.updateTileset('world', fileName, 32, 32, null)
       }
     }
     focusGameCanvas()
@@ -54,7 +53,7 @@ const TilesetSelector = ({ }) => {
     try {
       const { dataUrl, width, height } = await fromSourceToDataURL(URL.createObjectURL(fileObject))
       if (width === 320 && height === 32) {
-        Tileset.createTileset('world', fileObject.name, width, height, dataUrl)
+        Tileset.updateTileset('world', fileObject.name, width, height, dataUrl)
       } else {
         Tileset.remove('world')
       }
@@ -63,7 +62,6 @@ const TilesetSelector = ({ }) => {
     }
     focusGameCanvas()
   }
-
 
   const imgStyle = {
     minWidth: '320px',
