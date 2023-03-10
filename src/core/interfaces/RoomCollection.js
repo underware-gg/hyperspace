@@ -42,6 +42,7 @@ class RoomCollection extends RoomMate {
       return
     }
     this.remoteStore.setDocument(this.type, id, data)
+    return data
   }
 
   createAtPosition(id, data, x, y, z=0) {

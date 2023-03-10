@@ -20,6 +20,7 @@ import Textarea from '@/components/Textarea'
 import { PermissionsForm } from '@/components/PermissionsForm'
 import { SliderProgress, SliderPage } from '@/components/Sliders'
 import { getFilenameFromUrl } from '@/core/utils'
+import { TYPE } from '@/core/components/screen'
 
 const ModalScreenEdit = ({
   screenId,
@@ -135,11 +136,11 @@ const ScreenEditor = ({
 }) => {
   const screen = useDocument('screen', screenId)
 
-  if (screen?.type == Screen.TYPE.DOCUMENT) {
+  if (screen?.type == TYPE.DOCUMENT) {
     return <ScreenEditorDocument screenId={screenId} initialFocusRef={initialFocusRef} />
   }
 
-  if (screen?.type == Screen.TYPE.PDF_BOOK) {
+  if (screen?.type == TYPE.PDF_BOOK) {
     return <ScreenEditorPdfBook screenId={screenId} initialFocusRef={initialFocusRef} />
   }
 

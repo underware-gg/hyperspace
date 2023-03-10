@@ -31,7 +31,7 @@ const RoomPage = () => {
   const router = useRouter()
   const { slug } = router.query
 
-  const { agentId } = useRoomContext();
+  const { agentId } = useRoomContext()
   const { canEdit } = usePermission('world')
 
   const [showHelp, setShowHelp] = useState(false)

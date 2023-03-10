@@ -216,21 +216,15 @@ class Screen extends RoomCollection {
   }
 
   createDocument(id, x, y, rot, text, name) {
-    const screen = {
-      ...makeScreen(TYPE.DOCUMENT, x, y, rot, text, name),
-    }
+    const screen = this.makeScreen(TYPE.DOCUMENT, x, y, rot, text, name)
     console.log(`New screen:`, screen)
-    this.remoteStore.setDocument('screen', id, screen)
-    return screen
+    return this.upsert(id, screen, true)
   }
 
   createBook(id, x, y, rot, url, name) {
-    const screen = {
-      ...makeScreen(TYPE.PDF_BOOK, x, y, rot, url, name),
-    }
+    const screen = this.makeScreen(TYPE.PDF_BOOK, x, y, rot, url, name)
     console.log(`New Book:`, screen)
-    this.remoteStore.setDocument('screen', id, screen)
-    return screen
+    return this.upsert(id, screen, true)
   }
 
   updateScreen(id, values) {

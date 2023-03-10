@@ -56,7 +56,7 @@ const ChatBox = () => {
     <VStack className='ChatDrawer'>
       <Box className='ChatRow' align='center'>
         <HStack>
-          <b>PUBLIC CHAT</b>
+          <b>ROOM CHAT</b>
           <Spacer />
           {canEdit &&
             <DeleteIcon className='Clickable' onClick={() => _onDump()} />
