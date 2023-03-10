@@ -11,8 +11,14 @@ import { getLocalStore, getRemoteStore } from 'core/singleton'
 import { fromSourceToDataURL } from 'core/textures'
 import * as Tileset from 'core/components/tileset'
 import * as ClientRoom from 'core/networking'
-import Textarea from 'components/textarea'
+// import Textarea from 'components/textarea'
 import CodeEditor from 'components/code-editor'
+// import JSONViewer from 'components/json-viewer'
+import dynamic from 'next/dynamic'
+
+const JSONViewer = dynamic(() => import('components/json-viewer'), {
+  ssr: false,
+})
 
 const isValidKey = (key) => {
   // Check if key is a string
@@ -31,9 +37,9 @@ const isValidKey = (key) => {
   }
 
   // Check if key contains any invalid characters
-  if (!/^[a-zA-Z0-9_$]+$/.test(key)) {
-    return false
-  }
+  // if (!/^[a-zA-Z0-9_$]+$/.test(key)) {
+    // return false
+  // }
 
   // Key is valid
   return true
@@ -83,6 +89,11 @@ const Room = () => {
   const canvasRef = useRef()
   const canvas3dRef = useRef()
   const { slug } = router.query
+
+  const getAllState = () => {
+    const store = getRemoteStore()
+    return store.collections
+  }
 
   const setState = (type, key, value) => {
     if (!isValidKey(type)) {
@@ -198,7 +209,7 @@ const Room = () => {
           throw new Error(`Invalid type: ${type}`)
         }
         const key = nativeArgs[1]
-        if (!isValidKEy(key)) {
+        if (!isValidKey(key)) {
           throw new Error(`Invalid key: ${key}`)
         }
 
@@ -267,6 +278,7 @@ const Room = () => {
           value={code}
           onChange={handleChange}
         /> */}
+        <JSONViewer value={getAllState()} />
         <CodeEditor
           value={code}
           onChange={handleChange}
