@@ -50,7 +50,6 @@ const ValidatedInput = ({
   useEffect(() => {
     const _id = nanoid()
     setId(_id)
-    console.log(`NEW Input`, _id)
     return () => {
       onUnmounted(_id)
     }

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/router'
 import {
   Box,
@@ -8,8 +8,6 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
-import { useLocalDocument } from '@/hooks/useDocument'
-import { focusGameCanvas } from '@/core/game-canvas'
 import { emitAction } from '@/core/controller'
 import Layout from '@/components/Layout'
 import Game from '@/components/Game'
@@ -19,7 +17,6 @@ import TilesetSelector from '@/components/TilesetSelector'
 import ModalHelp from '@/components/ModalHelp'
 import ModalSnapshots from '@/components/ModalSnapshots'
 import InteractMenu from '@/components/InteractMenu'
-import Screens from '@/components/Screens'
 import RoomDownloadMenu from '@/components/RoomDownloadMenu'
 import VeridaMenu from '@/components/VeridaMenu'
 import { useRoomContext } from '@/hooks/RoomContext'

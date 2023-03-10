@@ -2,7 +2,6 @@ import EventEmitter from 'events'
 import Kernal from '@/core/merge/kernal'
 import { createOp } from '@/core/merge/tiny-merge'
 import { createMessage } from '@/core/merge/messages'
-import { getRemoteStore } from '@/core/singleton'
 import { typeDefs } from '@/core/merge/crdt-type'
 import { getAgentId, getSnapshot, setSnapshot } from './persistence'
 import Client from './client'
@@ -11,7 +10,7 @@ class ClientRoom extends EventEmitter {
   constructor(uri, slug, store = null, agent = null) {
     super()
     this.kernal = new Kernal(this.handleOps)
-    this.store = store ?? getRemoteStore()
+    this.store = store
     this.store.on(null, this.handleStoreChange)
     this.uri = uri
     this.slug = slug.toLowerCase()

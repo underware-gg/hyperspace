@@ -17,7 +17,7 @@ import Settings from '@/core/components/settings'
 import Tileset from '@/core/components/tileset'
 import Map from '@/core/components/map'
 import Editor from '@/core/components/editor'
-import { getRemoteStore, getLocalStore } from '@/core/singleton'
+import Store from '@/core/store'
 
 const _actions = [
   {
@@ -143,8 +143,8 @@ class Room {
 
   constructor() {
     // TODO: Move singletons here
-    this.remoteStore = getRemoteStore()
-    this.localStore = getLocalStore()
+    this.remoteStore = new Store()
+    this.localStore = new Store()
     // TODO: Instantiate ClientRoom here
     // this.clientRoom = ClientRoom.create()
 
@@ -157,8 +157,7 @@ class Room {
     this.renderer2D.init(context)
     this.renderer3D.init(canvas3d)
 
-    ClientRoom.init(slug)
-    this.clientRoom = ClientRoom.get() // TODO: remove singleton
+    this.clientRoom = ClientRoom.create(slug, this.remoteStore)
 
     // instantiate before this.clientRoom.init() to listen to snapshot loading events
     this.Portal = new Portal(this)
