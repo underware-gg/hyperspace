@@ -1,4 +1,4 @@
-import { useEffect, useRef, useContext } from 'react'
+import { useState, useEffect, useRef, useContext } from 'react'
 import {
   Box,
 } from '@chakra-ui/react'
@@ -8,6 +8,7 @@ import { focusGameCanvas } from '@/core/game-canvas'
 import Screens from '@/components/Screens'
 
 const Game = ({ slug }) => {
+  const [game, setGame] = useState(null)
   const { dispatchRoom, room } = useContext(RoomContext)
   const is3d = useLocalDocument('show-3d', 'world') ?? false
   const canvasRef = useRef()
@@ -18,14 +19,15 @@ const Game = ({ slug }) => {
   }, [is3d, canvasRef, canvas3dRef])
 
   useEffect(() => {
-    if (slug && canvasRef.current && canvas3dRef.current && !room) {
+    if (slug && canvasRef.current && canvas3dRef.current && !game) {
       import('src/core/game').then(({ default: Game }) => {
-        const game = new Game()
-        game.init(slug, canvasRef.current, canvas3dRef.current)
-        dispatchRoom(game.room)
+        const _game = new Game()
+        _game.init(slug, canvasRef.current, canvas3dRef.current)
+        dispatchRoom(_game.room)
+        setGame(_game)
       })
     }
-  }, [slug, canvasRef.current, canvas3dRef.current, room])
+  }, [slug, canvasRef.current, canvas3dRef.current])
 
   return (
     <Box
