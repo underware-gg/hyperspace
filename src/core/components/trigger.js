@@ -94,7 +94,7 @@ class Trigger extends RoomCollection {
     this.upsert(id, values, true)
   }
 
-  static _tileNumberToIndex = (value) => {
+  tileNumberToIndex = (value) => {
     let tile = parseInt(value)
     if (tile == 0) tile = 10
     return tile - 1
@@ -111,7 +111,7 @@ class Trigger extends RoomCollection {
 
     const state = (trigger.state + 1) % 2
 
-    updateTrigger(id, {
+    this.updateTrigger(id, {
       state,
     })
 
@@ -122,7 +122,7 @@ class Trigger extends RoomCollection {
       if (i.type == 'map') {
         console.log(`switch map:`, i)
         let tileNumber = state == 0 ? i.stateOff : i.stateOn
-        let tileIndex = _tileNumberToIndex(tileNumber)
+        let tileIndex = this.tileNumberToIndex(tileNumber)
         this.Map.updateTile('world', parseInt(i.x), parseInt(i.y), tileIndex)
       }
     }

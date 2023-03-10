@@ -33,7 +33,7 @@ const useClientRoom = (slug) => {
     }
     
     setRoom(_room)
-    setStore(null)
+    setStore(_room?.store ?? null)
 
     return () => {
       _mounted = false

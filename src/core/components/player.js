@@ -108,14 +108,14 @@ class Player extends RoomCollection {
     if (portalCookie) {
       cookies.remove('portal')
       if (portalCookie.agentId == agentId && portalCookie.slug == slug) {
-        moveToTile(agentId, portalCookie.tile)
+        this.moveToTile(agentId, portalCookie.tile)
         return
       }
     }
 
     // go to default entry
     // const settings = this.remoteStore.getDocument('settings', 'world') ?? defaultSettings
-    // moveToTile(agentId, settings.entry)
+    // this.moveToTile(agentId, settings.entry)
 
     // reset player position
     this.createPlayer(agentId)
@@ -294,7 +294,7 @@ class Player extends RoomCollection {
     for (const type of ['portal', 'trigger', 'screen']) {
       const ids = this.remoteStore.getIds(type)
       for (const id of ids) {
-        const rect = this.getCollisionRect(id)
+        const rect = this.getCollisionRect(type, id)
         if (rect && rectanglesOverlap(playerRect, rect)) {
           return {
             type,
@@ -304,6 +304,21 @@ class Player extends RoomCollection {
       }
     }
     return null;
+  }
+
+  getCollisionRect(type, id) {
+    const data = this.remoteStore.getDocument(type, id)
+    if (!data || !data.position) return null
+    return {
+      position: {
+        x: data.position.x * 32,
+        y: data.position.y * 32,
+      },
+      size: {
+        width: 32,
+        height: 32,
+      },
+    }
   }
 
   moveToTile(id, tile) {
@@ -367,24 +382,6 @@ class Player extends RoomCollection {
       size: {
         width: PLAYER_BOX,
         height: PLAYER_BOX,
-      },
-    }
-  }
-
-  getCollisionRect(id) {
-    if (id == null) return null
-
-    const data = this.remoteStore.getDocument(this.type, id)
-    if (!data || !data.position) return null
-
-    return {
-      position: {
-        x: data.position.x * 32,
-        y: data.position.y * 32,
-      },
-      size: {
-        width: 32,
-        height: 32,
       },
     }
   }

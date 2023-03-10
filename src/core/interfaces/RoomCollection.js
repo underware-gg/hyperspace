@@ -31,11 +31,9 @@ class RoomCollection extends RoomMate {
   upsert(id, newData, checkPermission = false) {
     if (id == null) return
     let data = this.remoteStore.getDocument(this.type, id)
-    if (data != null) {
-      data = {
-        ...data,
-        ...newData,
-      }
+    data = {
+      ...(data ?? {}),
+      ...newData,
     }
     if (checkPermission && !this.canEdit(id)) {
       console.warn(`No permission to create/update [${this.type}] (${id})`)

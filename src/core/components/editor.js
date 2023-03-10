@@ -53,7 +53,6 @@ class Editor extends RoomCollection {
       }
 
       const { x, y } = this.getCreateTileRotation(agentId)
-      console.log(`create_portal`, agentId, x, y, slug, tile)
       this.Portal.createPortal(slug, tile, x, y)
     })
 
