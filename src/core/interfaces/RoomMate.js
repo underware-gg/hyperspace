@@ -1,4 +1,3 @@
-
 // objects created inside Room
 // share the Room client and stores
 // can access other objects
@@ -10,7 +9,25 @@ class RoomMate {
     this.#room = room
   }
 
-  // client
+  // the Room
+
+  get canvas2d() {
+    return this.#room.canvas2d
+  }
+
+  get canvas3d() {
+    return this.#room.canvas3d
+  }
+
+  get remoteStore() {
+    return this.#room.remoteStore
+  }
+
+  get localStore() {
+    return this.#room.localStore
+  }
+
+  // the ClientRoom
 
   get slug() {
     return this.#room.clientRoom.slug
@@ -22,16 +39,6 @@ class RoomMate {
 
   get clientRoom() {
     return this.#room.clientRoom
-  }
-
-  // stores
-
-  get remoteStore() {
-    return this.#room.remoteStore
-  }
-
-  get localStore() {
-    return this.#room.localStore
   }
 
   // other RoomMates

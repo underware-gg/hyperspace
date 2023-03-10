@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react'
 import { HStack, Select, Spacer } from '@chakra-ui/react'
 import { spritesheets } from '@/core/texture-data'
-import { focusGameCanvas } from '@/core/game-canvas'
 import { useRoomContext } from '@/hooks/RoomContext'
+import useGameCanvas from '@/hooks/useGameCanvas'
 import useProfile from '@/hooks/useProfile'
 import useTexture from '@/hooks/useTexture'
 
 const CharacterSelector = ({ }) => {
   const { agentId, Profile } = useRoomContext()
   const { profileCharacterUrl } = useProfile(agentId)
+  const { gameCanvas } = useGameCanvas()
 
   const [selectedValue, setSelectedValue] = useState('')
   const [options, setOptions] = useState([])
@@ -44,7 +45,7 @@ const CharacterSelector = ({ }) => {
         spritesheet: fileName,
       })
     }
-    focusGameCanvas()
+    gameCanvas?.focus()
   })
 
   const containerStyle = {

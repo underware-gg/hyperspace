@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
   Tabs, TabList, TabPanels, Tab, TabPanel,
@@ -10,8 +10,8 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { useRoomContext } from '@/hooks/RoomContext'
-import { getGameCanvasElement } from '@/core/game-canvas'
 import { useDocument, useLocalDocument } from '@/hooks/useDocument'
+import useGameCanvas from '@/hooks/useGameCanvas'
 import usePermission from '@/hooks/usePermission'
 import useVerida from '@/hooks/useVerida'
 import Button from '@/components/Button'
@@ -26,15 +26,20 @@ const ModalScreenEdit = ({
   screenId,
 }) => {
   const { localStore, slug, Screen } = useRoomContext()
+  const { gameCanvas } = useGameCanvas()
   const { permission, isOwner, canEdit, canView } = usePermission(screenId)
   const screen = useDocument('screen', screenId)
 
+  const isOpen = useMemo(() => (screenId != null && canEdit), [screenId, canEdit])
+
   const initialFocusRef = useRef(null)
-  const finalRef = useRef(null)
+  const finalRef = useRef()
 
   useEffect(() => {
-    finalRef.current = getGameCanvasElement()
-  }, [])
+    if (isOpen) {
+      finalRef.current = gameCanvas
+    }
+  }, [isOpen])
 
   const _renameScreen = (value) => {
     Screen.updateScreen(screenId, {
@@ -51,8 +56,6 @@ const ModalScreenEdit = ({
     if (!localStore) return
     localStore.setDocument('screens', 'editing', null)
   }
-
-  const isOpen = (screenId != null && canEdit)
 
   return (
     <Modal
@@ -159,6 +162,7 @@ const ScreenEditorDocument = ({
   screenId,
   initialFocusRef,
 }) => {
+  const { Screen } = useRoomContext()
   const { veridaIsConnected } = useVerida()
   const screen = useDocument('screen', screenId)
 
@@ -204,6 +208,7 @@ const ScreenEditorPdfBook = ({
   screenId,
   initialFocusRef,
 }) => {
+  const { Screen } = useRoomContext()
   const screen = useDocument('screen', screenId)
   const pageCount = useLocalDocument('page-count', screenId) ?? 1
 

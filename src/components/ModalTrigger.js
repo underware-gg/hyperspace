@@ -6,8 +6,8 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react'
-import { getGameCanvasElement } from '@/core/game-canvas'
 import { useRoomContext } from '@/hooks/RoomContext'
+import useGameCanvas from '@/hooks/useGameCanvas'
 import useTrigger from '@/hooks/useTrigger'
 import usePermission from '@/hooks/usePermission'
 import Button from '@/components/Button'
@@ -20,6 +20,7 @@ const ModalTrigger = ({
   disclosure,
 }) => {
   const { Trigger } = useRoomContext()
+  const { gameCanvas } = useGameCanvas()
   const { isOpen, onOpen, onClose } = disclosure
 
   const { permission, isOwner, canEdit, canView } = usePermission(triggerId)
@@ -28,11 +29,13 @@ const ModalTrigger = ({
   const validator = useInputValidator()
 
   const initialFocusRef = useRef(null)
-  const finalRef = useRef(null)
+  const finalRef = useRef()
 
   useEffect(() => {
-    finalRef.current = getGameCanvasElement()
-  }, [])
+    if (isOpen) {
+      finalRef.current = gameCanvas
+    }
+  }, [isOpen])
 
   useEffect(() => {
     setNewData(data)

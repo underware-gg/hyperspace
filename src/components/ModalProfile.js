@@ -9,8 +9,8 @@ import {
   Link,
 } from '@chakra-ui/react'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
-import { getGameCanvasElement } from '@/core/game-canvas'
 import { useRoomContext } from '@/hooks/RoomContext'
+import useGameCanvas from '@/hooks/useGameCanvas'
 import useProfile from '@/hooks/useProfile'
 import useVerida from '@/hooks/useVerida'
 import CharacterSelector from '@/components/CharacterSelector'
@@ -22,22 +22,23 @@ const ModalProfile = ({
   disclosure,
 }) => {
   const { agentId, Profile } = useRoomContext()
-
+  const { gameCanvas } = useGameCanvas()
   const { isOpen, onOpen, onClose } = disclosure
-  const nameRef = useRef()
-  const finalRef = useRef(null)
-
   const { profileName, profileAvatarUrl, profileCharacterUrl } = useProfile(agentId)
+  const nameRef = useRef()
+  const finalRef = useRef()
+
+  useEffect(() => {
+    if (isOpen) {
+      finalRef.current = gameCanvas
+    }
+  }, [isOpen])
 
   const {
     connect, disconnect, inviteFriend,
     veridaIsConnected, veridaIsConnecting,
     hasVeridaProfile, veridaProfileName, veridaAvatarUri, veridaProfileUrl,
   } = useVerida()
-
-  useEffect(() => {
-    finalRef.current = getGameCanvasElement()
-  }, [])
 
   const _renameUser = (value) => {
     Profile.updateProfile(agentId, {

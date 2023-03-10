@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { HStack, Select, Spacer } from '@chakra-ui/react'
 import { tilesets, defaultTileset } from '@/core/texture-data'
 import { fromSourceToDataURL } from '@/core/textures'
-import { focusGameCanvas } from '@/core/game-canvas'
+import useGameCanvas from '@/hooks/useGameCanvas'
 import FileSelectButton from '@/components/FileSelectButton'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
@@ -11,6 +11,7 @@ import usePermission from '@/hooks/usePermission'
 
 const TilesetSelector = ({ }) => {
   const { Tileset } = useRoomContext()
+  const { gameCanvas } = useGameCanvas()
   const { canEdit } = usePermission('world')
   const tileset = useDocument('tileset', 'world')
   const [selectedValue, setSelectedValue] = useState('')
@@ -46,7 +47,7 @@ const TilesetSelector = ({ }) => {
         Tileset.updateTileset('world', fileName, 32, 32, null)
       }
     }
-    focusGameCanvas()
+    gameCanvas?.focus()
   })
 
   const _handleUploadTileset = async (fileObject) => {
@@ -60,7 +61,7 @@ const TilesetSelector = ({ }) => {
     } catch (e) {
       Tileset.remove('world')
     }
-    focusGameCanvas()
+    gameCanvas?.focus()
   }
 
   const imgStyle = {

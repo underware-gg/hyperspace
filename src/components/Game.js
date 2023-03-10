@@ -3,20 +3,24 @@ import {
   Box,
 } from '@chakra-ui/react'
 import { RoomContext } from '@/hooks/RoomContext'
-import { useLocalDocument } from '@/hooks/useDocument'
-import { focusGameCanvas } from '@/core/game-canvas'
+import useGameCanvas from '@/hooks/useGameCanvas'
 import Screens from '@/components/Screens'
 
-const Game = ({ slug }) => {
+const Game = ({
+  slug,
+  autoFocus=true,
+ }) => {
   const [game, setGame] = useState(null)
-  const { dispatchRoom, room } = useContext(RoomContext)
-  const is3d = useLocalDocument('show-3d', 'world') ?? false
+  const { dispatchRoom } = useContext(RoomContext)
+  const { gameCanvas, is3d } = useGameCanvas()
   const canvasRef = useRef()
   const canvas3dRef = useRef()
 
   useEffect(() => {
-    focusGameCanvas()
-  }, [is3d, canvasRef, canvas3dRef])
+    if (autoFocus) {
+      gameCanvas?.focus()
+    }
+  }, [is3d, autoFocus, gameCanvas])
 
   useEffect(() => {
     if (slug && canvasRef.current && canvas3dRef.current && !game) {

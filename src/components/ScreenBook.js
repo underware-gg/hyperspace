@@ -1,7 +1,7 @@
-import { useEffect, useState, useMemo, useRef } from 'react'
+import { useState, useMemo, useRef } from 'react'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
-import { getGameCanvasElement } from '@/core/game-canvas'
+import useGameCanvas from '@/hooks/useGameCanvas'
 import { getFilenameExtensionFromUrl } from '@/core/utils'
 
 
@@ -148,6 +148,8 @@ const ScreenCenteredContainer = ({
   height,
   children,
 }) => {
+  const { gameCanvas } = useGameCanvas()
+
   const containerStyle = useMemo(() => {
     let scale = 0
     let topMargin = 0
@@ -156,7 +158,6 @@ const ScreenCenteredContainer = ({
     if (width > 0 && height > 0) {
       const aspect = width / height
 
-      const gameCanvas = getGameCanvasElement()
       const gameWidth = gameCanvas.clientWidth
       const gameHeight = gameCanvas.clientHeight
       const gameAspect = gameWidth / gameHeight
