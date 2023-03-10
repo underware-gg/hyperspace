@@ -1,29 +1,25 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react'
-import { useRouter } from 'next/router'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
   Tabs, TabList, TabPanels, Tab, TabPanel,
   HStack,
   Spacer,
   Text,
-  Input,
-  Box,
-  VStack,
 } from '@chakra-ui/react'
-import { getLocalStore, getRemoteStore } from '@/core/singleton'
 import { getGameCanvasElement } from '@/core/game-canvas'
+import { useRoomContext } from '@/hooks/RoomContext'
 import useTrigger from '@/hooks/useTrigger'
 import usePermission from '@/hooks/usePermission'
 import Button from '@/components/Button'
 import Editable from '@/components/Editable'
 import { TileInput, ValidatedInput, useInputValidator } from '@/components/Inputs'
 import { PermissionsForm } from '@/components/PermissionsForm'
-import * as Trigger from '@/core/components/trigger'
 
 const ModalTrigger = ({
   triggerId,
   disclosure,
 }) => {
+  const { Trigger } = useRoomContext()
   const { isOpen, onOpen, onClose } = disclosure
 
   const { permission, isOwner, canEdit, canView } = usePermission(triggerId)

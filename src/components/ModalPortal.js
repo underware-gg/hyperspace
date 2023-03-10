@@ -6,19 +6,20 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react'
+import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
 import { getGameCanvasElement } from '@/core/game-canvas'
 import { TileInput, useInputValidator } from '@/components/Inputs'
 import Button from '@/components/Button'
 import { emitAction } from '@/core/controller'
 import { defaultSettings } from '@/core/components/settings'
-import * as Portal from '@/core/components/portal'
 
 const ModalPortal = ({
   disclosure,
   portalId,
   newPortal=false
 }) => {
+  const { Portal } = useRoomContext()
   const { isOpen, onOpen, onClose } = disclosure
   const [roomName, setRoomName] = useState('');
   const [tileX, setTileX] = useState(defaultSettings.entry.x);

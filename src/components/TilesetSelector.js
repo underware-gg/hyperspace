@@ -4,12 +4,13 @@ import { tilesets, defaultTileset } from '@/core/texture-data'
 import { fromSourceToDataURL } from '@/core/textures'
 import { focusGameCanvas } from '@/core/game-canvas'
 import FileSelectButton from '@/components/FileSelectButton'
+import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
 import usePermission from '@/hooks/usePermission'
-import * as Tileset from '@/core/components/tileset'
 
 
 const TilesetSelector = ({ }) => {
+  const { Tileset } = useRoomContext()
   const { canEdit } = usePermission('world')
   const tileset = useDocument('tileset', 'world')
   const [selectedValue, setSelectedValue] = useState('')

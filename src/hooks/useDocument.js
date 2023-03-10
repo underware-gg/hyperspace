@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react'
-import { getRemoteStore, getLocalStore } from '@/core/singleton'
-
-const remoteStore = getRemoteStore()
-const localStore = getLocalStore()
+import { useRoomContext } from '@/hooks/RoomContext'
 
 const useDocument = (type, id) => {
+  const { remoteStore } = useRoomContext()
   return _useDocument(type, id, remoteStore)
 }
 
 const useLocalDocument = (type, id) => {
+  const { localStore } = useRoomContext()
   return _useDocument(type, id, localStore)
 }
 
@@ -16,6 +15,8 @@ const _useDocument = (type, id, store) => {
   const [document, setDocument] = useState(null)
 
   useEffect(() => {
+    if (!store) return
+
     function _handleChange(innerId, document) {
       if (innerId === id) {
         setDocument(document)
@@ -32,10 +33,10 @@ const _useDocument = (type, id, store) => {
   }, [type, id])
 
   useEffect(() => {
-    if (id) {
+    if (id && store) {
       setDocument(store.getDocument(type, id))
     }
-  }, [id])
+  }, [id, store])
 
   return document
 }

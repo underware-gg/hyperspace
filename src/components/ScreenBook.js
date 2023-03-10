@@ -1,9 +1,8 @@
 import { useEffect, useState, useMemo, useRef } from 'react'
-import { getLocalStore, getRemoteStore } from '@/core/singleton'
+import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
 import { getGameCanvasElement } from '@/core/game-canvas'
 import { getFilenameExtensionFromUrl } from '@/core/utils'
-import * as Screen from '@/core/components/screen'
 
 
 export const ScreenBook = ({
@@ -79,6 +78,7 @@ export const ScreenBookPdf = ({
   screenId,
   url,
 }) => {
+  const { localStore } = useRoomContext()
   const screen = useDocument('screen', screenId)
 
   const [numPages, setNumPages] = useState(1);
@@ -99,8 +99,7 @@ export const ScreenBookPdf = ({
     setNumPages(pdf.numPages);
     setPageSizes(sizes)
 
-    const store = getLocalStore()
-    store.setDocument('page-count', screenId, pdf.numPages)
+    localStore.setDocument('page-count', screenId, pdf.numPages)
     console.log(`PDF ${screenId} has ${pdf.numPages} pages`)
   }
 

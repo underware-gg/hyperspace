@@ -8,11 +8,11 @@ import {
   Text,
   Box,
 } from '@chakra-ui/react'
+import { useRoomContext } from '@/hooks/RoomContext'
 import usePermission from '@/hooks/usePermission'
 import useVerida from '@/hooks/useVerida'
 import { useVeridaPublicProfile } from '@/hooks/useVeridaProfile'
 import { Avatar } from '@/components/Avatar'
-import * as Permission from '@/core/components/permission'
 
 export const PermissionsForm = ({
   type,
@@ -20,6 +20,7 @@ export const PermissionsForm = ({
   id,
   disabled = false,
 }) => {
+  const { Permission } = useRoomContext()
   const { veridaIsConnected, veridaProfile, did, didAddress } = useVerida()
 
   const { permission, isOwner, canEdit } = usePermission(id)

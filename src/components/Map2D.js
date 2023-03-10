@@ -3,13 +3,14 @@
 
 import React, { useRef, useState, useEffect } from 'react'
 import { loadTextures } from '@/core/textures'
-import { useClientRoom } from '@/hooks/useRoom'
-import * as Map from '@/core/components/map'
+import { useRoomContext } from '@/hooks/RoomContext'
+import { useClientRoom } from '@/hooks/useClientRoom'
 
 const Map2D = ({
   slug,
   onLoaded = (loaded) => { }
 }) => {
+  const { Map } = useRoomContext()
   const canvasRef = useRef()
   const { store } = useClientRoom(slug)
   const [context, setContext] = useState(null)

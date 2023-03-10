@@ -10,7 +10,7 @@ import {
   Box,
   VStack,
 } from '@chakra-ui/react'
-import { getLocalStore, getRemoteStore } from '@/core/singleton'
+import { useRoomContext } from '@/hooks/RoomContext'
 import { getGameCanvasElement } from '@/core/game-canvas'
 import { useDocument, useLocalDocument } from '@/hooks/useDocument'
 import usePermission from '@/hooks/usePermission'
@@ -21,11 +21,11 @@ import Textarea from '@/components/Textarea'
 import { PermissionsForm } from '@/components/PermissionsForm'
 import { SliderProgress, SliderPage } from '@/components/Sliders'
 import { getFilenameFromUrl } from '@/core/utils'
-import * as Screen from '@/core/components/screen'
 
 const ModalScreenEdit = ({
   screenId,
 }) => {
+  const { localStore, Screen } = useRoomContext()
   const { permission, isOwner, canEdit, canView } = usePermission(screenId)
   const screen = useDocument('screen', screenId)
 
@@ -51,8 +51,8 @@ const ModalScreenEdit = ({
   }
 
   const _handleClose = () => {
-    const store = getLocalStore()
-    store.setDocument('screens', 'editing', null)
+    if (!localStore) return
+    localStore.setDocument('screens', 'editing', null)
   }
 
   const isOpen = (screenId != null && canEdit)

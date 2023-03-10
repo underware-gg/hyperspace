@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react'
-import { getRemoteStore, getLocalStore } from '@/core/singleton'
-
-const remoteStore = getRemoteStore()
-const localStore = getLocalStore()
+import { useRoomContext } from '@/hooks/RoomContext'
 
 const useRemoteDocumentTypes = () => {
+  const { remoteStore } = useRoomContext()
   return useDocumentTypes(remoteStore)
 }
 
 const useLocalDocumentTypes = () => {
+  const { localStore } = useRoomContext()
   return useDocumentTypes(localStore)
 }
 

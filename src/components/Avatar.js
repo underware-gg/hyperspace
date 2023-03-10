@@ -5,7 +5,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
-import { useRoom } from '@/hooks/useRoom'
+import { useRoomContext } from '@/hooks/RoomContext'
 import useProfile from '@/hooks/useProfile'
 import useVerida from '@/hooks/useVerida'
 import useTexture from '@/hooks/useTexture'
@@ -54,7 +54,7 @@ export const Avatar = ({
 
 
 export const AvatarButton = () => {
-  const { agentId } = useRoom()
+  const { agentId } = useRoomContext()
   const { profileName, profileAvatarUrl, profileCharacterUrl } = useProfile(agentId)
   const { veridaIsConnecting, veridaProfileName, veridaAvatarUri } = useVerida()
 

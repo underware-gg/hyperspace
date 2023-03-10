@@ -9,11 +9,11 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
+import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
 import { PermissionsForm } from '@/components/PermissionsForm'
 import { TileInput, useInputValidator } from '@/components/Inputs'
 import Button from '@/components/Button'
-import * as Settings from '@/core/components/settings'
 import { defaultSettings } from '@/core/components/settings'
 
 
@@ -32,6 +32,7 @@ export const ModalSettings = ({
   settingsDisclosure,
   newRoom = false
 }) => {
+  const { Settings } = useRoomContext()
   const router = useRouter()
   const { slug } = router.query
   const { id, isOpen, onClose } = settingsDisclosure

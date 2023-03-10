@@ -2,8 +2,6 @@ import { nanoid } from 'nanoid'
 import * as THREE from 'three'
 import RoomCollection from '@/core/interfaces/RoomCollection'
 import { getActionState, addActionDownListener } from '@/core/controller'
-import { canPlaceOverPlayer } from '@/core/components/player'
-import { getPlayerTileRotation } from '@/core/components/player'
 import { roundToNearest, getFilenameFromUrl } from '@/core/utils'
 
 const normalMatrix = new THREE.Matrix3() // create once and reuse
@@ -46,7 +44,7 @@ class Editor extends RoomCollection {
         return
       }
 
-      if (!canPlaceOverPlayer(id)) {
+      if (!this.Player.canPlaceOverPlayer(id)) {
         return
       }
 
@@ -62,7 +60,7 @@ class Editor extends RoomCollection {
         data: JSON.stringify(options?.data ?? []),
       }
 
-      if (!canPlaceOverPlayer(id)) {
+      if (!this.Player.canPlaceOverPlayer(id)) {
         return
       }
 
@@ -71,7 +69,7 @@ class Editor extends RoomCollection {
     })
 
     addActionDownListener('createScreen', () => {
-      if (!canPlaceOverPlayer(id)) {
+      if (!this.Player.canPlaceOverPlayer(id)) {
         return
       }
 
@@ -88,7 +86,7 @@ class Editor extends RoomCollection {
     })
 
     addActionDownListener('createBook', () => {
-      if (!canPlaceOverPlayer(id)) {
+      if (!this.Player.canPlaceOverPlayer(id)) {
         return
       }
 
@@ -330,7 +328,7 @@ class Editor extends RoomCollection {
   getCreateTileRotation(id) {
     const editor = this.remoteStore.getDocument('editor', id)
 
-    let { x, y, rot } = getPlayerTileRotation(id)
+    let { x, y, rot } = this.Player.getPlayerTileRotation(id)
 
     if (editor) {
       const { interacting, position } = editor

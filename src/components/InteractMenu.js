@@ -4,7 +4,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
-import { useRoom } from '@/hooks/useRoom'
+import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
 import usePlayer from '@/hooks/usePlayer'
 import usePermission from '@/hooks/usePermission'
@@ -19,7 +19,7 @@ const InteractMenu = ({
   customTileset,
   onSelect,
 }) => {
-  const { agentId } = useRoom();
+  const { agentId } = useRoomContext();
   const {
     canPlace,
     overPortal, portalId, portalName, portal,

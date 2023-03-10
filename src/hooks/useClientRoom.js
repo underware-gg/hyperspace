@@ -3,24 +3,6 @@ import { useState, useEffect } from 'react'
 import Store from '@/core/store'
 import * as ClientRoom from '@/core/networking'
 
-const useRoom = () => {
-  const [room, setRoom] = useState({})
-
-  useEffect(() => {
-    async function _getRoom() {
-      const room = ClientRoom.get();
-      if (room) {
-        setRoom(room)
-      } else {
-        setTimeout(_getRoom, 100)
-      }
-    }
-    _getRoom()
-  }, [])
-
-  return room
-}
-
 const useClientRoom = (slug) => {
   const [agentId, setAgentId] = useState(null)
   const [room, setRoom] = useState(null)
@@ -72,6 +54,5 @@ const useClientRoom = (slug) => {
 }
 
 export {
-  useRoom,
   useClientRoom,
 } 

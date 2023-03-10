@@ -10,19 +10,18 @@ import {
 } from '@chakra-ui/react'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { getGameCanvasElement } from '@/core/game-canvas'
-import { useRoom } from '@/hooks/useRoom'
+import { useRoomContext } from '@/hooks/RoomContext'
 import useProfile from '@/hooks/useProfile'
 import useVerida from '@/hooks/useVerida'
 import CharacterSelector from '@/components/CharacterSelector'
 import Editable from '@/components/Editable'
 import Button from '@/components/Button'
 import { Avatar } from '@/components/Avatar'
-import * as Profile from '@/core/components/profile'
 
 const ModalProfile = ({
   disclosure,
 }) => {
-  const { agentId } = useRoom()
+  const { agentId, Profile } = useRoomContext()
 
   const { isOpen, onOpen, onClose } = disclosure
   const nameRef = useRef()

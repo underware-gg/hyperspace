@@ -1,10 +1,13 @@
-import { ChakraProvider } from '@chakra-ui/react'
 import { theme } from '@/styles/theme'
+import { ChakraProvider } from '@chakra-ui/react'
+import { RoomProvider } from '@/hooks/RoomContext'
 import '/styles/styles.scss'
 
 const MyApp = ({ Component, pageProps }) => (
   <ChakraProvider theme={theme}>
-    <Component {...pageProps} />
+    <RoomProvider>
+      <Component {...pageProps} />
+    </RoomProvider>
   </ChakraProvider>
 )
 

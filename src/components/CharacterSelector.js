@@ -2,13 +2,12 @@ import { useEffect, useState } from 'react'
 import { HStack, Select, Spacer } from '@chakra-ui/react'
 import { spritesheets } from '@/core/texture-data'
 import { focusGameCanvas } from '@/core/game-canvas'
-import { useRoom } from '@/hooks/useRoom'
+import { useRoomContext } from '@/hooks/RoomContext'
 import useProfile from '@/hooks/useProfile'
 import useTexture from '@/hooks/useTexture'
-import * as Profile from '@/core/components/profile'
 
 const CharacterSelector = ({ }) => {
-  const { agentId } = useRoom();
+  const { agentId, Profile } = useRoomContext();
   const { profileCharacterUrl } = useProfile(agentId)
 
   const [selectedValue, setSelectedValue] = useState('')
