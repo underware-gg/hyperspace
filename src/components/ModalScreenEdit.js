@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/router'
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
   Tabs, TabList, TabPanels, Tab, TabPanel,
@@ -25,12 +24,9 @@ import { getFilenameFromUrl } from '@/core/utils'
 const ModalScreenEdit = ({
   screenId,
 }) => {
-  const { localStore, Screen } = useRoomContext()
+  const { localStore, slug, Screen } = useRoomContext()
   const { permission, isOwner, canEdit, canView } = usePermission(screenId)
   const screen = useDocument('screen', screenId)
-
-  const router = useRouter()
-  const { slug } = router.query
 
   const initialFocusRef = useRef(null)
   const finalRef = useRef(null)

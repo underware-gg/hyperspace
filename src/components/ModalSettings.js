@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
   Tabs, TabList, TabPanels, Tab, TabPanel,
@@ -32,9 +31,7 @@ export const ModalSettings = ({
   settingsDisclosure,
   newRoom = false
 }) => {
-  const { Settings } = useRoomContext()
-  const router = useRouter()
-  const { slug } = router.query
+  const { Settings, slug } = useRoomContext()
   const { id, isOpen, onClose } = settingsDisclosure
 
   const [sizeX, setSizeX] = useState(defaultSettings.size.width);

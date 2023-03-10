@@ -1,5 +1,4 @@
-import { useEffect } from 'react'
-import { useRouter } from 'next/router'
+import React from 'react'
 import { HStack } from '@chakra-ui/react'
 import { useRoomContext } from '@/hooks/RoomContext'
 import usePermission from '@/hooks/usePermission'
@@ -19,10 +18,7 @@ const _downloadRoomData = (slug, clientRoom) => {
 }
 
 const RoomDownloadMenu = () => {
-  const { remoteStore, clientRoom } = useRoomContext()
-
-  const router = useRouter()
-  const { slug } = router.query
+  const { remoteStore, clientRoom, slug } = useRoomContext()
 
   const { canEdit } = usePermission('world')
 
