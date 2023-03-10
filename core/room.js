@@ -15,7 +15,7 @@ import { createRenderTexture } from './textures'
 import { renderMarkdown } from './canvas-markdown'
 
 // 1.9 - 1.2
-const documentTexture = createRenderTexture(640, 404)
+// const documentTexture = createRenderTexture(640, 404)
 
 export const init = async (slug, canvas, canvas3d) => {
   registerActions([
@@ -170,19 +170,19 @@ export const init = async (slug, canvas, canvas3d) => {
 
   const cellWidth = 1.9
   const cellHeight = 1.2
-  const documentGeometry = new THREE.PlaneGeometry(cellWidth, cellHeight, 1, 1)
-  const documentMaterial = new THREE.MeshBasicMaterial({
-    map: documentTexture.texture,
-  })
-  const documentMesh = new THREE.Mesh(documentGeometry, documentMaterial)
-  documentMesh.position.set(10, -1.01, .75)
-  documentMesh.rotation.set(90*Math.PI/180, 0, 0)
-  const localStore = getLocalStore()
-  const scene = localStore.getDocument('scene', 'scene')
-  if (scene === null) {
-    return
-  }
-  scene.add(documentMesh)
+  // const documentGeometry = new THREE.PlaneGeometry(cellWidth, cellHeight, 1, 1)
+  // const documentMaterial = new THREE.MeshBasicMaterial({
+    // map: documentTexture.texture,
+  // })
+  // const documentMesh = new THREE.Mesh(documentGeometry, documentMaterial)
+  // documentMesh.position.set(10, -1.01, .75)
+  // documentMesh.rotation.set(90*Math.PI/180, 0, 0)
+  // const localStore = getLocalStore()
+  // const scene = localStore.getDocument('scene', 'scene')
+  // if (scene === null) {
+    // return
+  // }
+  // scene.add(documentMesh)
 }
 
 export const update = (dt) => {
@@ -197,14 +197,14 @@ export const render = (canvas, context) => {
   const store = getRemoteStore()
   const playerIds = store.getIds('player')
   const portalIds = store.getIds('portal')
-  const document = store.getDocument('document', 'world')
-  const text = document?.content || ''
+  // const document = store.getDocument('document', 'world')
+  // const text = document?.content || ''
 
   Map.render('world', context)
 
   // This should be rendered to another canvas only when changes occur.
-  renderMarkdown(text, documentTexture.canvas, documentTexture.context)
-  documentTexture.texture.needsUpdate = true
+  // renderMarkdown(text, documentTexture.canvas, documentTexture.context)
+  // documentTexture.texture.needsUpdate = true
 
   // const renderImage = new Image()
   // renderImage.src = documentTexture.canvas.toDataURL()
