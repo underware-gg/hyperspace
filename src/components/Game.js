@@ -20,9 +20,9 @@ const Game = ({ slug }) => {
 
   useEffect(() => {
     if (slug && canvasRef.current && canvas3dRef.current && !game) {
-      import('src/core/game').then(({ default: Game }) => {
+      import('src/core/game').then(async ({ default: Game }) => {
         const _game = new Game()
-        _game.init(slug, canvasRef.current, canvas3dRef.current)
+        await _game.init(slug, canvasRef.current, canvas3dRef.current)
         dispatchRoom(_game.room)
         setGame(_game)
       })

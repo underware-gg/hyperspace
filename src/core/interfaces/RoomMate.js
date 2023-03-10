@@ -1,7 +1,7 @@
 
 // objects created inside Room
 // share the Room client and stores
-// can access to other objects
+// can access other objects
 
 class RoomMate {
   #room;
@@ -9,6 +9,8 @@ class RoomMate {
   constructor(room) {
     this.#room = room
   }
+
+  // client
 
   get slug() {
     return this.#room.clientRoom.slug
@@ -22,6 +24,8 @@ class RoomMate {
     return this.#room.clientRoom
   }
 
+  // stores
+
   get remoteStore() {
     return this.#room.remoteStore
   }
@@ -29,6 +33,8 @@ class RoomMate {
   get localStore() {
     return this.#room.localStore
   }
+
+  // other RoomMates
 
   get Player() {
     return this.#room.Player

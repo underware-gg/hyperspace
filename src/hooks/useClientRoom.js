@@ -26,11 +26,9 @@ const useClientRoom = (slug) => {
       //   }
       // })
       _room.on('patched', (patched) => {
-        if (patched && _mounted) {
+        if (patched && _mounted && !store) {
           setStore(_store)
         }
-      })
-      _store.on(null, (source, type, id, path, value) => {
       })
     }
     

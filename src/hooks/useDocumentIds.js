@@ -15,25 +15,27 @@ const useDocumentIds = (type, store) => {
   const [ids, setIds] = useState([])
 
   useEffect(() => {
+    if (!store) return
+
     let _mounted = true
 
     function _updateIds() {
-      const _ids = store?.getIds(type) ?? []
-      setIds(_ids)
+      if (_mounted && store) {
+        const _ids = store.getIds(type) ?? []
+        setIds(_ids)
+      }
     }
 
     _updateIds()
 
-    if (store) {
-      store.on({ type, event: 'create' }, _updateIds)
-      store.on({ type, event: 'delete' }, _updateIds)
-      return () => {
-        store.off({ type, event: 'create' }, _updateIds)
-        store.off({ type, event: 'delete' }, _updateIds)
-        _mounted = false
-      }
+    store.on({ type, event: 'create' }, _updateIds)
+    store.on({ type, event: 'delete' }, _updateIds)
+    return () => {
+      store.off({ type, event: 'create' }, _updateIds)
+      store.off({ type, event: 'delete' }, _updateIds)
+      _mounted = false
     }
-  }, [type])
+  }, [type, store])
 
   return ids
 }

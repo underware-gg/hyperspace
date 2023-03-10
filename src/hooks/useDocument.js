@@ -16,17 +16,16 @@ const _useDocument = (type, id, store) => {
 
   // initialize
   useEffect(() => {
-    if (id && store) {
+    if (type && id && store) {
       setDocument(store.getDocument(type, id))
     }
-  }, [id, store])
+  }, [type, id, store])
 
   // listen
   useEffect(() => {
-    if (!store) return
-
-    function _handleChange(innerId, document) {
-      if (innerId === id) {
+    if (!store || !id || !type) return
+    function _handleChange(documentId, document) {
+      if (documentId === id) {
         setDocument(document)
       }
     }
