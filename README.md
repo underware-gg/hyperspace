@@ -5,7 +5,7 @@ A collaborative, composable metaverse using CRDTs for state synchronisation.
 
 ## Development Server
 
-**requires node >=v16.14.1**
+**requires node >=v16.14.0**
 
 To run the development server:
 
