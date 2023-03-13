@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useClientRoom } from '@/hooks/useClientRoom'
+import { useClientRoom } from '@/hooks/useRoom'
 import SlugSelector from '@/components/SlugSelector'
 import Snapshot from '@/components/Snapshot'
 

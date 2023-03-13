@@ -4,6 +4,7 @@ import {
   handleKeyUp,
   addActionDownListener,
 } from '@/core/controller'
+import { loadTextures } from '@/core/textures'
 import * as ClientRoom from '@/core/networking'
 import Renderer2D from '@/core/rendering/renderer2D'
 import Renderer3D from '@/core/rendering/renderer3D'
@@ -155,6 +156,8 @@ class Room {
   async init(slug, canvas2d, canvas3d) {
     this.canvas2d = canvas2d
     this.canvas3d = canvas3d
+
+    await loadTextures()
 
     this.renderer2D.init(canvas2d)
     this.renderer3D.init(canvas3d)

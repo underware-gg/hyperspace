@@ -1,4 +1,3 @@
-import { loadTextures } from '@/core/textures'
 import Room from '@/core/room'
 
 class Game {
@@ -16,9 +15,7 @@ class Game {
 
   async init(slug, canvas2d, canvas3d) {
     
-    await loadTextures()
-
-    this.room.init(slug, canvas2d, canvas3d)
+    await this.room.init(slug, canvas2d, canvas3d)
 
     this.lastTime = (new Date()).getTime()
     this.currentTime = 0
