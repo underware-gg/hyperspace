@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
   Tabs, TabList, TabPanels, Tab, TabPanel,
@@ -9,11 +8,12 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
+import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
 import { PermissionsForm } from '@/components/PermissionsForm'
 import { TileInput, useInputValidator } from '@/components/Inputs'
 import Button from '@/components/Button'
-import * as Settings from '@/core/components/settings'
+import { defaultSettings } from '@/core/components/settings'
 
 
 export const useSettingsDisclosure = (id) => {
@@ -31,14 +31,13 @@ export const ModalSettings = ({
   settingsDisclosure,
   newRoom = false
 }) => {
-  const router = useRouter()
-  const { slug } = router.query
+  const { Settings, slug } = useRoomContext()
   const { id, isOpen, onClose } = settingsDisclosure
 
-  const [sizeX, setSizeX] = useState(Settings.defaultSettings.size.width);
-  const [sizeY, setSizeY] = useState(Settings.defaultSettings.size.height);
-  const [tileX, setTileX] = useState(Settings.defaultSettings.entry.x);
-  const [tileY, setTileY] = useState(Settings.defaultSettings.entry.y);
+  const [sizeX, setSizeX] = useState(defaultSettings.size.width);
+  const [sizeY, setSizeY] = useState(defaultSettings.size.height);
+  const [tileX, setTileX] = useState(defaultSettings.entry.x);
+  const [tileY, setTileY] = useState(defaultSettings.entry.y);
   const validator = useInputValidator()
 
   const settings = useDocument('settings', id)
@@ -64,7 +63,7 @@ export const ModalSettings = ({
         height: sizeY,
       }
     } else {
-      Settings.update(id, options)
+      Settings.updateSettings(id, options)
     }
     onClose()
   }

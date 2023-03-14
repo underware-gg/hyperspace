@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react'
 import { Button as ChakraButton } from '@chakra-ui/react'
-import { focusGameCanvas } from '@/core/game-canvas'
+import useGameCanvas from '@/hooks/useGameCanvas'
 
 const Button = forwardRef(({
   value,
@@ -13,11 +13,13 @@ const Button = forwardRef(({
   onClick,
   children,
 }, ref) => {
+  const { gameCanvas, is3d } = useGameCanvas()
 
   const _onClick = () => {
     onClick()
-    focusGameCanvas()
+    gameCanvas?.focus()
   }
+  
   return (
     <ChakraButton
       ref={ref}

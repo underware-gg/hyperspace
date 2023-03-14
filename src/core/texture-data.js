@@ -69,7 +69,7 @@ export const spritesheets = [
   { sprites: japanSet, src: '/spritesheets/japan/Punky.png' },
   { sprites: japanSet, src: '/spritesheets/japan/Ronin.png' },
   { sprites: japanSet, src: '/spritesheets/japan/OnnaMusha.png' },
-  { sprites: japanSet, src: '/spritesheets/japan/Witch.png' },
+  { sprites: japanSet, src: '/spritesheets/japan/Witchy.png' },
   { sprites: japanSet, src: '/spritesheets/japan/Doge.png' },
   { sprites: schoolSet, src: '/spritesheets/school/Madison.png' },
   { sprites: schoolSet, src: '/spritesheets/school/Morgan.png' },

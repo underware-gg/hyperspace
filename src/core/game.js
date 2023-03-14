@@ -1,66 +1,47 @@
-import { loadTextures } from '@/core/textures'
-import Renderer2D from '@/core/rendering/renderer2D'
-import Renderer3D from '@/core/rendering/renderer3D'
-import * as Room from '@/core/room'
+import Room from '@/core/room'
 
 class Game {
   constructor() {
+    this.init = this.init.bind(this)
+    this.shutdown = this.shutdown.bind(this)
+    this.render = this.render.bind(this)
+
+    this.room = new Room()
+    
     this.lastTime = (new Date()).getTime()
     this.currentTime = 0
     this.dt = 0
-
-    this.init = this.init.bind(this)
-    this.shutdown = this.shutdown.bind(this)
-    this.update = this.update.bind(this)
-    this.render = this.render.bind(this)
-    this.renderer2D = new Renderer2D()
-    this.renderer3D = new Renderer3D()
   }
 
-  async init(slug, canvas, canvas3d) {
-    this.canvas = canvas
-    this.context = canvas.getContext('2d')
-    this.canvas3d = canvas3d
-
-    await loadTextures()
-
-    this.renderer2D.init(this.context)
-    this.renderer3D.init(canvas3d)
-    Room.init(slug, canvas, canvas3d)
+  async init(slug, canvas2d, canvas3d) {
+    
+    await this.room.init(slug, canvas2d, canvas3d)
 
     this.lastTime = (new Date()).getTime()
     this.currentTime = 0
     this.dt = 0
 
     this.running = true
-    window.requestAnimationFrame(this.update)
+    window.requestAnimationFrame(this.render)
   }
 
   shutdown() {
     this.running = false
   }
 
-  update() {
+  render() {
     this.currentTime = (new Date()).getTime()
     this.dt = (this.currentTime - this.lastTime) / 1000
 
-    this.renderer2D.update(this.dt)
-    this.renderer3D.update(this.dt)
-    Room.update(this.dt)
+    this.room.update(this.dt)
   
-    this.render()
+    this.room.render()
   
     this.lastTime = this.currentTime
   
     if (this.running) {
-      window.requestAnimationFrame(this.update)
+      window.requestAnimationFrame(this.render)
     }
-  }
-
-  render() {
-    this.renderer2D.render(this.canvas, this.context)
-    this.renderer3D.render()
-    Room.render(this.canvas, this.context)
   }
 }
 

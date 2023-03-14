@@ -3,18 +3,16 @@ import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
   Tabs, TabList, TabPanels, Tab, TabPanel,
 } from '@chakra-ui/react'
-import { getRemoteStore, getLocalStore } from '@/core/singleton'
+import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
 import Snapshot from '@/components/Snapshot'
 import SnapshotSlug from '@/components/SnapshotSlug'
 import Button from '@/components/Button'
 
-const remoteStore = getRemoteStore()
-const localStore = getLocalStore()
-
 const ModalSnapshots = ({
   disclosure,
 }) => {
+  const { remoteStore, localStore } = useRoomContext()
   const { id, isOpen, onClose } = disclosure
 
   const settings = useDocument('settings', id)

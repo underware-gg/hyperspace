@@ -1,4 +1,4 @@
-import { getRemoteStore } from '@/core/singleton'
+import RoomCollection from '@/core/interfaces/RoomCollection'
 
 export const defaultSettings = {
   size: {
@@ -11,25 +11,26 @@ export const defaultSettings = {
   },
 }
 
-export const create = (id) => {
-  const store = getRemoteStore()
-  store.setDocument('settings', id, defaultSettings)
-  return defaultSettings
+class Settings extends RoomCollection {
+  constructor(room) {
+    super(room, 'settings')
+
+    this.clientRoom.on('patched', (patched) => {
+      if (!patched) {
+        this.resetSettings('world')
+      }
+    })
+  }
+
+  resetSettings(id) {
+    this.upsert(id, defaultSettings)
+  }
+
+  updateSettings(id, newSettings) {
+    let settings = this.remoteStore.getDocument('settings', id) ?? defaultSettings
+    this.remoteStore.setDocument('settings', id, { ...settings, ...newSettings })
+  }
+
 }
 
-export const update = (id, newSettings) => {
-  const store = getRemoteStore()
-  let settings = store.getDocument('settings', id) ?? defaultSettings
-  store.setDocument('settings', id, { ...settings, ...newSettings })
-}
-
-export const remove = (id) => {
-  const store = getRemoteStore()
-  store.setDocument('settings', id, null)
-}
-
-export const exists = (id) => {
-  const store = getRemoteStore()
-  const settings = store.getDocument('settings', id)
-  return settings !== null
-}
+export default Settings

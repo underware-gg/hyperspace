@@ -10,20 +10,19 @@ import {
   ArrowForwardIcon,
   DeleteIcon,
 } from '@chakra-ui/icons'
-import { getRemoteStore } from '@/core/singleton'
+import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
-import { useRoom } from '@/hooks/useRoom'
+import { useVeridaContext } from '@/hooks/VeridaContext'
 import useProfile from '@/hooks/useProfile'
-import useVerida from '@/hooks/useVerida'
 import usePermission from '@/hooks/usePermission'
 import Markdown from '@/components/Markdown'
 
 const ChatBox = () => {
-  const { agentId } = useRoom();
+  const { agentId, remoteStore } = useRoomContext()
   const { canEdit } = usePermission('world')
 
   const { profileName } = useProfile(agentId)
-  const { veridaProfileName } = useVerida()
+  const { veridaProfileName } = useVeridaContext()
 
   const [message, setMessage] = useState('')
 
@@ -33,14 +32,15 @@ const ChatBox = () => {
   }, [])
 
   const _onDump = () => {
-    if (!canEdit) return
+    if (!canEdit || !remoteStore) return
     let newDocument = {
       content: '',
     }
-    getRemoteStore().setDocument('document', 'chat', newDocument)
+    remoteStore.setDocument('document', 'chat', newDocument)
   }
 
   const _onSubmit = () => {
+    if (!canEdit || !remoteStore) return
     const name = veridaProfileName ?? profileName ?? 'You'
     const line = `**${name}**: ${message}\n\n`
     let newDocument = {
@@ -48,7 +48,7 @@ const ChatBox = () => {
       ...document
     }
     newDocument.content += line
-    getRemoteStore().setDocument('document', 'chat', newDocument)
+    remoteStore.setDocument('document', 'chat', newDocument)
     setMessage('')
   }
 
@@ -56,7 +56,7 @@ const ChatBox = () => {
     <VStack className='ChatDrawer'>
       <Box className='ChatRow' align='center'>
         <HStack>
-          <b>PUBLIC CHAT</b>
+          <b>ROOM CHAT</b>
           <Spacer />
           {canEdit &&
             <DeleteIcon className='Clickable' onClick={() => _onDump()} />

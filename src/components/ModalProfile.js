@@ -9,39 +9,39 @@ import {
   Link,
 } from '@chakra-ui/react'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
-import { getGameCanvasElement } from '@/core/game-canvas'
-import { useRoom } from '@/hooks/useRoom'
+import { useRoomContext } from '@/hooks/RoomContext'
+import { useVeridaContext } from '@/hooks/VeridaContext'
+import useGameCanvas from '@/hooks/useGameCanvas'
 import useProfile from '@/hooks/useProfile'
-import useVerida from '@/hooks/useVerida'
 import CharacterSelector from '@/components/CharacterSelector'
 import Editable from '@/components/Editable'
 import Button from '@/components/Button'
 import { Avatar } from '@/components/Avatar'
-import * as Profile from '@/core/components/profile'
 
 const ModalProfile = ({
   disclosure,
 }) => {
-  const { agentId } = useRoom()
-
+  const { agentId, Profile } = useRoomContext()
+  const { gameCanvas } = useGameCanvas()
   const { isOpen, onOpen, onClose } = disclosure
-  const nameRef = useRef()
-  const finalRef = useRef(null)
-
   const { profileName, profileAvatarUrl, profileCharacterUrl } = useProfile(agentId)
+  const nameRef = useRef()
+  const finalRef = useRef()
+
+  useEffect(() => {
+    if (isOpen) {
+      finalRef.current = gameCanvas
+    }
+  }, [isOpen])
 
   const {
     connect, disconnect, inviteFriend,
     veridaIsConnected, veridaIsConnecting,
     hasVeridaProfile, veridaProfileName, veridaAvatarUri, veridaProfileUrl,
-  } = useVerida()
-
-  useEffect(() => {
-    finalRef.current = getGameCanvasElement()
-  }, [])
+  } = useVeridaContext()
 
   const _renameUser = (value) => {
-    Profile.update(agentId, {
+    Profile.updateProfile(agentId, {
       name: value,
     })
   }

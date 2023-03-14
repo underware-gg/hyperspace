@@ -4,7 +4,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
-import { useRoom } from '@/hooks/useRoom'
+import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
 import usePlayer from '@/hooks/usePlayer'
 import usePermission from '@/hooks/usePermission'
@@ -19,7 +19,7 @@ const InteractMenu = ({
   customTileset,
   onSelect,
 }) => {
-  const { agentId } = useRoom();
+  const { agentId } = useRoomContext()
   const {
     canPlace,
     overPortal, portalId, portalName, portal,
@@ -29,7 +29,10 @@ const InteractMenu = ({
   } = usePlayer(agentId)
 
   const editor = useDocument('editor', agentId)
-  const { permission, isOwner, canEdit, canView } = usePermission(screenId)
+  const { canEdit: canEditRoom, canView: canViewRoom } = usePermission('world')
+  const { canEdit: canEditPortal, canView: canViewPortal } = usePermission(portalId)
+  const { canEdit: canEditTrigger, canView: canViewTrigger } = usePermission(triggerId)
+  const { canEdit: canEditScreen, canView: canViewScreen } = usePermission(screenId)
 
   const portalDisclosure = useDisclosure()
   const triggerDisclosure = useDisclosure()
@@ -76,19 +79,19 @@ const InteractMenu = ({
         ? <>Cursor@[{editor.position.x},{editor.position.y}]&nbsp;</>
         : <>Player@[{tileX},{tileY}]&nbsp;</>
       }
-      
+
       {canPlace &&
         <>
-          <Button size='sm' onClick={() => emitAction('editPortal')}>
+          <Button size='sm' disabled={!canEditRoom} onClick={() => emitAction('editPortal')}>
             New [P]ortal
           </Button>
-          <Button size='sm' onClick={() => emitAction('createScreen')}>
+          <Button size='sm' disabled={!canEditRoom} onClick={() => emitAction('createScreen')}>
             New scree[N]
           </Button>
-          <Button size='sm' onClick={() => emitAction('createBook')}>
+          <Button size='sm' disabled={!canEditRoom} onClick={() => emitAction('createBook')}>
             New [B]ook
           </Button>
-          <Button size='sm' onClick={() => emitAction('createTrigger')}>
+          <Button size='sm' disabled={!canEditRoom} onClick={() => emitAction('createTrigger')}>
             New Trigger
           </Button>
         </>
@@ -97,13 +100,13 @@ const InteractMenu = ({
       {overPortal &&
         <>
           Portal to&nbsp;<Text color='important'>{portalName}</Text>
-          <Button size='sm' disabled={!canEdit} onClick={() => enterPortalDisclosure.openConfirmDialog()}>
+          <Button size='sm' disabled={!canEditPortal} onClick={() => enterPortalDisclosure.openConfirmDialog()}>
             [E]nter
           </Button>
-          <Button size='sm' disabled={!canEdit} onClick={() => portalDisclosure.onOpen()}>
+          <Button size='sm' disabled={!canEditPortal} onClick={() => portalDisclosure.onOpen()}>
             Edit [P]ortal
           </Button>
-          <Button size='sm' disabled={!canEdit} onClick={() => deletePortalDisclosure.openConfirmDialog()}>
+          <Button size='sm' disabled={!canEditPortal} onClick={() => deletePortalDisclosure.openConfirmDialog()}>
             [Del]ete
           </Button>
           <DialogConfirm confirmDisclosure={enterPortalDisclosure} />
@@ -116,13 +119,13 @@ const InteractMenu = ({
       {overTrigger &&
         <>
           Trigger&nbsp;<Text color='important'>{triggerName}</Text>
-          <Button size='sm' disabled={!canEdit} onClick={() => emitAction('interact')}>
+          <Button size='sm' disabled={!canEditTrigger} onClick={() => emitAction('interact')}>
             [E]xecute
           </Button>
-          <Button size='sm' disabled={!canEdit} onClick={() => triggerDisclosure.onOpen()}>
+          <Button size='sm' disabled={!canEditTrigger} onClick={() => triggerDisclosure.onOpen()}>
             Edit Trigger
           </Button>
-          <Button size='sm' disabled={!canEdit} onClick={() => deleteTriggerDisclosure.openConfirmDialog()}>
+          <Button size='sm' disabled={!canEditTrigger} onClick={() => deleteTriggerDisclosure.openConfirmDialog()}>
             [Del]ete
           </Button>
           <DialogConfirm confirmDisclosure={deleteTriggerDisclosure} />
@@ -134,18 +137,18 @@ const InteractMenu = ({
       {overScreen &&
         <>
           {screen?.type}:<Text color='important'>{screen?.name ?? screenId}</Text>
-          {canEdit ?
+          {canEditScreen ?
             <>
-              <Button size='sm' disabled={!screen || !canEdit} onClick={() => emitAction('interact')}>
+              <Button size='sm' disabled={!screen || !canEditScreen} onClick={() => emitAction('interact')}>
                 [E]dit
               </Button>
-              <Button size='sm' disabled={!screen || !canEdit} onClick={() => deleteScreenDisclosure.openConfirmDialog()}>
+              <Button size='sm' disabled={!screen || !canEditScreen} onClick={() => deleteScreenDisclosure.openConfirmDialog()}>
                 [Del]ete
               </Button>
               <DialogConfirm confirmDisclosure={deleteScreenDisclosure} />
             </>
             :
-            <Button size='sm' disabled={!screen || !canView} onClick={() => emitAction('interact')}>
+            <Button size='sm' disabled={!screen || !canViewScreen} onClick={() => emitAction('interact')}>
               [V]iew
             </Button>
           }

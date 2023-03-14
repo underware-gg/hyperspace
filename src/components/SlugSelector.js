@@ -30,7 +30,7 @@ const SlugSelector = ({
   return (
     <Select
       value={selectedValue ?? ''}
-      placeholder='<document slug>'
+      placeholder={!rooms || rooms.length == 0 ?'loading rooms...' : 'select room...'}
       onChange={(e) => onChange(e.target.value)}
     >
       {options}

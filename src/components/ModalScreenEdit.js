@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/router'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
   Tabs, TabList, TabPanels, Tab, TabPanel,
@@ -10,34 +9,37 @@ import {
   Box,
   VStack,
 } from '@chakra-ui/react'
-import { getLocalStore, getRemoteStore } from '@/core/singleton'
-import { getGameCanvasElement } from '@/core/game-canvas'
+import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument, useLocalDocument } from '@/hooks/useDocument'
+import { useVeridaContext } from '@/hooks/VeridaContext'
+import useGameCanvas from '@/hooks/useGameCanvas'
 import usePermission from '@/hooks/usePermission'
-import useVerida from '@/hooks/useVerida'
 import Button from '@/components/Button'
 import Editable from '@/components/Editable'
 import Textarea from '@/components/Textarea'
 import { PermissionsForm } from '@/components/PermissionsForm'
 import { SliderProgress, SliderPage } from '@/components/Sliders'
 import { getFilenameFromUrl } from '@/core/utils'
-import * as Screen from '@/core/components/screen'
+import { TYPE } from '@/core/components/screen'
 
 const ModalScreenEdit = ({
   screenId,
 }) => {
+  const { localStore, slug, Screen } = useRoomContext()
+  const { gameCanvas } = useGameCanvas()
   const { permission, isOwner, canEdit, canView } = usePermission(screenId)
   const screen = useDocument('screen', screenId)
 
-  const router = useRouter()
-  const { slug } = router.query
+  const isOpen = useMemo(() => (screenId != null && canEdit), [screenId, canEdit])
 
   const initialFocusRef = useRef(null)
-  const finalRef = useRef(null)
+  const finalRef = useRef()
 
   useEffect(() => {
-    finalRef.current = getGameCanvasElement()
-  }, [])
+    if (isOpen) {
+      finalRef.current = gameCanvas
+    }
+  }, [isOpen])
 
   const _renameScreen = (value) => {
     Screen.updateScreen(screenId, {
@@ -51,11 +53,9 @@ const ModalScreenEdit = ({
   }
 
   const _handleClose = () => {
-    const store = getLocalStore()
-    store.setDocument('screens', 'editing', null)
+    if (!localStore) return
+    localStore.setDocument('screens', 'editing', null)
   }
-
-  const isOpen = (screenId != null && canEdit)
 
   return (
     <Modal
@@ -139,11 +139,11 @@ const ScreenEditor = ({
 }) => {
   const screen = useDocument('screen', screenId)
 
-  if (screen?.type == Screen.TYPE.DOCUMENT) {
+  if (screen?.type == TYPE.DOCUMENT) {
     return <ScreenEditorDocument screenId={screenId} initialFocusRef={initialFocusRef} />
   }
 
-  if (screen?.type == Screen.TYPE.PDF_BOOK) {
+  if (screen?.type == TYPE.PDF_BOOK) {
     return <ScreenEditorPdfBook screenId={screenId} initialFocusRef={initialFocusRef} />
   }
 
@@ -162,7 +162,8 @@ const ScreenEditorDocument = ({
   screenId,
   initialFocusRef,
 }) => {
-  const { veridaIsConnected } = useVerida()
+  const { Screen } = useRoomContext()
+  const { veridaIsConnected, retrieveLastTweet } = useVeridaContext()
   const screen = useDocument('screen', screenId)
 
   const _onContentChange = (e) => {
@@ -175,11 +176,9 @@ const ScreenEditorDocument = ({
   const [isFetchingTweet, setIsFetchingTweet] = useState(false)
   const _lastTweet = async () => {
     setIsFetchingTweet(true)
-    const { VeridaUser } = (await import('@/core/verida'))
-    await VeridaUser.retrieveLastTweet((content) => {
-      setIsFetchingTweet(false)
-      console.log(content)
-    })
+    const content = retrieveLastTweet()
+    setIsFetchingTweet(false)
+    console.warn(`USE THIS TWEET:`, content)
   }
 
   return (
@@ -207,6 +206,7 @@ const ScreenEditorPdfBook = ({
   screenId,
   initialFocusRef,
 }) => {
+  const { Screen } = useRoomContext()
   const screen = useDocument('screen', screenId)
   const pageCount = useLocalDocument('page-count', screenId) ?? 1
 

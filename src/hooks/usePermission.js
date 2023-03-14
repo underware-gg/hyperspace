@@ -1,19 +1,21 @@
 import { useMemo } from 'react'
+import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
-import useVerida from '@/hooks/useVerida'
+import { useVeridaContext } from '@/hooks/VeridaContext'
 
 const usePermission = (id) => {
-  const { veridaIsConnected, veridaProfile, did, didAddress } = useVerida()
+  const { veridaIsConnected, veridaProfile, did, didAddress } = useVeridaContext()
+  const { Permission } = useRoomContext()
 
-  const permission = useDocument('permission', id)
-  // console.log(`permission:`, id, permission)
+  const docPermission = useDocument('permission', id)
+  const roomPermission = useDocument('permission', id != 'world' ? 'world' : null)
 
-  const isOwner = useMemo(() => (veridaIsConnected && permission?.owner == didAddress), [veridaIsConnected, permission])
-  const canView = useMemo(() => (isOwner || !permission || permission.visible), [isOwner, permission])
-  const canEdit = useMemo(() => (isOwner || !permission || (permission.visible && permission.public)), [isOwner, permission])
-  
+  const isOwner = useMemo(() => (veridaIsConnected && docPermission?.owner == didAddress), [veridaIsConnected, docPermission])
+  const canView = useMemo(() => (isOwner || Permission?.canView(id)), [id, isOwner, Permission, docPermission, roomPermission])
+  const canEdit = useMemo(() => (isOwner || Permission?.canEdit(id)), [id, isOwner, Permission, docPermission, roomPermission])
+
   return {
-    permission,
+    permission: docPermission,
     isOwner,
     canView,
     canEdit,

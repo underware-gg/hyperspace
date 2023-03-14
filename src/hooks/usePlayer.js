@@ -1,14 +1,10 @@
 import { useState, useEffect } from 'react'
-import {
-  getPortalOverPlayer,
-  getTriggerOverPlayer,
-  getScreenOverPlayer,
-  getPlayerTileRotation,
-} from '@/core/components/player'
+import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument, useLocalDocument } from '@/hooks/useDocument'
 import { useRemoteDocumentIds } from '@/hooks/useDocumentIds'
 
 const usePlayer = (id) => {
+  const { Player } = useRoomContext()
   const player = useDocument('player', id)
   const [portalId, setPortalId] = useState(null)
   const [triggerId, setTriggerId] = useState(null)
@@ -25,18 +21,18 @@ const usePlayer = (id) => {
   const screenIds = useRemoteDocumentIds('screen')
 
   useEffect(() => {
-    if (player) {
-      setPortalId(getPortalOverPlayer(id))
-      setTriggerId(getTriggerOverPlayer(id))
-      setScreenId(getScreenOverPlayer(id))
-      setPlayerTile(getPlayerTileRotation(id))
+    if (player && Player) {
+      setPortalId(Player.getPortalOverPlayer(id))
+      setTriggerId(Player.getTriggerOverPlayer(id))
+      setScreenId(Player.getScreenOverPlayer(id))
+      setPlayerTile(Player.getPlayerTileRotation(id))
     } else {
       setPortalId(null)
       setTriggerId(null)
       setScreenId(null)
       setPlayerTile(null)
     }
-  }, [player?.position, player?.rotation, portalIds, triggerIds, screenIds, is3D])
+  }, [player?.position, player?.rotation, portalIds, triggerIds, screenIds, is3D, Player])
 
   return {
     portalId, portal,

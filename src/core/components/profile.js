@@ -1,25 +1,14 @@
-import { getRemoteStore } from '@/core/singleton'
+import RoomCollection from '@/core/interfaces/RoomCollection'
 
-export const create = (id, name, spritesheet) => {
-  const store = getRemoteStore()
-  const profile = { name, spritesheet }
-  store.setDocument('profile', id, profile)
-  return profile
+class Profile extends RoomCollection {
+  constructor(room) {
+    super(room, 'profile')
+  }
+
+  updateProfile(id, values) {
+    let profile = this.remoteStore.getDocument('profile', id) ?? {}
+    this.remoteStore.setDocument('profile', id, { ...profile, ...values })
+  }
 }
 
-export const update = (id, values) => {
-  const store = getRemoteStore()
-  let profile = store.getDocument('profile', id) ?? {}
-  store.setDocument('profile', id, { ...profile, ...values })
-}
-
-export const remove = (id) => {
-  const store = getRemoteStore()
-  store.setDocument('profile', id, null)
-}
-
-export const exists = (id) => {
-  const store = getRemoteStore()
-  const profile = store.getDocument('profile', id)
-  return profile !== null
-}
+export default Profile

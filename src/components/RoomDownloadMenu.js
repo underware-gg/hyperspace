@@ -1,21 +1,15 @@
-import { useEffect } from 'react'
-import { useRouter } from 'next/router'
+import React from 'react'
 import { HStack } from '@chakra-ui/react'
-import { getLocalStore, getRemoteStore } from '@/core/singleton'
+import { useRoomContext } from '@/hooks/RoomContext'
 import usePermission from '@/hooks/usePermission'
 import Button from '@/components/Button'
 import FileSelectButton from '@/components/FileSelectButton'
-import * as ClientRoom from '@/core/networking'
 import * as CrawlerData from '@rsodre/crawler-data'
-import * as Map from '@/core/components/map'
 const BN = require('bn.js');
 
-const _downloadRoomData = (slug) => {
-  const room = ClientRoom.get()
-  if (room === null) {
-    return
-  }
-  const snapshotOps = room.getSnapshotOps()
+const _downloadRoomData = (slug, clientRoom) => {
+  if (!clientRoom) return
+  const snapshotOps = clientRoom.getSnapshotOps()
   const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(snapshotOps))}`
   const dlAnchor = document.getElementById('download-room-data')
   dlAnchor.setAttribute('href', dataStr)
@@ -24,8 +18,7 @@ const _downloadRoomData = (slug) => {
 }
 
 const RoomDownloadMenu = () => {
-  const router = useRouter()
-  const { slug } = router.query
+  const { remoteStore, clientRoom, slug } = useRoomContext()
 
   const { canEdit } = usePermission('world')
 
@@ -33,7 +26,6 @@ const RoomDownloadMenu = () => {
     const reader = new FileReader()
     reader.onload = (e2) => {
       const json = JSON.parse(e2.target.result)
-      const remoteStore = getRemoteStore()
       for (const op of json) {
         if (op.pathIndex === 0) {
           const { type, key, value } = op
@@ -57,7 +49,7 @@ const RoomDownloadMenu = () => {
           for (let y = 0; y < 15; ++y) {
             const i = y * 16 + x
             const bit = bitmap.and(new BN('1').shln(255-i)).eq(new BN('0')) ? 0 : 1
-            Map.update('world', x, y, bit ? 8 : 5)
+            map.updateTile('world', x, y, bit ? 8 : 5)
           }
         }
         return
@@ -72,7 +64,7 @@ const RoomDownloadMenu = () => {
         disabled={!canEdit}
         variant='outline'
         size='sm'
-        onClick={() => _downloadRoomData(slug)}
+        onClick={() => _downloadRoomData(slug, clientRoom)}
       >
         Download Room Data
       </Button>

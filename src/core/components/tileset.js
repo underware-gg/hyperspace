@@ -1,21 +1,20 @@
-import { getRemoteStore } from '@/core/singleton'
+import RoomCollection from '@/core/interfaces/RoomCollection'
 
-export const create = (id, tileset) => {
-  const store = getRemoteStore()
+class Tileset extends RoomCollection {
+  constructor(room) {
+    super(room, 'tileset')
+  }
 
-  store.setDocument('tileset', id, tileset)
+  updateTileset(id, name, width, height, blob) {
+    const data = {
+      name,
+      blob,
+      size: { width, height },
+      blob,
+    }
+    return this.upsert(id, data, true)
+  }
 
-  return tileset
 }
 
-export const remove = (id) => {
-  const store = getRemoteStore()
-  store.setDocument('tileset', id, null)
-}
-
-export const exists = (id) => {
-  const store = getRemoteStore()
-  const tileset = store.getDocument('tileset', id)
-
-  return tileset !== null
-}
+export default Tileset

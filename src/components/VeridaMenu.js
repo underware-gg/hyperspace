@@ -1,41 +1,26 @@
-import { useEffect } from 'react'
-import { useRouter } from 'next/router'
+import React from 'react'
 import { HStack, Spacer } from '@chakra-ui/react'
 import Button from '@/components/Button'
-import useVerida from '@/hooks/useVerida'
+import { useRoomContext } from '@/hooks/RoomContext'
+import { useVeridaContext } from '@/hooks/VeridaContext'
 import usePermission from '@/hooks/usePermission'
-import { getLocalStore, getRemoteStore } from '@/core/singleton'
-import * as ClientRoom from '@/core/networking'
 
 const VeridaMenu = () => {
-  const { veridaIsConnected, veridaProfile } = useVerida()
+  const { remoteStore, clientRoom, slug } = useRoomContext()
+  const { veridaIsConnected, veridaProfile, saveRoom, getRoom } = useVeridaContext()
   const { canEdit } = usePermission('world')
 
-  const router = useRouter()
-  const { slug } = router.query
-
   const _saveRoomData = async (slug) => {
-    const room = ClientRoom.get()
-    if (room === null) {
-      return
-    }
-    const snapshotOps = room.getSnapshotOps()
-    const { VeridaUser } = (await import('@/core/verida'))
-    await VeridaUser.saveRoom(slug, snapshotOps)
+    if (!clientRoom) return
+    const snapshotOps = clientRoom.getSnapshotOps()
+    await saveRoom(slug, snapshotOps)
   }
 
   const _restoreRoomData = async () => {
-    const room = ClientRoom.get()
-    if (room === null) {
-      return
-    }
-
-    const { VeridaUser } = (await import('@/core/verida'))
-    const snapshot = await VeridaUser.getRoom(room.slug)
+    const snapshot = await getRoom(slug)
 
     if (snapshot) {
       const json = JSON.parse(snapshot)
-      const remoteStore = getRemoteStore()
 
       for (const op of json) {
         if (op.pathIndex === 0) {

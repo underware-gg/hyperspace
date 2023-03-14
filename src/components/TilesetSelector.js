@@ -1,15 +1,17 @@
-import { useEffect, useState, useMemo } from 'react'
-import { AbsoluteCenter, HStack, Select, Spacer } from '@chakra-ui/react'
+import { useEffect, useState } from 'react'
+import { HStack, Select, Spacer } from '@chakra-ui/react'
 import { tilesets, defaultTileset } from '@/core/texture-data'
 import { fromSourceToDataURL } from '@/core/textures'
-import { focusGameCanvas } from '@/core/game-canvas'
+import useGameCanvas from '@/hooks/useGameCanvas'
 import FileSelectButton from '@/components/FileSelectButton'
+import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
 import usePermission from '@/hooks/usePermission'
-import * as Tileset from '@/core/components/tileset'
 
 
 const TilesetSelector = ({ }) => {
+  const { Tileset } = useRoomContext()
+  const { gameCanvas } = useGameCanvas()
   const { canEdit } = usePermission('world')
   const tileset = useDocument('tileset', 'world')
   const [selectedValue, setSelectedValue] = useState('')
@@ -34,8 +36,7 @@ const TilesetSelector = ({ }) => {
     }
     setSelectedValue(_selectedValue)
     setOptions(_options)
-  }, [tileset])
-
+  }, [tileset?.name])
 
   const _handleSelectTileset = (e => {
     const fileName = e.target.value
@@ -43,34 +44,25 @@ const TilesetSelector = ({ }) => {
     for (const t of tilesets) {
       const src = t.src
       if (fileName == src) {
-        Tileset.create('world', {
-          blob: null,
-          name: fileName,
-          size: { width: 320, height: 32 },
-        })
+        Tileset.updateTileset('world', fileName, 32, 32, null)
       }
     }
-    focusGameCanvas()
+    gameCanvas?.focus()
   })
 
   const _handleUploadTileset = async (fileObject) => {
     try {
       const { dataUrl, width, height } = await fromSourceToDataURL(URL.createObjectURL(fileObject))
       if (width === 320 && height === 32) {
-        Tileset.create('world', {
-          blob: dataUrl,
-          name: fileObject.name,
-          size: { width, height },
-        })
+        Tileset.updateTileset('world', fileObject.name, width, height, dataUrl)
       } else {
         Tileset.remove('world')
       }
     } catch (e) {
       Tileset.remove('world')
     }
-    focusGameCanvas()
+    gameCanvas?.focus()
   }
-
 
   const imgStyle = {
     minWidth: '320px',

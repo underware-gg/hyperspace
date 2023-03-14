@@ -1,5 +1,18 @@
-class Renderer2D {
-  init(context) {
+
+import RoomMate from '@/core/interfaces/RoomMate'
+
+class Renderer2D extends RoomMate {
+  constructor(room) {
+    super(room)
+  }
+  
+  init(canvas) {
+    if (!canvas) {
+      return
+    }
+    
+    const context = canvas.getContext('2d')
+
     context.mozImageSmoothingEnabled = false
     context.webkitImageSmoothingEnabled = false
     context.msImageSmoothingEnabled = false
@@ -7,11 +20,11 @@ class Renderer2D {
   }
 
   update(dt) {
-
   }
 
-  render(canvas, context) {
-    context.clearRect(0, 0, canvas.width, canvas.height)
+  render(canvas) {
+    const context = canvas?.getContext('2d')
+    context?.clearRect(0, 0, canvas.width, canvas.height)
   }
 }
 

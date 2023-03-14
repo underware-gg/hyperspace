@@ -1,29 +1,61 @@
 import { nanoid } from 'nanoid'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
+import { RoomContext } from '@/hooks/RoomContext'
+import Room from '@/core/room'
 import Store from '@/core/store'
 import * as ClientRoom from '@/core/networking'
 
-const useRoom = () => {
-  const [room, setRoom] = useState({})
+//-----------------------------------------
+// Open a full room inside a <RoomProvider>
+// uses current agentId
+// good for 2D previews
+//
+const useRoom = (slug, canvas2d) => {
+  const [room, setRoom] = useState(null)
+  const { dispatchRoom } = useContext(RoomContext)
 
   useEffect(() => {
-    async function _getRoom() {
-      const room = ClientRoom.get();
-      if (room) {
-        setRoom(room)
-      } else {
-        setTimeout(_getRoom, 100)
+    let _mounted = true
+    let _room = null
+
+    const _initRoom = async () => {
+      _room = new Room()
+      await _room.init(slug, canvas2d, null)
+      if (_mounted) {
+        setRoom(_room)
+        _room.clientRoom.on('patched', (patched) => {
+          dispatchRoom(_room)
+        })
       }
     }
-    _getRoom()
-  }, [])
 
-  return room
+    setRoom(null)
+    dispatchRoom(null)
+
+    if (slug && canvas2d) {
+      _initRoom()
+    }
+
+    return () => {
+      _mounted = false
+      room?.clientRoom?.disconnect()
+    }
+  }, [slug, canvas2d])
+
+  return {
+    room,
+  }
 }
 
+//----------------------------------
+// Independent client and store
+// uses a disposable agentId
+// can be used to read document data
+// for rendering, useRoom()
+//
 const useClientRoom = (slug) => {
   const [agentId, setAgentId] = useState(null)
-  const [room, setRoom] = useState(null)
+  const [clientRoom, setClientRoom] = useState(null)
   const [store, setStore] = useState(null)
 
   useEffect(() => {
@@ -32,41 +64,37 @@ const useClientRoom = (slug) => {
 
   useEffect(() => {
     let _mounted = true
-    let _room = null
+    let _clientRoom = null
 
     if (slug && agentId) {
       const _store = new Store()
-      _room = ClientRoom.create(slug, _store, agentId)
-      _room.init()
+      _clientRoom = ClientRoom.create(slug, _store, agentId)
+      _clientRoom.init()
       // _room.on('agent-join', (id) => {
       //   if (id === agentId && _mounted) {
       //     setStore(_store)
       //   }
       // })
-      _room.on('patched', (patched) => {
-        if (patched && _mounted) {
+      _clientRoom.on('patched', (patched) => {
+        if (patched && _mounted && !store) {
           setStore(_store)
         }
       })
-      _store.on(null, (source, type, id, path, value) => {
-      })
     }
-    
-    setRoom(_room)
-    setStore(null)
+
+    setClientRoom(_clientRoom)
+    setStore(_clientRoom?.store ?? null)
 
     return () => {
       _mounted = false
-      if (_room) {
-        _room.disconnect()
-      }
+      _clientRoom?.disconnect()
     }
   }, [slug, agentId])
 
   return {
+    clientRoom,
+    slug: clientRoom?.slug ?? null,
     agentId,
-    room,
-    slug: room?.slug ?? null,
     store,
   }
 }

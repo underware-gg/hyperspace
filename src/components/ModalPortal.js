@@ -6,39 +6,42 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react'
+import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
-import { getGameCanvasElement } from '@/core/game-canvas'
+import useGameCanvas from '@/hooks/useGameCanvas'
 import { TileInput, useInputValidator } from '@/components/Inputs'
 import Button from '@/components/Button'
 import { emitAction } from '@/core/controller'
-import * as Portal from '@/core/components/portal'
-import * as Settings from '@/core/components/settings'
+import { defaultSettings } from '@/core/components/settings'
 
 const ModalPortal = ({
   disclosure,
   portalId,
   newPortal=false
 }) => {
+  const { Portal } = useRoomContext()
+  const { gameCanvas } = useGameCanvas()
   const { isOpen, onOpen, onClose } = disclosure
   const [roomName, setRoomName] = useState('');
-  const [tileX, setTileX] = useState(Settings.defaultSettings.entry.x);
-  const [tileY, setTileY] = useState(Settings.defaultSettings.entry.y);
+  const [tileX, setTileX] = useState(defaultSettings.entry.x);
+  const [tileY, setTileY] = useState(defaultSettings.entry.y);
   const validator = useInputValidator()
   const roomNameRef = useRef()
-  const finalRef = useRef(null)
-
+  const finalRef = useRef()
 
   useEffect(() => {
-    finalRef.current = getGameCanvasElement()
-  }, [])
+    if (isOpen) {
+      finalRef.current = gameCanvas
+    }
+  }, [isOpen])
 
   const portal = useDocument('portal', portalId)
 
   useEffect(() => {
     if (isOpen) {
       setRoomName(portal?.slug ?? '')
-      setTileX(portal?.tile?.x ?? Settings.defaultSettings.entry.x)
-      setTileY(portal?.tile?.y ?? Settings.defaultSettings.entry.y)
+      setTileX(portal?.tile?.x ?? defaultSettings.entry.x)
+      setTileY(portal?.tile?.y ?? defaultSettings.entry.y)
     }
   }, [portal, isOpen])
 

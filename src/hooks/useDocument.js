@@ -1,23 +1,31 @@
 import { useState, useEffect } from 'react'
-import { getRemoteStore, getLocalStore } from '@/core/singleton'
-
-const remoteStore = getRemoteStore()
-const localStore = getLocalStore()
+import { useRoomContext } from '@/hooks/RoomContext'
 
 const useDocument = (type, id) => {
+  const { remoteStore } = useRoomContext()
   return _useDocument(type, id, remoteStore)
 }
 
 const useLocalDocument = (type, id) => {
+  const { localStore } = useRoomContext()
   return _useDocument(type, id, localStore)
 }
 
 const _useDocument = (type, id, store) => {
   const [document, setDocument] = useState(null)
 
+  // initialize
   useEffect(() => {
-    function _handleChange(innerId, document) {
-      if (innerId === id) {
+    if (type && id && store) {
+      setDocument(store.getDocument(type, id))
+    }
+  }, [type, id, store])
+
+  // listen
+  useEffect(() => {
+    if (!store || !id || !type) return
+    function _handleChange(documentId, document) {
+      if (documentId === id) {
         setDocument(document)
       }
     }
@@ -29,13 +37,7 @@ const _useDocument = (type, id, store) => {
       store.off({ type, event: 'change' }, _handleChange)
       store.off({ type, event: 'delete' }, _handleChange)
     }
-  }, [type, id])
-
-  useEffect(() => {
-    if (id) {
-      setDocument(store.getDocument(type, id))
-    }
-  }, [id])
+  }, [type, id, store])
 
   return document
 }
