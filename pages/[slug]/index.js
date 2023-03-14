@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import {
   Box,
@@ -27,13 +27,25 @@ const RoomPage = () => {
   const router = useRouter()
   const { slug } = router.query
 
-  const { agentId } = useRoomContext()
+  const { agentId, room } = useRoomContext()
   const { canEdit } = usePermission('world')
 
   const [showHelp, setShowHelp] = useState(false)
   
   const settingsDisclosure = useSettingsDisclosure('world')
   const snapshotDisclosure = useDisclosure()
+
+  useEffect(() => {
+    if(!room) return
+    const _travel = (slug) => {
+      console.log(`Travel to...`, slug)
+      router.push(`/${slug}`)
+    }
+    room.clientRoom.on('travel', _travel)
+    return () => {
+      room.clientRoom.off('travel', _travel)
+    }
+  }, [room])
 
   return (
     <Layout height='100vh'>

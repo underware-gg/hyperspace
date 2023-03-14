@@ -122,7 +122,8 @@ class Portal extends RoomCollection {
       }
       const cookies = new Cookies();
       cookies.set('portal', JSON.stringify(data), { path: '/' });
-      window.location.href = `/${portal.slug}`
+      // window.location.href = `/${portal.slug}`
+      this.clientRoom.emit('travel', portal.slug)
     }
   }
 
