@@ -1,10 +1,10 @@
 import { useMemo } from 'react'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
-import useVerida from '@/hooks/useVerida'
+import { useVeridaContext } from '@/hooks/VeridaContext'
 
 const usePermission = (id) => {
-  const { veridaIsConnected, veridaProfile, did, didAddress } = useVerida()
+  const { veridaIsConnected, veridaProfile, did, didAddress } = useVeridaContext()
   const { Permission } = useRoomContext()
 
   const docPermission = useDocument('permission', id)

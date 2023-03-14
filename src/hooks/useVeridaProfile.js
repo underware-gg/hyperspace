@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import useVerida from '@/hooks/useVerida'
+import { useVeridaContext } from '@/hooks/VeridaContext'
 
 export const useVeridaProfile = (profile, did=null) => {
   const hasVeridaProfile = (profile != null)
@@ -12,15 +12,14 @@ export const useVeridaProfile = (profile, did=null) => {
 }
 
 export const useVeridaPublicProfile = (didAddress) => {
-  const { veridaIsConnected } = useVerida()
+  const { veridaIsConnected, getPublicProfile } = useVeridaContext()
   const [profile, setProfile] = useState(null)
 
   useEffect(() => {
     let _mounted = true
 
     const _getProfile = async () => {
-      const { getPublicProfile } = (await import('@/core/verida'))
-      const publicProfile = await getPublicProfile(didAddress);
+      const publicProfile = await getPublicProfile(didAddress)
       if (_mounted) {
         setProfile(publicProfile)
       }

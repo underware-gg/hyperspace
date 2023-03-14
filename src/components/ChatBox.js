@@ -12,8 +12,8 @@ import {
 } from '@chakra-ui/icons'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
+import { useVeridaContext } from '@/hooks/VeridaContext'
 import useProfile from '@/hooks/useProfile'
-import useVerida from '@/hooks/useVerida'
 import usePermission from '@/hooks/usePermission'
 import Markdown from '@/components/Markdown'
 
@@ -22,7 +22,7 @@ const ChatBox = () => {
   const { canEdit } = usePermission('world')
 
   const { profileName } = useProfile(agentId)
-  const { veridaProfileName } = useVerida()
+  const { veridaProfileName } = useVeridaContext()
 
   const [message, setMessage] = useState('')
 

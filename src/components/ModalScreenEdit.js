@@ -11,9 +11,9 @@ import {
 } from '@chakra-ui/react'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument, useLocalDocument } from '@/hooks/useDocument'
+import { useVeridaContext } from '@/hooks/VeridaContext'
 import useGameCanvas from '@/hooks/useGameCanvas'
 import usePermission from '@/hooks/usePermission'
-import useVerida from '@/hooks/useVerida'
 import Button from '@/components/Button'
 import Editable from '@/components/Editable'
 import Textarea from '@/components/Textarea'
@@ -163,7 +163,7 @@ const ScreenEditorDocument = ({
   initialFocusRef,
 }) => {
   const { Screen } = useRoomContext()
-  const { veridaIsConnected } = useVerida()
+  const { veridaIsConnected, retrieveLastTweet } = useVeridaContext()
   const screen = useDocument('screen', screenId)
 
   const _onContentChange = (e) => {
@@ -176,11 +176,9 @@ const ScreenEditorDocument = ({
   const [isFetchingTweet, setIsFetchingTweet] = useState(false)
   const _lastTweet = async () => {
     setIsFetchingTweet(true)
-    const { VeridaUser } = (await import('@/core/verida'))
-    await VeridaUser.retrieveLastTweet((content) => {
-      setIsFetchingTweet(false)
-      console.log(content)
-    })
+    const content = retrieveLastTweet()
+    setIsFetchingTweet(false)
+    console.warn(`USE THIS TWEET:`, content)
   }
 
   return (

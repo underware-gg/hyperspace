@@ -10,9 +10,9 @@ import {
 } from '@chakra-ui/react'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { useRoomContext } from '@/hooks/RoomContext'
+import { useVeridaContext } from '@/hooks/VeridaContext'
 import useGameCanvas from '@/hooks/useGameCanvas'
 import useProfile from '@/hooks/useProfile'
-import useVerida from '@/hooks/useVerida'
 import CharacterSelector from '@/components/CharacterSelector'
 import Editable from '@/components/Editable'
 import Button from '@/components/Button'
@@ -38,7 +38,7 @@ const ModalProfile = ({
     connect, disconnect, inviteFriend,
     veridaIsConnected, veridaIsConnecting,
     hasVeridaProfile, veridaProfileName, veridaAvatarUri, veridaProfileUrl,
-  } = useVerida()
+  } = useVeridaContext()
 
   const _renameUser = (value) => {
     Profile.updateProfile(agentId, {

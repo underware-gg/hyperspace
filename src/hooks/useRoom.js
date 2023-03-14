@@ -16,14 +16,17 @@ const useRoom = (slug, canvas2d) => {
 
   useEffect(() => {
     let _mounted = true
+    let _room = null
 
     const _initRoom = async () => {
-      let _room = new Room()
+      _room = new Room()
       await _room.init(slug, canvas2d, null)
-      setRoom(_room)
-      _room.clientRoom.on('patched', (patched) => {
-        dispatchRoom(_room)
-      })
+      if (_mounted) {
+        setRoom(_room)
+        _room.clientRoom.on('patched', (patched) => {
+          dispatchRoom(_room)
+        })
+      }
     }
 
     setRoom(null)
