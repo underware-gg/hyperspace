@@ -120,6 +120,7 @@ class ClientRoom extends EventEmitter {
 
   applyMessageOps = (ops) => {
     this.kernal.applyOps(ops, 'remote')
+    console.log('patched', ops.length > 0)
     this.emit('patched', ops.length > 0)
   }
 

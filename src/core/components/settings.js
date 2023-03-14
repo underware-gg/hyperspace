@@ -14,12 +14,16 @@ export const defaultSettings = {
 class Settings extends RoomCollection {
   constructor(room) {
     super(room, 'settings')
+
+    this.clientRoom.on('patched', (patched) => {
+      if (!patched) {
+        this.resetSettings('world')
+      }
+    })
   }
 
-  initializeSettings(id) {
-    if (!this.exists(id)) {
-      return this.upsert(id, defaultSettings)
-    }
+  resetSettings(id) {
+    this.upsert(id, defaultSettings)
   }
 
   updateSettings(id, newSettings) {

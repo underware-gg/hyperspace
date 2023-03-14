@@ -179,9 +179,6 @@ class Room {
     // loads snapshot
     this.clientRoom.init(slug)
 
-    this.Settings.initializeSettings('world')
-    this.Map.initializeMap('world')
-
     this.Editor.init2d(canvas2d, this.clientRoom.agentId)
     this.Editor.init3d(canvas3d, this.clientRoom.agentId)
 

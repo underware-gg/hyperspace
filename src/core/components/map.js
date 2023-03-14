@@ -212,6 +212,12 @@ class Map extends RoomCollection {
     this.localStore.setDocument('material-uv', 'world', materialUV)
     this.localStore.setDocument('gridContainer', 'gridContainer', gridContainer)
 
+    this.clientRoom.on('patched', (patched) => {
+      if (!patched) {
+        this.resetMap('world')
+      }
+    })
+
     // texture swapping
     this.remoteStore.on({ type: 'tileset', event: 'change' }, (id, tileset) => {
       if (id === 'world') {
@@ -220,9 +226,7 @@ class Map extends RoomCollection {
     })
   }
 
-  initializeMap(id) {
-    if (this.exists(id)) return
-
+  resetMap(id) {
     const map = [
       [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
       [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
@@ -319,7 +323,7 @@ class Map extends RoomCollection {
     }
   }
 
-  getTile(id, x, y){
+  getTile(id, x, y) {
     const map = this.remoteStore.getDocument('map', id)
 
     if (map === null) {

@@ -46,6 +46,7 @@ class Player extends RoomCollection {
 
     this.clientRoom.on('agent-join', (agentId) => {
       if (agentId === this.agentId) {
+        console.log(`agent-join:`, agentId, '(YOU)')
         this.enterRoom(agentId, this.slug)
         return
       }
