@@ -57,7 +57,7 @@ class RoomCollection extends RoomMate {
 
   canEdit(id) {
     if (this.remoteStore == null) return false // do not edit while room is loading
-    return this.Permission.hasPermissionToEdit('world') && this.Permission.hasPermissionToEdit(id)
+    return this.Permission.hasPermissionToView('world') && this.Permission.hasPermissionToEdit(id)
   }
 }
 

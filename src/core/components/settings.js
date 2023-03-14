@@ -16,7 +16,7 @@ class Settings extends RoomCollection {
     super(room, 'settings')
 
     this.clientRoom.on('patched', (patched) => {
-      if (!patched) {
+      if (!patched && !this.exists('world')) {
         this.resetSettings('world')
       }
     })
