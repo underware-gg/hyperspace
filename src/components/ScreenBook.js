@@ -100,7 +100,7 @@ export const ScreenBookPdf = ({
     setPageSizes(sizes)
 
     localStore.setDocument('page-count', screenId, pdf.numPages)
-    console.log(`PDF ${screenId} has ${pdf.numPages} pages`)
+    // console.log(`PDF ${screenId} has ${pdf.numPages} pages`)
   }
 
   const pageNumber = useMemo(() => {

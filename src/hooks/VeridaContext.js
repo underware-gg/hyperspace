@@ -83,8 +83,6 @@ const VeridaProvider = ({
       dispatchVerida(VeridaActions.setGetPublicProfile, getPublicProfile)
       _VeridaUser = VeridaUser
 
-      console.log(`VeridaUser.getPublicProfile`, VeridaUser.getPublicProfile)
-
       const isConnected = await VeridaUser.isConnected()
       if (isConnected) {
         const profile = await VeridaUser.getPublicProfile()

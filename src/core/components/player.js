@@ -46,7 +46,7 @@ class Player extends RoomCollection {
 
     this.clientRoom.on('agent-join', (agentId) => {
       if (agentId === this.agentId) {
-        console.log(`agent-join:`, agentId, '(YOU)')
+        console.log(`[${this.slug}] agent-join:`, agentId, '(YOU)')
         this.enterRoom(agentId, this.slug)
         return
       }
@@ -57,7 +57,7 @@ class Player extends RoomCollection {
       scene.add(playerMesh);
 
       this.localStore.setDocument('player-mesh', agentId, playerMesh)
-      console.log(`agent-join:`, agentId)
+      console.log(`[${this.slug}] agent-join:`, agentId)
     })
 
     this.clientRoom.on('agent-leave', (agentId) => {
@@ -68,11 +68,11 @@ class Player extends RoomCollection {
       }
 
       this.localStore.setDocument('player-mesh', agentId, null)
-      console.log(`agent-leave:`, agentId)
+      console.log(`[${this.slug}] agent-leave:`, agentId)
     })
 
     this.remoteStore.on({ type: 'player', event: 'update' }, (agentId, player) => {
-      // console.log(`agent-update:`, agentId)
+      // console.log(`[${this.slug}] agent-update:`, agentId)
       if (agentId == this.agentId) {
         // we moved: update all other players
         const playerIds = this.remoteStore.getIds('player')

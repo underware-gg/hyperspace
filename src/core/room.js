@@ -154,6 +154,7 @@ class Room {
   }
 
   async init(slug, canvas2d, canvas3d) {
+    this.slug = slug
     this.canvas2d = canvas2d
     this.canvas3d = canvas3d
 

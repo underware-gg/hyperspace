@@ -5,7 +5,6 @@ import {
   Grid, GridItem,
   VStack, HStack,
   Spacer,
-  Text,
   useDisclosure,
 } from '@chakra-ui/react'
 import { emitAction } from '@/core/controller'
@@ -84,7 +83,15 @@ const RoomPage = () => {
         </GridItem>
 
         <GridItem colSpan={4}>
-          <Game slug={slug} />
+          <Box
+            className='Relative'
+            border='1px'
+            borderRadius='2px'
+            maxH='700'
+          // h='700'
+          >
+            <Game slug={slug} />
+          </Box>
         </GridItem>
 
 

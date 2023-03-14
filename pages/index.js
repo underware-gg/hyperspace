@@ -21,12 +21,9 @@ const HomePage = ({ slug }) => {
 
   function enterRoom(roomName) {
     disclosure.onClose();
-    const url = roomName?.length > 0 ? `/${roomName}` : slug;
-    // router.push(url);
-
-    // dirty fix!
-    window.history.pushState({}, '', url);
-    window.history.go(0);
+    const slug = roomName?.length > 0 ? roomName : nanoid();
+    const url = `/${slug}`
+    router.push(url);
   }
 
   return (
@@ -74,14 +71,6 @@ const HomePage = ({ slug }) => {
 
     </Layout>
   )
-}
-
-export const getServerSideProps = async (context) => {
-  return {
-    props: {
-      slug: `/${nanoid()}`,
-    },
-  }
 }
 
 export default HomePage

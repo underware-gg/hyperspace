@@ -18,6 +18,7 @@ class ClientRoom extends EventEmitter {
     this.agentIds = [
       this.agentId,
     ]
+console.warn(`ClientRoom.constructor()`, this.agentId)
   }
 
   init() {
@@ -30,6 +31,7 @@ class ClientRoom extends EventEmitter {
       { uri: this.uri + '/api/room/' + this.slug + '/websocket' },
       this.kernal,
     )
+console.warn(`ClientRoom.init()`, this.agentId)
     this.client.addListener('open', this.handleOpen)
     this.client.addListener('close', this.handleClose)
     this.client.addListener('error', this.handleError)
@@ -135,12 +137,12 @@ class ClientRoom extends EventEmitter {
         break
       }
       case 'connected': {
-        console.log(`connected:`, message.agentId)
+        console.log(`[${this.slug}] connected:`, message.agentId)
         this.addAgentId(message.agentId)
         break
       }
       case 'disconnected': {
-        console.log(`disconnected:`, message.agentId)
+        console.log(`[${this.slug}] disconnected:`, message.agentId)
         this.removeAgentId(message.agentId)
         break
       }
