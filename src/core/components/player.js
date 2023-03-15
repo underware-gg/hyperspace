@@ -26,6 +26,15 @@ class Player extends RoomCollection {
   constructor(room) {
     super(room, 'player')
 
+    addActionDownListener('interact', () => {
+      this.interact(this.agentId)
+    })
+
+    addActionDownListener('toggle3d', () => {
+      const is3d = this.localStore.getDocument('show-3d', 'world')
+      this.localStore.setDocument('show-3d', 'world', !is3d)
+    })
+
     addActionDownListener('delete', () => {
       const editor = this.remoteStore.getDocument('editor', this.agentId)
       if (editor === null) {

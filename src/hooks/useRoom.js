@@ -38,7 +38,8 @@ const useRoom = (slug, canvas2d) => {
 
     return () => {
       _mounted = false
-      room?.clientRoom?.disconnect()
+      _room?.shutdown()
+      _room = null
     }
   }, [slug, canvas2d])
 
@@ -87,7 +88,8 @@ const useClientRoom = (slug) => {
 
     return () => {
       _mounted = false
-      _clientRoom?.disconnect()
+      _clientRoom?.shutdown()
+      _clientRoom = null
     }
   }, [slug, agentId])
 

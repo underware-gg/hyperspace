@@ -38,8 +38,11 @@ console.warn(`ClientRoom.init()`, this.agentId)
     this.client.addListener('message', this.handleMessage)
   }
 
-  disconnect = () => {
-    this.client?.connection?.close()
+  shutdown = () => {
+    this.store.off(null, this.handleStoreChange)
+    this.store = null
+    this.client.shutdown()
+    this.client = null
   }
 
   sendMessage(message) {

@@ -29,6 +29,22 @@ class Client extends EventEmitter {
 		this.heartbeat()
 	}
 
+  shutdown = () => {
+    this.disconnect()
+    if (this.heartbeatTimeout) clearTimeout(this.heartbeatTimeout)
+    if (this.handleCloseTimeout) clearTimeout(this.handleCloseTimeout)
+    if (this.handleErrorTimeout) clearTimeout(this.handleErrorTimeout)
+  }
+
+  disconnect = () => {
+    this.connection?.removeEventListener('message', this.handleMessage)
+    this.connection?.removeEventListener('open', this.handleOpen)
+    this.connection?.removeEventListener('close', this.handleClose)
+    this.connection?.removeEventListener('error', this.handleError)
+    this.connection?.close()
+    this.connection = null
+  }
+
 	handleMessage = (event) => {
 		const message = decode(event.data)
 
@@ -50,6 +66,7 @@ class Client extends EventEmitter {
 	}
 
 	heartbeat = () => {
+console.warn(`Client.ping()`, this.options.uri)
 		this.addMessage(createMessage.ping())
 		if (this.connection?.readyState === WebSocket.OPEN) {
 			if (this.lastPong + PONG_TIMEOUT < Date.now()) {
@@ -57,26 +74,31 @@ class Client extends EventEmitter {
 			}
 		}
 
-		setTimeout(() => {
+    this.heartbeatTimeout = setTimeout(() => {
 			this.heartbeat()
 		}, PING_PERIOD)
 	}
 
 	handleClose = (event) => {
+console.warn(`Client.handleClose()...`, this.options.uri)
 		this.emit('close', event)
-		setTimeout(() => {
+    this.handleCloseTimeout = setTimeout(() => {
+console.warn(`Client.handleClose() RECONNECT`, this.options.uri)
 			this.connection = this.createConnection()
 		}, RECONNECT_TIMEOUT)
 	}
 
 	handleError = (event) => {
+console.warn(`Client.handleError()...`, this.options.uri)
 		this.emit('error', event)
-		setTimeout(() => {
+    this.handleErrorTimeout = setTimeout(() => {
+console.warn(`Client.handleError() RECONNECT`, this.options.uri)
 			this.connection = this.createConnection()
 		}, RECONNECT_TIMEOUT)
 	}
 
 	createConnection = () => {
+    this.disconnect()
 		const connection = new WebSocket(this.options.uri)
 		connection.binaryType = 'arraybuffer'
 		connection.addEventListener('message', this.handleMessage)

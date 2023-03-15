@@ -20,10 +20,16 @@ const Game = ({
   const canvas3dRef = useRef()
 
   useEffect(() => {
+    return () => {
+      // _shutdownGame()
+    }
+  }, [])
+
+  useEffect(() => {
     if (autoFocus) {
       gameCanvas?.focus()
     }
-  }, [is3d, autoFocus, gameCanvas])
+  }, [autoFocus, gameCanvas])
 
   useEffect(() => {
     if (!render2d && !render3d) {
@@ -35,16 +41,20 @@ const Game = ({
     }
   }, [canvas2dRef.current, canvas3dRef.current, render2d, render3d])
 
+ const _shutdownGame = () => {
+    if (game) {
+      console.log(`<Game> shutdown...`)
+      game.shutdown()
+      dispatchRoom(null)
+    }
+  }
+
   useEffect(() => {
     if (slug && canvasesReady && !isLoading && slug != game?.room?.slug) {
-      if (game) {
-        console.log(`<Game> disconnect...`)
-        game.room.clientRoom.disconnect()
-        dispatchRoom(null)
-        setGame(null)
-      }
-      console.log(`<Game> import...`, game?.room?.slug, '>', slug)
+      _shutdownGame()
+      setGame(null)
       setIsLoading(true)
+      console.log(`<Game> import...`, game?.room?.slug, '>', slug)
       import('src/core/game').then(async ({ default: Game }) => {
         console.log(`<Game> init...`)
         const _game = new Game()

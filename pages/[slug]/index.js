@@ -31,19 +31,19 @@ const RoomPage = () => {
   const { canEdit } = usePermission('world')
 
   const [showHelp, setShowHelp] = useState(false)
-  
+
   const settingsDisclosure = useSettingsDisclosure('world')
   const snapshotDisclosure = useDisclosure()
 
   useEffect(() => {
-    if(!room) return
+    if (!room) return
     const _travel = (slug) => {
       console.log(`Travel to...`, slug)
       router.push(`/${slug}`)
     }
     room.clientRoom.on('travel', _travel)
     return () => {
-      room.clientRoom.off('travel', _travel)
+      room.clientRoom?.off('travel', _travel)
     }
   }, [room])
 

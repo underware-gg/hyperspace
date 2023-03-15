@@ -27,9 +27,14 @@ class Game {
 
   shutdown() {
     this.running = false
+    this.room.shutdown()
+    this.room = null
   }
 
   render() {
+    if (!this.running) {
+      return
+    }
     this.currentTime = (new Date()).getTime()
     this.dt = (this.currentTime - this.lastTime) / 1000
 
@@ -39,9 +44,7 @@ class Game {
   
     this.lastTime = this.currentTime
   
-    if (this.running) {
-      window.requestAnimationFrame(this.render)
-    }
+    window.requestAnimationFrame(this.render)
   }
 }
 

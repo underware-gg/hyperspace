@@ -160,8 +160,8 @@ class Room {
 
     await loadTextures()
 
-    this.renderer2D.init(canvas2d)
-    this.renderer3D.init(canvas3d)
+    this.renderer2D.init(this.canvas2d)
+    this.renderer3D.init(this.canvas3d)
 
     this.clientRoom = ClientRoom.create(slug, this.remoteStore)
 
@@ -180,8 +180,8 @@ class Room {
     // loads snapshot
     this.clientRoom.init(slug)
 
-    this.Editor.init2d(canvas2d, this.clientRoom.agentId)
-    this.Editor.init3d(canvas3d, this.clientRoom.agentId)
+    this.Editor.init2d(this.canvas2d, this.clientRoom.agentId)
+    this.Editor.init3d(this.canvas3d, this.clientRoom.agentId)
 
     const { VeridaUser } = (await import('@/core/verida'))
     this.localStore.setDocument('user', 'VeridaUser', VeridaUser)
@@ -189,34 +189,29 @@ class Room {
     // Event listeners
     registerActions(_actions)
 
-    addActionDownListener('toggle3d', () => {
-      const is3d = this.localStore.getDocument('show-3d', 'world')
-      this.localStore.setDocument('show-3d', 'world', !is3d)
-    })
+    this.canvas2d?.addEventListener('keydown', this.handleKeyDown, false)
+    this.canvas3d?.addEventListener('keydown', this.handleKeyDown, false)
+    this.canvas2d?.addEventListener('keyup', this.handleKeyUp, false)
+    this.canvas3d?.addEventListener('keyup', this.handleKeyUp, false)
+  }
 
-    addActionDownListener('interact', () => {
-      this.Player.interact(this.clientRoom.agentId)
-    })
+  shutdown = () => {
+    this.canvas2d?.removeEventListener('keydown', this.handleKeyDown)
+    this.canvas3d?.removeEventListener('keydown', this.handleKeyDown)
+    this.canvas2d?.removeEventListener('keyup', this.handleKeyUp)
+    this.canvas3d?.removeEventListener('keyup', this.handleKeyUp)
+    this.clientRoom.shutdown()
+    this.clientRoom = null
+  }
 
-    canvas2d?.addEventListener('keydown', (e) => {
-      e.preventDefault()
-      handleKeyDown(e)
-    }, false)
+  handleKeyDown = (e) => {
+    e.preventDefault()
+    handleKeyDown(e)
+  }
 
-    canvas3d?.addEventListener('keydown', (e) => {
-      e.preventDefault()
-      handleKeyDown(e)
-    }, false)
-
-    canvas2d?.addEventListener('keyup', e => {
-      e.preventDefault()
-      handleKeyUp(e)
-    }, false)
-
-    canvas3d?.addEventListener('keyup', e => {
-      e.preventDefault()
-      handleKeyUp(e)
-    }, false)
+  handleKeyUp = (e) => {
+    e.preventDefault()
+    handleKeyUp(e)
   }
 
   update(dt) {
