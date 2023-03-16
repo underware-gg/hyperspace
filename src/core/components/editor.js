@@ -1,7 +1,6 @@
 import { nanoid } from 'nanoid'
 import * as THREE from 'three'
 import RoomCollection from '@/core/interfaces/RoomCollection'
-import { getActionState, addActionDownListener } from '@/core/controller'
 import { roundToNearest, getFilenameFromUrl } from '@/core/utils'
 
 const normalMatrix = new THREE.Matrix3() // create once and reuse
@@ -41,7 +40,7 @@ class Editor extends RoomCollection {
       // id is the agent id.
     })
 
-    addActionDownListener('createPortal', (options = {}) => {
+    this.actions.addActionDownListener('createPortal', (options = {}) => {
       const { slug, tile } = options
       if (!slug) {
         console.warn(`createPortal: missing slug`)
@@ -56,7 +55,7 @@ class Editor extends RoomCollection {
       this.Portal.createPortal(slug, tile, x, y)
     })
 
-    addActionDownListener('createTrigger', (options = {}) => {
+    this.actions.addActionDownListener('createTrigger', (options = {}) => {
       const trigger = {
         name: options?.name ?? 'Trigger',
         state: options?.state ?? 0,
@@ -71,7 +70,7 @@ class Editor extends RoomCollection {
       this.Trigger.createAtPosition(nanoid(), trigger, x, y)
     })
 
-    addActionDownListener('createScreen', () => {
+    this.actions.addActionDownListener('createScreen', () => {
       if (!this.Player.canPlaceOverPlayer(agentId)) {
         return
       }
@@ -88,7 +87,7 @@ class Editor extends RoomCollection {
       this.Screen.createDocument(screenId, x, y, rot, text, name)
     })
 
-    addActionDownListener('createBook', () => {
+    this.actions.addActionDownListener('createBook', () => {
       if (!this.Player.canPlaceOverPlayer(agentId)) {
         return
       }
@@ -242,43 +241,43 @@ class Editor extends RoomCollection {
       return
     }
 
-    if (getActionState('1')) {
+    if (this.actions.getActionState('1')) {
       this.Map.updateTile('world', x, y, 0)
     }
 
-    if (getActionState('2')) {
+    if (this.actions.getActionState('2')) {
       this.Map.updateTile('world', x, y, 1)
     }
 
-    if (getActionState('3')) {
+    if (this.actions.getActionState('3')) {
       this.Map.updateTile('world', x, y, 2)
     }
 
-    if (getActionState('4')) {
+    if (this.actions.getActionState('4')) {
       this.Map.updateTile('world', x, y, 3)
     }
 
-    if (getActionState('5')) {
+    if (this.actions.getActionState('5')) {
       this.Map.updateTile('world', x, y, 4)
     }
 
-    if (getActionState('6')) {
+    if (this.actions.getActionState('6')) {
       this.Map.updateTile('world', x, y, 5)
     }
 
-    if (getActionState('7')) {
+    if (this.actions.getActionState('7')) {
       this.Map.updateTile('world', x, y, 6)
     }
 
-    if (getActionState('8')) {
+    if (this.actions.getActionState('8')) {
       this.Map.updateTile('world', x, y, 7)
     }
 
-    if (getActionState('9')) {
+    if (this.actions.getActionState('9')) {
       this.Map.updateTile('world', x, y, 8)
     }
 
-    if (getActionState('0')) {
+    if (this.actions.getActionState('0')) {
       this.Map.updateTile('world', x, y, 9)
     }
   }

@@ -1,19 +1,17 @@
-import { useState, useEffect } from 'react'
-import {
-  addActionDownListener,
-  removeActionDownListener,
-  emitAction,
-} from '@/core/controller'
+import { useEffect } from 'react'
+import { useRoomContext } from '@/hooks/RoomContext'
 
-const useActionDownListener = (eventName, callback=() => {}) => {
+const useActionDownListener = (eventName, callback = () => { }) => {
+  const { actions } = useRoomContext()
   useEffect(() => {
-    addActionDownListener(eventName, callback)
+    if (!actions) return
+    actions.addActionDownListener(eventName, callback)
     return () => {
-      removeActionDownListener(eventName, callback)
+      actions.removeActionDownListener(eventName, callback)
     }
   }, [])
 
-  return { emitter: emitAction }
+  return { emitter: actions?.emitAction ?? null }
 }
 
 export default useActionDownListener

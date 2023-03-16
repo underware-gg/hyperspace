@@ -3,7 +3,6 @@ import RoomCollection from '@/core/interfaces/RoomCollection'
 import { HTMLMesh } from '@/core/rendering/HTMLMesh'
 import { getTextureImageByName } from '@/core/textures'
 import { floors } from '@/core/components/map'
-import { addActionDownListener } from '@/core/controller'
 
 export const TYPE = {
   DOCUMENT: 'document',
@@ -120,7 +119,7 @@ class Screen extends RoomCollection {
       }
     })
 
-    addActionDownListener('syncScreens', async () => {
+    this.actions.addActionDownListener('syncScreens', async () => {
       const screenIds = this.remoteStore.getIds('screen')
       for (const screenId of screenIds) {
         // delete if already exists (component could have been remounted)

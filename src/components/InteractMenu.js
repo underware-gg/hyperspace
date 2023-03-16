@@ -9,7 +9,6 @@ import { useDocument } from '@/hooks/useDocument'
 import usePlayer from '@/hooks/usePlayer'
 import usePermission from '@/hooks/usePermission'
 import useActionDownListener from '@/hooks/useActionDownListener'
-import { emitAction } from '@/core/controller'
 import { DialogConfirm, useConfirmDisclosure } from '@/components/DialogConfirm'
 import ModalPortal from '@/components/ModalPortal'
 import ModalTrigger from '@/components/ModalTrigger'
@@ -19,7 +18,7 @@ const InteractMenu = ({
   customTileset,
   onSelect,
 }) => {
-  const { agentId } = useRoomContext()
+  const { agentId, actions } = useRoomContext()
   const {
     canPlace,
     overPortal, portalId, portalName, portal,
@@ -49,28 +48,28 @@ const InteractMenu = ({
     header: 'Delete Portal',
     message: <>Delete Portal to Room <span className='Important'>{portalName}</span>?</>,
     confirmLabel: 'Delete',
-    onConfirm: () => emitAction('delete'),
+    onConfirm: () => actions.emitAction('delete'),
   })
 
   const deleteTriggerDisclosure = useConfirmDisclosure({
     header: 'Delete Trigger',
     message: <>Delete Trigger <span className='Important'>{triggerName}</span>?</>,
     confirmLabel: 'Delete',
-    onConfirm: () => emitAction('delete'),
+    onConfirm: () => actions.emitAction('delete'),
   })
 
   const enterPortalDisclosure = useConfirmDisclosure({
     header: 'Enter Portal',
     message: <>Enter Portal to Room <span className='Important'>{portalName}</span>{portal?.tile && `@[${portal.tile.x},${portal.tile.y}]`} ?</>,
     confirmLabel: 'Enter',
-    onConfirm: () => emitAction('interact'),
+    onConfirm: () => actions.emitAction('interact'),
   })
 
   const deleteScreenDisclosure = useConfirmDisclosure({
     header: 'Delete Screen',
     message: <>Delete Screen <span className='Important'>{screen?.name}</span>?</>,
     confirmLabel: 'Delete',
-    onConfirm: () => emitAction('delete'),
+    onConfirm: () => actions.emitAction('delete'),
   })
 
   return (
@@ -82,16 +81,16 @@ const InteractMenu = ({
 
       {canPlace &&
         <>
-          <Button size='sm' disabled={!canEditRoom} onClick={() => emitAction('editPortal')}>
+          <Button size='sm' disabled={!canEditRoom} onClick={() => actions.emitAction('editPortal')}>
             New [P]ortal
           </Button>
-          <Button size='sm' disabled={!canEditRoom} onClick={() => emitAction('createScreen')}>
+          <Button size='sm' disabled={!canEditRoom} onClick={() => actions.emitAction('createScreen')}>
             New scree[N]
           </Button>
-          <Button size='sm' disabled={!canEditRoom} onClick={() => emitAction('createBook')}>
+          <Button size='sm' disabled={!canEditRoom} onClick={() => actions.emitAction('createBook')}>
             New [B]ook
           </Button>
-          <Button size='sm' disabled={!canEditRoom} onClick={() => emitAction('createTrigger')}>
+          <Button size='sm' disabled={!canEditRoom} onClick={() => actions.emitAction('createTrigger')}>
             New Trigger
           </Button>
         </>
@@ -119,7 +118,7 @@ const InteractMenu = ({
       {overTrigger &&
         <>
           Trigger&nbsp;<Text color='important'>{triggerName}</Text>
-          <Button size='sm' disabled={!canEditTrigger} onClick={() => emitAction('interact')}>
+          <Button size='sm' disabled={!canEditTrigger} onClick={() => actions.emitAction('interact')}>
             [E]xecute
           </Button>
           <Button size='sm' disabled={!canEditTrigger} onClick={() => triggerDisclosure.onOpen()}>
@@ -139,7 +138,7 @@ const InteractMenu = ({
           {screen?.type}:<Text color='important'>{screen?.name ?? screenId}</Text>
           {canEditScreen ?
             <>
-              <Button size='sm' disabled={!screen || !canEditScreen} onClick={() => emitAction('interact')}>
+              <Button size='sm' disabled={!screen || !canEditScreen} onClick={() => actions.emitAction('interact')}>
                 [E]dit
               </Button>
               <Button size='sm' disabled={!screen || !canEditScreen} onClick={() => deleteScreenDisclosure.openConfirmDialog()}>
@@ -148,7 +147,7 @@ const InteractMenu = ({
               <DialogConfirm confirmDisclosure={deleteScreenDisclosure} />
             </>
             :
-            <Button size='sm' disabled={!screen || !canViewScreen} onClick={() => emitAction('interact')}>
+            <Button size='sm' disabled={!screen || !canViewScreen} onClick={() => actions.emitAction('interact')}>
               [V]iew
             </Button>
           }

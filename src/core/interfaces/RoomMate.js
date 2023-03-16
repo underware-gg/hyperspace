@@ -27,6 +27,10 @@ class RoomMate {
     return this.#room.localStore
   }
 
+  get actions() {
+    return this.#room.actions
+  }
+
   // the ClientRoom
 
   get slug() {

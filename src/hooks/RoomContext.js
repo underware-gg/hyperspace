@@ -65,6 +65,7 @@ export const useRoomContext = () => {
     localStore: room?.localStore ?? null,
     canvas2d: room?.canvas2d ?? null,
     canvas3d: room?.canvas3d ?? null,
+    actions: room?.actions ?? null,
     agentId: room?.clientRoom?.agentId ?? null,
     clientRoom: room?.clientRoom ?? null,
     Player: room?.Player ?? null,

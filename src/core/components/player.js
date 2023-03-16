@@ -1,7 +1,6 @@
 import * as THREE from 'three'
 import RoomCollection from '@/core/interfaces/RoomCollection'
 import { defaultSettings } from '@/core/components/settings'
-import { getActionState, addActionDownListener } from '@/core/controller'
 import { getTextureByName, getTextureSprite } from '@/core/textures'
 import { CONST, clamp, clampRadians, deepCompare, deepCopy } from '@/core/utils'
 import { floors } from '@/core/components/map'
@@ -26,16 +25,16 @@ class Player extends RoomCollection {
   constructor(room) {
     super(room, 'player')
 
-    addActionDownListener('interact', () => {
+    this.actions.addActionDownListener('interact', () => {
       this.interact(this.agentId)
     })
 
-    addActionDownListener('toggle3d', () => {
+    this.actions.addActionDownListener('toggle3d', () => {
       const is3d = this.localStore.getDocument('show-3d', 'world')
       this.localStore.setDocument('show-3d', 'world', !is3d)
     })
 
-    addActionDownListener('delete', () => {
+    this.actions.addActionDownListener('delete', () => {
       const editor = this.remoteStore.getDocument('editor', this.agentId)
       if (editor === null) {
         return
@@ -422,39 +421,39 @@ class Player extends RoomCollection {
       forwardMove.add(forward.setLength(SPEED * dt))
       sideMove.add(right.setLength(SPEED * dt))
 
-      if (getActionState('left')) {
+      if (this.actions.getActionState('left')) {
         x -= sideMove.x
         y += sideMove.y
       }
 
-      if (getActionState('right')) {
+      if (this.actions.getActionState('right')) {
         x += sideMove.x
         y -= sideMove.y
       }
 
-      if (getActionState('up')) {
+      if (this.actions.getActionState('up')) {
         x -= forwardMove.x
         y += forwardMove.y
       }
 
-      if (getActionState('down')) {
+      if (this.actions.getActionState('down')) {
         x += forwardMove.x
         y -= forwardMove.y
       }
 
-      if (getActionState('turnLeft')) {
+      if (this.actions.getActionState('turnLeft')) {
         rotationCopy.y += Math.PI * dt
       }
-      if (getActionState('turnRight')) {
+      if (this.actions.getActionState('turnRight')) {
         rotationCopy.y -= Math.PI * dt
       }
-      if (getActionState('moveBack')) {
+      if (this.actions.getActionState('moveBack')) {
         rotationCopy.x -= Math.PI * dt * 0.75
         if (rotationCopy.x < -Math.PI * 0.25) {
           rotationCopy.x = -Math.PI * 0.25
         }
       }
-      if (getActionState('moveForward')) {
+      if (this.actions.getActionState('moveForward')) {
         rotationCopy.x += Math.PI * dt * 0.75
         if (rotationCopy.x > +Math.PI * 0.15) {
           rotationCopy.x = +Math.PI * 0.15
@@ -465,16 +464,16 @@ class Player extends RoomCollection {
       let speedX = 0;
       let speedY = 0;
 
-      if (getActionState('left') || getActionState('turnLeft')) {
+      if (this.actions.getActionState('left') || this.actions.getActionState('turnLeft')) {
         speedX -= SPEED;
       }
-      if (getActionState('right') || getActionState('turnRight')) {
+      if (this.actions.getActionState('right') || this.actions.getActionState('turnRight')) {
         speedX += SPEED;
       }
-      if (getActionState('up') || getActionState('moveForward')) {
+      if (this.actions.getActionState('up') || this.actions.getActionState('moveForward')) {
         speedY -= SPEED;
       }
-      if (getActionState('down') || getActionState('moveBack')) {
+      if (this.actions.getActionState('down') || this.actions.getActionState('moveBack')) {
         speedY += SPEED;
       }
 
@@ -529,7 +528,7 @@ class Player extends RoomCollection {
     zSpeed += GRAVITY * dt
     zSpeed = Math.min(zSpeed, MAX_Z_SPEED)
 
-    if (getActionState('jump') && grounded) {
+    if (this.actions.getActionState('jump') && grounded) {
       zSpeed = -JUMP_SPEED
       grounded = false
     }

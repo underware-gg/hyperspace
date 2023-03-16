@@ -7,7 +7,6 @@ import {
   Spacer,
   useDisclosure,
 } from '@chakra-ui/react'
-import { emitAction } from '@/core/controller'
 import Layout from '@/components/Layout'
 import Game from '@/components/Game'
 import Button from '@/components/Button'
@@ -27,7 +26,7 @@ const RoomPage = () => {
   const router = useRouter()
   const { slug } = router.query
 
-  const { agentId, room } = useRoomContext()
+  const { agentId, room, actions } = useRoomContext()
   const { canEdit } = usePermission('world')
 
   const [showHelp, setShowHelp] = useState(false)
@@ -59,7 +58,7 @@ const RoomPage = () => {
         <GridItem colSpan={4}>
           <VStack align='stretch' className='Stretch'>
             <HStack>
-              <Button size='sm' onClick={() => emitAction('toggle3d')}>
+              <Button size='sm' onClick={() => actions?.emitAction('toggle3d')}>
                 2D/3D
               </Button>
               <Button size='sm' onClick={() => setShowHelp(!showHelp)}>

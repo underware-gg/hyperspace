@@ -18,7 +18,6 @@ class ClientRoom extends EventEmitter {
     this.agentIds = [
       this.agentId,
     ]
-console.warn(`ClientRoom.constructor()`, this.agentId)
   }
 
   init() {
@@ -31,7 +30,6 @@ console.warn(`ClientRoom.constructor()`, this.agentId)
       { uri: this.uri + '/api/room/' + this.slug + '/websocket' },
       this.kernal,
     )
-console.warn(`ClientRoom.init()`, this.agentId)
     this.client.addListener('open', this.handleOpen)
     this.client.addListener('close', this.handleClose)
     this.client.addListener('error', this.handleError)

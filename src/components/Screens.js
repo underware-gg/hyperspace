@@ -1,6 +1,5 @@
 import { useEffect, useMemo } from 'react'
 import { useRoomContext } from '@/hooks/RoomContext'
-import { emitAction } from '@/core/controller'
 import { useDocument, useLocalDocument } from '@/hooks/useDocument'
 import { useRemoteDocumentIds } from '@/hooks/useDocumentIds'
 import usePermission from '@/hooks/usePermission'
@@ -9,7 +8,7 @@ import { ScreenBook } from '@/components/ScreenBook'
 import { TYPE } from '@/core/components/screen'
 
 const Screens = ({ }) => {
-  const { localStore, Screen } = useRoomContext()
+  const { localStore, actions } = useRoomContext()
   const screenIds = useRemoteDocumentIds('screen')
   const is3d = useLocalDocument('show-3d', 'world') ?? false
   const editingScreenId = useLocalDocument('screens', 'editing')
@@ -45,7 +44,7 @@ const Screens = ({ }) => {
   }, [screenIds.length, editingScreenId, facingScreenId, is3d, canEdit, canView])
 
   useEffect(() => {
-    emitAction('syncScreens')
+    actions?.emitAction('syncScreens')
   }, [screensComponents])
 
   return (

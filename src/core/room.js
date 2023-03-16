@@ -1,11 +1,6 @@
-import {
-  registerActions,
-  handleKeyDown,
-  handleKeyUp,
-  addActionDownListener,
-} from '@/core/controller'
-import { loadTextures } from '@/core/textures'
+import Actions from '@/core/actions'
 import * as ClientRoom from '@/core/networking'
+import { loadTextures } from '@/core/textures'
 import Renderer2D from '@/core/rendering/renderer2D'
 import Renderer3D from '@/core/rendering/renderer3D'
 import Portal from '@/core/components/portal'
@@ -143,14 +138,13 @@ const _actions = [
 class Room {
 
   constructor() {
-    // TODO: Move singletons here
     this.remoteStore = new Store()
     this.localStore = new Store()
-    // TODO: Instantiate ClientRoom here
-    // this.clientRoom = ClientRoom.create()
 
     this.renderer2D = new Renderer2D(this)
     this.renderer3D = new Renderer3D(this)
+
+    this.actions = new Actions()
   }
 
   async init(slug, canvas2d, canvas3d) {
@@ -187,7 +181,7 @@ class Room {
     this.localStore.setDocument('user', 'VeridaUser', VeridaUser)
 
     // Event listeners
-    registerActions(_actions)
+    this.actions.registerActions(_actions)
 
     this.canvas2d?.addEventListener('keydown', this.handleKeyDown, false)
     this.canvas3d?.addEventListener('keydown', this.handleKeyDown, false)
@@ -206,12 +200,12 @@ class Room {
 
   handleKeyDown = (e) => {
     e.preventDefault()
-    handleKeyDown(e)
+    this.actions.handleKeyDown(e)
   }
 
   handleKeyUp = (e) => {
     e.preventDefault()
-    handleKeyUp(e)
+    this.actions.handleKeyUp(e)
   }
 
   update(dt) {
@@ -271,5 +265,3 @@ class Room {
 }
 
 export default Room
-
-

@@ -10,16 +10,15 @@ import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
 import useGameCanvas from '@/hooks/useGameCanvas'
 import { TileInput, useInputValidator } from '@/components/Inputs'
-import Button from '@/components/Button'
-import { emitAction } from '@/core/controller'
 import { defaultSettings } from '@/core/components/settings'
+import Button from '@/components/Button'
 
 const ModalPortal = ({
   disclosure,
   portalId,
   newPortal=false
 }) => {
-  const { Portal } = useRoomContext()
+  const { Portal, actions } = useRoomContext()
   const { gameCanvas } = useGameCanvas()
   const { isOpen, onOpen, onClose } = disclosure
   const [roomName, setRoomName] = useState('');
@@ -54,7 +53,7 @@ const ModalPortal = ({
       }
     }
     if (newPortal) {
-      emitAction('createPortal', options)
+      actions.emitAction('createPortal', options)
     } else {
       Portal.updatePortal(portalId, options)
     }

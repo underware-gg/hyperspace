@@ -66,7 +66,7 @@ class Client extends EventEmitter {
 	}
 
 	heartbeat = () => {
-console.warn(`Client.ping()`, this.options.uri)
+    // console.warn(`Client.ping()`, this.options.uri)
 		this.addMessage(createMessage.ping())
 		if (this.connection?.readyState === WebSocket.OPEN) {
 			if (this.lastPong + PONG_TIMEOUT < Date.now()) {
@@ -80,19 +80,19 @@ console.warn(`Client.ping()`, this.options.uri)
 	}
 
 	handleClose = (event) => {
-console.warn(`Client.handleClose()...`, this.options.uri)
+    console.warn(`Client.handleClose()...`, this.options.uri)
 		this.emit('close', event)
     this.handleCloseTimeout = setTimeout(() => {
-console.warn(`Client.handleClose() RECONNECT`, this.options.uri)
+      console.warn(`Client.handleClose() RECONNECT`, this.options.uri)
 			this.connection = this.createConnection()
 		}, RECONNECT_TIMEOUT)
 	}
 
 	handleError = (event) => {
-console.warn(`Client.handleError()...`, this.options.uri)
+    console.warn(`Client.handleError()...`, this.options.uri)
 		this.emit('error', event)
     this.handleErrorTimeout = setTimeout(() => {
-console.warn(`Client.handleError() RECONNECT`, this.options.uri)
+      console.warn(`Client.handleError() RECONNECT`, this.options.uri)
 			this.connection = this.createConnection()
 		}, RECONNECT_TIMEOUT)
 	}
