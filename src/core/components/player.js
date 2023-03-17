@@ -108,28 +108,6 @@ class Player extends RoomCollection {
     })
   }
 
-  enterRoom(agentId, slug) {
-    this.localStore.setDocument('joined', agentId, true)
-
-    // from a portal
-    const cookies = new Cookies();
-    const portalCookie = cookies.get('portal') ?? null
-    if (portalCookie) {
-      cookies.remove('portal')
-      if (portalCookie.agentId == agentId && portalCookie.slug == slug) {
-        this.moveToTile(agentId, portalCookie.tile)
-        return
-      }
-    }
-
-    // go to default entry
-    // const settings = this.remoteStore.getDocument('settings', 'world') ?? defaultSettings
-    // this.moveToTile(agentId, settings.entry)
-
-    // reset player position
-    this.createPlayer(agentId)
-  }
-
   makePlayerMaterial(agentId) {
     const texture = this.getPlayerTexture(agentId)
     const materialTexture = new THREE.TextureLoader().load(texture.src);
@@ -204,29 +182,6 @@ class Player extends RoomCollection {
       1
     )
 
-  }
-
-  createPlayer(id) {
-    const settings = this.remoteStore.getDocument('settings', 'world') ?? defaultSettings
-
-    const entryPosition = this.Map.fromTileToCanvasPosition(settings.entry.x, settings.entry.y)
-
-    const player = {
-      position: {
-        x: entryPosition.x,
-        y: entryPosition.y,
-        z: 0,
-      },
-      rotation: {
-        x: 0,
-        y: Math.PI,
-        z: 0,
-      }
-    }
-
-    this.remoteStore.setDocument('player', id, player)
-
-    return player
   }
 
   // We should add a delete portal button too.
@@ -330,33 +285,59 @@ class Player extends RoomCollection {
     }
   }
 
+  enterRoom(agentId, slug) {
+    this.localStore.setDocument('joined', agentId, true)
+
+    const cookies = new Cookies()
+
+    // portal navigation
+    let portalCookie = cookies.get('portal') ?? null
+    if (portalCookie) {
+      if (portalCookie.agentId == agentId) {
+        // coming in from a portal
+        if (portalCookie.to == slug) {
+          portalCookie.to = null
+          cookies.set('portal', JSON.stringify(portalCookie), { path: '/' })
+          this.moveToTile(agentId, portalCookie.entry)
+          return
+        }
+        // coming back from a portal
+        if (portalCookie.from == slug) {
+          cookies.remove('portal')
+          this.moveToTile(agentId, portalCookie.exit)
+          return
+        }
+      }
+      cookies.remove('portal')
+    }
+
+    // go to default entry
+    const settings = this.remoteStore.getDocument('settings', 'world') ?? defaultSettings
+    this.moveToTile(agentId, settings.entry)
+  }
+
   moveToTile(id, tile) {
     let player = this.remoteStore.getDocument('player', id)
+
     if (player === null) {
-      return null
+      player = {
+        position: {
+          x: 0,
+          y: 0,
+          z: 0,
+        },
+        rotation: {
+          x: 0,
+          y: Math.PI,
+          z: 0,
+        }
+      }
     }
 
     const position = this.Map.fromTileToCanvasPosition(tile?.x, tile?.y)
     player.position.x = position.x
     player.position.y = position.y
     this.remoteStore.setDocument('player', id, player)
-  }
-
-  getCollisionCircle(id) {
-    const player = this.remoteStore.getDocument('player', id)
-    if (player === null) {
-      return null
-    }
-
-    const { x, y } = player.position
-
-    return {
-      position: {
-        x: Math.round(x),
-        y: Math.round(y),
-      },
-      radius: PLAYER_RADIUS,
-    }
   }
 
   getPlayerTileRotation(id) {
@@ -612,7 +593,6 @@ class Player extends RoomCollection {
     const texture = this.getPlayerTexture(id)
     if (!texture) return // texture not loaded yet
 
-    // strokeCircle(context, getCollisionCircle(id))
     strokeRect(context, this.getPlayerCollisionRect(id))
 
     let scale = texture.scale;

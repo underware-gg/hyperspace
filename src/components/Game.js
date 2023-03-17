@@ -43,7 +43,7 @@ const Game = ({
 
  const _shutdownGame = () => {
     if (game) {
-      console.log(`<Game> shutdown...`)
+      console.log(`[${game.room.slug}] <Game> shutdown...`)
       game.shutdown()
       dispatchRoom(null)
     }
@@ -54,9 +54,9 @@ const Game = ({
       _shutdownGame()
       setGame(null)
       setIsLoading(true)
-      console.log(`<Game> import...`, game?.room?.slug, '>', slug)
+      console.log(`[${slug}] <Game> import...`)
       import('src/core/game').then(async ({ default: Game }) => {
-        console.log(`<Game> init...`)
+        console.log(`[${slug}] <Game> init...`)
         const _game = new Game()
         await _game.init(slug, canvas2dRef.current, canvas3dRef.current)
         dispatchRoom(_game.room)

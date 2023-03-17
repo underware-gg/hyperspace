@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import RoomCollection from '@/core/interfaces/RoomCollection'
 import { getTextureImageByName } from '@/core/textures'
 import { floors } from '@/core/components/map'
-import Cookies from 'universal-cookie';
+import Cookies from 'universal-cookie'
 
 class Portal extends RoomCollection {
   constructor(room) {
@@ -113,16 +113,16 @@ class Portal extends RoomCollection {
     if (this.slug == portal.slug) {
       this.Player.moveToTile(this.agentId, portal.tile)
     } else {
-      // Travel to other Room
-      const data = {
+      const cookies = new Cookies()
+      const portalCookie = {
         agentId: this.agentId,
         from: this.slug,
-        slug: portal.slug,
-        tile: portal.tile ?? null,
+        to: portal.slug,
+        exit: portal.position ?? null,
+        entry: portal.tile ?? null,
       }
-      const cookies = new Cookies();
-      cookies.set('portal', JSON.stringify(data), { path: '/' });
-      // window.location.href = `/${portal.slug}`
+      cookies.set('portal', JSON.stringify(portalCookie), { path: '/' })
+      // Travel to portal destination
       this.clientRoom.emit('travel', portal.slug)
     }
   }
