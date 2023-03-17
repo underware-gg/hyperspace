@@ -1,8 +1,9 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
   VStack,
   Input,
+  Text,
 } from '@chakra-ui/react'
 import Button from '@/components/Button'
 
@@ -12,7 +13,16 @@ const ModalRoom = ({
 }) => {
   const { isOpen, onOpen, onClose } = disclosure
   const [roomName, setRoomName] = useState('');
+  const [isValid, setIsValid] = useState(false);
   const roomNameRef = useRef()
+
+  useEffect(() => {
+    setIsValid(roomName.length == 0 || /^[a-zA-Z0-9-+_]+$/.test(roomName))
+  }, [roomName])
+
+  const _onChange = (name) => {
+    setRoomName(name)
+  }
 
   return (
     <Modal
@@ -42,9 +52,10 @@ const ModalRoom = ({
               placeholder=''
               ref={roomNameRef}
               value={roomName}
-              onChange={(e) => setRoomName(e.target.value)}
+              onChange={(e) => _onChange(e.target.value)}
               onKeyDown={(e) => { if (e.code == 'Enter') onSubmit(roomName) }}
             />
+            <Text>{isValid ? <span>&nbsp;</span> : 'invalid room name'}</Text>
           </VStack>
         </ModalBody>
         <ModalFooter>
@@ -53,6 +64,7 @@ const ModalRoom = ({
             fullWidth
             value={roomName.length > 0 ? 'Create / Enter Room' : 'Create Casual Room'}
             onClick={() => onSubmit(roomName)}
+            disabled={!isValid}
             type='submit'
           />
         </ModalFooter>
