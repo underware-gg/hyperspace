@@ -13,28 +13,11 @@ class Trigger extends RoomCollection {
       return // no 3d render
     }
 
-    const triggerGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1.25, 32, 1, true)
+    const triggerGeometry = new THREE.CylinderGeometry(0.4, 0.4, 1.25, 32, 1, true)
 
     const _updateTriggerState = (triggerMesh, trigger) => {
       if (triggerMesh === null) return
       triggerMesh.material.color.set(trigger.state == 0 ? '#f00' : '#0f0')
-    }
-
-    const _updateTriggerPosition = (triggerMesh, trigger) => {
-      if (triggerMesh === null) return
-
-      const tile = this.Map.getTile('world', trigger.position.x, trigger.position.y)
-      if (tile === null) return
-
-      const currentFloorHeight = floors[tile]
-
-      // maybe we should be updating the y position of the trigger but
-      // for now we will just update where the render happens.
-      triggerMesh.position.set(
-        (Math.floor(trigger.position.x)) + 0.5,
-        (-Math.floor(trigger.position.y)) - 0.5,
-        currentFloorHeight + .5,
-      )
     }
 
     this.remoteStore.on({ type: 'trigger', event: 'create' }, (triggerId, trigger) => {
@@ -54,7 +37,7 @@ class Trigger extends RoomCollection {
       scene.add(triggerMesh)
       this.localStore.setDocument('trigger-mesh', triggerId, triggerMesh)
 
-      _updateTriggerPosition(triggerMesh, trigger)
+      this.Map.updateMeshPositionToMap(triggerMesh, trigger.position)
 
       _updateTriggerState(triggerMesh, trigger)
     })
@@ -85,7 +68,7 @@ class Trigger extends RoomCollection {
 
         const triggerMesh = this.localStore.getDocument('trigger-mesh', triggerId)
 
-        _updateTriggerPosition(triggerMesh, trigger)
+        this.Map.updateMeshPositionToMap(triggerMesh, trigger.position)
       }
     })
   }

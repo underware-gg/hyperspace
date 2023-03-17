@@ -248,6 +248,24 @@ class Map extends RoomCollection {
     this.upsert(id, map)
   }
 
+  updateMeshPositionToMap(mesh, position) {
+    if (mesh === null) return
+
+    const tile = this.getTile('world', position.x, position.y)
+    if (tile === null) return
+
+    const currentFloorHeight = floors[tile]
+
+    mesh.geometry.computeBoundingBox()
+    const bbox = mesh.geometry.boundingBox
+
+    mesh.position.set(
+      (Math.floor(position.x) + 0.5),
+      -(Math.floor(position.y) + 0.5),
+      currentFloorHeight + (bbox.max.z - bbox.min.z) * 0.5,
+    )
+  }
+
   updateTile(id, x, y, value) {
     const map = this.remoteStore.getDocument('map', id)
 

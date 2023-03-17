@@ -2,7 +2,6 @@ import { nanoid } from 'nanoid'
 import * as THREE from 'three'
 import RoomCollection from '@/core/interfaces/RoomCollection'
 import { getTextureImageByName } from '@/core/textures'
-import { floors } from '@/core/components/map'
 import Cookies from 'universal-cookie'
 
 class Portal extends RoomCollection {
@@ -26,37 +25,15 @@ class Portal extends RoomCollection {
       depthWrite: false,
     })
 
-    const _updatePortalPosition = (portalMesh, portal) => {
-      if (portalMesh === null) return
-
-      const tile = this.Map.getTile('world', portal.position.x, portal.position.y)
-      if (tile === null) return
-
-      const currentFloorHeight = floors[tile]
-
-      // maybe we should be updating the y position of the portal but
-      // for now we will just update where the render happens.
-      portalMesh.position.set(
-        (Math.floor(portal.position.x)) + 0.5,
-        (-Math.floor(portal.position.y)) - 0.5,
-        currentFloorHeight + .5,
-      )
-    }
-
     this.remoteStore.on({ type: 'portal', event: 'create' }, (portalId, portal) => {
       const portalMesh = new THREE.Mesh(portalGeometry, portalMaterial)
 
       const map = this.remoteStore.getDocument('map', 'world')
       if (map === null) return
 
-      portalMesh.position.set(
-        (Math.floor(portal.position.x)) + 0.5,
-        (-Math.floor(portal.position.y)) - 0.5,
-        0,
-      )
       portalMesh.rotation.set(Math.PI / 2, 0, 0);
 
-      _updatePortalPosition(portalMesh, portal)
+      this.Map.updateMeshPositionToMap(portalMesh, portal.position)
 
       scene.add(portalMesh)
       this.localStore.setDocument('portal-mesh', portalId, portalMesh)
@@ -81,7 +58,8 @@ class Portal extends RoomCollection {
         if (portal === null) continue
 
         const portalMesh = this.localStore.getDocument('portal-mesh', portalId)
-        _updatePortalPosition(portalMesh, portal)
+
+        this.Map.updateMeshPositionToMap(portalMesh, portal.position)
       }
     })
   }
