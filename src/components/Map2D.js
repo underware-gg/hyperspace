@@ -3,6 +3,7 @@
 
 import React, { useRef, useEffect } from 'react'
 import { useRoomContext } from '@/hooks/RoomContext'
+import { useDocument } from '@/hooks/useDocument'
 import { useRoom } from '@/hooks/useRoom'
 
 const Map2D = ({
@@ -10,10 +11,12 @@ const Map2D = ({
   onLoaded = (loaded) => { }
 }) => {
   const canvasRef = useRef()
-  useRoom(slug, canvasRef.current)
 
   // useRoom() will dispatch to RoomContext when the room is loaded
+  useRoom(slug, canvasRef.current)
   const { room } = useRoomContext()
+
+  const map = useDocument('map', 'world')
 
   useEffect(() => {
     onLoaded(room != null)
@@ -26,6 +29,12 @@ const Map2D = ({
       }
     }
   }, [room])
+
+  useEffect(() => {
+    if (map) {
+      room.render()
+    }
+  }, [map])
 
   return (
     <div>
