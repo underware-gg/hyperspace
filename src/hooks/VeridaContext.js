@@ -83,10 +83,14 @@ const VeridaProvider = ({
       dispatchVerida(VeridaActions.setGetPublicProfile, getPublicProfile)
       _VeridaUser = VeridaUser
 
-      const isConnected = await VeridaUser.isConnected()
-      if (isConnected) {
-        const profile = await VeridaUser.getPublicProfile()
-        await _veridaConnected(profile)
+      try {
+        const isConnected = await VeridaUser.isConnected()
+        if (isConnected) {
+          const profile = await VeridaUser.getPublicProfile()
+          await _veridaConnected(profile)
+        }
+      } catch (e) {
+        console.warn(`VeridaContext exception:`, e)
       }
       dispatchVerida(VeridaActions.setIsConnecting, false)
 
