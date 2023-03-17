@@ -6,6 +6,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import Button from '@/components/Button'
+import { validateRoomSlug } from '@/core/utils'
 
 const ModalRoom = ({
   disclosure,
@@ -17,7 +18,7 @@ const ModalRoom = ({
   const roomNameRef = useRef()
 
   useEffect(() => {
-    setIsValid(roomName.length == 0 || /^[a-zA-Z0-9-+_]+$/.test(roomName))
+    setIsValid(roomName.length == 0 || validateRoomSlug(roomName))
   }, [roomName])
 
   const _onChange = (name) => {

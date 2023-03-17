@@ -84,3 +84,7 @@ export const hashCode = function (s) {
     return a & a;
   }, 0);
 }
+
+export const validateRoomSlug = (slug) => {
+  return /^[a-zA-Z0-9-+_]+$/.test(slug)
+}

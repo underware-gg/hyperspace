@@ -21,10 +21,18 @@ import { useRoomContext } from '@/hooks/RoomContext'
 import usePermission from '@/hooks/usePermission'
 import { AvatarButton } from '@/components/Avatar'
 import { ModalSettings, useSettingsDisclosure } from '@/components/ModalSettings'
+import { validateRoomSlug } from '@/core/utils'
 
 const RoomPage = () => {
   const router = useRouter()
   const { slug } = router.query
+  const _slug = validateRoomSlug(slug) ? slug : 'limbo'
+
+  useEffect(() => {
+    if (!validateRoomSlug(slug)) {
+      router.replace('/limbo')
+    }
+  })
 
   const { agentId, room, actions } = useRoomContext()
   const { canEdit } = usePermission('world')
@@ -101,7 +109,7 @@ const RoomPage = () => {
             maxH='700'
           // h='700'
           >
-            <Game slug={slug} />
+            <Game slug={_slug} />
           </Box>
         </GridItem>
 
