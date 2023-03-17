@@ -91,6 +91,9 @@ export const textureData = {
   'portal': {
     src: '/tiles/portal.png',
   },
+  'entry': {
+    src: '/tiles/door.png',
+  },
   // matching screen types
   'document': {
     src: '/tiles/screen_document.png',

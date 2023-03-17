@@ -321,6 +321,18 @@ class Map extends RoomCollection {
         )
       }
     }
+
+    const entryTexture = getTextureImageByName('entry')
+    if (entryTexture) {
+      const { entry } = settings
+      context.drawImage(
+        entryTexture,
+        Math.round(entry.x * 32),
+        Math.round(entry.y * 32),
+        32,
+        32,
+      )
+    }
   }
 
   getTile(id, x, y) {
