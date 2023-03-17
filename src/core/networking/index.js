@@ -1,3 +1,4 @@
+import ClientRoom from './client-room'
 import { serverUrl } from './config'
 
 // Create a Room
@@ -12,7 +13,6 @@ export const create = (slug, store, agent = null) => {
 // The singleton ClientRoom will be removed soon
 // avoid using it!
 //
-import ClientRoom from './client-room'
 import { getRemoteStore } from '@/core/singleton'
 
 // Create the main Room singleton

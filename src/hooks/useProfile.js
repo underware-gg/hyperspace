@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useRoomContext } from '@/hooks/RoomContext'
-import { useDocument } from '@/hooks/useDocument'
+import { useAgentDocument } from '@/hooks/useDocument'
 import { getFilenameFromUrl } from '@/core/utils'
 
 const useProfile = (id) => {
@@ -10,7 +10,7 @@ const useProfile = (id) => {
   const [profileAvatarUrl, setProfileAvatarUrl] = useState(null)
   const [profileCharacterUrl, setProfileCharacterUrl] = useState(null)
 
-  const profile = useDocument('profile', id)
+  const profile = useAgentDocument('profile', id)
 
   useEffect(() => {
     if (!Player) return

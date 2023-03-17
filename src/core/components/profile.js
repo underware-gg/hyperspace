@@ -6,8 +6,8 @@ class Profile extends RoomCollection {
   }
 
   updateProfile(id, values) {
-    let profile = this.remoteStore.getDocument('profile', id) ?? {}
-    this.remoteStore.setDocument('profile', id, { ...profile, ...values })
+    let profile = this.agentStore.getDocument('profile', id) ?? {}
+    this.agentStore.setDocument('profile', id, { ...profile, ...values })
   }
 }
 

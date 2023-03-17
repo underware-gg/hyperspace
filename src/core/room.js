@@ -140,6 +140,7 @@ class Room {
   constructor() {
     this.remoteStore = new Store()
     this.localStore = new Store()
+    this.agentStore = new Store()
 
     this.renderer2D = new Renderer2D(this)
     this.renderer3D = new Renderer3D(this)
@@ -158,21 +159,26 @@ class Room {
     this.renderer3D.init(this.canvas3d)
 
     this.clientRoom = ClientRoom.create(slug, this.remoteStore)
+    this.clientAgent = ClientRoom.create(':agents', this.agentStore)
 
+    // remoteStore
     // instantiate before this.clientRoom.init() to listen to snapshot loading events
     this.Portal = new Portal(this)
     this.Trigger = new Trigger(this)
     this.Screen = new Screen(this)
     this.Player = new Player(this)
-    this.Profile = new Profile(this)
     this.Permission = new Permission(this)
     this.Settings = new Settings(this)
     this.Tileset = new Tileset(this)
     this.Map = new Map(this)
     this.Editor = new Editor(this)
 
-    // loads snapshot
-    this.clientRoom.init(slug)
+    // agentStore
+    this.Profile = new Profile(this)
+
+    // loads snapshots
+    this.clientRoom.init()
+    this.clientAgent.init()
 
     this.Editor.init2d(this.canvas2d, this.clientRoom.agentId)
     this.Editor.init3d(this.canvas3d, this.clientRoom.agentId)
@@ -196,6 +202,8 @@ class Room {
     this.canvas3d?.removeEventListener('keyup', this.handleKeyUp)
     this.clientRoom.shutdown()
     this.clientRoom = null
+    this.clientAgent.shutdown()
+    this.clientAgent = null
   }
 
   handleKeyDown = (e) => {

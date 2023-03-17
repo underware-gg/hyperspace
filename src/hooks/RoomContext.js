@@ -63,6 +63,7 @@ export const useRoomContext = () => {
     slug: room?.clientRoom?.slug ?? null,
     remoteStore: room?.remoteStore ?? null,
     localStore: room?.localStore ?? null,
+    agentStore: room?.agentStore ?? null,
     canvas2d: room?.canvas2d ?? null,
     canvas3d: room?.canvas3d ?? null,
     actions: room?.actions ?? null,

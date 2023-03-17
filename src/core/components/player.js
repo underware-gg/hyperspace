@@ -96,7 +96,7 @@ class Player extends RoomCollection {
     })
 
     // texture swapping
-    this.remoteStore.on({ type: 'profile', event: 'change' }, (agentId, profile) => {
+    this.agentStore.on({ type: 'profile', event: 'change' }, (agentId, profile) => {
       const playerMesh = this.localStore.getDocument('player-mesh', agentId)
 
       if (playerMesh !== null) {
@@ -628,7 +628,7 @@ class Player extends RoomCollection {
   }
 
   getPlayerTexture(agentId = '') {
-    const profile = this.remoteStore.getDocument('profile', agentId)
+    const profile = this.agentStore.getDocument('profile', agentId)
 
     let texture = getTextureByName(profile?.spritesheet)
 

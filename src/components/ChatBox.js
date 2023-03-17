@@ -19,7 +19,7 @@ import Markdown from '@/components/Markdown'
 
 const ChatBox = () => {
   const { agentId, remoteStore } = useRoomContext()
-  const { canEdit } = usePermission('world')
+  const { canEdit, canView } = usePermission('world')
 
   const { profileName } = useProfile(agentId)
   const { veridaProfileName } = useVeridaContext()
@@ -40,7 +40,7 @@ const ChatBox = () => {
   }
 
   const _onSubmit = () => {
-    if (!canEdit || !remoteStore) return
+    if (!canView || !remoteStore) return
     const name = veridaProfileName ?? profileName ?? 'You'
     const line = `**${name}**: ${message}\n\n`
     let newDocument = {
@@ -74,8 +74,9 @@ const ChatBox = () => {
         <HStack>
           <Input
             size='xs'
-            placeholder=''
+            placeholder={canView ?'':'no permission'}
             value={message}
+            disabled={!canView}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e) => { if (e.code == 'Enter') _onSubmit() }}
           />

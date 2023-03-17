@@ -27,6 +27,10 @@ class RoomMate {
     return this.#room.localStore
   }
 
+  get agentStore() {
+    return this.#room.agentStore
+  }
+
   get actions() {
     return this.#room.actions
   }
@@ -43,6 +47,10 @@ class RoomMate {
 
   get clientRoom() {
     return this.#room.clientRoom
+  }
+
+  get clientAgent() {
+    return this.#room.clientAgent
   }
 
   // other RoomMates
