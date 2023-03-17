@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument, useLocalDocument } from '@/hooks/useDocument'
 import { useRemoteDocumentIds } from '@/hooks/useDocumentIds'
+import useProfile from '@/hooks/useProfile'
 
 const usePlayer = (id) => {
   const { Player } = useRoomContext()
@@ -14,7 +15,7 @@ const usePlayer = (id) => {
   const portal = useDocument('portal', portalId)
   const trigger = useDocument('trigger', triggerId)
   const screen = useDocument('screen', screenId)
-  const is3D = useLocalDocument('show-3d', 'world')
+  const { view3d } = useProfile()
 
   const portalIds = useRemoteDocumentIds('portal')
   const triggerIds = useRemoteDocumentIds('trigger')
@@ -32,7 +33,7 @@ const usePlayer = (id) => {
       setScreenId(null)
       setPlayerTile(null)
     }
-  }, [player?.position, player?.rotation, portalIds, triggerIds, screenIds, is3D, Player])
+  }, [player?.position, player?.rotation, portalIds, triggerIds, screenIds, view3d, Player])
 
   return {
     portalId, portal,

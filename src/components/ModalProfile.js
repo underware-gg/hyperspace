@@ -24,7 +24,7 @@ const ModalProfile = ({
   const { agentId, Profile } = useRoomContext()
   const { gameCanvas } = useGameCanvas()
   const { isOpen, onOpen, onClose } = disclosure
-  const { profileName, profileAvatarUrl, profileCharacterUrl } = useProfile(agentId)
+  const { profileName, profileAvatarUrl, profileCharacterUrl } = useProfile()
   const nameRef = useRef()
   const finalRef = useRef()
 

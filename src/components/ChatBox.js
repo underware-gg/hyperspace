@@ -18,10 +18,10 @@ import usePermission from '@/hooks/usePermission'
 import Markdown from '@/components/Markdown'
 
 const ChatBox = () => {
-  const { agentId, remoteStore } = useRoomContext()
+  const { remoteStore } = useRoomContext()
   const { canEdit, canView } = usePermission('world')
 
-  const { profileName } = useProfile(agentId)
+  const { profileName } = useProfile()
   const { veridaProfileName } = useVeridaContext()
 
   const [message, setMessage] = useState('')

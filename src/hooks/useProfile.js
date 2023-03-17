@@ -3,18 +3,20 @@ import { useRoomContext } from '@/hooks/RoomContext'
 import { useAgentDocument } from '@/hooks/useDocument'
 import { getFilenameFromUrl } from '@/core/utils'
 
-const useProfile = (id) => {
+const useProfile = (id = null) => {
+  const { agentId } = useRoomContext()
   const { Player } = useRoomContext()
   const [profileName, setProfileName] = useState(null)
   const [characterName, setCharacterName] = useState(null)
   const [profileAvatarUrl, setProfileAvatarUrl] = useState(null)
   const [profileCharacterUrl, setProfileCharacterUrl] = useState(null)
 
-  const profile = useAgentDocument('profile', id)
+  const _id = id ?? agentId
+  const profile = useAgentDocument('profile', _id)
 
   useEffect(() => {
     if (!Player) return
-    let texture = Player.getPlayerTexture(id)
+    let texture = Player.getPlayerTexture(_id)
     setProfileName(profile && profile.name != '' ? profile.name : null)
     setCharacterName(getFilenameFromUrl(texture?.src)?.split('.')[0] ?? null)
     // TODO: Extract PFP from texture
@@ -26,6 +28,7 @@ const useProfile = (id) => {
     profileName: profileName ?? characterName ?? '...',
     profileAvatarUrl,
     profileCharacterUrl,
+    view3d: profile?.view3d ?? false,
   }
 }
 

@@ -8,7 +8,7 @@ import useTexture from '@/hooks/useTexture'
 
 const CharacterSelector = ({ }) => {
   const { agentId, Profile } = useRoomContext()
-  const { profileCharacterUrl } = useProfile(agentId)
+  const { profileCharacterUrl } = useProfile()
   const { gameCanvas } = useGameCanvas()
 
   const [selectedValue, setSelectedValue] = useState('')

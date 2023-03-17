@@ -29,11 +29,6 @@ class Player extends RoomCollection {
       this.interact(this.agentId)
     })
 
-    this.actions.addActionDownListener('toggle3d', () => {
-      const is3d = this.localStore.getDocument('show-3d', 'world')
-      this.localStore.setDocument('show-3d', 'world', !is3d)
-    })
-
     this.actions.addActionDownListener('delete', () => {
       const editor = this.remoteStore.getDocument('editor', this.agentId)
       if (editor === null) {
@@ -228,8 +223,8 @@ class Player extends RoomCollection {
 
     let screenId = null
 
-    const is3d = this.localStore.getDocument('show-3d', 'world')
-    if (is3d) {
+    const profile = this.agentStore.getDocument('profile', id)
+    if (profile.view3d) {
       screenId = this.localStore.getDocument('screens', 'facing-3d')
     } else {
       screenId = this.getObjectOfTypeOverPlayer(id, 'screen')
@@ -385,9 +380,10 @@ class Player extends RoomCollection {
     let { position: { x, y, z }, rotation } = player
     const rotationCopy = deepCopy(rotation)
 
-    const show3D = this.localStore.getDocument('show-3d', 'world')
+    const profile = this.agentStore.getDocument('profile', id)
+    const view3d = profile.view3d ?? false
 
-    if (show3D) {
+    if (view3d) {
       const angle = new THREE.Euler(CONST.HALF_PI, rotation.y, rotation.z)
 
       const forward = new THREE.Vector3(0, 0, 1)

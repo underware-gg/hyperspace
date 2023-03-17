@@ -15,7 +15,7 @@ const Game = ({
   const [isLoading, setIsLoading] = useState(false)
   const [game, setGame] = useState(null)
   const { dispatchRoom } = useContext(RoomContext)
-  const { gameCanvas, is3d } = useGameCanvas(render2d, render3d)
+  const { gameCanvas, view3d } = useGameCanvas(render2d, render3d)
   const canvas2dRef = useRef()
   const canvas3dRef = useRef()
 
@@ -79,7 +79,7 @@ const Game = ({
           style={{
             width: '100%',
             height: '100%',
-            display: is3d ? 'none' : 'block',
+            display: view3d ? 'none' : 'block',
           }}
           tabIndex='1'
         >
@@ -98,7 +98,7 @@ const Game = ({
           style={{
             width: '100%',
             height: '100%',
-            display: is3d ? 'block' : 'none',
+            display: view3d ? 'block' : 'none',
           }}
           tabIndex='2'
         >

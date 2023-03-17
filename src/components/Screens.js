@@ -3,6 +3,7 @@ import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument, useLocalDocument } from '@/hooks/useDocument'
 import { useRemoteDocumentIds } from '@/hooks/useDocumentIds'
 import usePermission from '@/hooks/usePermission'
+import useProfile from '@/hooks/useProfile'
 import ModalScreenEdit from '@/components/ModalScreenEdit'
 import { ScreenBook } from '@/components/ScreenBook'
 import { TYPE } from '@/core/components/screen'
@@ -10,15 +11,15 @@ import { TYPE } from '@/core/components/screen'
 const Screens = ({ }) => {
   const { localStore, actions } = useRoomContext()
   const screenIds = useRemoteDocumentIds('screen')
-  const is3d = useLocalDocument('show-3d', 'world') ?? false
   const editingScreenId = useLocalDocument('screens', 'editing')
   const facingScreenId = useLocalDocument('screens', 'facing-3d')
   const { permission, isOwner, canEdit, canView } = usePermission(editingScreenId)
+  const { view3d } = useProfile()
 
   const screensComponents = useMemo(() => {
     let result = []
     for (const screenId of screenIds) {
-      const overlayScreen = (screenId == editingScreenId && !is3d)
+      const overlayScreen = (screenId == editingScreenId && !view3d)
       const selectedScreen = (screenId == editingScreenId || screenId == facingScreenId)
       result.push(
         <div key={screenId}
@@ -41,7 +42,7 @@ const Screens = ({ }) => {
     }
 
     return result
-  }, [screenIds.length, editingScreenId, facingScreenId, is3d, canEdit, canView])
+  }, [screenIds.length, editingScreenId, facingScreenId, view3d, canEdit, canView])
 
   useEffect(() => {
     actions?.emitAction('syncScreens')

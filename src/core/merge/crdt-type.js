@@ -135,6 +135,7 @@ export const profile = {
   name: 'string',
   spritesheet: 'string',
   blob: 'string',
+  view3d: 'boolean',
 }
 
 export const settings = {

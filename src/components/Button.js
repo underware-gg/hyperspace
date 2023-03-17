@@ -13,7 +13,7 @@ const Button = forwardRef(({
   onClick,
   children,
 }, ref) => {
-  const { gameCanvas, is3d } = useGameCanvas()
+  const { gameCanvas } = useGameCanvas()
 
   const _onClick = () => {
     onClick()
