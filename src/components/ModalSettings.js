@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
+import usePermission from '@/hooks/usePermission'
 import { PermissionsForm } from '@/components/PermissionsForm'
 import { TileInput, useInputValidator } from '@/components/Inputs'
 import Button from '@/components/Button'
@@ -31,8 +32,9 @@ export const ModalSettings = ({
   settingsDisclosure,
   newRoom = false
 }) => {
-  const { Settings, slug } = useRoomContext()
+  const { Settings, Map, slug } = useRoomContext()
   const { id, isOpen, onClose } = settingsDisclosure
+  const { canEdit } = usePermission('world')
 
   const [sizeX, setSizeX] = useState(defaultSettings.size.width);
   const [sizeY, setSizeY] = useState(defaultSettings.size.height);
@@ -48,6 +50,10 @@ export const ModalSettings = ({
       setTileY(settings.entry.y)
     }
   }, [settings])
+
+  const _onReset = () => {
+    Map.resetMap('world')
+  }
 
   const _onSave = () => {
     let options = {
@@ -130,8 +136,16 @@ export const ModalSettings = ({
         <ModalFooter>
           <Button
             variant='outline'
+            value='RESET Map'
+            colorScheme='red'
+            disabled={!canEdit}
+            onClick={() => _onReset()}
+          />
+          <Spacer />
+          <Button
+            variant='outline'
             value='Save'
-            disabled={!validator.isValid}
+            disabled={!canEdit || !validator.isValid}
             onClick={() => _onSave()}
           />
         </ModalFooter>

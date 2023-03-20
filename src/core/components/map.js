@@ -213,6 +213,7 @@ class Map extends RoomCollection {
     this.localStore.setDocument('gridContainer', 'gridContainer', gridContainer)
 
     this.clientRoom.on('patched', (patched) => {
+      // console.log(`[${this.slug}] PATCHED:`, patched, `exists:`, this.exists('world'))
       if (!patched && !this.exists('world')) {
         this.resetMap('world')
       }
@@ -296,7 +297,7 @@ class Map extends RoomCollection {
     const map = store.getDocument('map', id)
 
     if (map === null) {
-      console.log(`Map.render2d() Map is null`, id)
+      console.log(`[${this.slug}] Map.render2d() Map [${id}] is null`)
       return
     }
 

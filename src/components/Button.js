@@ -6,6 +6,7 @@ const Button = forwardRef(({
   value,
   type = 'button',
   size = 'sm',
+  colorScheme = 'teal',
   loading,
   fullWidth,
   disabled,
@@ -23,7 +24,7 @@ const Button = forwardRef(({
   return (
     <ChakraButton
       ref={ref}
-      colorScheme='teal'
+      colorScheme={colorScheme}
       size={size}
       variant={variant}
       isLoading={loading}
