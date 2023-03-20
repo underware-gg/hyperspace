@@ -4,7 +4,7 @@ import useGameCanvas from '@/hooks/useGameCanvas'
 import Screens from '@/components/Screens'
 import { render } from 'react-dom'
 
-const Game = ({
+const Hyperbox = ({
   slug,
   autoFocus = true,
   render2d = true,
@@ -33,7 +33,7 @@ const Game = ({
 
   useEffect(() => {
     if (!render2d && !render3d) {
-      console.warn(`<Game> requires render2d and/or render3d`)
+      console.warn(`<Hyperbox> requires render2d and/or render3d`)
     } else {
       const ready2d = !render2d || canvas2dRef.current != null
       const ready3d = !render3d || canvas3dRef.current != null
@@ -43,7 +43,7 @@ const Game = ({
 
  const _shutdownGame = () => {
     if (game) {
-      console.log(`[${game.room.slug}] <Game> shutdown...`)
+      console.log(`[${game.room.slug}] <Hyperbox> shutdown...`)
       game.shutdown()
       dispatchRoom(null)
     }
@@ -54,9 +54,9 @@ const Game = ({
       _shutdownGame()
       setGame(null)
       setIsLoading(true)
-      console.log(`[${slug}] <Game> import...`)
+      console.log(`[${slug}] <Hyperbox> import...`)
       import('src/core/game').then(async ({ default: Game }) => {
-        console.log(`[${slug}] <Game> init...`)
+        console.log(`[${slug}] <Hyperbox> init...`)
         const _game = new Game()
         await _game.init(slug, canvas2dRef.current, canvas3dRef.current)
         dispatchRoom(_game.room)
@@ -113,4 +113,4 @@ const Game = ({
   )
 }
 
-export default Game
+export default Hyperbox

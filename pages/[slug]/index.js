@@ -8,7 +8,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'
 import Layout from '@/components/Layout'
-import Game from '@/components/Game'
+import Hyperbox from '@/components/Hyperbox'
 import Button from '@/components/Button'
 import ChatBox from '@/components/ChatBox'
 import TilesetSelector from '@/components/TilesetSelector'
@@ -109,7 +109,7 @@ const RoomPage = () => {
             maxH='700'
           // h='700'
           >
-            <Game slug={_slug} />
+            <Hyperbox slug={_slug} />
           </Box>
         </GridItem>
 
