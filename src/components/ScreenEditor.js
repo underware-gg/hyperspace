@@ -10,6 +10,7 @@ import {
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument, useLocalDocument } from '@/hooks/useDocument'
 import { useVeridaContext } from '@/hooks/VeridaContext'
+import usePermission from '@/hooks/usePermission'
 import Button from '@/components/Button'
 import Textarea from '@/components/Textarea'
 import { SliderPage } from '@/components/Sliders'
@@ -22,16 +23,19 @@ import { TYPE } from '@/core/components/screen'
 const ScreenEditor = ({
   screenId,
   initialFocusRef,
-  options={},
+  options = {},
 }) => {
   const screen = useDocument('screen', screenId)
+  const { canEdit } = usePermission(screenId)
+
+  const _disabled = !screen || !canEdit
 
   if (screen?.type == TYPE.DOCUMENT) {
-    return <ScreenEditorDocument screenId={screenId} initialFocusRef={initialFocusRef} options={options} />
+    return <ScreenEditorDocument screen={screen} screenId={screenId} initialFocusRef={initialFocusRef} options={options} disabled={_disabled} />
   }
 
   if (screen?.type == TYPE.PDF_BOOK) {
-    return <ScreenEditorPdfBook screenId={screenId} initialFocusRef={initialFocusRef} options={options} />
+    return <ScreenEditorPdfBook screen={screen} screenId={screenId} initialFocusRef={initialFocusRef} options={options} disabled={_disabled} />
   }
 
   return (
@@ -49,13 +53,14 @@ export default ScreenEditor
 //
 
 const ScreenEditorDocument = ({
+  screen,
   screenId,
+  disabled = true,
   initialFocusRef,
-  options={},
+  options = {},
 }) => {
   const { Screen } = useRoomContext()
   const { veridaIsConnected, retrieveLastTweet } = useVeridaContext()
-  const screen = useDocument('screen', screenId)
 
   const _onContentChange = (e) => {
     const content = e.target.value
@@ -79,7 +84,7 @@ const ScreenEditorDocument = ({
           ref={initialFocusRef}
           value={screen?.content ?? `Screen [${screenId}] not found`}
           onChange={(e) => _onContentChange(e)}
-          disabled={!screen}
+          disabled={disabled}
           minRows={options.minRows}
           maxRows={options.maxRows}
         />
@@ -96,12 +101,13 @@ const ScreenEditorDocument = ({
 
 
 const ScreenEditorPdfBook = ({
+  screen,
   screenId,
+  disabled = true,
   initialFocusRef,
-  options={},
+  options = {},
 }) => {
   const { Screen } = useRoomContext()
-  const screen = useDocument('screen', screenId)
   const pageCount = useLocalDocument('page-count', screenId) ?? 1
 
   const _onContentChange = (e) => {
@@ -127,10 +133,10 @@ const ScreenEditorPdfBook = ({
           ref={initialFocusRef}
           value={screen?.content ?? `Screen [${screenId}] not found`}
           onChange={(e) => _onContentChange(e)}
-          disabled={!screen}
+          disabled={disabled}
         />
       </HStack>
-      <SliderPage defaultValue={screen?.page} pageCount={pageCount} onChange={(value) => _onProgressChange(value)} />
+      <SliderPage defaultValue={screen?.page} pageCount={pageCount} onChange={(value) => _onProgressChange(value)} disabled={disabled} />
     </VStack>
   )
 }
