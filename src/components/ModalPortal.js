@@ -11,6 +11,7 @@ import { useDocument } from '@/hooks/useDocument'
 import useGameCanvas from '@/hooks/useGameCanvas'
 import { TileInput, useInputValidator } from '@/components/Inputs'
 import { defaultSettings } from '@/core/components/settings'
+import { validateRoomSlug } from '@/core/utils'
 import Button from '@/components/Button'
 
 const ModalPortal = ({
@@ -60,6 +61,12 @@ const ModalPortal = ({
     onClose()
   }
 
+  const _setRoomName = (name) => {
+    setRoomName(name)
+  }
+
+  const roomNameIsValid = validateRoomSlug(roomName)
+
   return (
     <Modal
       isOpen={isOpen}
@@ -82,11 +89,11 @@ const ModalPortal = ({
             <HStack>
               <Text w='125px'>To Room:</Text>
               <Input
-                focusBorderColor='teal.500'
+                focusBorderColor={roomNameIsValid ? 'teal.500' : 'crimson'}
                 placeholder=''
                 ref={roomNameRef}
                 value={roomName}
-                onChange={(e) => setRoomName(e.target.value)}
+                onChange={(e) => _setRoomName(e.target.value)}
               />
             </HStack>
             <TileInput
@@ -111,7 +118,7 @@ const ModalPortal = ({
           <Button
             variant='outline'
             value='Save'
-            disabled={!validator.isValid}
+            disabled={!validator.isValid || !roomNameIsValid}
             onClick={() => _onSave()}
           />
         </ModalFooter>
