@@ -72,7 +72,7 @@ const ScreenEditorDocument = ({
   const [isFetchingTweet, setIsFetchingTweet] = useState(false)
   const _lastTweet = async () => {
     setIsFetchingTweet(true)
-    const content = retrieveLastTweet()
+    const content = await retrieveLastTweet()
     setIsFetchingTweet(false)
     console.warn(`USE THIS TWEET:`, content)
   }

@@ -161,11 +161,11 @@ export const useVeridaContext = () => {
   }
 
   const retrieveLastTweet = async () => {
-    let _content = null
-    await VeridaUser.retrieveLastTweet((content) => {
-      _content = content
+    let result = null
+    await state.VeridaUser?.retrieveLastTweet((content) => {
+      result = content
     })
-    return _content
+    return result
   }
 
   const did = state.VeridaUser?.did ?? null
