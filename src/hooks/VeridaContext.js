@@ -83,20 +83,28 @@ const VeridaProvider = ({
       dispatchVerida(VeridaActions.setGetPublicProfile, getPublicProfile)
       _VeridaUser = VeridaUser
 
+      _VeridaUser?.on('connected', _veridaConnected)
+      _VeridaUser?.on('disconnected', _veridaDisconnected)
+      _VeridaUser?.on('profileChanged', _veridaProfileChanged)
+
       try {
         const isConnected = await VeridaUser.isConnected()
+        // .catch(e, () => {
+        //   console.warn(`VeridaUser.isConnected() exception:`, e)
+        //   throw new Error(e)
+        // })
         if (isConnected) {
           const profile = await VeridaUser.getPublicProfile()
+          // .catch(e, () => {
+          //   console.warn(`VeridaUser.getPublicProfile() exception:`, e)
+          //   throw new Error(e)
+          // })
           await _veridaConnected(profile)
         }
       } catch (e) {
         console.warn(`VeridaContext exception:`, e)
       }
       dispatchVerida(VeridaActions.setIsConnecting, false)
-
-      _VeridaUser.on('connected', _veridaConnected)
-      _VeridaUser.on('disconnected', _veridaDisconnected)
-      _VeridaUser.on('profileChanged', _veridaProfileChanged)
     }
 
     _initVerida()

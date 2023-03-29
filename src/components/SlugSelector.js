@@ -11,7 +11,7 @@ const SlugSelector = ({
   onChange,
   resetOnMount = true,
 }) => {
-  const { rooms } = useDbRooms()
+  const { rooms, error } = useDbRooms()
 
   useEffect(() => {
     if (resetOnMount) {
@@ -30,7 +30,7 @@ const SlugSelector = ({
   return (
     <Select
       value={selectedValue ?? ''}
-      placeholder={!rooms || rooms.length == 0 ?'loading rooms...' : 'select room...'}
+      placeholder={error ? 'error loading rooms' : (!rooms || rooms.length == 0) ? 'loading rooms...' : 'select room...'}
       onChange={(e) => onChange(e.target.value)}
     >
       {options}

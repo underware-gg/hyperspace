@@ -3,21 +3,35 @@ import useSWR from 'swr'
 
 const fetcher = (...args) => fetch(...args).then(res => res.json())
 
+const useApi = (route) => {
+  const { data, error, isLoading } = useSWR(route, fetcher)
+  const _error = data?.error ?? error ?? null
+  if (_error) {
+    console.warn(`ueApi(${route}) error:`, _error)
+    return {
+      data: null,
+      error: _error,
+      isLoading,
+    }
+  }
+  return { data, error, isLoading }
+}
+
 const useDbRooms = (id) => {
-  const { data, error, isLoading } = useSWR(`/api/db/rooms`, fetcher)
+  const { data, error, isLoading } = useApi(`/api/db/rooms`)
   return {
     rooms: (data && !error) ? data.filter(n => n) : [],
     isLoading,
-    error
+    error,
   }
 }
 
 const useGetUrl = (url) => {
-  const { data, error, isLoading } = useSWR(`/api/geturl/${url}`, fetcher)
+  const { data, error, isLoading } = useApi(`/api/geturl/${url}`)
   return {
     rooms: (data && !error) ? data.filter(n => n) : [],
     isLoading,
-    error
+    error,
   }
 }
 
