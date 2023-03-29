@@ -28,7 +28,9 @@ const DocumentPage = () => {
             <ScreenEditor screenId={screenId} options={{
               minRows: 10, maxRows: 10
             }} />
-            <ScreenComponent screenId={screenId} />
+            <Box maxH='600'>
+              <ScreenComponent screenId={screenId} />
+            </Box>
           </>
           }
         </Box>

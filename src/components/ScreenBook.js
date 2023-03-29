@@ -158,8 +158,8 @@ const ScreenCenteredContainer = ({
     if (width > 0 && height > 0) {
       const aspect = width / height
 
-      const gameWidth = gameCanvas.clientWidth
-      const gameHeight = gameCanvas.clientHeight
+      const gameWidth = gameCanvas?.clientWidth ?? 800
+      const gameHeight = gameCanvas?.clientHeight ?? 600
       const gameAspect = gameWidth / gameHeight
 
       if (gameAspect > aspect) {
