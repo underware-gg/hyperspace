@@ -86,5 +86,6 @@ export const hashCode = function (s) {
 }
 
 export const validateRoomSlug = (slug) => {
+  if (!slug) return false
   return /^[a-zA-Z0-9-+_]+$/.test(slug)
 }

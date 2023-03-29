@@ -26,13 +26,13 @@ import { validateRoomSlug } from '@/core/utils'
 const RoomPage = () => {
   const router = useRouter()
   const { slug } = router.query
-  const _slug = validateRoomSlug(slug) ? slug : 'limbo'
+  const slugIsValid = validateRoomSlug(slug)
 
   useEffect(() => {
-    if (!validateRoomSlug(slug)) {
+    if (router.isReady && !slugIsValid) {
       router.replace('/limbo')
     }
-  })
+  }, [router.isReady, slugIsValid])
 
   const { agentId, room, actions } = useRoomContext()
   const { canEdit } = usePermission('world')
@@ -53,6 +53,10 @@ const RoomPage = () => {
       room.clientRoom?.off('travel', _travel)
     }
   }, [room])
+
+  if (!router.isReady || !slugIsValid) {
+    return null
+  }
 
   return (
     <Layout height='100vh'>
@@ -109,7 +113,7 @@ const RoomPage = () => {
             maxH='700'
           // h='700'
           >
-            <Hyperbox slug={_slug} />
+            <Hyperbox slug={slug} />
           </Box>
         </GridItem>
 

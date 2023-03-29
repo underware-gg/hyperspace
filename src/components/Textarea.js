@@ -4,6 +4,8 @@ import ResizeTextarea from 'react-textarea-autosize'
 
 const Textarea = forwardRef(({
   value,
+  minRows = 15,
+  maxRows = 25,
   onChange,
   disabled,
 }, ref) => {
@@ -19,8 +21,8 @@ const Textarea = forwardRef(({
       overflowY='auto'
       w='100%'
       resize={true}
-      minRows={15}
-      maxRows={25}
+      minRows={minRows}
+      maxRows={maxRows}
       as={ResizeTextarea}
       disabled={disabled || value == null}
       placeholder={value == null ? 'No content' : 'Start editing the document'}

@@ -13,7 +13,7 @@ const Map2D = ({
   const canvasRef = useRef()
 
   // useRoom() will dispatch to RoomContext when the room is loaded
-  useRoom(slug, canvasRef.current)
+  useRoom(slug, canvasRef.current, true)
   const { room } = useRoomContext()
 
   const map = useDocument('map', 'world')

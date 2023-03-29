@@ -153,6 +153,8 @@ class Room {
     this.canvas2d = canvas2d
     this.canvas3d = canvas3d
 
+    // load all async resources beforehand
+    const { VeridaUser } = (await import('@/core/verida'))
     await loadTextures()
 
     this.renderer2D.init(this.canvas2d)
@@ -183,7 +185,6 @@ class Room {
     this.Editor.init2d(this.canvas2d, this.clientRoom.agentId)
     this.Editor.init3d(this.canvas3d, this.clientRoom.agentId)
 
-    const { VeridaUser } = (await import('@/core/verida'))
     this.localStore.setDocument('user', 'VeridaUser', VeridaUser)
 
     // Event listeners

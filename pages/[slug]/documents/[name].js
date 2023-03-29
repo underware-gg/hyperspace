@@ -1,72 +1,36 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { VStack, Heading, Box, Text } from '@chakra-ui/react'
+import { useRoom } from '@/hooks/useRoom'
+import { useScreen } from '@/hooks/useScreen'
 import Layout from '@/components/Layout'
-import Markdown from '@/components/Markdown'
-import Textarea from '@/components/Textarea'
-import { useDocument } from '@/hooks/useDocument'
-import { useRemoteDocumentIds } from '@/hooks/useDocumentIds'
-import { getRemoteStore } from '@/core/singleton'
-import * as Screen from '@/core/components/screen'
+import { ScreenComponent } from '@/components/Screens'
+import ScreenEditor from '@/components/ScreenEditor'
+
 
 const DocumentPage = () => {
   const router = useRouter()
   const { slug, name } = router.query
 
-  const screenIds = useRemoteDocumentIds('screen')
-  const [screenId, setScreenId] = useState(null)
-  const screen = useDocument('screen', screenId)
+  // useRoom() will dispatch to RoomContext when the room is loaded
+  useRoom(slug, null, false)
 
-  useEffect(() => {
-    if (slug) {
-      console.log(`Import slug`, slug)
-      import('@/core/networking').then((ClientRoom) => {
-        console.log(`Imported!!!`)
-        ClientRoom.init(slug)
-        const room = ClientRoom.get()
-        room.init(slug)
-      })
-    }
-  }, [slug])
-
-
-  useEffect(() => {
-    if (!screenIds) return
-    const remoteStore = getRemoteStore();
-    for (const id of screenIds) {
-      const screen = remoteStore.getDocument('screen', id);
-      if (name == id || name == screen?.name) {
-        setScreenId(id)
-        return
-      }
-    }
-
-  }, [name, screenIds])
-
-  const _handleInputChange = (e) => {
-    if(screenId) {
-      const content = e.target.value
-      Screen.updateScreen(screenId, {
-        content,
-      })
-    }
-  }
+  const { screenId, screen } = useScreen(name)
 
   return (
     <Layout>
       <VStack align='stretch' w='100%' spacing={4} shouldWrapChildren>
         <Heading as='h1' size='2xl'>
-          Screen <Text color='important' as='span'>{screen?.name ?? '???'}</Text>
+          Screen <Text color='important' as='span'>{screen?.name ?? '...'}</Text>
         </Heading>
         <Box border='1px' borderRadius='4px'>
-          <Textarea
-            value={screen?.content ?? `Screen [${screenId}] not found`}
-            disabled={!screen}
-            onChange={(e) => _handleInputChange(e)}
-          />
-          <Box p='4'>
-            <Markdown>{screen?.content ?? ''}</Markdown>
-          </Box>
+          {screenId && <>
+            <ScreenEditor screenId={screenId} options={{
+              minRows: 10, maxRows: 10
+            }} />
+            <ScreenComponent screenId={screenId} />
+          </>
+          }
         </Box>
       </VStack>
     </Layout>

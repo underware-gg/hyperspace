@@ -61,7 +61,7 @@ export default Screens
 //-------------------------
 // Generic Screen component
 //
-const ScreenComponent = ({
+export const ScreenComponent = ({
   screenId,
 }) => {
   const screen = useDocument('screen', screenId)

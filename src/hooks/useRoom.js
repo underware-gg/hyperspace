@@ -10,7 +10,7 @@ import * as ClientRoom from '@/core/networking'
 // uses current agentId
 // good for 2D previews
 //
-const useRoom = (slug, canvas2d) => {
+const useRoom = (slug, canvas2d, needCanvas2d) => {
   const [room, setRoom] = useState(null)
   const { dispatchRoom } = useContext(RoomContext)
 
@@ -20,7 +20,7 @@ const useRoom = (slug, canvas2d) => {
 
     const _initRoom = async () => {
       _room = new Room()
-      await _room.init(slug, canvas2d, null)
+      await _room.init(slug, needCanvas2d ? canvas2d : null, null)
       if (_mounted) {
         setRoom(_room)
         _room.clientRoom.on('patched', (patched) => {
@@ -32,7 +32,7 @@ const useRoom = (slug, canvas2d) => {
     setRoom(null)
     dispatchRoom(null)
 
-    if (slug && canvas2d) {
+    if (slug && (canvas2d || !needCanvas2d)) {
       _initRoom()
     }
 
@@ -51,8 +51,8 @@ const useRoom = (slug, canvas2d) => {
 //----------------------------------
 // Independent client and store
 // uses a disposable agentId
-// can be used to read document data
-// for rendering, useRoom()
+// can be used to read document data.
+// For rendering, useRoom()
 //
 const useClientRoom = (slug) => {
   const [agentId, setAgentId] = useState(null)

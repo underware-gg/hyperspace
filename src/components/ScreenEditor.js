@@ -22,15 +22,16 @@ import { TYPE } from '@/core/components/screen'
 const ScreenEditor = ({
   screenId,
   initialFocusRef,
+  options={},
 }) => {
   const screen = useDocument('screen', screenId)
 
   if (screen?.type == TYPE.DOCUMENT) {
-    return <ScreenEditorDocument screenId={screenId} initialFocusRef={initialFocusRef} />
+    return <ScreenEditorDocument screenId={screenId} initialFocusRef={initialFocusRef} options={options} />
   }
 
   if (screen?.type == TYPE.PDF_BOOK) {
-    return <ScreenEditorPdfBook screenId={screenId} initialFocusRef={initialFocusRef} />
+    return <ScreenEditorPdfBook screenId={screenId} initialFocusRef={initialFocusRef} options={options} />
   }
 
   return (
@@ -50,6 +51,7 @@ export default ScreenEditor
 const ScreenEditorDocument = ({
   screenId,
   initialFocusRef,
+  options={},
 }) => {
   const { Screen } = useRoomContext()
   const { veridaIsConnected, retrieveLastTweet } = useVeridaContext()
@@ -78,6 +80,8 @@ const ScreenEditorDocument = ({
           value={screen?.content ?? `Screen [${screenId}] not found`}
           onChange={(e) => _onContentChange(e)}
           disabled={!screen}
+          minRows={options.minRows}
+          maxRows={options.maxRows}
         />
         <HStack>
           <Button size='sm' onClick={async () => await _lastTweet()} disabled={!veridaIsConnected || isFetchingTweet}>
@@ -94,6 +98,7 @@ const ScreenEditorDocument = ({
 const ScreenEditorPdfBook = ({
   screenId,
   initialFocusRef,
+  options={},
 }) => {
   const { Screen } = useRoomContext()
   const screen = useDocument('screen', screenId)
