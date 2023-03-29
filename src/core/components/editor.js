@@ -226,12 +226,10 @@ class Editor extends RoomCollection {
     const { position: { x, y }, interacting } = editor
 
     const pointerMesh = this.localStore.getDocument('raycastPointer', 'raycastPointer')
-
-    if (pointerMesh === null) {
-      return
+    
+    if (pointerMesh != null) {
+      pointerMesh.visible = interacting
     }
-
-    pointerMesh.visible = interacting
 
     if (!interacting) {
       return

@@ -41,10 +41,6 @@ class Player extends RoomCollection {
 
     const scene = this.localStore.getDocument('scene', 'scene')
 
-    if (scene == null) {
-      return // no 3d render
-    }
-
     this.localStore.setDocument('joined', this.agentId, false)
 
     this.clientRoom.on('agent-join', (agentId) => {
@@ -54,10 +50,17 @@ class Player extends RoomCollection {
         return
       }
 
-      const material = this.makePlayerMaterial(agentId)
-      const geometry = new THREE.PlaneGeometry(PLAYER_MESH, PLAYER_MESH);
-      const playerMesh = new THREE.Mesh(geometry, material);
-      scene.add(playerMesh);
+      let playerMesh = null
+
+      // has 3d render
+      if (scene) { 
+        const material = this.makePlayerMaterial(agentId)
+        const geometry = new THREE.PlaneGeometry(PLAYER_MESH, PLAYER_MESH);
+
+        playerMesh = new THREE.Mesh(geometry, material);
+
+        scene.add(playerMesh);
+      }
 
       this.localStore.setDocument('player-mesh', agentId, playerMesh)
       console.log(`[${this.slug}] agent-join:`, agentId)
