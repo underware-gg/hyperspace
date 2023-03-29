@@ -15,13 +15,14 @@ const useProfile = (id = null) => {
   const profile = useAgentDocument('profile', _id)
 
   useEffect(() => {
-    if (!Player) return
-    let texture = Player.getPlayerTexture(_id)
-    setProfileName(profile && profile.name != '' ? profile.name : null)
-    setCharacterName(getFilenameFromUrl(texture?.src)?.split('.')[0] ?? null)
-    // TODO: Extract PFP from texture
-    // setProfileAvatarUrl(texture?.src ?? null)
-    setProfileCharacterUrl(texture?.src ?? null)
+    if (Player && _id) {
+      let texture = Player.getPlayerTexture(_id)
+      setProfileName(profile && profile.name != '' ? profile.name : null)
+      setCharacterName(getFilenameFromUrl(texture?.src)?.split('.')[0] ?? null)
+      // TODO: Extract PFP from texture
+      // setProfileAvatarUrl(texture?.src ?? null)
+      setProfileCharacterUrl(texture?.src ?? null)
+    }
   }, [id, profile, Player])
 
   return {

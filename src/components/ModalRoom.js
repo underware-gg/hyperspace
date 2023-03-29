@@ -4,8 +4,10 @@ import {
   VStack,
   Input,
   Text,
+  Spacer,
 } from '@chakra-ui/react'
 import Button from '@/components/Button'
+import { useDbRooms } from '@/hooks/useApi'
 import { validateRoomSlug } from '@/core/utils'
 
 const ModalRoom = ({
@@ -14,11 +16,15 @@ const ModalRoom = ({
 }) => {
   const { isOpen, onOpen, onClose } = disclosure
   const [roomName, setRoomName] = useState('');
-  const [isValid, setIsValid] = useState(false);
+  const [roomIsValid, setRoomIsValid] = useState(false);
+  const [roomExists, setRoomExists] = useState(false);
   const roomNameRef = useRef()
 
+  const { rooms } = useDbRooms()
+
   useEffect(() => {
-    setIsValid(roomName.length == 0 || validateRoomSlug(roomName))
+    setRoomIsValid(roomName.length == 0 || validateRoomSlug(roomName))
+    setRoomExists(rooms.includes(roomName))
   }, [roomName])
 
   const _onChange = (name) => {
@@ -49,23 +55,24 @@ const ModalRoom = ({
           <VStack spacing={4}>
             <Input
               w='100%'
-              focusBorderColor='teal.500'
+              focusBorderColor={roomIsValid ? 'teal.500' : 'crimson'}
               placeholder=''
               ref={roomNameRef}
               value={roomName}
               onChange={(e) => _onChange(e.target.value)}
               onKeyDown={(e) => { if (e.code == 'Enter') onSubmit(roomName) }}
             />
-            <Text>{isValid ? <span>&nbsp;</span> : 'invalid room name'}</Text>
+            <Text>{roomIsValid ? <span>&nbsp;</span> : 'invalid room name'}</Text>
           </VStack>
         </ModalBody>
         <ModalFooter>
+          <Spacer />
           <Button
             variant='outline'
             fullWidth
-            value={roomName.length > 0 ? 'Create / Enter Room' : 'Create Casual Room'}
+            value={roomName.length == 0 ? 'Create Casual Room' : roomExists ? 'Enter Room' : 'Create Room' }
             onClick={() => onSubmit(roomName)}
-            disabled={!isValid}
+            disabled={!roomIsValid}
             type='submit'
           />
         </ModalFooter>

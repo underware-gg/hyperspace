@@ -43,14 +43,14 @@ const RoomPage = () => {
   const snapshotDisclosure = useDisclosure()
 
   useEffect(() => {
-    if (!room) return
+    if (!room?.clientRoom) return
     const _travel = (slug) => {
       console.log(`Travel to...`, slug)
       router.push(`/${slug}`)
     }
     room.clientRoom.on('travel', _travel)
     return () => {
-      room.clientRoom?.off('travel', _travel)
+      room.clientRoom.off('travel', _travel)
     }
   }, [room])
 

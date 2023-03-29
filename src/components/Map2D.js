@@ -31,10 +31,10 @@ const Map2D = ({
   }, [room])
 
   useEffect(() => {
-    if (map) {
+    if (map && room) {
       room.render()
     }
-  }, [map])
+  }, [map, room])
 
   return (
     <div>
