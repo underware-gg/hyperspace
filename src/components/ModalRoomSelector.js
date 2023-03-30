@@ -1,7 +1,9 @@
 import React, { useState, useRef } from 'react'
+import { useRouter } from 'next/router'
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
   VStack,
+  Spacer,
 } from '@chakra-ui/react'
 import Button from '@/components/Button'
 import Map2D from '@/components/Map2D'
@@ -15,6 +17,7 @@ const ModalRoom = ({
   const selectorRef = useRef()
   const [slug, setSlug] = useState(null)
   const [loaded, setLoaded] = useState(false)
+  const router = useRouter()
 
   return (
     <Modal
@@ -43,6 +46,13 @@ const ModalRoom = ({
           </VStack>
         </ModalBody>
         <ModalFooter>
+          <Button
+            variant='outline'
+            fullWidth
+            value={'Dual Rooms Demo'}
+            onClick={() => router.push(`/dual`)}
+          />
+          <Spacer />
           <Button
             variant='outline'
             fullWidth
