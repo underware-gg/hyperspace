@@ -50,7 +50,7 @@ const RoomPage = () => {
     }
     room.clientRoom.on('travel', _travel)
     return () => {
-      room.clientRoom.off('travel', _travel)
+      room.clientRoom?.off('travel', _travel)
     }
   }, [room])
 

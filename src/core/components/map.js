@@ -213,8 +213,8 @@ class Map extends RoomCollection {
     this.localStore.setDocument('gridContainer', 'gridContainer', gridContainer)
 
     this.clientRoom.on('patched', (patched) => {
-      // console.log(`[${this.slug}] PATCHED:`, patched, `exists:`, this.exists('world'))
-      if (!patched && !this.exists('world')) {
+      console.log(`[${this.slug}] PATCHED:`, patched, `exists:`, this.exists('world'))
+      if (!this.exists('world')) {
         this.resetMap('world')
       }
     })
