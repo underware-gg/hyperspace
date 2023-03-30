@@ -3,20 +3,20 @@ import { useRoomContext } from '@/hooks/RoomContext'
 
 const useDocument = (type, id) => {
   const { remoteStore } = useRoomContext()
-  return _useDocument(type, id, remoteStore)
+  return useStoreDocument(type, id, remoteStore)
 }
 
 const useLocalDocument = (type, id) => {
   const { localStore } = useRoomContext()
-  return _useDocument(type, id, localStore)
+  return useStoreDocument(type, id, localStore)
 }
 
 const useAgentDocument = (type, id) => {
   const { agentStore } = useRoomContext()
-  return _useDocument(type, id, agentStore)
+  return useStoreDocument(type, id, agentStore)
 }
 
-const _useDocument = (type, id, store) => {
+const useStoreDocument = (type, id, store) => {
   const [document, setDocument] = useState(null)
 
   // initialize
@@ -29,6 +29,7 @@ const _useDocument = (type, id, store) => {
   // listen
   useEffect(() => {
     if (!store || !id || !type) return
+
     function _handleChange(documentId, document) {
       if (documentId === id) {
         setDocument(document)
@@ -51,4 +52,5 @@ export {
   useDocument,
   useLocalDocument,
   useAgentDocument,
+  useStoreDocument,
 } 

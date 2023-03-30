@@ -87,6 +87,10 @@ const TileInput = ({
   name = 'Tile',
   valueX,
   valueY,
+  minX = 1,
+  minY = 1,
+  maxX = null,
+  maxY = null,
   disabled = false,
   onChangeX = (value) => { },
   onChangeY = (value) => { },
@@ -94,7 +98,7 @@ const TileInput = ({
   children,
 }) => {
 
-  const settings = useDocument('settings', 'world')
+  const settings = useDocument('settings', 'world') ?? defaultSettings
 
   return (
     <HStack>
@@ -102,7 +106,8 @@ const TileInput = ({
       <Text>X:</Text>
       <ValidatedInput
         value={valueX}
-        maxValue={settings?.size?.width ?? defaultSettings.size.width}
+        minValue={minX}
+        maxValue={maxX ?? settings?.size?.width}
         disabled={disabled}
         onChange={onChangeX}
         validator={validator}
@@ -110,7 +115,8 @@ const TileInput = ({
       <Text>Y:</Text>
       <ValidatedInput
         value={valueY}
-        maxValue={settings?.size?.height ?? defaultSettings.size.height}
+        minValue={minY}
+        maxValue={maxY ?? settings?.size?.height}
         disabled={disabled}
         onChange={onChangeY}
         validator={validator}

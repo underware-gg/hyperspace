@@ -11,13 +11,13 @@ import {
 } from '@chakra-ui/react'
 import Button from '@/components/Button'
 import Layout from '@/components/Layout'
-import ModalRoom from '@/components/ModalRoom'
+import ModalRoomCreate from '@/components/ModalRoomCreate'
 import ModalRoomSelector from '@/components/ModalRoomSelector'
 
 const HomePage = ({ slug }) => {
   const disclosure = useDisclosure()
   const disclosureSelector = useDisclosure()
-  const router = useRouter();
+  const router = useRouter()
 
   function enterRoom(roomName) {
     disclosure.onClose();
@@ -59,9 +59,8 @@ const HomePage = ({ slug }) => {
         </VStack>
       </Box>
 
-      <ModalRoom
+      <ModalRoomCreate
         disclosure={disclosure}
-        onSubmit={(roomName) => enterRoom(roomName)}
       />
 
       <ModalRoomSelector

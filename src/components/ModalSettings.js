@@ -13,8 +13,8 @@ import { useDocument } from '@/hooks/useDocument'
 import usePermission from '@/hooks/usePermission'
 import { PermissionsForm } from '@/components/PermissionsForm'
 import { TileInput, useInputValidator } from '@/components/Inputs'
-import Button from '@/components/Button'
 import { defaultSettings } from '@/core/components/settings'
+import Button from '@/components/Button'
 
 
 export const useSettingsDisclosure = (id) => {
@@ -46,6 +46,8 @@ export const ModalSettings = ({
 
   useEffect(() => {
     if (settings) {
+      setSizeX(settings.size.width)
+      setSizeY(settings.size.height)
       setTileX(settings.entry.x)
       setTileY(settings.entry.y)
     }
