@@ -329,8 +329,8 @@ class Editor extends RoomCollection {
     }
   }
 
-  getMouseTilePosition(e, canvas, store) {
-    const { x, y } = this.getMouseCanvasPosition(e, canvas);
+  getMouseTilePosition(e, canvas) {
+    const { x, y } = this.getMouseCanvasPosition(e, canvas)
     const mapScale = this.Map.getMapScale('world')
     return {
       x: Math.floor(x / mapScale.x / 32),

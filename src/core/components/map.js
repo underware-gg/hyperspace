@@ -4,6 +4,29 @@ import { getTextureImageByName } from '@/core/textures'
 import { defaultTileset } from '@/core/texture-data'
 import { clamp } from '@/core/utils'
 
+const defaultMap = [
+  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+]
+
 const cellWidth = 1
 
 export const walls = [
@@ -218,6 +241,19 @@ class Map extends RoomCollection {
       if (!this.exists('world')) {
         this.resetMap('world')
       }
+      
+      // update old maps with smaller map size
+      let map = this.remoteStore.getDocument('map', 'world')
+      if (Object.keys(map).length < Object.keys(defaultMap).length) {
+        while (Object.keys(map).length < Object.keys(defaultMap).length) {
+          map[Object.keys(map).length] = defaultMap[Object.keys(map).length]
+        }
+        this.remoteStore.setDocument('map', 'world', map)
+      }
+      
+      _init3D()
+
+      this.localStore.setDocument('patched', 'world', true)
     })
 
     // texture swapping
@@ -225,30 +261,11 @@ class Map extends RoomCollection {
       if (id === 'world') {
         this.swapTileset(id, tileset)
       }
-      _init3D()
     })
   }
 
   resetMap(id) {
-    const map = [
-      [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-      [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-      [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-      [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-      [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-      [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-      [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-      [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-      [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-      [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-      [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-      [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-      [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-      [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-      [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-    ]
-
-    this.upsert(id, map)
+    this.upsert(id, defaultMap)
   }
 
   updateMeshPositionToMap(mesh, position) {
@@ -287,6 +304,11 @@ class Map extends RoomCollection {
     this.remoteStore.setValueAtPath('map', id, `/${y}.${x}`, value)
   }
 
+  getMapAspect(id) {
+    const settings = this.remoteStore.getDocument('settings', id)
+    return settings.size.width / settings.size.height
+  }
+
   getMapScale(id) {
     const settings = this.remoteStore.getDocument('settings', id)
     return {
@@ -295,20 +317,25 @@ class Map extends RoomCollection {
     }
   }
 
-  render2d(id, context, store) {
-    const map = store.getDocument('map', id)
+  render2d(id, context) {
+    const map = this.remoteStore.getDocument('map', id)
 
     if (map === null) {
       console.log(`[${this.slug}] Map.render2d() Map [${id}] is null`)
       return
     }
 
-    const mapScale = this.getMapScale('world')
+    const patched = this.localStore.getDocument('patched', 'world')
+    if (!patched) {
+      return
+    }
+
+    const mapScale = this.getMapScale(id)
 
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.scale(mapScale.x, mapScale.y);
 
-    const crdtTileset = store.getDocument('tileset', id)
+    const crdtTileset = this.remoteStore.getDocument('tileset', id)
 
     let image
     let sz
@@ -322,7 +349,7 @@ class Map extends RoomCollection {
       sz = image?.height ?? 32
     }
 
-    const settings = store.getDocument('settings', 'world')
+    const settings = this.remoteStore.getDocument('settings', 'world')
 
     // console.log(`render`, crdtTileset, image, sz, settings)
 
