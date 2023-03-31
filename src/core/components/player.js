@@ -310,7 +310,7 @@ class Player extends RoomCollection {
     }
 
     // go to default entry
-    const settings = this.remoteStore.getDocument('settings', 'world') ?? defaultSettings
+    const settings = this.Settings.get('world')
     this.moveToTile(agentId, settings.entry)
   }
 

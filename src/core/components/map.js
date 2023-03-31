@@ -3,7 +3,6 @@ import RoomCollection from '@/core/interfaces/RoomCollection'
 import { getTextureImageByName } from '@/core/textures'
 import { defaultTileset } from '@/core/texture-data'
 import { clamp } from '@/core/utils'
-import { defaultSettings } from '@/core/components/settings'
 
 const cellWidth = 1
 
@@ -37,183 +36,185 @@ class Map extends RoomCollection {
   constructor(room) {
     super(room, 'map')
 
-    const scene = this.localStore.getDocument('scene', 'scene')
+    const _init3D = () => {
+      const scene = this.localStore.getDocument('scene', 'scene')
 
-    if (scene == null) {
-      return // no 3d render
-    }
-
-    ////////////
-    //3D STUFF//
-    ////////////
-    const geometryFloor = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
-    const geometryWall = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
-
-    const geometryFloorUV0 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
-    const geometryFloorUV1 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
-    const geometryFloorUV2 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
-    const geometryFloorUV3 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
-    const geometryFloorUV4 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
-    const geometryFloorUV5 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
-    const geometryFloorUV6 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
-    const geometryFloorUV7 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
-    const geometryFloorUV8 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
-    const geometryFloorUV9 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
-
-    const geometryWallUV0 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
-    const geometryWallUV1 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
-    const geometryWallUV2 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
-    const geometryWallUV3 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
-    const geometryWallUV4 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
-    const geometryWallUV5 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
-    const geometryWallUV6 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
-    const geometryWallUV7 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
-    const geometryWallUV8 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
-    const geometryWallUV9 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
-
-    const loader = new THREE.TextureLoader()
-
-    const materialUV = new THREE.MeshLambertMaterial({
-      map: loader.load(defaultTileset.src),
-    })
-    materialUV.map.minFilter = THREE.NearestFilter
-    materialUV.map.magFilter = THREE.NearestFilter
-
-    const floorGeometries = [
-      geometryFloorUV0,
-      geometryFloorUV1,
-      geometryFloorUV2,
-      geometryFloorUV3,
-      geometryFloorUV4,
-      geometryFloorUV5,
-      geometryFloorUV6,
-      geometryFloorUV7,
-      geometryFloorUV8,
-      geometryFloorUV9,
-    ]
-
-    const wallGeometries = [
-      geometryWallUV0,
-      geometryWallUV1,
-      geometryWallUV2,
-      geometryWallUV3,
-      geometryWallUV4,
-      geometryWallUV5,
-      geometryWallUV6,
-      geometryWallUV7,
-      geometryWallUV8,
-      geometryWallUV9,
-    ]
-
-    const setUV = (plane, index) => {
-      const uvs = new Float32Array([
-        0.1 * index, 1,
-        0.1 * index + 0.1, 1,
-        0.1 * index, 0,
-        0.1 * index + 0.1, 0
-      ])
-
-      plane.setAttribute('uv', new THREE.BufferAttribute(uvs, 2))
-    }
-
-    for (let i = 0; i < floorGeometries.length; i++) {
-      setUV(floorGeometries[i], i)
-      setUV(wallGeometries[i], i)
-    }
-
-    const gridContainer = new THREE.Object3D()
-
-    const settings = this.remoteStore.getDocument('settings', 'world') ?? defaultSettings
-
-    let map3D = new Array(settings.size.width)
-    for (let x = 0; x < settings.size.width; x++) {
-      map3D[x] = new Array(settings.size.height)
-    }
-
-    const MakeWall = (object3D) => {
-      let wall3Dn = new THREE.Mesh(geometryWall, materialUV)
-      let wall3Ds = new THREE.Mesh(geometryWall, materialUV)
-      let wall3De = new THREE.Mesh(geometryWall, materialUV)
-      let wall3Dw = new THREE.Mesh(geometryWall, materialUV)
-
-      wall3Dn.visible = true
-      wall3Ds.visible = true
-      wall3De.visible = true
-      wall3Dw.visible = true
-
-      wall3Dn.position.y = cellWidth / 2
-      wall3Ds.position.y = -cellWidth / 2
-
-      wall3De.position.x = -cellWidth / 2
-      wall3Dw.position.x = cellWidth / 2
-
-      wall3Dn.rotateX(Math.PI / 2)
-      wall3Dn.rotateY(Math.PI)
-
-      wall3Ds.rotateX(Math.PI / 2)
-      wall3Ds.rotateY(0)
-
-      wall3De.rotateX(Math.PI / 2)
-      wall3De.rotateY(-Math.PI / 2)
-
-      wall3Dw.rotateX(Math.PI / 2)
-      wall3Dw.rotateY(Math.PI / 2)
-
-      object3D.add(wall3De)
-      object3D.add(wall3Dw)
-      object3D.add(wall3Dn)
-      object3D.add(wall3Ds)
-    }
-
-    for (let x = 0; x < settings.size.width; x++) {
-      for (let y = 0; y < settings.size.height; y++) {
-        let gridCell3D = new THREE.Mesh(geometryFloor, materialUV)
-
-        const wallStack1 = new THREE.Object3D()
-        const wallStack2 = new THREE.Object3D()
-        const wallStack3 = new THREE.Object3D()
-
-        MakeWall(wallStack1)
-        MakeWall(wallStack2)
-        MakeWall(wallStack3)
-
-        wallStack1.position.z = -2.5
-        wallStack2.position.z = -1.5
-        wallStack3.position.z = -0.5
-
-        gridCell3D.add(
-          wallStack1,
-          wallStack2,
-          wallStack3,
-        )
-
-        map3D[y][x] = {
-          mesh: gridCell3D,
-          walls: {
-            stack1: wallStack1,
-            stack2: wallStack2,
-            stack3: wallStack3,
-          },
-        }
-        let pos = this.fromTileToCellPosition(x, y)
-
-        gridCell3D.position.x = pos.x
-        gridCell3D.position.y = pos.y + cellWidth
-
-        gridContainer.add(gridCell3D)
+      if (scene == null) {
+        return // no 3d render
       }
+
+      ////////////
+      //3D STUFF//
+      ////////////
+      const geometryFloor = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
+      const geometryWall = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
+
+      const geometryFloorUV0 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
+      const geometryFloorUV1 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
+      const geometryFloorUV2 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
+      const geometryFloorUV3 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
+      const geometryFloorUV4 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
+      const geometryFloorUV5 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
+      const geometryFloorUV6 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
+      const geometryFloorUV7 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
+      const geometryFloorUV8 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
+      const geometryFloorUV9 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
+
+      const geometryWallUV0 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
+      const geometryWallUV1 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
+      const geometryWallUV2 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
+      const geometryWallUV3 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
+      const geometryWallUV4 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
+      const geometryWallUV5 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
+      const geometryWallUV6 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
+      const geometryWallUV7 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
+      const geometryWallUV8 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
+      const geometryWallUV9 = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
+
+      const loader = new THREE.TextureLoader()
+
+      const materialUV = new THREE.MeshLambertMaterial({
+        map: loader.load(defaultTileset.src),
+      })
+      materialUV.map.minFilter = THREE.NearestFilter
+      materialUV.map.magFilter = THREE.NearestFilter
+
+      const floorGeometries = [
+        geometryFloorUV0,
+        geometryFloorUV1,
+        geometryFloorUV2,
+        geometryFloorUV3,
+        geometryFloorUV4,
+        geometryFloorUV5,
+        geometryFloorUV6,
+        geometryFloorUV7,
+        geometryFloorUV8,
+        geometryFloorUV9,
+      ]
+
+      const wallGeometries = [
+        geometryWallUV0,
+        geometryWallUV1,
+        geometryWallUV2,
+        geometryWallUV3,
+        geometryWallUV4,
+        geometryWallUV5,
+        geometryWallUV6,
+        geometryWallUV7,
+        geometryWallUV8,
+        geometryWallUV9,
+      ]
+
+      const setUV = (plane, index) => {
+        const uvs = new Float32Array([
+          0.1 * index, 1,
+          0.1 * index + 0.1, 1,
+          0.1 * index, 0,
+          0.1 * index + 0.1, 0
+        ])
+
+        plane.setAttribute('uv', new THREE.BufferAttribute(uvs, 2))
+      }
+
+      for (let i = 0; i < floorGeometries.length; i++) {
+        setUV(floorGeometries[i], i)
+        setUV(wallGeometries[i], i)
+      }
+
+      const gridContainer = new THREE.Object3D()
+
+      const settings = this.Settings.get('world')
+
+      let map3D = new Array(settings.size.width)
+      for (let x = 0; x < settings.size.width; x++) {
+        map3D[x] = new Array(settings.size.height)
+      }
+
+      const MakeWall = (object3D) => {
+        let wall3Dn = new THREE.Mesh(geometryWall, materialUV)
+        let wall3Ds = new THREE.Mesh(geometryWall, materialUV)
+        let wall3De = new THREE.Mesh(geometryWall, materialUV)
+        let wall3Dw = new THREE.Mesh(geometryWall, materialUV)
+
+        wall3Dn.visible = true
+        wall3Ds.visible = true
+        wall3De.visible = true
+        wall3Dw.visible = true
+
+        wall3Dn.position.y = cellWidth / 2
+        wall3Ds.position.y = -cellWidth / 2
+
+        wall3De.position.x = -cellWidth / 2
+        wall3Dw.position.x = cellWidth / 2
+
+        wall3Dn.rotateX(Math.PI / 2)
+        wall3Dn.rotateY(Math.PI)
+
+        wall3Ds.rotateX(Math.PI / 2)
+        wall3Ds.rotateY(0)
+
+        wall3De.rotateX(Math.PI / 2)
+        wall3De.rotateY(-Math.PI / 2)
+
+        wall3Dw.rotateX(Math.PI / 2)
+        wall3Dw.rotateY(Math.PI / 2)
+
+        object3D.add(wall3De)
+        object3D.add(wall3Dw)
+        object3D.add(wall3Dn)
+        object3D.add(wall3Ds)
+      }
+
+      for (let x = 0; x < settings.size.width; x++) {
+        for (let y = 0; y < settings.size.height; y++) {
+          let gridCell3D = new THREE.Mesh(geometryFloor, materialUV)
+
+          const wallStack1 = new THREE.Object3D()
+          const wallStack2 = new THREE.Object3D()
+          const wallStack3 = new THREE.Object3D()
+
+          MakeWall(wallStack1)
+          MakeWall(wallStack2)
+          MakeWall(wallStack3)
+
+          wallStack1.position.z = -2.5
+          wallStack2.position.z = -1.5
+          wallStack3.position.z = -0.5
+
+          gridCell3D.add(
+            wallStack1,
+            wallStack2,
+            wallStack3,
+          )
+
+          map3D[y][x] = {
+            mesh: gridCell3D,
+            walls: {
+              stack1: wallStack1,
+              stack2: wallStack2,
+              stack3: wallStack3,
+            },
+          }
+          let pos = this.fromTileToCellPosition(x, y)
+
+          gridCell3D.position.x = pos.x
+          gridCell3D.position.y = pos.y + cellWidth
+
+          gridContainer.add(gridCell3D)
+        }
+      }
+
+      scene.add(gridContainer)
+
+      this.localStore.setDocument('map3d', 'world', map3D)
+      this.localStore.setDocument('floor-geometries', 'world', floorGeometries)
+      this.localStore.setDocument('wall-geometries', 'world', wallGeometries)
+      this.localStore.setDocument('material-uv', 'world', materialUV)
+      this.localStore.setDocument('gridContainer', 'gridContainer', gridContainer)
     }
-
-    scene.add(gridContainer)
-
-    this.localStore.setDocument('map3d', 'world', map3D)
-    this.localStore.setDocument('floor-geometries', 'world', floorGeometries)
-    this.localStore.setDocument('wall-geometries', 'world', wallGeometries)
-    this.localStore.setDocument('material-uv', 'world', materialUV)
-    this.localStore.setDocument('gridContainer', 'gridContainer', gridContainer)
 
     this.clientRoom.on('patched', (patched) => {
-      console.log(`[${this.slug}] PATCHED:`, patched, `exists:`, this.exists('world'))
+      console.log(`[${this.slug}] PATCHED MAP:`, patched, `exists:`, this.exists('world'))
       if (!this.exists('world')) {
         this.resetMap('world')
       }
@@ -224,6 +225,7 @@ class Map extends RoomCollection {
       if (id === 'world') {
         this.swapTileset(id, tileset)
       }
+      _init3D()
     })
   }
 
@@ -286,7 +288,7 @@ class Map extends RoomCollection {
   }
 
   getMapScale(id) {
-    const settings = this.remoteStore.getDocument('settings', id) ?? defaultSettings
+    const settings = this.remoteStore.getDocument('settings', id)
     return {
       x: (process.env.CANVAS_WIDTH / (settings.size.width * 32)),
       y: (process.env.CANVAS_HEIGHT / (settings.size.height * 32)),
@@ -320,7 +322,7 @@ class Map extends RoomCollection {
       sz = image?.height ?? 32
     }
 
-    const settings = store.getDocument('settings', 'world') ?? defaultSettings
+    const settings = store.getDocument('settings', 'world')
 
     // console.log(`render`, crdtTileset, image, sz, settings)
 
@@ -377,7 +379,7 @@ class Map extends RoomCollection {
   }
 
   validateTile(x, y) {
-    const settings = this.remoteStore.getDocument('settings', 'world') ?? defaultSettings
+    const settings = this.Settings.get('world')
     if (x == null || x < 0 || x >= settings.size.width || y == null || y < 0 || y >= settings.size.height) {
       return false
     }
@@ -386,7 +388,7 @@ class Map extends RoomCollection {
 
   fromTileToCanvasPosition(tileX, tileY) {
     if (!this.validateTile(tileX, tileY)) {
-      const settings = this.remoteStore.getDocument('settings', 'world') ?? defaultSettings
+      const settings = this.Settings.get('world')
       tileX = settings.entry.x
       tileY = settings.entry.y
     }
@@ -396,7 +398,7 @@ class Map extends RoomCollection {
   }
 
   fromTileToCellPosition(tileX, tileY) {
-    const settings = this.remoteStore.getDocument('settings', 'world') ?? defaultSettings
+    const settings = this.Settings.get('world')
 
     const x = tileX * cellWidth + cellWidth * 0.5
     const y = tileY * cellWidth - settings.size.height * cellWidth - cellWidth * 0.5
@@ -428,7 +430,7 @@ class Map extends RoomCollection {
       return
     }
 
-    const settings = this.remoteStore.getDocument('settings', 'world') ?? defaultSettings
+    const settings = this.Settings.get('world')
 
     for (let x = 0; x < settings.size.width; x++) {
       for (let y = 0; y < settings.size.height; y++) {

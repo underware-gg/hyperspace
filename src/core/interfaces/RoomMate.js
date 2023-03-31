@@ -55,20 +55,20 @@ class RoomMate {
 
   // other RoomMates
 
-  get Player() {
-    return this.#room.Player
-  }
-
-  get Profile() {
-    return this.#room.Profile
+  get Settings() {
+    return this.#room.Settings
   }
 
   get Permission() {
     return this.#room.Permission
   }
 
-  get Settings() {
-    return this.#room.Settings
+  get Player() {
+    return this.#room.Player
+  }
+
+  get Profile() {
+    return this.#room.Profile
   }
 
   get Tileset() {

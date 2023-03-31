@@ -17,6 +17,11 @@ class RoomCollection extends RoomMate {
     return data !== null
   }
 
+  get(id) {
+    if (id == null) return null
+    return this.remoteStore.getDocument(this.type, id)
+  }
+
   remove(id, checkPermission = false) {
     if (id == null) return
     const data = this.remoteStore.getDocument(this.type, id)

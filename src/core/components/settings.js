@@ -16,7 +16,8 @@ class Settings extends RoomCollection {
     super(room, 'settings')
 
     this.clientRoom.on('patched', (patched) => {
-      if (!patched && !this.exists('world')) {
+      console.log(`[${this.slug}] PATCHED SETTINGS:`, patched, this.Settings.get('world'))
+      if (!this.exists('world')) {
         this.resetSettings('world')
       }
     })
@@ -28,7 +29,10 @@ class Settings extends RoomCollection {
 
   updateSettings(id, newSettings) {
     let settings = this.remoteStore.getDocument('settings', id) ?? defaultSettings
-    this.remoteStore.setDocument('settings', id, { ...settings, ...newSettings })
+    this.remoteStore.setDocument('settings', id, {
+      ...settings,
+      ...newSettings,
+    })
   }
 
 }

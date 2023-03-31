@@ -98,7 +98,7 @@ const TileInput = ({
   children,
 }) => {
 
-  const settings = useDocument('settings', 'world') ?? defaultSettings
+  const settings = useDocument('settings', 'world')
 
   return (
     <HStack>

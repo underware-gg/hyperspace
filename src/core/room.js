@@ -163,14 +163,13 @@ class Room {
     this.clientRoom = ClientRoom.create(slug, this.remoteStore)
     this.clientAgent = ClientRoom.create(':agents', this.agentStore)
 
-    // remoteStore
-    // instantiate before this.clientRoom.init() to listen to snapshot loading events
+    // instantiate components before this.clientRoom.init() to listen to snapshot loading events
+    this.Settings = new Settings(this)
+    this.Permission = new Permission(this)
+    this.Player = new Player(this)
     this.Portal = new Portal(this)
     this.Trigger = new Trigger(this)
     this.Screen = new Screen(this)
-    this.Player = new Player(this)
-    this.Permission = new Permission(this)
-    this.Settings = new Settings(this)
     this.Tileset = new Tileset(this)
     this.Map = new Map(this)
     this.Editor = new Editor(this)
