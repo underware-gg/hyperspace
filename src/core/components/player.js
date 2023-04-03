@@ -332,9 +332,15 @@ class Player extends RoomCollection {
       }
     }
 
-    const position = this.Map.fromTileToCanvasPosition(tile?.x, tile?.y)
-    player.position.x = position.x
-    player.position.y = position.y
+    if (!this.Map.validateTile(tile?.x, tile?.y)) {
+        const settings = this.Settings.get('world')
+        tile = settings.entry
+    }
+    const t = this.Map.tileMap.tiles[tile.y][tile.x]
+    player.position.x = t.start.x + (this.Map.tileMap.tileSize / 2)
+    player.position.y = t.start.y + (this.Map.tileMap.tileSize / 2)
+
+    console.log(player.position)
     this.remoteStore.setDocument('player', id, player)
   }
 
@@ -468,6 +474,8 @@ class Player extends RoomCollection {
       }
     }
 
+    console.log(x, y)
+
     const overlappingTiles = getOverlappingTiles(this.fromPosToRect(x, player.position.y), 32)
     for (let i = 0; i < overlappingTiles.length; i++) {
       const tile = this.Map.getTile('world', overlappingTiles[i].x, overlappingTiles[i].y)
@@ -500,8 +508,8 @@ class Player extends RoomCollection {
       }
     }
 
-    x = clamp(x, PLAYER_RADIUS, process.env.BASE_WIDTH - PLAYER_RADIUS)
-    y = clamp(y, PLAYER_RADIUS, process.env.BASE_HEIGHT - PLAYER_RADIUS)
+    x = clamp(x, PLAYER_RADIUS, process.env.CANVAS_WIDTH - PLAYER_RADIUS)
+    y = clamp(y, PLAYER_RADIUS, process.env.CANVAS_HEIGHT - PLAYER_RADIUS)
 
     // const tile = this.Map.getTile('world', x, y)
 

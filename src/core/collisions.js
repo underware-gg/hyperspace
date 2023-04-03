@@ -48,16 +48,16 @@ export const circlesOverlap = (circle, circle2) => {
 // This assumes that the rect is smaller than the tile size.
 // Otherwise we'd need to loop through each point between x1 and x2
 // and y1 and y2.
-export const getOverlappingTiles = (rect, TILE_SIZE) => {
+export const getOverlappingTiles = (rect, tileSize) => {
   const tiles = []
 
   const { x, y } = rect.position
   const { width, height } = rect.size
 
-  const x1 = Math.floor(x / TILE_SIZE)
-  const y1 = Math.floor(y / TILE_SIZE)
-  const x2 = Math.floor((x + width) / TILE_SIZE)
-  const y2 = Math.floor((y + height) / TILE_SIZE)
+  const x1 = Math.floor(x / tileSize)
+  const y1 = Math.floor(y / tileSize)
+  const x2 = Math.floor((x + width) / tileSize)
+  const y2 = Math.floor((y + height) / tileSize)
 
   tiles.push({ x: x1, y: y1 })
 

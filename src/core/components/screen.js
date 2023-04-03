@@ -29,7 +29,7 @@ class Screen extends RoomCollection {
 
       const { position: { x, y }, rotation: { y: rot } } = screen
 
-      const aspect = process.env.BASE_WIDTH / process.env.BASE_HEIGHT
+      const aspect = process.env.CANVAS_WIDTH / process.env.CANVAS_HEIGHT
       const cellHeight = 1.5 //1.2
       const cellWidth = cellHeight * aspect
 
@@ -175,20 +175,8 @@ class Screen extends RoomCollection {
     if (agentId && id == this.Player.getScreenOverPlayer(agentId)) {
       textureNameOver += `_over`
     }
-    let texture = getTextureImageByName(textureNameOver, textureName)
 
-    if (texture == null) {
-      console.warn(`Screen texture not found`, textureNameOver, textureName)
-      return
-    }
-
-    context.drawImage(
-      texture,
-      Math.round(x * 32),
-      Math.round(y * 32),
-      32,
-      32,
-    )
+    this.Map.drawTextureAtTile(context, x, y, textureNameOver, textureName)
   }
 
 

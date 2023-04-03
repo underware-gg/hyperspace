@@ -110,26 +110,30 @@ class Portal extends RoomCollection {
     if (portal === null) return
 
     const { position: { x, y } } = portal
+    if (!this.Map.validateTile(x, y)) return
 
     const texture = getTextureImageByName('portal')
 
     let t = 0
     if (this.Player.getPortalOverPlayer(this.agentId) == id) {
-      t = new Date().getTime() / 10000;
+      t = new Date().getTime() / 10000
     }
 
+    const tile = this.Map.tileMap.tiles[y][x]
+    const ht = process.env.BASE_TILE_SIZE / 2
+
     context.save()
-    context.translate(Math.round(x * 32 + 16), Math.round(y * 32 + 16));
-    context.rotate((t % 1) * Math.PI * 2);
-    context.translate(-16, -16);
+    context.translate(tile.start.x + ht, tile.start.y + ht)
+    context.rotate((t % 1) * Math.PI * 2)
+    context.translate(-ht, -ht)
     context.drawImage(
       texture,
       0,
       0,
-      32,
-      32,
+      this.Map.tileMap.tileSize,
+      this.Map.tileMap.tileSize,
     )
-    context.restore();
+    context.restore()
   }
 }
 

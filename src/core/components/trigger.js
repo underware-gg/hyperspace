@@ -114,22 +114,11 @@ class Trigger extends RoomCollection {
 
   render2d(id, context) {
     const trigger = this.remoteStore.getDocument('trigger', id)
-
-    if (trigger === null) {
-      return
-    }
+    if (trigger === null) return
 
     const { position: { x, y }, state, data } = trigger
 
-    const texture = getTextureImageByName(`trigger_${state}`)
-
-    context.drawImage(
-      texture,
-      Math.round(x * 32),
-      Math.round(y * 32),
-      32,
-      32,
-    )
+    this.Map.drawTextureAtTile(context, x, y, `trigger_${state}`)
   }
 }
 

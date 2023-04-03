@@ -42,8 +42,8 @@ const Map2D = ({
         id='room'
         ref={canvasRef}
         border='1px'
-        width={process.env.CANVAS_WIDTH}
-        height={process.env.CANVAS_HEIGHT}
+        width={process.env.RENDER_WIDTH}
+        height={process.env.RENDER_HEIGHT}
         className='FillParent Map2D'
       >
         Canvas not supported by your browser.

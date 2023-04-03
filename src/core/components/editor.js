@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
 import * as THREE from 'three'
 import RoomCollection from '@/core/interfaces/RoomCollection'
-import { roundToNearest, getFilenameFromUrl } from '@/core/utils'
+import { getFilenameFromUrl } from '@/core/utils'
 
 const normalMatrix = new THREE.Matrix3() // create once and reuse
 const worldNormal = new THREE.Vector3() // create once and reuse
@@ -17,23 +17,14 @@ class Editor extends RoomCollection {
     }
 
     const _handleEditorMove = (position, interacting) => {
-      const editor = this.remoteStore.getDocument('editor', agentId)
-
-      if (editor != null) {
-        const { position: { x, y } } = editor
-        if (position.x == x && position.y == y) {
-          return
-        }
-      }
-
       this.remoteStore.setDocument('editor', agentId, {
-        position,
-        interacting,
+        position: position ?? {},
+        interacting: interacting && position != null,
       })
     }
 
-    const handleMouseMove = (e) => _handleEditorMove(this.getMouseTilePosition(e, canvas, this.remoteStore), true)
-    const handleMouseOver = (e) => _handleEditorMove(this.getMouseTilePosition(e, canvas, this.remoteStore), true)
+    const handleMouseMove = (e) => _handleEditorMove(this.getMouseTilePosition(e, canvas), true)
+    const handleMouseOver = (e) => _handleEditorMove(this.getMouseTilePosition(e, canvas), true)
     const handleMouseOut = (e) => _handleEditorMove({ x: 0, y: 0 }, false)
 
     this.remoteStore.on({ type: 'editor', event: 'update' }, (id, editor) => {
@@ -218,10 +209,7 @@ class Editor extends RoomCollection {
 
   update(id, dt) {
     const editor = this.remoteStore.getDocument('editor', id)
-
-    if (editor === null) {
-      return
-    }
+    if (editor === null) return
 
     const { position: { x, y }, interacting } = editor
 
@@ -281,24 +269,20 @@ class Editor extends RoomCollection {
   }
 
   render2d(id, context) {
-    if (!context) {
+    if (!context) return
+
+    // do not draw cursor for if I cant edit
+    if (!this.canEdit('world')) {
       return
     }
 
     const editor = this.remoteStore.getDocument('editor', id)
-
-    if (editor === null) {
-      return
-    }
+    if (editor === null) return
 
     const { position: { x, y }, interacting } = editor
+    if (!interacting) return
 
-    if (!interacting) {
-      return
-    }
-
-    // do not draw cursor for if I cant edit
-    if (!this.canEdit('world')) {
+    if(!this.Map.validateTile(x, y)) {
       return
     }
 
@@ -312,10 +296,10 @@ class Editor extends RoomCollection {
     context.strokeStyle = isRemoteUser ? 'red' : 'blue'
 
     context.strokeRect(
-      roundToNearest(x * 32 - 16, 32),
-      roundToNearest(y * 32 - 16, 32),
-      32,
-      32,
+      this.Map.tileMap.tiles[y][x].start.x,
+      this.Map.tileMap.tiles[y][x].start.y,
+      this.Map.tileMap.tileSize,
+      this.Map.tileMap.tileSize,
     )
   }
 
@@ -324,18 +308,32 @@ class Editor extends RoomCollection {
     const x = (e.clientX - rect.left) / canvas.scrollWidth * canvas.width
     const y = (e.clientY - rect.top) / canvas.scrollHeight * canvas.height
     return {
-      x: Math.floor(x),
-      y: Math.floor(y),
+      x: Math.floor(x / process.env.CANVAS_SCALE),
+      y: Math.floor(y / process.env.CANVAS_SCALE),
     }
   }
 
   getMouseTilePosition(e, canvas) {
-    const { x, y } = this.getMouseCanvasPosition(e, canvas)
-    const mapScale = this.Map.getMapScale('world')
-    return {
-      x: Math.floor(x / mapScale.x / 32),
-      y: Math.floor(y / mapScale.y / 32),
+    const canvasPos = this.getMouseCanvasPosition(e, canvas)
+
+    const tileMap = this.Map.tileMap
+
+    if (!tileMap || canvasPos.x < tileMap.start.x || canvasPos.x >= tileMap.end.x || canvasPos.y < tileMap.start.y || canvasPos.y >= tileMap.end.y) {
+      return null
     }
+
+    for (let y = 0; y < tileMap.tiles.length; y++) {
+      const row = tileMap.tiles[y]
+      if (canvasPos.y >= row[0].start.y && canvasPos.y < row[0].end.y) {
+        for (let x = 0; x < row.length; x++) {
+          if (canvasPos.x >= row[x].start.x && canvasPos.x < row[x].end.x) {
+            return { x, y }
+          }
+        }
+      }
+    }
+
+    return null
   }
 
   getCreateTileRotation(id) {

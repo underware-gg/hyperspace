@@ -74,8 +74,8 @@ const Hyperbox = ({
           ref={canvas2dRef}
           border='1px'
           borderradius={4}
-          width={process.env.CANVAS_WIDTH}
-          height={process.env.CANVAS_HEIGHT}
+          width={process.env.RENDER_WIDTH}
+          height={process.env.RENDER_HEIGHT}
           style={{
             width: '100%',
             height: '100%',
@@ -93,8 +93,8 @@ const Hyperbox = ({
           ref={canvas3dRef}
           border='1px'
           borderradius={4}
-          width={process.env.CANVAS_WIDTH}
-          height={process.env.CANVAS_HEIGHT}
+          width={process.env.RENDER_WIDTH}
+          height={process.env.RENDER_HEIGHT}
           style={{
             width: '100%',
             height: '100%',
