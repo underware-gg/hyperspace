@@ -91,51 +91,51 @@ class Map extends RoomCollection {
     const settings = this.Settings.get('world')
 
     // canvas size in pixels
-    const canvasWidth = process.env.CANVAS_WIDTH
-    const canvasHeight = process.env.CANVAS_HEIGHT
+    const canvasWidth = process.env.RENDER_WIDTH
+    const canvasHeight = process.env.RENDER_HEIGHT
 
     // map size in tiles
-    const mapWidth = settings.size.width
-    const mapHeight = settings.size.height
+    const mapWidth = Math.max(settings.size.width, process.env.CANVAS_TILE_WIDTH)
+    const mapHeight = Math.max(settings.size.height, process.env.CANVAS_TILE_HEIGHT)
     
     // tile size inside canvas, in pixels
-    const tileSize = Math.min(Math.min(canvasWidth / mapWidth, canvasHeight / mapHeight), process.env.BASE_TILE_SIZE)
+    const scale = Math.min(canvasWidth / mapWidth, canvasHeight / mapHeight)
 
-    // map bounds inside canvas, in pixels
-    const start = {
-      x: (canvasWidth - (mapWidth * tileSize)) / 2,
-      y: (canvasHeight - (mapHeight * tileSize)) / 2,
+    const offset = {
+      x: (canvasWidth / scale) / 2,
+      y: (canvasHeight / scale) / 2,
     }
-    const end = {
-      x: start.x + (mapWidth * tileSize),
-      y: start.y + (mapHeight * tileSize),
+
+    const start = {
+      x: -settings.size.width / 2,
+      y: -settings.size.height / 2,
     }
 
     const tiles = []
     for (let y = 0; y < mapHeight; y++) {
       const row = []
+      const _y = -mapHeight / 2
       for (let x = 0; x < mapWidth; x++) {
-        const _x = start.x + (x * tileSize)
-        const _y = start.y + (y * tileSize)
+        const _x = -mapWidth / 2
         row.push({
           start: {
-            x: _x,
-            y: _y,
+            x: start.x + x,
+            y: start.y + y,
           },
           end: {
-            x: _x + tileSize,
-            y: _y + tileSize,
+            x: start.x + x + 1,
+            y: start.y + y + 1,
           }
         })
       }
       tiles.push(row)
     }
-    // console.log(`TILE SIZE`, tileSize, start, end, tiles)
+    console.log(`TILEMAP`, offset, start, tiles)
 
-    this.tileMap = {
+    this.viewport = {
+      offset,
+      scale,
       start,
-      end,
-      tileSize,
       tiles,
     }
   }
@@ -361,8 +361,8 @@ class Map extends RoomCollection {
     this.remoteStore.setValueAtPath('map', id, `/${y}.${x}`, value)
   }
 
-  render2d(id, context) {
-    if (!this.tileMap) return // not initialized
+  render2d(id, context, canvas) {
+    if (!this.viewport) return // not initialized
 
     const map = this.remoteStore.getDocument('map', id)
 
@@ -371,10 +371,18 @@ class Map extends RoomCollection {
       return
     }
 
-    // set draw matrix for all 2D elements
+    // reset canvas matrix
     context.setTransform(1, 0, 0, 1, 0, 0);
-    context.scale(process.env.CANVAS_SCALE, process.env.CANVAS_SCALE)
-    context.clearRect(0, 0, process.env.CANVAS_WIDTH, process.env.CANVASHEIGHT)
+
+    // clear canvas
+    context.clearRect(0, 0, canvas.width, canvas.height)
+    context.rect(0, 0, canvas.width, canvas.height)
+    context.fillStyle = 'black'
+    context.fill()
+
+    // set draw matrix for all 2D elements
+    context.scale(this.viewport.scale, this.viewport.scale)
+    context.translate(this.viewport.offset.x, this.viewport.offset.y)
 
     const crdtTileset = this.remoteStore.getDocument('tileset', id)
 
@@ -394,9 +402,10 @@ class Map extends RoomCollection {
 
     // console.log(`render`, crdtTileset, image, sz, settings)
 
-    for (let x = 0; x < settings.size.width; x++) {
-      for (let y = 0; y < settings.size.height; y++) {
-        const tile = this.tileMap.tiles[y][x]
+    for (let y = 0; y < settings.size.height; y++) {
+      const row = this.viewport.tiles[y]
+      for (let x = 0; x < settings.size.width; x++) {
+        const tile = row[x]
         const tileIndex = clamp(map[y][x], 0, 9)
         context.drawImage(
           image,
@@ -406,8 +415,8 @@ class Map extends RoomCollection {
           imageTileSize,
           tile.start.x,
           tile.start.y,
-          this.tileMap.tileSize,
-          this.tileMap.tileSize,
+          1,
+          1,
         )
       }
     }
@@ -417,7 +426,7 @@ class Map extends RoomCollection {
   }
 
   drawTextureAtTile(context, x, y, textureName, altTextureName = null) {
-    if (!this.tileMap) return // not initialized
+    if (!this.viewport) return // not initialized
 
     if (!this.validateTile(x, y)) return
 
@@ -427,18 +436,31 @@ class Map extends RoomCollection {
       return
     }
 
-    const tile = this.tileMap.tiles[y][x]
+    const tile = this.viewport.tiles[y][x]
     context.drawImage(
       texture,
       tile.start.x,
       tile.start.y,
-      this.tileMap.tileSize,
-      this.tileMap.tileSize,
+      1,
+      1 ,
     )
   }
 
+  drawRect(context, x, y, width, height, lineWidth, color) {
+    if (!this.viewport) return // not initialized
+    context.lineWidth = lineWidth
+    context.strokeStyle = color
+    context.strokeRect(
+      this.viewport.start.x + x,
+      this.viewport.start.y + y,
+      width,
+      height,
+    )
+  }
+
+
   validateTile(x, y) {
-    if (!this.tileMap) return false // not initialized
+    if (!this.viewport) return false // not initialized
     const settings = this.Settings.get('world')
     return (x != null && x >= 0 && x < settings.size.width && y != null && y >= 0 && y < settings.size.height)
   }
@@ -454,6 +476,13 @@ class Map extends RoomCollection {
     const tile = map[y][x]
 
     return clamp(tile, 0, 9)
+  }
+
+  canvasPositionToTile(x, y) {
+    return {
+      x: (x / this.viewport.scale) - this.viewport.offset.x,
+      y: (y / this.viewport.scale) - this.viewport.offset.y,
+    }
   }
 
   render3d(id) {

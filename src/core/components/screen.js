@@ -29,7 +29,7 @@ class Screen extends RoomCollection {
 
       const { position: { x, y }, rotation: { y: rot } } = screen
 
-      const aspect = process.env.CANVAS_WIDTH / process.env.CANVAS_HEIGHT
+      const aspect = process.env.RENDER_WIDTH / process.env.RENDER_HEIGHT
       const cellHeight = 1.5 //1.2
       const cellWidth = cellHeight * aspect
 

@@ -292,38 +292,32 @@ class Editor extends RoomCollection {
       return
     }
 
-    context.lineWidth = 3
+    context.lineWidth = 0.1
     context.strokeStyle = isRemoteUser ? 'red' : 'blue'
 
     context.strokeRect(
-      this.Map.tileMap.tiles[y][x].start.x,
-      this.Map.tileMap.tiles[y][x].start.y,
-      this.Map.tileMap.tileSize,
-      this.Map.tileMap.tileSize,
+      this.Map.viewport.tiles[y][x].start.x,
+      this.Map.viewport.tiles[y][x].start.y,
+      1,
+      1,
     )
   }
 
   getMouseCanvasPosition(e, canvas) {
     const rect = canvas.getBoundingClientRect()
-    const x = (e.clientX - rect.left) / canvas.scrollWidth * canvas.width
-    const y = (e.clientY - rect.top) / canvas.scrollHeight * canvas.height
-    return {
-      x: Math.floor(x / process.env.CANVAS_SCALE),
-      y: Math.floor(y / process.env.CANVAS_SCALE),
-    }
+    const x = Math.floor((e.clientX - rect.left) / canvas.scrollWidth * canvas.width)
+    const y = Math.floor((e.clientY - rect.top) / canvas.scrollHeight * canvas.height)
+    return this.Map.canvasPositionToTile(x, y);
   }
 
   getMouseTilePosition(e, canvas) {
+    const viewport = this.Map.viewport
+    if (!viewport) return null // not initialized
+
     const canvasPos = this.getMouseCanvasPosition(e, canvas)
 
-    const tileMap = this.Map.tileMap
-
-    if (!tileMap || canvasPos.x < tileMap.start.x || canvasPos.x >= tileMap.end.x || canvasPos.y < tileMap.start.y || canvasPos.y >= tileMap.end.y) {
-      return null
-    }
-
-    for (let y = 0; y < tileMap.tiles.length; y++) {
-      const row = tileMap.tiles[y]
+    for (let y = 0; y < viewport.tiles.length; y++) {
+      const row = viewport.tiles[y]
       if (canvasPos.y >= row[0].start.y && canvasPos.y < row[0].end.y) {
         for (let x = 0; x < row.length; x++) {
           if (canvasPos.x >= row[x].start.x && canvasPos.x < row[x].end.x) {

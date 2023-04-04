@@ -236,7 +236,7 @@ class Room {
     this.renderer2D.render(this.canvas2d)
 
     const context = this.canvas2d.getContext('2d')
-    this.Map.render2d('world', context)
+    this.Map.render2d('world', context, this.canvas2d)
 
     const playerIds = this.remoteStore.getIds('player')
     const portalIds = this.remoteStore.getIds('portal')

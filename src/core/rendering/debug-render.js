@@ -1,6 +1,6 @@
 export const strokeRect = (ctx, rect) => {
   ctx.beginPath()
-  ctx.lineWidth = '1'
+  ctx.lineWidth = 0.05
   ctx.strokeStyle = 'red'
 
   ctx.rect(
@@ -15,7 +15,7 @@ export const strokeRect = (ctx, rect) => {
 
 export const strokeCircle = (ctx, circle) => {
   ctx.beginPath()
-  ctx.lineWidth = '1'
+  ctx.lineWidth = 0.05
   ctx.strokeStyle = 'red'
 
   ctx.arc(
