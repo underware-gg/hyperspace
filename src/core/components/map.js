@@ -60,8 +60,13 @@ class Map extends RoomCollection {
   constructor(room) {
     super(room, 'map')
 
+    this.patched = false
+
     this.clientRoom.on('patched', (patched) => {
+      if (this.patched) return
+
       console.log(`[${this.slug}] PATCHED MAP:`, patched, `exists:`, this.exists('world'))
+      
       if (!this.exists('world')) {
         this.resetMap('world')
       }
@@ -77,6 +82,8 @@ class Map extends RoomCollection {
       
       this.init2D()
       this.init3D()
+
+      this.patched = true
     })
 
     // texture swapping
@@ -130,7 +137,6 @@ class Map extends RoomCollection {
       }
       tiles.push(row)
     }
-    console.log(`TILEMAP`, offset, start, tiles)
 
     this.viewport = {
       offset,

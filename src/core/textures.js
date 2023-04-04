@@ -71,7 +71,7 @@ export const loadTextures = async () => {
 export const getTextureByName = (name, fallback) => textures[name] ?? textures[fallback] ?? null
 export const getTextureImageByName = name => textures[name]?.image ?? null
 
-export const getTextureSprite = (texture, stepX = 0.0, stepY = 0.0, cycleName = 'idle') => {
+export const getTextureSprite = (texture, step = 0, cycleName = 'idle') => {
 
   if (!texture) {
     return null
@@ -94,26 +94,26 @@ export const getTextureSprite = (texture, stepX = 0.0, stepY = 0.0, cycleName = 
   let stepValue = 0.0
 
   if (cycleName == 'walkRight') {
-    stepValue = stepX
+    stepValue = step
   } if (cycleName == 'walkLeft') {
-    stepValue = 10000 - stepX
+    stepValue = 10000 - step
   } else if (cycleName == 'walkUp') {
-    stepValue = stepY
+    stepValue = step
   } else if (cycleName == 'walkDown') {
-    stepValue = 10000 - stepY
+    stepValue = 10000 - step
   }
 
-  let step = ((stepValue * stepScale) % 1.0)
+  let stepIndex = ((stepValue * stepScale) % 1.0)
 
   const cycle = texture.sprites.cycles?.[cycleName] ?? null
-  step = Math.floor(step * (cycle?.length ?? 1))
+  stepIndex = Math.floor(stepIndex * (cycle?.length ?? 1))
 
   const aspect = texture.sprites.width / texture.sprites.height
 
   const dx = 1.0 / texture.sprites.columns
   const dy = 1.0 / texture.sprites.rows
 
-  const coord = cycle?.[step] ?? [0, 0]
+  const coord = cycle?.[stepIndex] ?? [0, 0]
 
   const uv = {
     start: [coord[0] * dx, coord[1] * dy],

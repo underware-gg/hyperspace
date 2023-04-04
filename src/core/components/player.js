@@ -7,12 +7,13 @@ import { floors } from '@/core/components/map'
 import { strokeRect } from '@/core/rendering/debug-render'
 import { getOverlappingTiles, rectanglesOverlap } from '@/core/collisions'
 import { spritesheets } from '@/core/texture-data'
-import { hashCode } from '@/core/utils'
+import { hashCode, toDegrees } from '@/core/utils'
 import Cookies from 'universal-cookie'
 
-const SPEED = 125
-const PLAYER_BOX = 16
-const PLAYER_RADIUS = 8
+// all sizes, positions and dimensions are relative to tiles
+const SPEED = 4
+const PLAYER_BOX = 0.5
+const PLAYER_RADIUS = 0.25
 const PLAYER_MESH = 1.4
 const CAM_Z_OFFSET = 1.15
 const GRAVITY = 25
@@ -44,6 +45,8 @@ class Player extends RoomCollection {
     this.localStore.setDocument('joined', this.agentId, false)
 
     this.clientRoom.on('agent-join', (agentId) => {
+      this.localStore.setDocument('joined', agentId, true)
+
       if (agentId === this.agentId) {
         console.log(`[${this.slug}] agent-join:`, agentId, '(YOU)')
         this.enterRoom(agentId, this.slug)
@@ -53,13 +56,13 @@ class Player extends RoomCollection {
       let playerMesh = null
 
       // has 3d render
-      if (scene) { 
+      if (scene) {
         const material = this.makePlayerMaterial(agentId)
-        const geometry = new THREE.PlaneGeometry(PLAYER_MESH, PLAYER_MESH);
+        const geometry = new THREE.PlaneGeometry(PLAYER_MESH, PLAYER_MESH)
 
-        playerMesh = new THREE.Mesh(geometry, material);
+        playerMesh = new THREE.Mesh(geometry, material)
 
-        scene.add(playerMesh);
+        scene.add(playerMesh)
       }
 
       this.localStore.setDocument('player-mesh', agentId, playerMesh)
@@ -99,8 +102,8 @@ class Player extends RoomCollection {
 
       if (playerMesh !== null) {
         const material = this.makePlayerMaterial(agentId)
-        playerMesh.material = material;
-        playerMesh.needsUpdate = true;
+        playerMesh.material = material
+        playerMesh.needsUpdate = true
         // console.log(`CHANGE MATERIAL`, agentId, material)
       }
     })
@@ -108,43 +111,39 @@ class Player extends RoomCollection {
 
   makePlayerMaterial(agentId) {
     const texture = this.getPlayerTexture(agentId)
-    const materialTexture = new THREE.TextureLoader().load(texture.src);
-    materialTexture.minFilter = THREE.NearestFilter;
-    materialTexture.magFilter = THREE.NearestFilter;
+    const materialTexture = new THREE.TextureLoader().load(texture.src)
+    materialTexture.minFilter = THREE.NearestFilter
+    materialTexture.magFilter = THREE.NearestFilter
     const material = new THREE.MeshBasicMaterial({
       map: materialTexture,
       side: THREE.DoubleSide,
       transparent: true,
-    });
-    return material;
+    })
+    return material
   }
 
   update3dSprite(id) {
     if (id === this.agentId) {
-      return;
+      return
     }
 
     const playerMesh = this.localStore.getDocument('player-mesh', id)
-    if (playerMesh === null) {
-      return;
-    }
+    if (!playerMesh) return
 
     const player = this.remoteStore.getDocument('player', id)
-    if (player === null) {
-      return
-    }
+    if (!player) return
 
     // Position
     const { position: { x, y, z }, rotation } = player
     playerMesh.position.set(
-      x / 32,
-      - y / 32,
+      x,
+      -y,
       z + PLAYER_MESH / 2,
     )
 
     // Rotation (billboard) 
     const thisPlayer = this.remoteStore.getDocument('player', this.agentId)
-    const rotToThisPlayer = Math.atan2(y - thisPlayer.position.y, x - thisPlayer.position.x) - CONST.HALF_PI;
+    const rotToThisPlayer = Math.atan2(y - thisPlayer.position.y, x - thisPlayer.position.x) - CONST.HALF_PI
     playerMesh.rotation.set(
       CONST.HALF_PI,
       -rotToThisPlayer,
@@ -154,26 +153,26 @@ class Player extends RoomCollection {
     // UV
     const texture = this.getPlayerTexture(id)
 
-    const rot = -(player.rotation.y + rotToThisPlayer + CONST.PI);
-    const sprite = this.getPlayerSprite(texture, x, y, rot);
+    const rot = -(player.rotation.y + rotToThisPlayer + CONST.PI)
+    const sprite = this.getPlayerSprite(texture, x, y, rot)
     if (!sprite) return
 
     const { uv } = sprite
 
-    var geometryUv = playerMesh.geometry.getAttribute('uv');
+    var geometryUv = playerMesh.geometry.getAttribute('uv')
 
     // 2 3
     // 0 1
-    geometryUv.setXY(0, uv.start[0], 1.0 - uv.start[1]);
-    geometryUv.setXY(1, uv.end[0], 1.0 - uv.start[1]);
-    geometryUv.setXY(2, uv.start[0], 1.0 - uv.end[1]);
-    geometryUv.setXY(3, uv.end[0], 1.0 - uv.end[1]);
-    geometryUv.needsUpdate = true;
+    geometryUv.setXY(0, uv.start[0], 1.0 - uv.start[1])
+    geometryUv.setXY(1, uv.end[0], 1.0 - uv.start[1])
+    geometryUv.setXY(2, uv.start[0], 1.0 - uv.end[1])
+    geometryUv.setXY(3, uv.end[0], 1.0 - uv.end[1])
+    geometryUv.needsUpdate = true
 
-    playerMesh.geometry.setAttribute('uv', geometryUv);
+    playerMesh.geometry.setAttribute('uv', geometryUv)
 
     // Scale
-    const aspect = texture.sprites?.aspect ?? texture.aspect ?? 1.0;
+    const aspect = texture.sprites?.aspect ?? texture.aspect ?? 1.0
     playerMesh.scale.set(
       aspect,
       1.0,
@@ -241,7 +240,7 @@ class Player extends RoomCollection {
       this.getPortalOverPlayer(id) == null &&
       this.getScreenOverPlayer(id) == null &&
       this.getTriggerOverPlayer(id) == null
-    );
+    )
   }
 
   getObjectOfTypeOverPlayer(id, type) {
@@ -250,7 +249,7 @@ class Player extends RoomCollection {
   }
 
   getObjectOverPlayer(id) {
-    const playerRect = this.getPlayerCollisionRect(id);
+    const playerRect = this.getPlayerCollisionRect(id)
     if (playerRect == null) return
 
     for (const type of ['portal', 'trigger', 'screen']) {
@@ -265,27 +264,22 @@ class Player extends RoomCollection {
         }
       }
     }
-    return null;
+    return null
   }
 
   getCollisionRect(type, id) {
     const data = this.remoteStore.getDocument(type, id)
     if (!data || !data.position) return null
     return {
-      position: {
-        x: data.position.x * 32,
-        y: data.position.y * 32,
-      },
+      position: data.position,
       size: {
-        width: 32,
-        height: 32,
+        width: 1,
+        height: 1,
       },
     }
   }
 
   enterRoom(agentId, slug) {
-    this.localStore.setDocument('joined', agentId, true)
-
     const cookies = new Cookies()
 
     // portal navigation
@@ -333,34 +327,33 @@ class Player extends RoomCollection {
     }
 
     if (!this.Map.validateTile(tile?.x, tile?.y)) {
-        const settings = this.Settings.get('world')
-        tile = settings.entry
+      const settings = this.Settings.get('world')
+      tile = settings.entry
     }
-    const t = this.Map.tileMap.tiles[tile.y][tile.x]
-    player.position.x = t.start.x + (this.Map.tileMap.tileSize / 2)
-    player.position.y = t.start.y + (this.Map.tileMap.tileSize / 2)
 
-    console.log(player.position)
+    player.position.x = tile.x + 0.5
+    player.position.y = tile.y + 1 - PLAYER_RADIUS - 0.01
+
     this.remoteStore.setDocument('player', id, player)
   }
 
   getPlayerTileRotation(id) {
     const player = this.remoteStore.getDocument('player', id)
-    if (player === null) return null
+    if (!player) return null
 
     const { x, y } = player.position
     const { y: rot } = player.rotation
 
     return {
-      x: Math.floor(x / 32),
-      y: Math.floor(y / 32),
+      x: Math.floor(x),
+      y: Math.floor(y),
       rot,
     }
   }
 
   getPlayerCollisionRect(id) {
     const player = this.remoteStore.getDocument('player', id)
-    if (player === null) return null
+    if (!player) return null
 
     const { x, y } = player.position
 
@@ -370,8 +363,8 @@ class Player extends RoomCollection {
   fromPosToRect(x, y) {
     return {
       position: {
-        x: Math.round(x - PLAYER_RADIUS),
-        y: Math.round(y - PLAYER_RADIUS),
+        x: (x - PLAYER_RADIUS),
+        y: (y - PLAYER_RADIUS),
       },
       size: {
         width: PLAYER_BOX,
@@ -404,27 +397,27 @@ class Player extends RoomCollection {
       const forwardMove = new THREE.Vector3(0, 0, 0)
       const sideMove = new THREE.Vector3(0, 0, 0)
 
-      forwardMove.add(forward.setLength(SPEED * dt))
-      sideMove.add(right.setLength(SPEED * dt))
+      forwardMove.add(forward.setLength(SPEED))
+      sideMove.add(right.setLength(SPEED))
 
       if (this.actions.getActionState('left')) {
-        x -= sideMove.x
-        y += sideMove.y
+        x -= sideMove.x * dt
+        y += sideMove.y * dt
       }
 
       if (this.actions.getActionState('right')) {
-        x += sideMove.x
-        y -= sideMove.y
+        x += sideMove.x * dt
+        y -= sideMove.y * dt
       }
 
       if (this.actions.getActionState('up')) {
-        x -= forwardMove.x
-        y += forwardMove.y
+        x -= forwardMove.x * dt
+        y += forwardMove.y * dt
       }
 
       if (this.actions.getActionState('down')) {
-        x += forwardMove.x
-        y -= forwardMove.y
+        x += forwardMove.x * dt
+        y -= forwardMove.y * dt
       }
 
       if (this.actions.getActionState('turnLeft')) {
@@ -441,26 +434,26 @@ class Player extends RoomCollection {
       }
       if (this.actions.getActionState('moveForward')) {
         rotationCopy.x += Math.PI * dt * 0.75
-        if (rotationCopy.x > +Math.PI * 0.15) {
-          rotationCopy.x = +Math.PI * 0.15
+        if (rotationCopy.x > Math.PI * 0.15) {
+          rotationCopy.x = Math.PI * 0.15
         }
       }
 
     } else {
-      let speedX = 0;
-      let speedY = 0;
+      let speedX = 0
+      let speedY = 0
 
       if (this.actions.getActionState('left') || this.actions.getActionState('turnLeft')) {
-        speedX -= SPEED;
+        speedX -= SPEED
       }
       if (this.actions.getActionState('right') || this.actions.getActionState('turnRight')) {
-        speedX += SPEED;
+        speedX += SPEED
       }
       if (this.actions.getActionState('up') || this.actions.getActionState('moveForward')) {
-        speedY -= SPEED;
+        speedY -= SPEED
       }
       if (this.actions.getActionState('down') || this.actions.getActionState('moveBack')) {
-        speedY += SPEED;
+        speedY += SPEED
       }
 
       if (speedX || speedY) {
@@ -474,42 +467,34 @@ class Player extends RoomCollection {
       }
     }
 
-    console.log(x, y)
-
-    const overlappingTiles = getOverlappingTiles(this.fromPosToRect(x, player.position.y), 32)
-    for (let i = 0; i < overlappingTiles.length; i++) {
-      const tile = this.Map.getTile('world', overlappingTiles[i].x, overlappingTiles[i].y)
-
+    const overlappingTilesX = getOverlappingTiles(this.fromPosToRect(x, player.position.y), 1)
+    for (let i = 0; i < overlappingTilesX.length; i++) {
+      const tile = this.Map.getTile('world', overlappingTilesX[i].x, overlappingTilesX[i].y)
       if (tile !== null) {
         const currentFloorHeight = floors[tile]
-
         if (z < currentFloorHeight - 0.75) {
           x = player.position.x
-          // y = player.position.y
-
           break
         }
       }
     }
 
-    const overlappingTiles3 = getOverlappingTiles(this.fromPosToRect(player.position.x, y), 32)
-    for (let i = 0; i < overlappingTiles3.length; i++) {
-      const tile = this.Map.getTile('world', overlappingTiles3[i].x, overlappingTiles3[i].y)
-
+    const overlappingTilesY = getOverlappingTiles(this.fromPosToRect(player.position.x, y), 1)
+    for (let i = 0; i < overlappingTilesY.length; i++) {
+      const tile = this.Map.getTile('world', overlappingTilesY[i].x, overlappingTilesY[i].y)
       if (tile !== null) {
         const currentFloorHeight = floors[tile]
-
         if (z < currentFloorHeight - 0.75) {
-          // x = player.position.x
           y = player.position.y
-
           break
         }
       }
     }
 
-    x = clamp(x, PLAYER_RADIUS, process.env.CANVAS_WIDTH - PLAYER_RADIUS)
-    y = clamp(y, PLAYER_RADIUS, process.env.CANVAS_HEIGHT - PLAYER_RADIUS)
+    const settings = this.Settings.get('world')
+
+    x = clamp(x, PLAYER_RADIUS, settings.size.width - PLAYER_RADIUS)
+    y = clamp(y, PLAYER_RADIUS, settings.size.height - PLAYER_RADIUS)
 
     // const tile = this.Map.getTile('world', x, y)
 
@@ -523,21 +508,11 @@ class Player extends RoomCollection {
 
     z -= zSpeed * dt
 
-    // const floorHeight = tile === null ? 0 : floors[tile]
-
-    // if (z < floorHeight) {
-    //   z = floorHeight
-    //   zSpeed = 0
-    //   grounded = true
-    // }
-
-    const overlappingTiles2 = getOverlappingTiles(this.fromPosToRect(x, y), 32)
-    for (let i = 0; i < overlappingTiles2.length; i++) {
-      const tile = this.Map.getTile('world', overlappingTiles2[i].x, overlappingTiles2[i].y)
-
+    const overlappingTilesXY = getOverlappingTiles(this.fromPosToRect(x, y), 32)
+    for (let i = 0; i < overlappingTilesXY.length; i++) {
+      const tile = this.Map.getTile('world', overlappingTilesXY[i].x, overlappingTilesXY[i].y)
       if (tile !== null) {
         const currentFloorHeight = floors[tile]
-
         if (z < currentFloorHeight) {
           z = currentFloorHeight
           zSpeed = 0
@@ -547,9 +522,8 @@ class Player extends RoomCollection {
     }
 
     if (player.position.x !== x || player.position.y !== y || player.position.z !== z || deepCompare(rotation, rotationCopy) === false) {
-
-      rotationCopy.y = clampRadians(rotationCopy.y);
-
+      // console.log(`moved:`, x.toFixed(2), y.toFixed(2), toDegrees(rotationCopy.y))
+      rotationCopy.y = clampRadians(rotationCopy.y)
       this.remoteStore.setDocument('player', id, {
         position: {
           x,
@@ -560,26 +534,20 @@ class Player extends RoomCollection {
       })
     }
 
-    const cameraOrbit = this.localStore.getDocument('cameraOrbit', 'cameraOrbit')
     const camera = this.localStore.getDocument('camera', 'camera')
+    const cameraOrbit = this.localStore.getDocument('cameraOrbit', 'cameraOrbit')
 
-    if (cameraOrbit === null) {
-      return
-    }
-
-    if (cameraOrbit !== null) {
+    if (camera && cameraOrbit) {
       cameraOrbit.position.set(
-        x / 32,
-        - y / 32,
+        x,
+        -y,
         CAM_Z_OFFSET + z,
       )
-
       cameraOrbit.rotation.set(
         CONST.HALF_PI,
         rotation.y,
         rotation.z
       )
-
       camera.rotation.set(
         rotation.x,
         0,
@@ -590,39 +558,42 @@ class Player extends RoomCollection {
 
   render2d(id, context) {
     const player = this.remoteStore.getDocument('player', id)
-    if (player === null) return
+    if (!player) return
 
     const joined = this.localStore.getDocument('joined', id) ?? null
-    if (joined === false) return
+    if (!joined) return
 
     const { position: { x, y }, rotation } = player
 
     const texture = this.getPlayerTexture(id)
     if (!texture) return // texture not loaded yet
 
-    strokeRect(context, this.getPlayerCollisionRect(id))
+    const rect = this.getPlayerCollisionRect(id)
+    this.Map.drawRect(context, rect.position.x, rect.position.y, rect.size.width, rect.size.height, 0.05, 'red')
 
-    let scale = texture.scale;
-    let sWidth = texture.width;
-    let sHeight = texture.height;
-    let sx = 0;
-    let sy = 0;
+    let scale = texture.scale
+    let sWidth = texture.width
+    let sHeight = texture.height
+    let sx = 0
+    let sy = 0
 
     if (texture.sprites) {
-      scale = texture.sprites.scale ?? scale;
-      sWidth = texture.sprites.width;
-      sHeight = texture.sprites.height;
+      scale = texture.sprites.scale ?? scale
+      sWidth = texture.sprites.width
+      sHeight = texture.sprites.height
 
-      const { pixel } = this.getPlayerSprite(texture, x, y, rotation.y);
+      const { pixel } = this.getPlayerSprite(texture, x, y, rotation.y)
 
-      sx = pixel.start[0];
-      sy = pixel.start[1];
+      sx = pixel.start[0]
+      sy = pixel.start[1]
     }
 
-    const dWidth = sWidth * scale;
-    const dHeight = sHeight * scale;
-    const dx = Math.round(x - (dWidth / 2));
-    const dy = Math.round(y - dHeight + PLAYER_RADIUS);
+    const start = this.Map.viewport.start
+
+    const dWidth = (sWidth * scale) / process.env.TILE_SIZE
+    const dHeight = (sHeight * scale) / process.env.TILE_SIZE
+    const dx = start.x + (x - (dWidth / 2))
+    const dy = start.y + (y - dHeight + PLAYER_RADIUS)
 
     context.drawImage(
       texture.image,
@@ -653,23 +624,20 @@ class Player extends RoomCollection {
 
 
   getPlayerSprite(texture, x, y, rot) {
-    let cycleName;
+    let cycleName
 
-    rot = clampRadians(rot);
+    rot = clampRadians(rot)
     if (Math.abs(rot - CONST.HALF_PI) <= CONST.QUATER_PI) {
-      cycleName = 'walkLeft';
+      cycleName = 'walkLeft'
     } else if (Math.abs(rot - (CONST.HALF_PI + Math.PI)) <= CONST.QUATER_PI) {
-      cycleName = 'walkRight';
+      cycleName = 'walkRight'
     } else if (Math.abs(rot - Math.PI) <= CONST.QUATER_PI) {
-      cycleName = 'walkDown';
+      cycleName = 'walkDown'
     } else {
-      cycleName = 'walkUp';
+      cycleName = 'walkUp'
     }
 
-    const stepX = x / 32.0;
-    const stepY = y / 32.0;
-
-    return getTextureSprite(texture, stepX, stepY, cycleName)
+    return getTextureSprite(texture, x + y, cycleName)
   }
 }
 

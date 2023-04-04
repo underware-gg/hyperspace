@@ -9,7 +9,7 @@ const useActionDownListener = (eventName, callback = () => { }) => {
     return () => {
       actions.removeActionDownListener(eventName, callback)
     }
-  }, [])
+  }, [actions])
 
   return { emitter: actions?.emitAction ?? null }
 }

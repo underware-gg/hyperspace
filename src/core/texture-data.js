@@ -7,7 +7,7 @@ export const tilesets = [
   { src: '/tilesets/dungeon.png' },
   { src: '/tilesets/warehouse.png' },
 ]
-export const defaultTileset = tilesets[0];
+export const defaultTileset = tilesets[0]
 
 //-------------------------------
 // Character spritesheets

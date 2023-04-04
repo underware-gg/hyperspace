@@ -224,12 +224,12 @@ class Room {
   }
 
   render() {
-    this.render2d(this.canvas2d)
-    this.render3d(this.canvas2d)
+    this.render2d()
+    this.render3d()
   }
 
   render2d() {
-    if (this.canvas2d == null) {
+    if (this.canvas2d == null || this.canvas2d.style.display == 'none') {
       return
     }
 
@@ -263,7 +263,7 @@ class Room {
   }
 
   render3d() {
-    if (this.canvas3d == null) {
+    if (this.canvas3d == null || this.canvas3d.style.display == 'none') {
       return
     }
     this.renderer3D.render()

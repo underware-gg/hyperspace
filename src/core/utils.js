@@ -3,6 +3,7 @@ export class CONST {
   static TWO_PI = Math.PI * 2;
   static HALF_PI = Math.PI * 0.5;
   static QUATER_PI = Math.PI * 0.25;
+  static DEGREES_PER_RADIANS = (180 / Math.PI);
 }
 
 export const deepCopy = data => JSON.parse(JSON.stringify(data))
@@ -17,6 +18,8 @@ export const clampRadians = (angle) => {
   while (result > CONST.TWO_PI) result -= CONST.TWO_PI
   return result
 }
+export const toDegrees = (r) => (Math.floor(r * CONST.DEGREES_PER_RADIANS))
+export const toRadians = (d) => (d / CONST.DEGREES_PER_RADIANS)
 
 export const getFilenameFromUrl = (url) => {
   return url?.split('/')?.slice(-1)?.[0] ?? null
