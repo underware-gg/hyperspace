@@ -470,24 +470,20 @@ class Player extends RoomCollection {
     const overlappingTilesX = getOverlappingTiles(this.fromPosToRect(x, player.position.y), 1)
     for (let i = 0; i < overlappingTilesX.length; i++) {
       const tile = this.Map.getTile('world', overlappingTilesX[i].x, overlappingTilesX[i].y)
-      if (tile !== null) {
-        const currentFloorHeight = floors[tile]
-        if (z < currentFloorHeight - 0.75) {
-          x = player.position.x
-          break
-        }
+      const currentFloorHeight = floors[tile]
+      if (tile == null || z < currentFloorHeight - 0.75) {
+        x = player.position.x
+        break
       }
     }
 
     const overlappingTilesY = getOverlappingTiles(this.fromPosToRect(player.position.x, y), 1)
     for (let i = 0; i < overlappingTilesY.length; i++) {
       const tile = this.Map.getTile('world', overlappingTilesY[i].x, overlappingTilesY[i].y)
-      if (tile !== null) {
-        const currentFloorHeight = floors[tile]
-        if (z < currentFloorHeight - 0.75) {
-          y = player.position.y
-          break
-        }
+      const currentFloorHeight = floors[tile]
+      if (tile == null || z < currentFloorHeight - 0.75) {
+        y = player.position.y
+        break
       }
     }
 

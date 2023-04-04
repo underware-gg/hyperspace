@@ -266,6 +266,10 @@ class Editor extends RoomCollection {
     if (this.actions.getActionState('0')) {
       this.Map.updateTile('world', x, y, 9)
     }
+
+    if (this.actions.getActionState('-')) {
+      this.Map.updateTile('world', x, y, null)
+    }
   }
 
   render2d(id, context) {

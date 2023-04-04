@@ -72,6 +72,12 @@ const TilesetSelector = ({ }) => {
     textAlign: 'center',
     padding: '0',
   }
+  const deleteStyle = {
+    width: '32px',
+    height: '32px',
+    border: 'solid 1px gray',
+    padding: '10px',
+  }
   const shortcutsStyle = {
     width: '100%',
     height: '100%',
@@ -91,6 +97,9 @@ const TilesetSelector = ({ }) => {
           <span style={shortcutsStyle}>1234567890</span>
         }
       </div>
+      {canEdit &&
+        <div style={deleteStyle}>-</div>
+      }
       <div style={{ width: '120px' }}>
         <Select
           size='sm'

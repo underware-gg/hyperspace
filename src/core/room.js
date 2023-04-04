@@ -73,6 +73,10 @@ const _actions = [
     keycode: '48',
   },
   {
+    name: '-',
+    keycode: '189',
+  },
+  {
     name: 'createScreen',
     keycode: '78', // n
   },

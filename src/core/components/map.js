@@ -411,8 +411,10 @@ class Map extends RoomCollection {
     for (let y = 0; y < settings.size.height; y++) {
       const row = this.viewport.tiles[y]
       for (let x = 0; x < settings.size.width; x++) {
+        let tileIndex = map[y][x]
+        if (typeof tileIndex != 'number' || tileIndex < 0 || tileIndex > 9) continue
+
         const tile = row[x]
-        const tileIndex = clamp(map[y][x], 0, 9)
         context.drawImage(
           image,
           tileIndex * imageTileSize,
@@ -479,9 +481,7 @@ class Map extends RoomCollection {
     const map = this.remoteStore.getDocument('map', id)
     if (map === null) return null
 
-    const tile = map[y][x]
-
-    return clamp(tile, 0, 9)
+    return map[y][x]
   }
 
   canvasPositionToTile(x, y) {
@@ -522,20 +522,23 @@ class Map extends RoomCollection {
       for (let y = 0; y < settings.size.height; y++) {
         let mapCell = map3D[settings.size.height - 1 - y][x]
 
-        const tile = clamp(map[y][x], 0, 9)
+        let tileIndex = map[y][x]
+        if (typeof tileIndex != 'number' || tileIndex < 0 || tileIndex > 9) {
+          mapCell.mesh.visible = false
+        } else {
+          mapCell.mesh.visible = true
+          mapCell.mesh.geometry = floorGeometries[tileIndex]
+          mapCell.mesh.position.z = walls[tileIndex]
 
-        mapCell.mesh.geometry = floorGeometries[tile]
-
-        mapCell.mesh.position.z = walls[tile]
-
-        const updateGeometries = (wallStack) => {
-          wallStack.children.forEach(element => {
-            element.geometry = wallGeometries[tile]
-          })
+          const updateGeometries = (wallStack) => {
+            wallStack.children.forEach(element => {
+              element.geometry = wallGeometries[tileIndex]
+            })
+          }
+          updateGeometries(mapCell.walls.stack1)
+          updateGeometries(mapCell.walls.stack2)
+          updateGeometries(mapCell.walls.stack3)
         }
-        updateGeometries(mapCell.walls.stack1)
-        updateGeometries(mapCell.walls.stack2)
-        updateGeometries(mapCell.walls.stack3)
       }
     }
   }
