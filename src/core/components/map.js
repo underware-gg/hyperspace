@@ -442,13 +442,14 @@ class Map extends RoomCollection {
 
     const settings = this.remoteStore.getDocument('settings', id)
 
-    // console.log(`render`, crdtTileset, image, sz, settings)
+    const mapWidth = gravityMap ? MAX_MAP_SIZE : settings.size.width
+    const mapHeight = gravityMap ? MAX_MAP_SIZE : settings.size.height
 
-    for (let y = 0; y < settings.size.height; y++) {
+    for (let y = 0; y < mapHeight; y++) {
       const row = this.viewport.tiles[y]
-      for (let x = 0; x < settings.size.width; x++) {
-        let tileIndex = map[y][x]
-        if (typeof tileIndex != 'number' || tileIndex < 0 || tileIndex > 9) continue
+      for (let x = 0; x < mapWidth; x++) {
+        let tileIndex = map[y]?.[x] ?? null
+        if (tileIndex == null || tileIndex < 0 || tileIndex > 9) continue
 
         const tile = row[x]
         context.drawImage(
@@ -502,31 +503,42 @@ class Map extends RoomCollection {
     )
   }
 
-
   validateTile(x, y) {
     if (!this.viewport) return false // not initialized
+
+    const gravityMap = this.localStore.getDocument('editGravityMap', 'world') ?? false
     const settings = this.Settings.get('world')
-    return (x != null && x >= 0 && x < settings.size.width && y != null && y >= 0 && y < settings.size.height)
+    
+    const mapWidth = gravityMap ? MAX_MAP_SIZE : settings.size.width
+    const mapHeight = gravityMap ? MAX_MAP_SIZE : settings.size.height
+        
+    return (x != null && x >= 0 && x < mapWidth && y != null && y >= 0 && y < mapHeight)
   }
 
   getTile(id, x, y) {
     if (!this.validateTile(x, y)) {
       return null
     }
-
     const map = this.remoteStore.getDocument('map', id)
-    if (map === null) return null
-
-    return map[y][x]
+    return map?.[y]?.[x] ?? null
   }
 
   canvasPositionToTile(x, y) {
     const m = this.canvasInverseTransform
-    if (!m) return {}
-    const tile = {
-      x: m.a * x + m.c * y + m.e,
-      y: m.b * x + m.d * y + m.f,
+    
+    if (!this.Map.viewport || !m) {
+      return null // not initialized
     }
+
+    const tile = {
+      x: Math.floor(m.a * x + m.c * y + m.e),
+      y: Math.floor(m.b * x + m.d * y + m.f),
+    }
+
+    // if (!this.validateTile(tile.x, tile.y)) {
+    //   return null
+    // }
+
     return tile
   }
 

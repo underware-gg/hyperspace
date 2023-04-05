@@ -16,10 +16,10 @@ class Editor extends RoomCollection {
       return
     }
 
-    const _handleEditorMove = (position, interacting) => {
+    const _handleEditorMove = (tile, interacting) => {
       this.remoteStore.setDocument('editor', agentId, {
-        position: position ?? {},
-        interacting: interacting && position != null,
+        position: tile ?? {},
+        interacting: interacting && tile != null,
       })
     }
 
@@ -307,31 +307,11 @@ class Editor extends RoomCollection {
     )
   }
 
-  getMouseCanvasPosition(e, canvas) {
+  getMouseTilePosition(e, canvas) {
     const rect = canvas.getBoundingClientRect()
     const x = Math.floor((e.clientX - rect.left) / canvas.scrollWidth * canvas.width)
     const y = Math.floor((e.clientY - rect.top) / canvas.scrollHeight * canvas.height)
     return this.Map.canvasPositionToTile(x, y);
-  }
-
-  getMouseTilePosition(e, canvas) {
-    const viewport = this.Map.viewport
-    if (!viewport) return null // not initialized
-
-    const canvasPos = this.getMouseCanvasPosition(e, canvas)
-
-    for (let y = 0; y < viewport.tiles.length; y++) {
-      const row = viewport.tiles[y]
-      if (canvasPos.y >= row[0].start.y && canvasPos.y < row[0].end.y) {
-        for (let x = 0; x < row.length; x++) {
-          if (canvasPos.x >= row[x].start.x && canvasPos.x < row[x].end.x) {
-            return { x, y }
-          }
-        }
-      }
-    }
-
-    return null
   }
 
   getCreateTileRotation(id) {
