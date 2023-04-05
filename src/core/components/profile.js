@@ -12,6 +12,8 @@ class Profile extends RoomCollection {
       this.updateProfile(this.agentId, {
         view3d
       })
+
+      this.localStore.setDocument('editGravityMap', 'world', false)
     })
   }
 

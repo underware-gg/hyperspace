@@ -139,7 +139,7 @@ export const profile = {
 }
 
 export const settings = {
-  size: { // map size in tiles
+  size: { // map size in tiles (deprecated)
     width: 'number',
     height: 'number',
   },

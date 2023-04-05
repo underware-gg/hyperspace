@@ -15,6 +15,7 @@ import { PermissionsForm } from '@/components/PermissionsForm'
 import { TileInput, useInputValidator } from '@/components/Inputs'
 import { defaultSettings } from '@/core/components/settings'
 import Button from '@/components/Button'
+import { MAX_MAP_SIZE, MIN_MAP_SIZE } from '@/core/components/map'
 
 
 export const useSettingsDisclosure = (id) => {
@@ -38,8 +39,8 @@ export const ModalSettings = ({
 
   const [sizeX, setSizeX] = useState(defaultSettings.size.width);
   const [sizeY, setSizeY] = useState(defaultSettings.size.height);
-  const [tileX, setTileX] = useState(defaultSettings.entry.x);
-  const [tileY, setTileY] = useState(defaultSettings.entry.y);
+  const [entryX, setEntryX] = useState(defaultSettings.entry.x);
+  const [entryY, setEntryY] = useState(defaultSettings.entry.y);
   const validator = useInputValidator()
 
   const settings = useDocument('settings', id)
@@ -48,8 +49,8 @@ export const ModalSettings = ({
     if (settings) {
       setSizeX(settings.size.width)
       setSizeY(settings.size.height)
-      setTileX(settings.entry.x)
-      setTileY(settings.entry.y)
+      setEntryX(settings.entry.x)
+      setEntryY(settings.entry.y)
     }
   }, [settings])
 
@@ -60,8 +61,8 @@ export const ModalSettings = ({
   const _onSave = () => {
     let options = {
       entry: {
-        x: parseInt(tileX),
-        y: parseInt(tileY),
+        x: parseInt(entryX),
+        y: parseInt(entryY),
       }
     }
     if (newRoom) {
@@ -110,7 +111,7 @@ export const ModalSettings = ({
                   />
                 </HStack>
                 <Spacer pt={3} />
-                <TileInput
+                {/* <TileInput
                   name='Map Size'
                   valueX={sizeX}
                   valueY={sizeY}
@@ -119,13 +120,17 @@ export const ModalSettings = ({
                   validator={validator}
                   disabled={!newRoom}
                 />
-                <Spacer pt={3} />
+                <Spacer pt={3} /> */}
                 <TileInput
                   name='Entry'
-                  valueX={tileX}
-                  valueY={tileY}
-                  onChangeX={setTileX}
-                  onChangeY={setTileY}
+                  valueX={entryX}
+                  valueY={entryY}
+                  minX={0}
+                  minY={0}
+                  maxX={MAX_MAP_SIZE-1}
+                  maxY={MAX_MAP_SIZE-1}
+                  onChangeX={setEntryX}
+                  onChangeY={setEntryY}
                   validator={validator}
                 />
               </TabPanel>

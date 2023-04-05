@@ -487,10 +487,11 @@ class Player extends RoomCollection {
       }
     }
 
-    const settings = this.Settings.get('world')
-
-    x = clamp(x, PLAYER_RADIUS, settings.size.width - PLAYER_RADIUS)
-    y = clamp(y, PLAYER_RADIUS, settings.size.height - PLAYER_RADIUS)
+    const mapBounds = this.localStore.getDocument('mapBounds', 'world')
+    if (mapBounds) {
+      x = clamp(x, mapBounds.start.x + PLAYER_RADIUS, mapBounds.end.x + 1 - PLAYER_RADIUS)
+      y = clamp(y, mapBounds.start.y + PLAYER_RADIUS, mapBounds.end.y + 1 - PLAYER_RADIUS)
+    }
 
     // const tile = this.Map.getTile('world', x, y)
 
@@ -503,6 +504,14 @@ class Player extends RoomCollection {
     }
 
     z -= zSpeed * dt
+
+
+    // please don't fall off map!
+    // console.log(z.toFixed(2), zSpeed.toFixed(2))
+    // if(z < 5) {
+    //   zSpeed = 0
+    //   z = 2
+    // }
 
     const overlappingTilesXY = getOverlappingTiles(this.fromPosToRect(x, y), 32)
     for (let i = 0; i < overlappingTilesXY.length; i++) {

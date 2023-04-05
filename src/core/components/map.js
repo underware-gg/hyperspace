@@ -88,38 +88,111 @@ class Map extends RoomCollection {
     })
   }
 
-  init2D = (id) => {
+  calculateMapBounds = (id) => {
     const settings = this.Settings.get(id)
+    const entry = settings.entry
+    const map = this.remoteStore.getDocument('map', id)
+
+    let start = { ...entry }
+    let end = { ...entry }
+
+    // find x start/end
+    for (let x = 0; x < MAX_MAP_SIZE; x++) {
+      let filled = false
+      for (let y = 0; y < MAX_MAP_SIZE && !filled; y++) {
+        if (map[y]?.[x] != null) {
+          filled = true
+        }
+      }
+      if (filled && x < entry.x && start.x == entry.x) {
+        start.x = x
+      }
+      if (filled && x > entry.x) {
+        end.x = x
+      }
+    }
+
+    // find y start/end
+    for (let y = 0; y < MAX_MAP_SIZE; y++) {
+      let filled = false
+      for (let x = 0; x < MAX_MAP_SIZE && !filled; x++) {
+        if (map[y]?.[x] != null) {
+          filled = true
+        }
+      }
+      if (filled && y < entry.y && start.y == entry.y) {
+        start.y = y
+      }
+      if (filled && y > entry.y) {
+        end.y = y
+      }
+    }
+
+    // fill minimum size
+    const _size = () => ({
+      width: (end.x - start.x + 1),
+      height: (end.y - start.y + 1),
+    })
+    while (_size().width < MIN_MAP_SIZE) {
+      if (end.x < MAX_MAP_SIZE - 1) {
+        end.x++
+      } else {
+        start.x--
+      }
+    }
+    while (_size().height < MIN_MAP_SIZE) {
+      if (end.y < MAX_MAP_SIZE - 1) {
+        end.y++
+      } else {
+        start.y--
+      }
+    }
+
+    const bounds = {
+      start,
+      end,
+      size: _size(),
+    }
+    this.localStore.setDocument('mapBounds', id, bounds)
+  }
+
+  init2D = (id) => {
     const gravityMap = this.localStore.getDocument('editGravityMap', id) ?? false
+
+    if (!gravityMap) {
+      this.calculateMapBounds(id)
+    }
+
+    const mapBounds = this.localStore.getDocument('mapBounds', id) ?? {}
 
     // canvas size in pixels
     const canvasWidth = process.env.RENDER_WIDTH
     const canvasHeight = process.env.RENDER_HEIGHT
 
     // map size in tiles
-    const mapWidth = gravityMap ? MAX_MAP_SIZE : Math.max(settings.size.width, DEFAULT_MAP_WIDTH)
-    const mapHeight = gravityMap ? MAX_MAP_SIZE : Math.max(settings.size.height, DEFAULT_MAP_HEIGHT)
+    const mapWidth = gravityMap ? MAX_MAP_SIZE : Math.max(mapBounds.size.width, DEFAULT_MAP_WIDTH)
+    const mapHeight = gravityMap ? MAX_MAP_SIZE : Math.max(mapBounds.size.height, DEFAULT_MAP_HEIGHT)
 
     // tile size inside canvas, in pixels
     const scale = Math.min(canvasWidth / mapWidth, canvasHeight / mapHeight)
 
     // viewport 'camera' offset
     const offset = {
-      x: (canvasWidth / scale) / 2,
-      y: (canvasHeight / scale) / 2,
+      x: -(gravityMap ? 0 : mapBounds.start.x) + (canvasWidth / scale) / 2,
+      y: -(gravityMap ? 0 : mapBounds.start.y) + (canvasHeight / scale) / 2,
     }
 
     // map start, used to draw tiles in map space
     const start = {
-      x: -(gravityMap ? MAX_MAP_SIZE : settings.size.width) / 2,
-      y: -(gravityMap ? MAX_MAP_SIZE : settings.size.height) / 2,
+      x: -(gravityMap ? MAX_MAP_SIZE : mapBounds.size.width) / 2,
+      y: -(gravityMap ? MAX_MAP_SIZE : mapBounds.size.height) / 2,
     }
 
     // tiles grid, for easy reference
     const tiles = []
-    for (let y = 0; y < mapHeight; y++) {
+    for (let y = 0; y < MAX_MAP_SIZE; y++) {
       const row = []
-      for (let x = 0; x < mapWidth; x++) {
+      for (let x = 0; x < MAX_MAP_SIZE; x++) {
         row.push({
           start: {
             x,
@@ -229,11 +302,9 @@ class Map extends RoomCollection {
 
     const gridContainer = new THREE.Object3D()
 
-    const settings = this.Settings.get(id)
-
-    let map3D = new Array(settings.size.width)
-    for (let x = 0; x < settings.size.width; x++) {
-      map3D[x] = new Array(settings.size.height)
+    let map3D = new Array(MAX_MAP_SIZE)
+    for (let x = 0; x < MAX_MAP_SIZE; x++) {
+      map3D[x] = new Array(MAX_MAP_SIZE)
     }
 
     const MakeWall = (object3D) => {
@@ -271,8 +342,8 @@ class Map extends RoomCollection {
       object3D.add(wall3Ds)
     }
 
-    for (let x = 0; x < settings.size.width; x++) {
-      for (let y = 0; y < settings.size.height; y++) {
+    for (let x = 0; x < MAX_MAP_SIZE; x++) {
+      for (let y = 0; y < MAX_MAP_SIZE; y++) {
         let gridCell3D = new THREE.Mesh(geometryFloor, materialUV)
 
         const wallStack1 = new THREE.Object3D()
@@ -304,7 +375,7 @@ class Map extends RoomCollection {
 
         const pos = {
           x: x * cellWidth + cellWidth * 0.5,
-          y: y * cellWidth - settings.size.height * cellWidth - cellWidth * 0.5,
+          y: y * cellWidth - MAX_MAP_SIZE * cellWidth - cellWidth * 0.5,
         }
 
         gridCell3D.position.x = pos.x
@@ -326,20 +397,34 @@ class Map extends RoomCollection {
   resetMap(id) {
     let map = []
 
-    for (let y = 0; y < MAX_MAP_SIZE; y++) {
-      map.push(new Array(MAX_MAP_SIZE).fill(null))
+    const start = {
+      x: Math.floor(MAX_MAP_SIZE * 0.25),
+      y: Math.floor(MAX_MAP_SIZE * 0.25),
+    }
+    const end = {
+      x: Math.floor(MAX_MAP_SIZE * 0.75),
+      y: Math.floor(MAX_MAP_SIZE * 0.75),
+    }
+    const entry = {
+      x: Math.floor(MAX_MAP_SIZE * 0.5),
+      y: Math.floor(MAX_MAP_SIZE * 0.5),
     }
 
-    const settings = this.remoteStore.getDocument('settings', id)
-
-    for (let y = 0; y < clamp(settings.size.height, MIN_MAP_SIZE, MAX_MAP_SIZE); y++) {
-      const row = this.viewport.tiles[y]
-      for (let x = 0; x < clamp(settings.size.width, MIN_MAP_SIZE, MAX_MAP_SIZE); x++) {
-        map[y][x] = DEFAULT_MAP_TILE
+    for (let y = 0; y < MAX_MAP_SIZE; y++) {
+      let row = new Array(MAX_MAP_SIZE).fill(null)
+      for (let x = 0; x < MAX_MAP_SIZE; x++) {
+        row[x] = (x >= start.x && x <= end.x && y >= start.y && y <= end.y) ? DEFAULT_MAP_TILE : null
       }
+      map.push(row)
     }
 
     this.remoteStore.setDocument('map', id, map)
+
+    const settings = this.Settings.get(id)
+    this.remoteStore.setDocument('settings', 'world', {
+      ...settings,
+      entry,
+    })
   }
 
   updateMeshPositionToMap(mesh, position) {
@@ -362,20 +447,28 @@ class Map extends RoomCollection {
 
   updateTile(id, x, y, value) {
     const map = this.remoteStore.getDocument('map', id)
-
-    if (map === null) {
-      return
-    }
+    if (!map) return 
 
     if (!this.validateTile(x, y)) {
-      return
+      return // invalid tile
     }
 
     if (map[y][x] === value) {
-      return
+      return // no change
+    }
+
+    if (value == null) {
+      const settings = this.Settings.get(id)
+      if (x == settings.entry.x && y == settings.entry.y) {
+        return // cannot delete entry
+      }
+    } else if (typeof value != 'number' || value < 0 || value > 9) {
+      return // invalid value
     }
 
     this.remoteStore.setValueAtPath('map', id, `/${y}.${x}`, value)
+
+    this.calculateMapBounds(id)
   }
 
   render2d(id, context, canvas) {
@@ -423,8 +516,10 @@ class Map extends RoomCollection {
           context.drawImage(gridImage, x, y, 1, 1)
         }
       }
-
     }
+
+    const mapBounds = this.localStore.getDocument('mapBounds', 'world')
+    this.drawRect(context, mapBounds.start.x, mapBounds.start.y, mapBounds.size.width, mapBounds.size.height, 0.05, gravityMap ? 'red' : '#fff1')
 
     const crdtTileset = this.remoteStore.getDocument('tileset', id)
 
@@ -440,14 +535,11 @@ class Map extends RoomCollection {
       imageTileSize = image?.height ?? 32
     }
 
-    const settings = this.remoteStore.getDocument('settings', id)
+    const bounds = this.getCurrentBounds()
 
-    const mapWidth = gravityMap ? MAX_MAP_SIZE : settings.size.width
-    const mapHeight = gravityMap ? MAX_MAP_SIZE : settings.size.height
-
-    for (let y = 0; y < mapHeight; y++) {
+    for (let y = bounds.start.y; y <= bounds.end.y; y++) {
       const row = this.viewport.tiles[y]
-      for (let x = 0; x < mapWidth; x++) {
+      for (let x = bounds.start.x; x <= bounds.end.x; x++) {
         let tileIndex = map[y]?.[x] ?? null
         if (tileIndex == null || tileIndex < 0 || tileIndex > 9) continue
 
@@ -466,6 +558,7 @@ class Map extends RoomCollection {
       }
     }
 
+    const settings = this.remoteStore.getDocument('settings', id)
     const { entry } = settings
     this.drawTextureAtTile(context, entry.x, entry.y, 'entry')
   }
@@ -503,16 +596,30 @@ class Map extends RoomCollection {
     )
   }
 
+  getCurrentBounds() {
+    const gravityMap = this.localStore.getDocument('editGravityMap', 'world') ?? false
+    const mapBounds = this.localStore.getDocument('mapBounds', 'world')
+    
+    if (gravityMap || !mapBounds) {
+      return {
+        start: {
+          x: 0,
+          y: 0,
+        },
+        end: {
+          x: MAX_MAP_SIZE - 1,
+          y: MAX_MAP_SIZE - 1,
+        }
+      }
+    }
+
+    return mapBounds
+  }
+
   validateTile(x, y) {
     if (!this.viewport) return false // not initialized
-
-    const gravityMap = this.localStore.getDocument('editGravityMap', 'world') ?? false
-    const settings = this.Settings.get('world')
-    
-    const mapWidth = gravityMap ? MAX_MAP_SIZE : settings.size.width
-    const mapHeight = gravityMap ? MAX_MAP_SIZE : settings.size.height
-        
-    return (x != null && x >= 0 && x < mapWidth && y != null && y >= 0 && y < mapHeight)
+    const bounds = this.getCurrentBounds()
+    return (x != null && x >= bounds.start.x && x <= bounds.end.x && y != null && y >= bounds.start.y && y <= bounds.end.y)
   }
 
   getTile(id, x, y) {
@@ -569,9 +676,9 @@ class Map extends RoomCollection {
 
     const settings = this.Settings.get(id)
 
-    for (let x = 0; x < settings.size.width; x++) {
-      for (let y = 0; y < settings.size.height; y++) {
-        let mapCell = map3D[settings.size.height - 1 - y][x]
+    for (let x = 0; x < MAX_MAP_SIZE; x++) {
+      for (let y = 0; y < MAX_MAP_SIZE; y++) {
+        let mapCell = map3D[MAX_MAP_SIZE - 1 - y][x]
 
         let tileIndex = map[y][x]
         if (typeof tileIndex != 'number' || tileIndex < 0 || tileIndex > 9) {

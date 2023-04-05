@@ -86,7 +86,7 @@ const ModalRoomCreate = ({
               onChange={(e) => _onChange(e.target.value)}
               onKeyDown={(e) => { if (e.code == 'Enter' && _canSubmit) _enterRoom() }}
             />
-            <TileInput
+            {/* <TileInput
               name='Size'
               minX={MIN_MAP_SIZE}
               minY={MIN_MAP_SIZE}
@@ -98,7 +98,7 @@ const ModalRoomCreate = ({
               onChangeY={setSizeY}
               validator={validator}
               disabled={roomExists}
-            />
+            /> */}
           </VStack>
         </ModalBody>
         <ModalFooter>
