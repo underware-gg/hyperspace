@@ -15,6 +15,7 @@ import { useClientRoom } from '@/hooks/useRoom'
 import { useStoreDocument } from '@/hooks/useDocument'
 import { map, validateRoomSlug } from '@/core/utils'
 import { defaultSettings } from '@/core/components/settings'
+import { MIN_MAP_SIZE, MAX_MAP_SIZE } from '@/core/components/map'
 
 const ModalRoomCreate = ({
   disclosure,
@@ -87,10 +88,10 @@ const ModalRoomCreate = ({
             />
             <TileInput
               name='Size'
-              minX={5}
-              minY={5}
-              maxX={20}
-              maxY={20}
+              minX={MIN_MAP_SIZE}
+              minY={MIN_MAP_SIZE}
+              maxX={MAX_MAP_SIZE}
+              maxY={MAX_MAP_SIZE}
               valueX={sizeX}
               valueY={sizeY}
               onChangeX={setSizeX}

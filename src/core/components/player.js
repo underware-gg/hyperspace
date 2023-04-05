@@ -584,12 +584,10 @@ class Player extends RoomCollection {
       sy = pixel.start[1]
     }
 
-    const start = this.Map.viewport.start
-
     const dWidth = (sWidth * scale) / process.env.TILE_SIZE
     const dHeight = (sHeight * scale) / process.env.TILE_SIZE
-    const dx = start.x + (x - (dWidth / 2))
-    const dy = start.y + (y - dHeight + PLAYER_RADIUS)
+    const dx = (x - (dWidth / 2))
+    const dy = (y - dHeight + PLAYER_RADIUS)
 
     context.drawImage(
       texture.image,

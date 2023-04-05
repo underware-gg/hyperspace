@@ -3,30 +3,14 @@ import RoomCollection from '@/core/interfaces/RoomCollection'
 import { getTextureImageByName } from '@/core/textures'
 import { defaultTileset } from '@/core/texture-data'
 import { clamp } from '@/core/utils'
-import { tileset } from '../merge/crdt-type'
 
-const defaultMap = [
-  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-]
+export const MIN_MAP_SIZE = 5
+export const MAX_MAP_SIZE = 20
+
+export const DEFAULT_MAP_WIDTH = 20
+export const DEFAULT_MAP_HEIGHT = 15
+
+export const DEFAULT_MAP_TILE = 4
 
 const cellWidth = 1
 
@@ -66,22 +50,22 @@ class Map extends RoomCollection {
       if (this.patched) return
 
       console.log(`[${this.slug}] PATCHED MAP:`, patched, `exists:`, this.exists('world'))
-      
+
       if (!this.exists('world')) {
         this.resetMap('world')
       }
-      
+
       // update old maps with smaller map size
       let map = this.remoteStore.getDocument('map', 'world')
-      if (Object.keys(map).length < Object.keys(defaultMap).length) {
-        while (Object.keys(map).length < Object.keys(defaultMap).length) {
-          map[Object.keys(map).length] = defaultMap[Object.keys(map).length]
+      if (Object.keys(map).length < MAX_MAP_SIZE) {
+        while (Object.keys(map).length < MAX_MAP_SIZE) {
+          map[Object.keys(map).length] = new Array(MAX_MAP_SIZE).fill(null)
         }
         this.remoteStore.setDocument('map', 'world', map)
       }
-      
-      this.init2D()
-      this.init3D()
+
+      this.init2D('world')
+      this.init3D('world')
 
       this.patched = true
     })
@@ -92,46 +76,58 @@ class Map extends RoomCollection {
         this.swapTileset(id, tileset)
       }
     })
+
+    this.actions.addActionDownListener('toggleGravityMap', () => {
+      const gravityMap = this.localStore.getDocument('editGravityMap', 'world') ? false : true
+      this.localStore.setDocument('editGravityMap', 'world', gravityMap)
+    })
+
+    // texture swapping
+    this.localStore.on({ type: 'editGravityMap', event: 'change' }, (id, enabled) => {
+      this.init2D(id)
+    })
   }
 
-  init2D = () => {
-    const settings = this.Settings.get('world')
+  init2D = (id) => {
+    const settings = this.Settings.get(id)
+    const gravityMap = this.localStore.getDocument('editGravityMap', id) ?? false
 
     // canvas size in pixels
     const canvasWidth = process.env.RENDER_WIDTH
     const canvasHeight = process.env.RENDER_HEIGHT
 
     // map size in tiles
-    const mapWidth = Math.max(settings.size.width, process.env.CANVAS_TILE_WIDTH)
-    const mapHeight = Math.max(settings.size.height, process.env.CANVAS_TILE_HEIGHT)
-    
+    const mapWidth = gravityMap ? MAX_MAP_SIZE : Math.max(settings.size.width, DEFAULT_MAP_WIDTH)
+    const mapHeight = gravityMap ? MAX_MAP_SIZE : Math.max(settings.size.height, DEFAULT_MAP_HEIGHT)
+
     // tile size inside canvas, in pixels
     const scale = Math.min(canvasWidth / mapWidth, canvasHeight / mapHeight)
 
+    // viewport 'camera' offset
     const offset = {
       x: (canvasWidth / scale) / 2,
       y: (canvasHeight / scale) / 2,
     }
 
+    // map start, used to draw tiles in map space
     const start = {
-      x: -settings.size.width / 2,
-      y: -settings.size.height / 2,
+      x: -(gravityMap ? MAX_MAP_SIZE : settings.size.width) / 2,
+      y: -(gravityMap ? MAX_MAP_SIZE : settings.size.height) / 2,
     }
 
+    // tiles grid, for easy reference
     const tiles = []
     for (let y = 0; y < mapHeight; y++) {
       const row = []
-      const _y = -mapHeight / 2
       for (let x = 0; x < mapWidth; x++) {
-        const _x = -mapWidth / 2
         row.push({
           start: {
-            x: start.x + x,
-            y: start.y + y,
+            x,
+            y,
           },
           end: {
-            x: start.x + x + 1,
-            y: start.y + y + 1,
+            x: x + 1,
+            y: y + 1,
           }
         })
       }
@@ -146,7 +142,7 @@ class Map extends RoomCollection {
     }
   }
 
-  init3D = () => {
+  init3D = (id) => {
     const scene = this.localStore.getDocument('scene', 'scene')
 
     if (scene == null) {
@@ -233,7 +229,7 @@ class Map extends RoomCollection {
 
     const gridContainer = new THREE.Object3D()
 
-    const settings = this.Settings.get('world')
+    const settings = this.Settings.get(id)
 
     let map3D = new Array(settings.size.width)
     for (let x = 0; x < settings.size.width; x++) {
@@ -320,15 +316,30 @@ class Map extends RoomCollection {
 
     scene.add(gridContainer)
 
-    this.localStore.setDocument('map3d', 'world', map3D)
-    this.localStore.setDocument('floor-geometries', 'world', floorGeometries)
-    this.localStore.setDocument('wall-geometries', 'world', wallGeometries)
-    this.localStore.setDocument('material-uv', 'world', materialUV)
+    this.localStore.setDocument('map3d', id, map3D)
+    this.localStore.setDocument('floor-geometries', id, floorGeometries)
+    this.localStore.setDocument('wall-geometries', id, wallGeometries)
+    this.localStore.setDocument('material-uv', id, materialUV)
     this.localStore.setDocument('gridContainer', 'gridContainer', gridContainer)
   }
 
   resetMap(id) {
-    this.upsert(id, defaultMap)
+    let map = []
+
+    for (let y = 0; y < MAX_MAP_SIZE; y++) {
+      map.push(new Array(MAX_MAP_SIZE).fill(null))
+    }
+
+    const settings = this.remoteStore.getDocument('settings', id)
+
+    for (let y = 0; y < clamp(settings.size.height, MIN_MAP_SIZE, MAX_MAP_SIZE); y++) {
+      const row = this.viewport.tiles[y]
+      for (let x = 0; x < clamp(settings.size.width, MIN_MAP_SIZE, MAX_MAP_SIZE); x++) {
+        map[y][x] = DEFAULT_MAP_TILE
+      }
+    }
+
+    this.remoteStore.setDocument('map', id, map)
   }
 
   updateMeshPositionToMap(mesh, position) {
@@ -378,7 +389,7 @@ class Map extends RoomCollection {
     }
 
     // reset canvas matrix
-    context.setTransform(1, 0, 0, 1, 0, 0);
+    context.resetTransform()
 
     // clear canvas
     context.clearRect(0, 0, canvas.width, canvas.height)
@@ -387,8 +398,33 @@ class Map extends RoomCollection {
     context.fill()
 
     // set draw matrix for all 2D elements
+    // position viewport/camera at the center of the map
     context.scale(this.viewport.scale, this.viewport.scale)
     context.translate(this.viewport.offset.x, this.viewport.offset.y)
+
+    // translate to map start so all subsequent draws are in map space
+    context.translate(this.viewport.start.x, this.viewport.start.y)
+
+    // store current save matrix
+    this.canvasTransform = context.getTransform()
+    this.canvasInverseTransform = this.canvasTransform.inverse()
+
+    const gravityMap = this.localStore.getDocument('editGravityMap', id) ?? false
+    if (gravityMap) {
+      const gravityImage = getTextureImageByName('gravity')
+      // context.save()
+      // context.translate(this.viewport.start.x, this.viewport.start.y)
+      context.drawImage(gravityImage, 0, 0, MAX_MAP_SIZE, MAX_MAP_SIZE)
+      // context.restore()
+
+      const gridImage = getTextureImageByName('gridtile')
+      for (let x = 0; x < MAX_MAP_SIZE; x++) {
+        for (let y = 0; y < MAX_MAP_SIZE; y++) {
+          context.drawImage(gridImage, x, y, 1, 1)
+        }
+      }
+
+    }
 
     const crdtTileset = this.remoteStore.getDocument('tileset', id)
 
@@ -404,7 +440,7 @@ class Map extends RoomCollection {
       imageTileSize = image?.height ?? 32
     }
 
-    const settings = this.remoteStore.getDocument('settings', 'world')
+    const settings = this.remoteStore.getDocument('settings', id)
 
     // console.log(`render`, crdtTileset, image, sz, settings)
 
@@ -450,7 +486,7 @@ class Map extends RoomCollection {
       tile.start.x,
       tile.start.y,
       1,
-      1 ,
+      1,
     )
   }
 
@@ -459,8 +495,8 @@ class Map extends RoomCollection {
     context.lineWidth = lineWidth
     context.strokeStyle = color
     context.strokeRect(
-      this.viewport.start.x + x,
-      this.viewport.start.y + y,
+      x,
+      y,
       width,
       height,
     )
@@ -485,10 +521,13 @@ class Map extends RoomCollection {
   }
 
   canvasPositionToTile(x, y) {
-    return {
-      x: (x / this.viewport.scale) - this.viewport.offset.x,
-      y: (y / this.viewport.scale) - this.viewport.offset.y,
+    const m = this.canvasInverseTransform
+    if (!m) return {}
+    const tile = {
+      x: m.a * x + m.c * y + m.e,
+      y: m.b * x + m.d * y + m.f,
     }
+    return tile
   }
 
   render3d(id) {
@@ -498,25 +537,25 @@ class Map extends RoomCollection {
       return
     }
 
-    const map3D = this.localStore.getDocument('map3d', 'world')
+    const map3D = this.localStore.getDocument('map3d', id)
 
     if (map3D === null) {
       return
     }
 
-    const floorGeometries = this.localStore.getDocument('floor-geometries', 'world')
+    const floorGeometries = this.localStore.getDocument('floor-geometries', id)
 
     if (floorGeometries === null) {
       return
     }
 
-    const wallGeometries = this.localStore.getDocument('wall-geometries', 'world')
+    const wallGeometries = this.localStore.getDocument('wall-geometries', id)
 
     if (wallGeometries === null) {
       return
     }
 
-    const settings = this.Settings.get('world')
+    const settings = this.Settings.get(id)
 
     for (let x = 0; x < settings.size.width; x++) {
       for (let y = 0; y < settings.size.height; y++) {

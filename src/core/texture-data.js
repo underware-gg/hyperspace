@@ -113,4 +113,10 @@ export const textureData = {
   'trigger_1': {
     src: '/tiles/trigger_1.png',
   },
+  'gravity': {
+    src: '/gravity.jpg',
+  },
+  'gridtile': {
+    src: '/tiles/gridtile.png',
+  },
 }

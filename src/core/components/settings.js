@@ -1,9 +1,10 @@
 import RoomCollection from '@/core/interfaces/RoomCollection'
+import { DEFAULT_MAP_WIDTH, DEFAULT_MAP_HEIGHT } from './map'
 
 export const defaultSettings = {
   size: {
-    width: 20,
-    height: 15,
+    width: DEFAULT_MAP_WIDTH,
+    height: DEFAULT_MAP_HEIGHT,
   },
   entry: {
     x: 9,

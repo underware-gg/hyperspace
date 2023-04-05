@@ -76,6 +76,9 @@ const RoomPage = () => {
               <Button size='sm' onClick={() => setShowHelp(!showHelp)}>
                 Help
               </Button>
+              <Button size='sm' onClick={() => snapshotDisclosure.onOpen()}>
+                Snapshots
+              </Button>
               <Spacer />
               <InteractMenu />
             </HStack>
@@ -83,11 +86,11 @@ const RoomPage = () => {
             <HStack>
               <TilesetSelector />
               <Spacer />
+              <Button size='sm' onClick={() => actions?.emitAction('toggleGravityMap')}>
+                Edit Map
+              </Button>
               <Button disabled={!canEdit} size='sm' onClick={() => settingsDisclosure.openSettings()}>
                 Room Settings
-              </Button>
-              <Button size='sm' onClick={() => snapshotDisclosure.onOpen()}>
-                Snapshots
               </Button>
             </HStack>
           </VStack>
