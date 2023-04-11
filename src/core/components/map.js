@@ -77,12 +77,15 @@ class Map extends RoomCollection {
       }
     })
 
+    this.remoteStore.on({ type: 'map', event: 'change' }, (id, map) => {
+      this.init2D(id)
+    })
+
     this.actions.addActionDownListener('toggleGravityMap', () => {
       const gravityMap = this.localStore.getDocument('editGravityMap', 'world') ? false : true
       this.localStore.setDocument('editGravityMap', 'world', gravityMap)
     })
 
-    // texture swapping
     this.localStore.on({ type: 'editGravityMap', event: 'change' }, (id, enabled) => {
       if (enabled) {
         this.Profile.updateProfile(this.agentId, { view3d: false })
@@ -162,9 +165,7 @@ class Map extends RoomCollection {
   init2D = (id) => {
     const gravityMap = this.localStore.getDocument('editGravityMap', id) ?? false
 
-    if (!gravityMap) {
-      this.calculateMapBounds(id)
-    }
+    this.calculateMapBounds(id)
 
     const mapBounds = this.localStore.getDocument('mapBounds', id) ?? {}
 
@@ -480,8 +481,6 @@ class Map extends RoomCollection {
     }
 
     this.remoteStore.setValueAtPath('map', id, `/${y}.${x}`, value)
-
-    this.calculateMapBounds(id)
   }
 
   render2d(id, context, canvas) {
