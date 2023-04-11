@@ -84,6 +84,9 @@ class Map extends RoomCollection {
 
     // texture swapping
     this.localStore.on({ type: 'editGravityMap', event: 'change' }, (id, enabled) => {
+      if (enabled) {
+        this.Profile.updateProfile(this.agentId, { view3d: false })
+      }
       this.init2D(id)
     })
   }
@@ -225,6 +228,16 @@ class Map extends RoomCollection {
     ////////////
     //3D STUFF//
     ////////////
+
+    // hide everything under map
+    const groundMaterial = new THREE.MeshBasicMaterial({
+      color: 0x000,
+    })
+    const groundGeometry = new THREE.PlaneGeometry(MAX_MAP_SIZE, MAX_MAP_SIZE, 1, 1)
+    const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial)
+    groundMesh.position.set(MAX_MAP_SIZE / 2, -MAX_MAP_SIZE / 2, -1)
+    scene.add(groundMesh)
+
     const geometryFloor = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
     const geometryWall = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
 
