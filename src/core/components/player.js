@@ -16,15 +16,19 @@ const PLAYER_BOX = 0.5
 const PLAYER_RADIUS = 0.25
 const PLAYER_MESH = 1.4
 const CAM_Z_OFFSET = 1.15
-const GRAVITY = 25
-const MAX_Z_SPEED = 100
-const JUMP_SPEED = 7.5
-let zSpeed = 0
-let grounded = false
+const STEP_SIZE = 0.75
+
+// physics
+const GRAVITY = 0.6
+const MAX_Z_SPEED = 2
+const JUMP_VELOCITY = 0.1
 
 class Player extends RoomCollection {
   constructor(room) {
     super(room, 'player')
+
+    this.localStore.setDocument('joined', this.agentId, false)
+    this.localStore.setDocument('velocity', this.agentId, 0)
 
     this.actions.addActionDownListener('interact', () => {
       this.interact(this.agentId)
@@ -40,10 +44,6 @@ class Player extends RoomCollection {
       this.Screen.remove(this.getScreenOverPlayer(this.agentId), true)
     })
 
-    const scene = this.localStore.getDocument('scene', 'scene')
-
-    this.localStore.setDocument('joined', this.agentId, false)
-
     this.clientRoom.on('agent-join', (agentId) => {
       this.localStore.setDocument('joined', agentId, true)
 
@@ -56,6 +56,7 @@ class Player extends RoomCollection {
       let playerMesh = null
 
       // has 3d render
+      const scene = this.localStore.getDocument('scene', 'scene')
       if (scene) {
         const material = this.makePlayerMaterial(agentId)
         const geometry = new THREE.PlaneGeometry(PLAYER_MESH, PLAYER_MESH)
@@ -72,6 +73,7 @@ class Player extends RoomCollection {
     this.clientRoom.on('agent-leave', (agentId) => {
       const playerMesh = this.localStore.getDocument('player-mesh', agentId)
 
+      const scene = this.localStore.getDocument('scene', 'scene')
       if (scene !== null && playerMesh !== null) {
         scene.remove(playerMesh)
       }
@@ -385,6 +387,8 @@ class Player extends RoomCollection {
     const profile = this.agentStore.getDocument('profile', id) ?? {}
     const view3d = profile.view3d ?? false
 
+    // Compute new XY position
+
     if (view3d) {
       const angle = new THREE.Euler(CONST.HALF_PI, rotation.y, rotation.z)
 
@@ -467,25 +471,7 @@ class Player extends RoomCollection {
       }
     }
 
-    const overlappingTilesX = getOverlappingTiles(this.fromPosToRect(x, player.position.y), 1)
-    for (let i = 0; i < overlappingTilesX.length; i++) {
-      const tile = this.Map.getTile('world', overlappingTilesX[i].x, overlappingTilesX[i].y)
-      const currentFloorHeight = floors[tile]
-      if (tile == null || z < currentFloorHeight - 0.75) {
-        x = player.position.x
-        break
-      }
-    }
-
-    const overlappingTilesY = getOverlappingTiles(this.fromPosToRect(player.position.x, y), 1)
-    for (let i = 0; i < overlappingTilesY.length; i++) {
-      const tile = this.Map.getTile('world', overlappingTilesY[i].x, overlappingTilesY[i].y)
-      const currentFloorHeight = floors[tile]
-      if (tile == null || z < currentFloorHeight - 0.75) {
-        y = player.position.y
-        break
-      }
-    }
+    // Clamp position within walls and world boundaries
 
     const mapBounds = this.localStore.getDocument('mapBounds', 'world')
     if (mapBounds) {
@@ -493,41 +479,65 @@ class Player extends RoomCollection {
       y = clamp(y, mapBounds.start.y + PLAYER_RADIUS, mapBounds.end.y + 1 - PLAYER_RADIUS)
     }
 
-    // const tile = this.Map.getTile('world', x, y)
-
-    zSpeed += GRAVITY * dt
-    zSpeed = Math.min(zSpeed, MAX_Z_SPEED)
-
-    if (this.actions.getActionState('jump') && grounded) {
-      zSpeed = -JUMP_SPEED
-      grounded = false
+    const overlappingTilesX = getOverlappingTiles(this.fromPosToRect(x, player.position.y), 1)
+    for (const tile of overlappingTilesX) {
+      const tileIndex = this.Map.getTile('world', tile.x, tile.y)
+      const floorHeight = floors[tileIndex]
+      if (tileIndex == null || (floorHeight - z) > STEP_SIZE) {
+        x = player.position.x
+        break
+      }
     }
 
-    z -= zSpeed * dt
+    const overlappingTilesY = getOverlappingTiles(this.fromPosToRect(player.position.x, y), 1)
+    for (const tile of overlappingTilesY) {
+      const tileIndex = this.Map.getTile('world', tile.x, tile.y)
+      const floorHeight = floors[tileIndex]
+      if (tileIndex == null || (floorHeight - z) > STEP_SIZE) {
+        y = player.position.y
+        break
+      }
+    }
 
+    // calculate velocity and vertical position
 
-    // please don't fall off map!
-    // console.log(z.toFixed(2), zSpeed.toFixed(2))
-    // if(z < 5) {
-    //   zSpeed = 0
-    //   z = 2
-    // }
+    let velocity = this.localStore.getDocument('velocity', this.agentId)
 
-    const overlappingTilesXY = getOverlappingTiles(this.fromPosToRect(x, y), 32)
-    for (let i = 0; i < overlappingTilesXY.length; i++) {
-      const tile = this.Map.getTile('world', overlappingTilesXY[i].x, overlappingTilesXY[i].y)
-      if (tile !== null) {
-        const currentFloorHeight = floors[tile]
-        if (z < currentFloorHeight) {
-          z = currentFloorHeight
-          zSpeed = 0
-          grounded = true
+    if (this.actions.getActionState('jump') && velocity == 0) {
+      velocity = JUMP_VELOCITY
+    } else {
+      velocity -= GRAVITY * dt;
+      velocity = Math.min(velocity, MAX_Z_SPEED)
+    }
+
+    z += velocity
+
+    // ground player
+
+    const overlappingTilesXY = getOverlappingTiles(this.fromPosToRect(x, y), 1)
+
+    let tilesUnderPlayer = 0
+    for (const tile of overlappingTilesXY) {
+      const tileIndex = this.Map.getTile('world', tile.x, tile.y)
+      if (tileIndex !== null) {
+        tilesUnderPlayer++
+        const floorHeight = floors[tileIndex]
+        if (z < floorHeight) {
+          z = floorHeight
+          velocity = 0
         }
       }
     }
 
+    if (tilesUnderPlayer == 0) {
+      console.log(`No ground! Move to entry...`)
+      const settings = this.Settings.get('world')
+      this.moveToTile(this.agentId, settings.entry)
+      return
+    }
+
     if (player.position.x !== x || player.position.y !== y || player.position.z !== z || deepCompare(rotation, rotationCopy) === false) {
-      // console.log(`moved:`, x.toFixed(2), y.toFixed(2), toDegrees(rotationCopy.y))
+      // console.log(`moved xyz/r:`, x.toFixed(2), y.toFixed(2), z.toFixed(2), toDegrees(rotationCopy.y))
       rotationCopy.y = clampRadians(rotationCopy.y)
       this.remoteStore.setDocument('player', id, {
         position: {
@@ -538,6 +548,8 @@ class Player extends RoomCollection {
         rotation: rotationCopy,
       })
     }
+
+    this.localStore.setDocument('velocity', this.agentId, velocity)
 
     const camera = this.localStore.getDocument('camera', 'camera')
     const cameraOrbit = this.localStore.getDocument('cameraOrbit', 'cameraOrbit')
