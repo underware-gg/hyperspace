@@ -11,6 +11,11 @@ const useLocalDocument = (type, id) => {
   return useStoreDocument(type, id, localStore)
 }
 
+const useSessionDocument = (type, id) => {
+  const { sessionStore } = useRoomContext()
+  return useStoreDocument(type, id, sessionStore)
+}
+
 const useAgentDocument = (type, id) => {
   const { agentStore } = useRoomContext()
   return useStoreDocument(type, id, agentStore)
@@ -51,6 +56,7 @@ const useStoreDocument = (type, id, store) => {
 export {
   useDocument,
   useLocalDocument,
+  useSessionDocument,
   useAgentDocument,
   useStoreDocument,
 } 

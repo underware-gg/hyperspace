@@ -20,10 +20,12 @@ class ClientRoom extends EventEmitter {
     ]
   }
 
-  init() {
-    const snapshot = getSnapshot(this.slug)
-    if (snapshot.length !== 0) {
-      this.kernal.applyOps(snapshot, 'database')
+  init(loadLocalSnapshot) {
+    if (loadLocalSnapshot) {
+      const snapshot = getSnapshot(this.slug)
+      if (snapshot.length !== 0) {
+        this.kernal.applyOps(snapshot, 'database')
+      }
     }
 
     this.client = new Client(
