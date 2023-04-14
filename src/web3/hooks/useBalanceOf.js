@@ -1,17 +1,19 @@
 import { useContractRead } from 'wagmi'
 
 const useBalanceOf = (account, options = {}) => {
-  const { data, isError, isLoading } = useContractRead({
+  const { data, isLoading, isSuccess, isError } = useContractRead({
     address: options.contractAddress,
     abi: options.abi,
     functionName: 'balanceOf',
     args: [account],
+    watch: true,
   })
 
   return {
     balanceOf: data?.toNumber() ?? null,
-    isError,
     isLoading,
+    isSuccess,
+    isError,
   }
 }
 

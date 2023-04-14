@@ -1,16 +1,18 @@
 import { useContractRead } from 'wagmi'
 
 const useTotalSupply = (options = {}) => {
-  const { data, isError, isLoading } = useContractRead({
+  const { data, isLoading, isSuccess, isError } = useContractRead({
     address: options.contractAddress,
     abi: options.abi,
     functionName: 'totalSupply',
+    watch: true,
   })
 
   return {
     totalSupply: data?.toNumber() ?? null,
-    isError,
     isLoading,
+    isSuccess,
+    isError,
   }
 }
 
