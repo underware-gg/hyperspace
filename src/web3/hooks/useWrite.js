@@ -1,6 +1,6 @@
 import {
-  useContractWrite,
   usePrepareContractWrite,
+  useContractWrite,
   useWaitForTransaction,
 } from 'wagmi'
 
@@ -11,7 +11,7 @@ const useWrite = (functionName, args = [], options) => {
     functionName,
     args,
   })
-  const { data, isLoading, isSuccess, isError, error, write } = useContractWrite(config)
+  const { write, data, isLoading, isSuccess, isError, error } = useContractWrite(config)
   const hash = isSuccess ? data?.hash : null
   const {
     isLoading: isLoadingTrans,

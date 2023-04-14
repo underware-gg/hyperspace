@@ -1,6 +1,7 @@
 import { nanoid } from 'nanoid'
 import * as THREE from 'three'
 import RoomCollection from '@/core/interfaces/RoomCollection'
+import { boxGeometryToLineSegmentsGeometry } from '@/core/rendering/mesh-utils'
 import { getFilenameFromUrl } from '@/core/utils'
 
 const normalMatrix = new THREE.Matrix3() // create once and reuse
@@ -108,15 +109,26 @@ class Editor extends RoomCollection {
 
     const scene = this.localStore.getDocument('scene', 'scene')
 
-    const selectionGeometry = new THREE.BoxGeometry(1.2, 1.2, 2.3)
+    const pointerMesh = new THREE.Object3D()
+    {
+      const pointerGeometry = new THREE.BoxGeometry(1.2, 1.2, 2.3)
+      const pointerShadeMat = new THREE.MeshBasicMaterial({
+        color: 'blue',
+        transparent: true,
+        opacity: 0.23,
+        depthWrite: false,
+      })
+      const pointerShade = new THREE.Mesh(pointerGeometry, pointerShadeMat)
+      pointerMesh.add(pointerShade)
 
-    const selectionMat = new THREE.MeshBasicMaterial({
-      color: 'blue',
-      transparent: true,
-      opacity: 0.23,
-      depthWrite: false,
-    })
-    const pointerMesh = new THREE.Mesh(selectionGeometry, selectionMat)
+      const pointerWireMat = new THREE.LineBasicMaterial({
+        color: 'white',
+        linewidth: 3, // does not work on most browsers
+      })
+      const pointerWireGeometry = boxGeometryToLineSegmentsGeometry(pointerGeometry)
+      const pointerWire = new THREE.LineSegments(pointerWireGeometry, pointerWireMat)
+      pointerMesh.add(pointerWire)
+    }
 
     scene.add(pointerMesh)
 
