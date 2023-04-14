@@ -150,23 +150,6 @@ export const getTextureSprite = (texture, step = 0, cycleName = 'idle') => {
   }
 }
 
-export const createRenderTexture = (width, height) => {
-  const canvas = document.createElement('canvas')
-  const context = canvas.getContext('2d')
-  canvas.width = width
-  canvas.height = height
-
-  const texture = new THREE.CanvasTexture(canvas)
-
-  return {
-    canvas,
-    context,
-    texture,
-    width,
-    height,
-  }
-}
-
 // Currently only accepts png.
 export const fromSourceToDataURL = (src) => (
   new Promise((resolve, reject) => {

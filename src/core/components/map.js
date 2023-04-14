@@ -501,10 +501,10 @@ class Map extends RoomCollection {
     context.resetTransform()
 
     // clear canvas
-    context.clearRect(0, 0, canvas.width, canvas.height)
-    context.rect(0, 0, canvas.width, canvas.height)
-    context.fillStyle = 'black'
-    context.fill()
+    // context.clearRect(0, 0, canvas.width, canvas.height)
+    // context.rect(0, 0, canvas.width, canvas.height)
+    // context.fillStyle = 'black'
+    // context.fill()
 
     // set draw matrix for all 2D elements
     // position viewport/camera at the center of the map
@@ -521,10 +521,7 @@ class Map extends RoomCollection {
     const gravityMap = this.localStore.getDocument('editGravityMap', id) ?? false
     if (gravityMap) {
       const gravityImage = getTextureImageByName('gravity')
-      // context.save()
-      // context.translate(this.viewport.start.x, this.viewport.start.y)
       context.drawImage(gravityImage, 0, 0, MAX_MAP_SIZE, MAX_MAP_SIZE)
-      // context.restore()
 
       const gridImage = getTextureImageByName('gridtile')
       for (let x = 0; x < MAX_MAP_SIZE; x++) {

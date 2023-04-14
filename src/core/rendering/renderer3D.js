@@ -7,9 +7,7 @@ class Renderer3D extends RoomMate {
   }
 
   init(canvas) {
-    if(!canvas) {
-      return
-    }
+    if(!canvas) return
     
     this.camera = new THREE.PerspectiveCamera(
       70,

@@ -237,9 +237,12 @@ class Room {
       return
     }
 
-    this.renderer2D.render(this.canvas2d)
+    const context = this.canvas2d.getContext('2d', { alpha: false })
+    context.beginPath() // make sure context drawing is closed
 
-    const context = this.canvas2d.getContext('2d')
+    // initialize context
+    this.renderer2D.render(context, this.canvas2d)
+
     this.Map.render2d('world', context, this.canvas2d)
 
     const playerIds = this.remoteStore.getIds('player')
@@ -264,6 +267,8 @@ class Room {
         this.Editor.render2d(playerId, context)
       }
     }
+
+    context.closePath() // make sure context drawing is closed
   }
 
   render3d() {

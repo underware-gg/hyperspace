@@ -24,9 +24,7 @@ const Map2D = ({
       room.render()
     } else {
       const _context = canvasRef.current?.getContext('2d') ?? null
-      if(_context) {
-        _context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
-      }
+      _context?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
     }
   }, [room])
 
