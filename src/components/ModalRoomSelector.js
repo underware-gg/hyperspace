@@ -50,7 +50,7 @@ const ModalRoom = ({
             variant='outline'
             fullWidth
             value={'Dual Rooms Demo'}
-            onClick={() => router.push(`/dual`)}
+            onClick={() => router.push(`/pages/dual`)}
           />
           <Spacer />
           <Button
