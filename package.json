@@ -18,6 +18,8 @@
     "@verida/account-web-vault": "2.0.4",
     "@verida/client-ts": "2.0.4",
     "bn.js": "^5.2.1",
+    "connectkit": "^1.2.2",
+    "ethers": "^5",
     "events": "^3.3.0",
     "file-loader": "^6.2.0",
     "framer-motion": "^8.5.5",
@@ -33,9 +35,10 @@
     "react-textarea-autosize": "^8.4.0",
     "sass": "^1.58.1",
     "swr": "^2.0.4",
-    "three": "^0.145.0"
+    "three": "^0.145.0",
+    "wagmi": "^0.12.10"
   },
-    "engines": {
-        "node": ">=16.14.0"
-    }
+  "engines": {
+    "node": ">=16.14.0"
+  }
 }
