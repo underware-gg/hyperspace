@@ -5,7 +5,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'
 import { useRoomContext } from '@/hooks/RoomContext'
-import { useDocument } from '@/hooks/useDocument'
+import { useSessionDocument } from '@/hooks/useDocument'
 import usePlayer from '@/hooks/usePlayer'
 import usePermission from '@/hooks/usePermission'
 import useActionDownListener from '@/hooks/useActionDownListener'
@@ -27,7 +27,7 @@ const InteractMenu = ({
     tileX, tileY,
   } = usePlayer(agentId)
 
-  const editor = useDocument('editor', agentId)
+  const editor = useSessionDocument('editor', agentId)
   const { canEdit: canEditRoom, canView: canViewRoom } = usePermission('world')
   const { canEdit: canEditPortal, canView: canViewPortal } = usePermission(portalId)
   const { canEdit: canEditTrigger, canView: canViewTrigger } = usePermission(triggerId)

@@ -655,9 +655,9 @@ class Map extends RoomCollection {
       y: Math.floor(m.b * x + m.d * y + m.f),
     }
 
-    // if (!this.validateTile(tile.x, tile.y)) {
-    //   return null
-    // }
+    if (!this.validateTile(tile.x, tile.y)) {
+      return null
+    }
 
     return tile
   }

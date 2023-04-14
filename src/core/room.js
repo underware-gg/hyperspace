@@ -252,7 +252,7 @@ class Room {
 
     this.Map.render2d('world', context, this.canvas2d)
 
-    const playerIds = this.remoteStore.getIds('player')
+    const playerIds = this.sessionStore.getIds('player')
     const portalIds = this.remoteStore.getIds('portal')
     const triggerIds = this.remoteStore.getIds('trigger')
     const screenIds = this.remoteStore.getIds('screen')

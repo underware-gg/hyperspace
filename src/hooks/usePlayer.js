@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useRoomContext } from '@/hooks/RoomContext'
-import { useDocument, useLocalDocument } from '@/hooks/useDocument'
+import { useDocument, useSessionDocument } from '@/hooks/useDocument'
 import { useRemoteDocumentIds } from '@/hooks/useDocumentIds'
 import useProfile from '@/hooks/useProfile'
 
 const usePlayer = (id) => {
   const { Player } = useRoomContext()
-  const player = useDocument('player', id)
+  const player = useSessionDocument('player', id)
   const [portalId, setPortalId] = useState(null)
   const [triggerId, setTriggerId] = useState(null)
   const [screenId, setScreenId] = useState(null)

@@ -113,7 +113,7 @@ class Screen extends RoomCollection {
       _updatePermission(screenId)
     })
 
-    this.remoteStore.on({ type: 'player', event: 'update' }, (agentId, player) => {
+    this.sessionStore.on({ type: 'player', event: 'update' }, (agentId, player) => {
       if (agentId == this.agentId) {
        this.doScreenPicking();
       }
