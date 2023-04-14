@@ -102,7 +102,7 @@ class Editor extends RoomCollection {
   }
 
   init3d(canvas, agentId) {
-    if(!canvas) {
+    if (!canvas) {
       return
     }
 
@@ -111,16 +111,16 @@ class Editor extends RoomCollection {
     const selectionGeometry = new THREE.BoxGeometry(1.2, 1.2, 2.3)
 
     const selectionMat = new THREE.MeshBasicMaterial({
-      color: 0x0000FF,
+      color: 'blue',
       transparent: true,
       opacity: 0.23,
       depthWrite: false,
     })
-    const selectionMesh = new THREE.Mesh(selectionGeometry, selectionMat)
+    const pointerMesh = new THREE.Mesh(selectionGeometry, selectionMat)
 
-    scene.add(selectionMesh)
+    scene.add(pointerMesh)
 
-    this.localStore.setDocument('raycastPointer', 'raycastPointer', selectionMesh)
+    this.localStore.setDocument('pointerMesh', 'pointerMesh', pointerMesh)
 
     const updatePointerVector = (e) => {
       const pointer = new THREE.Vector2()
@@ -136,16 +136,17 @@ class Editor extends RoomCollection {
       this.doPicking()
 
       const pickingLocation = this.localStore.getDocument('pickingLocation', 'pickingLocation')
+      if (!pickingLocation) return
 
-      if (pickingLocation !== null) {
-        this.remoteStore.setDocument('editor', agentId, {
-          position: {
-            x: Math.floor(pickingLocation.x),
-            y: Math.floor(-pickingLocation.y - 1),
-          },
-          interacting: this.canEdit('world'),
-        })
+      const tile = {
+        x: Math.floor(pickingLocation.x),
+        y: Math.floor(-pickingLocation.y - 1),
       }
+
+      this.remoteStore.setDocument('editor', agentId, {
+        position: tile,
+        interacting: this.canEdit('world') && this.Map.validateTile(tile.x, tile.y),
+      })
     }
 
     const handleMouseMove = (e) => {
@@ -166,7 +167,7 @@ class Editor extends RoomCollection {
   }
 
   doPicking() {
-    const pointerMesh = this.localStore.getDocument('raycastPointer', 'raycastPointer')
+    const pointerMesh = this.localStore.getDocument('pointerMesh', 'pointerMesh')
     const rayTargets = this.localStore.getDocument('gridContainer', 'gridContainer')
     const pointer = this.localStore.getDocument('pointer', 'pointer')
     const camera = this.localStore.getDocument('camera', 'camera')
@@ -213,8 +214,8 @@ class Editor extends RoomCollection {
 
     const { position: { x, y }, interacting } = editor
 
-    const pointerMesh = this.localStore.getDocument('raycastPointer', 'raycastPointer')
-    
+    const pointerMesh = this.localStore.getDocument('pointerMesh', 'pointerMesh')
+
     if (pointerMesh != null) {
       pointerMesh.visible = interacting
     }
@@ -286,7 +287,7 @@ class Editor extends RoomCollection {
     const { position: { x, y }, interacting } = editor
     if (!interacting) return
 
-    if(!this.Map.validateTile(x, y)) {
+    if (!this.Map.validateTile(x, y)) {
       return
     }
 
