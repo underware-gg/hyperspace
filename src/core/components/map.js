@@ -406,6 +406,10 @@ class Map extends RoomCollection {
     this.localStore.setDocument('wall-geometries', id, wallGeometries)
     this.localStore.setDocument('material-uv', id, materialUV)
     this.localStore.setDocument('gridContainer', 'gridContainer', gridContainer)
+
+    const tileset = this.remoteStore.getDocument('tileset', id)
+    this.swapTileset(id, tileset)
+
   }
 
   resetMap(id) {
@@ -714,15 +718,8 @@ class Map extends RoomCollection {
   }
 
   swapTileset(id, tileset) {
-    if (id !== 'world') {
-      return
-    }
-
     const materialUV = this.localStore.getDocument('material-uv', id)
-
-    if (materialUV === null) {
-      return
-    }
+    if (materialUV === null) return
 
     const loader = new THREE.TextureLoader()
 
