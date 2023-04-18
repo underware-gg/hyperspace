@@ -2,12 +2,12 @@ import React, { useMemo, useState } from 'react'
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
   Tabs, TabList, TabPanels, Tab, TabPanel,
-  VStack, HStack,
   Spacer,
-  Text,
 } from '@chakra-ui/react'
+import { exportCrdtData, exportTypes } from '@/core/export-import'
 import { useRoomContext } from '@/hooks/RoomContext'
 import usePermission from '@/hooks/usePermission'
+import Snapshot from '@/components/Snapshot'
 import Button from '@/components/Button'
 
 
@@ -22,14 +22,17 @@ const ModalExporter = ({
   const isSelectiveExport = useMemo(() => (tabIndex == 0), [tabIndex])
   const isFullExport = useMemo(() => (tabIndex == 1), [tabIndex])
 
-  const [selectedData, setSelectedData] = useState([])
+  const [selectedTypes, setSelectedTypes] = useState([])
 
   const data = useMemo(() => {
     if (isFullExport) {
-      return clientRoom?.getSnapshotOps() ?? null
+      return exportCrdtData(clientRoom)
+    }
+    if (isSelectiveExport) {
+      return exportTypes(selectedTypes, remoteStore)
     }
     return null
-  }, [slug, clientRoom, isSelectiveExport, isFullExport])
+  }, [slug, clientRoom, isFullExport, isSelectiveExport, selectedTypes])
 
   const _download = () => {
     if (!data) return
@@ -69,10 +72,10 @@ const ModalExporter = ({
             </TabList>
             <TabPanels>
               <TabPanel>
-                (select data)
+                <Snapshot store={remoteStore} expanded={false} onTypesSelected={setSelectedTypes} excludeTypes={['player', 'editor', 'profile']} />
               </TabPanel>
               <TabPanel>
-                (preview data)
+                <Snapshot store={remoteStore} expanded={false} />
               </TabPanel>
             </TabPanels>
           </Tabs>

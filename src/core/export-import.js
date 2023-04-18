@@ -3,15 +3,17 @@ export const isCrdtData = (data) => {
   if (!Array.isArray(data) || data.length == 0) {
     return false
   }
-  for(let i = 0 ; i < data.length ; ++i) {
+  for (let i = 0; i < data.length; ++i) {
     const item = data[i]
     if (!item.key || !item.type || !item.version) {
-      console.log(`NOT CRDT`, item)
       return false
     }
   }
-  console.log(`IS CRDT`)
   return true
+}
+
+export const exportCrdtData = (clientRoom) => {
+  return clientRoom?.getSnapshotOps() ?? null
 }
 
 export const importCrdtData = (data, store) => {
@@ -25,3 +27,14 @@ export const importCrdtData = (data, store) => {
   return true
 }
 
+export const exportTypes = (types, store) => {
+  let result = {}
+  for (const type of types) {
+    result[type] = {}
+    const ids = store.getIds(type) ?? []
+    for (const id of ids) {
+      result[type][id] = store.getDocument(type, id) ?? null
+    }
+  }
+  return result
+}

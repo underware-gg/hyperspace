@@ -11,7 +11,7 @@ const useLocalDocumentTypes = () => {
   return useDocumentTypes(localStore)
 }
 
-const useDocumentTypes = (store) => {
+const useDocumentTypes = (store, excludeTypes = []) => {
   const [types, setTypes] = useState([])
 
   useEffect(() => {
@@ -23,7 +23,7 @@ const useDocumentTypes = (store) => {
       if (store && _mounted) {
         const _types = store.getTypes() ?? []
         if (_types.length != types.length && _mounted) {
-          setTypes(_types)
+          setTypes(_types.filter(t => !excludeTypes.includes(t)))
         }
       }
     }
