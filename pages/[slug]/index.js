@@ -15,7 +15,7 @@ import TilesetSelector from '@/components/TilesetSelector'
 import ModalHelp from '@/components/ModalHelp'
 import ModalSnapshots from '@/components/ModalSnapshots'
 import InteractMenu from '@/components/InteractMenu'
-import RoomDownloadMenu from '@/components/RoomDownloadMenu'
+import ExportImportMenu from '@/components/ExportImportMenu'
 import VeridaMenu from '@/components/VeridaMenu'
 import { useRoomContext } from '@/hooks/RoomContext'
 import usePermission from '@/hooks/usePermission'
@@ -128,7 +128,7 @@ const RoomPage = () => {
 
         <GridItem colSpan={4}>
           <HStack>
-            <RoomDownloadMenu />
+            <ExportImportMenu />
             <Spacer />
             <VeridaMenu />
           </HStack>
