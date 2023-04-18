@@ -33,6 +33,8 @@ const ModalExporter = ({
     }
     return null
   }, [slug, clientRoom, isFullExport, isSelectiveExport, selectedTypes])
+  
+  const dataSize = useMemo(() => (data ? JSON.stringify(data).length : 0), [data])
 
   const _download = () => {
     if (!data) return
@@ -98,6 +100,8 @@ const ModalExporter = ({
           >
             Download
           </Button>
+          &nbsp;
+          {(dataSize/1000).toFixed(1)}K
         </ModalFooter>
       </ModalContent>
     </Modal>
