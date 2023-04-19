@@ -113,6 +113,7 @@ const TilesetSelector = ({ }) => {
       </div>
       <FileSelectButton
         label='Upload Tileset'
+        variant='outline'
         id='tileset-image'
         accept='image/*'
         disabled={!canEdit}

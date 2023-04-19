@@ -107,9 +107,6 @@ class Store {
     return Object.keys(this.collections[type] ?? {})
   }
 
-  // I don't really like this event system...
-  // 'player', 'map'
-  // create, update, delete
   on(options, listener) {
     if (options === null) {
       this.eventEmitter.on('change', listener)

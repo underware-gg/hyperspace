@@ -17,10 +17,11 @@ const useApi = (route) => {
   return { data, error, isLoading }
 }
 
-const useDbRooms = (id) => {
+const useDbRooms = (id, includeSession = false) => {
   const { data, error, isLoading } = useApi(`/api/db/rooms`)
+  const _filter = (v) => (v && (includeSession || !v.includes(':')))
   return {
-    rooms: (data && !error) ? data.filter(n => n) : [],
+    rooms: (data && !error) ? data.filter(_filter) : [],
     isLoading,
     error,
   }

@@ -18,7 +18,7 @@ class Editor extends RoomCollection {
     }
 
     const _handleEditorMove = (tile, interacting) => {
-      this.remoteStore.setDocument('editor', agentId, {
+      this.sessionStore.setDocument('editor', agentId, {
         position: tile ?? {},
         interacting: interacting && tile != null,
       })
@@ -28,7 +28,7 @@ class Editor extends RoomCollection {
     const handleMouseOver = (e) => _handleEditorMove(this.getMouseTilePosition(e, canvas), true)
     const handleMouseOut = (e) => _handleEditorMove({ x: 0, y: 0 }, false)
 
-    this.remoteStore.on({ type: 'editor', event: 'update' }, (id, editor) => {
+    this.sessionStore.on({ type: 'editor', event: 'update' }, (id, editor) => {
       // id is the agent id.
     })
 
@@ -154,10 +154,11 @@ class Editor extends RoomCollection {
         x: Math.floor(pickingLocation.x),
         y: Math.floor(-pickingLocation.y - 1),
       }
+      const interacting = this.canEdit('world') && this.Map.validateTile(tile.x, tile.y)
 
-      this.remoteStore.setDocument('editor', agentId, {
+      this.sessionStore.setDocument('editor', agentId, {
         position: tile,
-        interacting: this.canEdit('world') && this.Map.validateTile(tile.x, tile.y),
+        interacting,
       })
     }
 
@@ -221,7 +222,7 @@ class Editor extends RoomCollection {
   }
 
   update(id, dt) {
-    const editor = this.remoteStore.getDocument('editor', id)
+    const editor = this.sessionStore.getDocument('editor', id)
     if (editor === null) return
 
     const { position: { x, y }, interacting } = editor
@@ -293,7 +294,7 @@ class Editor extends RoomCollection {
       return
     }
 
-    const editor = this.remoteStore.getDocument('editor', id)
+    const editor = this.sessionStore.getDocument('editor', id)
     if (editor === null) return
 
     const { position: { x, y }, interacting } = editor
@@ -328,7 +329,7 @@ class Editor extends RoomCollection {
   }
 
   getCreateTileRotation(id) {
-    const editor = this.remoteStore.getDocument('editor', id)
+    const editor = this.sessionStore.getDocument('editor', id)
 
     let { x, y, rot } = this.Player.getPlayerTileRotation(id)
 

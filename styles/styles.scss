@@ -32,6 +32,12 @@ $color-error: #F34000;
 .NoMargin {
   margin: 0 !important;
 }
+.Padded {
+  padding: 0.25em !important;
+}
+.Margin {
+  margin: 0.5em !important;
+}
 .Clickable {
   cursor: pointer;
 }
@@ -40,6 +46,11 @@ $color-error: #F34000;
 }
 .ClearBackground {
   background-color: #0000;
+}
+
+.HR {
+  color: #fff8;
+  margin: 0.5em 0 !important;
 }
 
 //-----------------------------------

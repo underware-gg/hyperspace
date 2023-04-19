@@ -35,10 +35,9 @@ class Player extends RoomCollection {
     })
 
     this.actions.addActionDownListener('delete', () => {
-      const editor = this.remoteStore.getDocument('editor', this.agentId)
-      if (editor === null) {
-        return
-      }
+      const editor = this.sessionStore.getDocument('editor', this.agentId)
+      if (editor === null) return
+      
       this.Portal.remove(this.getPortalOverPlayer(this.agentId), true)
       this.Trigger.remove(this.getTriggerOverPlayer(this.agentId), true)
       this.Screen.remove(this.getScreenOverPlayer(this.agentId), true)
@@ -82,11 +81,11 @@ class Player extends RoomCollection {
       console.log(`[${this.slug}] agent-leave:`, agentId)
     })
 
-    this.remoteStore.on({ type: 'player', event: 'update' }, (agentId, player) => {
+    this.sessionStore.on({ type: 'player', event: 'update' }, (agentId, player) => {
       // console.log(`[${this.slug}] agent-update:`, agentId)
       if (agentId == this.agentId) {
         // we moved: update all other players
-        const playerIds = this.remoteStore.getIds('player')
+        const playerIds = this.sessionStore.getIds('player')
         for (const id of playerIds) {
           if (id != this.agentId && this.clientRoom.hasAgentId(id)) {
             this.update3dSprite(id)
@@ -132,7 +131,7 @@ class Player extends RoomCollection {
     const playerMesh = this.localStore.getDocument('player-mesh', id)
     if (!playerMesh) return
 
-    const player = this.remoteStore.getDocument('player', id)
+    const player = this.sessionStore.getDocument('player', id)
     if (!player) return
 
     // Position
@@ -144,7 +143,7 @@ class Player extends RoomCollection {
     )
 
     // Rotation (billboard) 
-    const thisPlayer = this.remoteStore.getDocument('player', this.agentId)
+    const thisPlayer = this.sessionStore.getDocument('player', this.agentId)
     const rotToThisPlayer = Math.atan2(y - thisPlayer.position.y, x - thisPlayer.position.x) - CONST.HALF_PI
     playerMesh.rotation.set(
       CONST.HALF_PI,
@@ -311,7 +310,7 @@ class Player extends RoomCollection {
   }
 
   moveToTile(id, tile) {
-    let player = this.remoteStore.getDocument('player', id)
+    let player = this.sessionStore.getDocument('player', id)
 
     if (player === null) {
       player = {
@@ -336,11 +335,11 @@ class Player extends RoomCollection {
     player.position.x = tile.x + 0.5
     player.position.y = tile.y + 1 - PLAYER_RADIUS - 0.01
 
-    this.remoteStore.setDocument('player', id, player)
+    this.sessionStore.setDocument('player', id, player)
   }
 
   getPlayerTileRotation(id) {
-    const player = this.remoteStore.getDocument('player', id)
+    const player = this.sessionStore.getDocument('player', id)
     if (!player) return null
 
     const { x, y } = player.position
@@ -354,7 +353,7 @@ class Player extends RoomCollection {
   }
 
   getPlayerCollisionRect(id) {
-    const player = this.remoteStore.getDocument('player', id)
+    const player = this.sessionStore.getDocument('player', id)
     if (!player) return null
 
     const { x, y } = player.position
@@ -376,7 +375,7 @@ class Player extends RoomCollection {
   }
 
   update(id, dt) {
-    const player = this.remoteStore.getDocument('player', id)
+    const player = this.sessionStore.getDocument('player', id)
     if (player === null) {
       return
     }
@@ -539,7 +538,7 @@ class Player extends RoomCollection {
     if (player.position.x !== x || player.position.y !== y || player.position.z !== z || deepCompare(rotation, rotationCopy) === false) {
       // console.log(`moved xyz/r:`, x.toFixed(2), y.toFixed(2), z.toFixed(2), toDegrees(rotationCopy.y))
       rotationCopy.y = clampRadians(rotationCopy.y)
-      this.remoteStore.setDocument('player', id, {
+      this.sessionStore.setDocument('player', id, {
         position: {
           x,
           y,
@@ -574,7 +573,7 @@ class Player extends RoomCollection {
   }
 
   render2d(id, context) {
-    const player = this.remoteStore.getDocument('player', id)
+    const player = this.sessionStore.getDocument('player', id)
     if (!player) return
 
     const joined = this.localStore.getDocument('joined', id) ?? null

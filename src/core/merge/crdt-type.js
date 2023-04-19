@@ -118,6 +118,10 @@ export const createTypeMetadata = (type) => {
   }
 }
 
+//
+// transient data types
+// no need to persist between sessions
+
 export const player = {
   position: {
     x: 'number',
@@ -130,6 +134,18 @@ export const player = {
     z: 'number',
   },
 }
+
+export const editor = {
+  position: {
+    x: 'number',
+    y: 'number',
+  },
+  interacting: 'boolean',
+}
+
+
+// 
+// persistent data types
 
 export const profile = {
   name: 'string',
@@ -171,14 +187,6 @@ export const map = [
   ['number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number'],
   ['number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number'],
 ]
-
-export const editor = {
-  position: {
-    x: 'number',
-    y: 'number',
-  },
-  interacting: 'boolean',
-}
 
 export const portal = {
   position: {
@@ -252,11 +260,13 @@ export const book = { // deprecated
 }
 
 export const typeDefs = {
+  // transient
   player: createTypeMetadata(player),
+  editor: createTypeMetadata(editor),
+  // persistent
   profile: createTypeMetadata(profile),
   settings: createTypeMetadata(settings),
   map: createTypeMetadata(map),
-  editor: createTypeMetadata(editor),
   portal: createTypeMetadata(portal),
   tileset: createTypeMetadata(tileset),
   screen: createTypeMetadata(screen),

@@ -4,7 +4,6 @@ import {
   Tabs, TabList, TabPanels, Tab, TabPanel,
 } from '@chakra-ui/react'
 import { useRoomContext } from '@/hooks/RoomContext'
-import { useDocument } from '@/hooks/useDocument'
 import Snapshot from '@/components/Snapshot'
 import SnapshotSlug from '@/components/SnapshotSlug'
 import Button from '@/components/Button'
@@ -14,11 +13,6 @@ const ModalSnapshots = ({
 }) => {
   const { remoteStore, localStore } = useRoomContext()
   const { id, isOpen, onClose } = disclosure
-
-  const settings = useDocument('settings', id)
-
-  useEffect(() => {
-  }, [])
 
   return (
     <Modal

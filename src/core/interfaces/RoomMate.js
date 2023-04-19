@@ -19,12 +19,16 @@ class RoomMate {
     return this.#room.canvas3d
   }
 
+  get localStore() {
+    return this.#room.localStore
+  }
+
   get remoteStore() {
     return this.#room.remoteStore
   }
 
-  get localStore() {
-    return this.#room.localStore
+  get sessionStore() {
+    return this.#room.sessionStore
   }
 
   get agentStore() {
@@ -49,9 +53,13 @@ class RoomMate {
     return this.#room.clientRoom
   }
 
-  get clientAgent() {
-    return this.#room.clientAgent
-  }
+  // get clientSession() {
+  //   return this.#room.clientSession
+  // }
+
+  // get clientAgent() {
+  //   return this.#room.clientAgent
+  // }
 
   // other RoomMates
 
