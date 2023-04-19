@@ -11,7 +11,7 @@ const Button = forwardRef(({
   fullWidth,
   disabled,
   variant,
-  onClick,
+  onClick = () => { },
   children,
 }, ref) => {
   const { gameCanvas } = useGameCanvas()
@@ -20,7 +20,7 @@ const Button = forwardRef(({
     onClick()
     gameCanvas?.focus()
   }
-  
+
   return (
     <ChakraButton
       ref={ref}

@@ -84,7 +84,7 @@ const Type = ({
   selected = null,
   onSelect = (type, selected) => { },
 }) => {
-  const ids = useDocumentIds(type, store)
+  const ids = useDocumentIds(type, store) ?? []
 
   const items = useMemo(() => {
     let result = []
@@ -106,6 +106,10 @@ const Type = ({
     }
     return result
   }, [ids])
+
+  if (ids.length == 0) {
+    return null
+  }
 
   return (
     <AccordionItem className='AccordionItem'>

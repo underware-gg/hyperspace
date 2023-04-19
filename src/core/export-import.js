@@ -1,3 +1,4 @@
+import { typeDefs } from '@/core/merge/crdt-type'
 
 export const isCrdtData = (data) => {
   if (!Array.isArray(data) || data.length == 0) {
@@ -16,8 +17,23 @@ export const exportCrdtData = (clientRoom) => {
   return clientRoom?.getSnapshotOps() ?? null
 }
 
-export const importCrdtData = (data, store) => {
-  if (!isCrdtData(data)) return false
+const eraseData = (store) => {
+  for (const type of ['portal', 'screen', 'tileset', 'document', 'trigger', 'permission', 'player', 'editor', 'profile']) {
+    const ids = store.getIds(type) ?? []
+    for (const id of ids) {
+      store.setDocument(type, id, null)
+    }
+  }
+}
+
+export const importCrdtData = (data, store, replaceData = false) => {
+  if (!isCrdtData(data) || !store?.setDocument) {
+    console.warn(`importCrdtData() bad data or store`, data, store)
+    return false
+  }
+  if (replaceData) {
+    eraseData(store)
+  }
   for (const op of data) {
     if (op.pathIndex === 0) {
       const { type, key, value } = op
@@ -27,7 +43,7 @@ export const importCrdtData = (data, store) => {
   return true
 }
 
-export const exportTypes = (types, store) => {
+export const exportDataTypes = (types, store) => {
   let result = {}
   for (const type of types) {
     result[type] = {}
@@ -38,3 +54,23 @@ export const exportTypes = (types, store) => {
   }
   return result
 }
+
+export const importDataTypes = (data, store, replaceData = false) => {
+  if (!data || typeof data != 'object' || !store?.setDocument) {
+    console.warn(`importDataTypes() bad data or store`, data, store)
+    return false
+  }
+  if (replaceData) {
+    eraseData(store)
+  }
+  for (const type of Object.keys(data)) {
+    if (typeDefs[type]) {
+      for (const id of Object.keys(data[type])) {
+        const value = data[type][id]
+        store.setDocument(type, id, value)
+      }
+    }
+  }
+  return true
+}
+

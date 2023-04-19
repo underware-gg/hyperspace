@@ -6,6 +6,7 @@ const FileSelectButton = ({
   id,
   disabled = false,
   label = 'Select File',
+  variant = null,
   textBefore,
   textAfter,
   onSelect = (fileObject) => { },
@@ -23,6 +24,9 @@ const FileSelectButton = ({
   return (
     <HStack>
       {textBefore && <Text>{textBefore}</Text>}
+      <Button variant={variant} disabled={disabled} onClick={() => inputRef.current.click()}>
+        {label}
+      </Button>
       <input type='file'
         id={id}
         accept={accept}
@@ -30,9 +34,6 @@ const FileSelectButton = ({
         ref={inputRef}
         hidden
       />
-      <Button variant='outline' disabled={disabled} onClick={() => inputRef.current.click()}>
-        {label}
-      </Button>
       {textAfter && <Text>{textAfter}</Text>}
     </HStack>
   )

@@ -3,8 +3,9 @@ import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
   Tabs, TabList, TabPanels, Tab, TabPanel,
   Spacer,
+  HStack,
 } from '@chakra-ui/react'
-import { exportCrdtData, exportTypes } from '@/core/export-import'
+import { exportCrdtData, exportDataTypes } from '@/core/export-import'
 import { useRoomContext } from '@/hooks/RoomContext'
 import usePermission from '@/hooks/usePermission'
 import Snapshot from '@/components/Snapshot'
@@ -29,11 +30,11 @@ const ModalExporter = ({
       return exportCrdtData(clientRoom)
     }
     if (isSelectiveExport) {
-      return exportTypes(selectedTypes, remoteStore)
+      return exportDataTypes(selectedTypes, remoteStore)
     }
     return null
   }, [slug, clientRoom, isFullExport, isSelectiveExport, selectedTypes])
-  
+
   const dataSize = useMemo(() => (data ? JSON.stringify(data).length : 0), [data])
 
   const _download = () => {
@@ -91,17 +92,26 @@ const ModalExporter = ({
           />
           <Spacer />
 
-          <a id='download-room-data' href='#' hidden></a>
-          <Button
-            disabled={!canEdit || !data}
-            // variant='outline'
-            size='sm'
-            onClick={() => _download()}
-          >
-            Download
-          </Button>
-          &nbsp;
-          {(dataSize/1000).toFixed(1)}K
+          <HStack>
+            <a id='download-room-data' href='#' hidden></a>
+
+            <Button size='sm' disabled={true} onClick={() => { }}>
+              Verida Store
+            </Button>
+            <Button size='sm' disabled={true} onClick={() => { }}>
+              Mint NFT
+            </Button>
+            <Button size='sm' disabled={true} onClick={() => { }}>
+              Select NFT
+            </Button>
+            <Button size='sm' disabled={!canEdit || !data} onClick={() => _download()}>
+              Download
+            </Button>
+
+            <div>
+              {(dataSize / 1000).toFixed(1)}K
+            </div>
+          </HStack>
         </ModalFooter>
       </ModalContent>
     </Modal>

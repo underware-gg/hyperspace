@@ -6,7 +6,7 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react'
-import { isCrdtData, importCrdtData } from '@/core/export-import'
+import { isCrdtData, importCrdtData, importDataTypes } from '@/core/export-import'
 import { useRoomContext } from '@/hooks/RoomContext'
 import usePermission from '@/hooks/usePermission'
 import FileSelectButton from '@/components/FileSelectButton'
@@ -21,11 +21,14 @@ const ImporterPreview = ({
 }) => {
   return (
     <div>
-      {data === false && <div>BAD DATA</div>}
-      {data == null && <div>No Data</div>}
+      {data === false && <div>Bad data!!!</div>}
+      {data == null && <div>No data selected</div>}
       {data &&
         <div>
-          (preview data)
+          {isCrdt && <div>The importing data is a full CRDT snapshot</div>}
+          <div>
+            (preview data)
+          </div>
         </div>
       }
     </div>
@@ -45,14 +48,33 @@ const ModalImporter = ({
   const isNFT = useMemo(() => (tabIndex == 2), [tabIndex])
   const isCrawler = useMemo(() => (tabIndex == 3), [tabIndex])
 
+  const [filenames, setFilenames] = useState([null, null, null, null])
+  const _setCurrentTabFilename = (filename) => {
+    let filenames = [null, null, null, null]
+    filenames[tabIndex] = filename
+    setFilenames(filenames)
+  }
   const [data, setData] = useState(null)
   const isCrdt = useMemo(() => isCrdtData(data), [data])
 
+  const [importStatus, setImportStatus] = useState(false)
   useEffect(() => {
+    if (importStatus) {
+      handleClose(false)
+      // TODO: move to Entry
+    }
+  }, [importStatus])
+
+  // initialize
+  useEffect(() => {
+    _setCurrentTabFilename(null)
+    setImportStatus(false)
     setData(null)
   }, [isOpen])
 
   const _uploadRoomData = (fileObject) => {
+    _setCurrentTabFilename(fileObject?.name ?? null)
+    if (!fileObject) return
     const reader = new FileReader()
     reader.onload = (e2) => {
       try {
@@ -87,14 +109,12 @@ const ModalImporter = ({
     }
   }
 
-  const _importSelected = () => {
-    if (!data) return
+  const _importCrdt = (replaceData) => {
+    setImportStatus(importCrdtData(data, remoteStore, replaceData))
   }
 
-  const _importCrdt = () => {
-    if (!importCrdtData(data, remoteStore)) return
-    handleClose(false)
-    // TODO: move to Entry
+  const _importData = (replaceData) => {
+    setImportStatus(importDataTypes(data, remoteStore, replaceData))
   }
 
 
@@ -129,27 +149,43 @@ const ModalImporter = ({
             </TabList>
             <TabPanels>
               <TabPanel className='NoPadding'>
-                <FileSelectButton
-                  disabled={!canEdit}
-                  label='Select File'
-                  id='upload-room-data'
-                  accept='.json'
-                  onSelect={(fileObject) => _uploadRoomData(fileObject)}
-                />
+                <HStack>
+                  <FileSelectButton
+                    id='upload-room-data'
+                    label='Select File'
+                    accept='.json'
+                    disabled={!canEdit}
+                    variant={data && !filenames[0] ? 'outline' : null}
+                    onSelect={(fileObject) => _uploadRoomData(fileObject)}
+                  />
+                  <div>{filenames[0]}</div>
+                </HStack>
               </TabPanel>
-              <TabPanel>
-                <Button disabled={true}>todo</Button>
+
+              <TabPanel className='NoPadding'>
+                <HStack>
+                  <Button disabled={!canEdit} variant={data && !filenames[1] ? 'outline' : null}>Restore from Verida</Button>
+                  <div>{filenames[1]}</div>
+                </HStack>
               </TabPanel>
-              <TabPanel>
-                <Button disabled={true}>todo</Button>
+
+              <TabPanel className='NoPadding'>
+                <HStack>
+                  <Button disabled={!canEdit} variant={data && !filenames[2] ? 'outline' : null}>Restore from State NFT</Button>
+                  <div>{filenames[2]}</div>
+                </HStack>
               </TabPanel>
-              <TabPanel>
-                <Button disabled={true}>todo</Button>
+
+              <TabPanel className='NoPadding'>
+                <HStack>
+                  <Button disabled={!canEdit} variant={data && !filenames[3] ? 'outline' : null}>Import Endless Crawler Map</Button>
+                  <div>{filenames[3]}</div>
+                </HStack>
               </TabPanel>
             </TabPanels>
           </Tabs>
 
-          <hr className='Margin' />
+          <hr className='HR' />
           <ImporterPreview data={data} isCrdt={isCrdt} />
 
         </ModalBody>
@@ -162,14 +198,24 @@ const ModalImporter = ({
           />
           <Spacer />
 
-          <Button
-            disabled={!canEdit || !data}
-            // variant='outline'
-            size='sm'
-            onClick={() => (isCrdt ? _importCrdt : _importSelected)()}
-          >
-            Import {isCrdt ? 'CRDT' : 'Selected'}
-          </Button>
+          <HStack>
+            <Button size='sm' disabled={!canEdit || !data || !isCrdt} onClick={() => _importCrdt(true)}>
+              Replace CRDT
+            </Button>
+            <Button size='sm' disabled={!canEdit || !data || !isCrdt} onClick={() => _importCrdt(false)}>
+              Merge CRDT
+            </Button>
+          </HStack>
+          <Spacer />
+
+          <HStack>
+            <Button size='sm' disabled={!canEdit || !data || isCrdt} onClick={() => _importData(true)}>
+              Replace Data
+            </Button>
+            <Button size='sm' disabled={!canEdit || !data || isCrdt} onClick={() => _importData(false)}>
+              Merge Data
+            </Button>
+          </HStack>
         </ModalFooter>
       </ModalContent>
     </Modal>
