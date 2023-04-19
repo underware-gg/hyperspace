@@ -1,15 +1,17 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
   Tabs, TabList, TabPanels, Tab, TabPanel,
   Spacer,
   HStack,
 } from '@chakra-ui/react'
-import { exportCrdtData, exportDataTypes } from '@/core/export-import'
+import { exportCrdtData, exportDataTypes, isCrdtData } from '@/core/export-import'
 import { useRoomContext } from '@/hooks/RoomContext'
+import { useVeridaContext } from '@/hooks/VeridaContext'
 import usePermission from '@/hooks/usePermission'
 import Snapshot from '@/components/Snapshot'
 import Button from '@/components/Button'
+import { VeridaConnectMenu, VeridaStoreButton } from '@/components/Verida'
 
 
 const ModalExporter = ({
@@ -21,22 +23,39 @@ const ModalExporter = ({
 
   const [tabIndex, setTabIndex] = useState(0)
   const isSelectiveExport = useMemo(() => (tabIndex == 0), [tabIndex])
-  const isFullExport = useMemo(() => (tabIndex == 1), [tabIndex])
+  const isCrdtExport = useMemo(() => (tabIndex == 1), [tabIndex])
 
   const [selectedTypes, setSelectedTypes] = useState([])
 
   const data = useMemo(() => {
-    if (isFullExport) {
+    if (isCrdtExport) {
       return exportCrdtData(clientRoom)
     }
     if (isSelectiveExport) {
-      return exportDataTypes(selectedTypes, remoteStore)
+      return selectedTypes.length > 0 ? exportDataTypes(selectedTypes, remoteStore) : null
     }
     return null
-  }, [slug, clientRoom, isFullExport, isSelectiveExport, selectedTypes])
+  }, [slug, clientRoom, isCrdtExport, isSelectiveExport, selectedTypes])
 
   const dataSize = useMemo(() => (data ? JSON.stringify(data).length : 0), [data])
+  const dataId = useMemo(() => (data ? `${slug}${isCrdtExport?'':':data'}` : null), [data])
 
+  //
+  // Verida
+  const { veridaIsConnected, dispatchVerida, requestedConnect } = useVeridaContext()
+  const [veridaStatus, setVeridaStatus] = useState(null)
+  useEffect(() => {
+    if (requestedConnect) {
+      handleClose(false)
+    }
+  }, [requestedConnect])
+  useEffect(() => {
+    setVeridaStatus(null)
+  }, [data])
+
+
+  //
+  // Download
   const _download = () => {
     if (!data) return
     const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(data))}`
@@ -75,13 +94,52 @@ const ModalExporter = ({
             </TabList>
             <TabPanels>
               <TabPanel>
-                <Snapshot store={remoteStore} expanded={false} onTypesSelected={setSelectedTypes} excludeTypes={['player', 'editor', 'profile']} />
+                <Snapshot store={remoteStore} expanded={false} height='250px' onTypesSelected={setSelectedTypes} excludeTypes={['player', 'editor', 'profile']} />
               </TabPanel>
               <TabPanel>
-                <Snapshot store={remoteStore} expanded={false} />
+                <Snapshot store={remoteStore} expanded={false} height='250px' />
               </TabPanel>
             </TabPanels>
           </Tabs>
+
+          <Tabs isFitted variant='enclosed'>
+            <TabList mb='1em'>
+              <Tab _selected={{ bg: 'teal' }}>Verida</Tab>
+              <Tab _selected={{ bg: 'teal' }}>State NFT</Tab>
+              <Tab _selected={{ bg: 'teal' }}>Download</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
+                <HStack>
+                  <VeridaConnectMenu disconnectButton={true} />
+                  <VeridaStoreButton disabled={!canEdit}
+                    id={dataId} data={data}
+                    onSaving={() => setVeridaStatus('Saving...')}
+                    onSaved={(success) => setVeridaStatus(success ? 'Saved!' : 'Error!')}
+                  >
+                    Verida Save
+                  </VeridaStoreButton>
+                  <div>as <b className='Important'>{dataId}</b> {veridaStatus}</div>
+                </HStack>
+              </TabPanel>
+
+              <TabPanel>
+                <HStack>
+                  <Button size='sm' disabled={true} onClick={() => { }}>
+                    Mint NFT
+                  </Button>
+                  <Button size='sm' disabled={true} onClick={() => { }}>
+                    Select NFT
+                  </Button>
+                </HStack>
+              </TabPanel>
+
+              <TabPanel>
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
+
+
         </ModalBody>
         <ModalFooter>
           <Button
@@ -94,20 +152,9 @@ const ModalExporter = ({
 
           <HStack>
             <a id='download-room-data' href='#' hidden></a>
-
-            <Button size='sm' disabled={true} onClick={() => { }}>
-              Verida Store
-            </Button>
-            <Button size='sm' disabled={true} onClick={() => { }}>
-              Mint NFT
-            </Button>
-            <Button size='sm' disabled={true} onClick={() => { }}>
-              Select NFT
-            </Button>
             <Button size='sm' disabled={!canEdit || !data} onClick={() => _download()}>
-              Download
+              Download {isCrdtExport ? 'CRDT' : 'Selected Data Types'}
             </Button>
-
             <div>
               {(dataSize / 1000).toFixed(1)}K
             </div>

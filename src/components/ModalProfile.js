@@ -3,7 +3,6 @@ import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
   VStack, HStack,
   Spacer, Flex,
-  Input,
   Text,
   Box,
   Link,
@@ -17,6 +16,7 @@ import CharacterSelector from '@/components/CharacterSelector'
 import Editable from '@/components/Editable'
 import Button from '@/components/Button'
 import { Avatar } from '@/components/Avatar'
+import { VeridaConnectMenu } from '@/components/Verida'
 
 const ModalProfile = ({
   disclosure,
@@ -35,8 +35,6 @@ const ModalProfile = ({
   }, [isOpen])
 
   const {
-    connect, disconnect, inviteFriend,
-    veridaIsConnected, veridaIsConnecting,
     hasVeridaProfile, veridaProfileName, veridaAvatarUri, veridaProfileUrl,
   } = useVeridaContext()
 
@@ -45,8 +43,6 @@ const ModalProfile = ({
       name: value,
     })
   }
-
-  const disabled = (veridaIsConnecting)
 
   return (
     <Modal
@@ -100,29 +96,7 @@ const ModalProfile = ({
           </HStack>
         </ModalBody>
         <ModalFooter>
-
-          {veridaIsConnected ?
-            <>
-              <Button disabled={disabled} size='sm' onClick={() => inviteFriend()}>
-                Invite Friend
-              </Button>
-              &nbsp;
-              <Button disabled={disabled} size='sm' onClick={() => disconnect()}>
-                Disconnect
-              </Button>
-            </>
-            :
-            <>
-              <Button disabled={disabled} size='sm' onClick={() => window.open('https://www.verida.io/', '_blank', 'noreferrer')}>
-                Download Verida
-              </Button>
-              &nbsp;
-              <Button disabled={disabled} size='sm' onClick={() => connect()}>
-                {veridaIsConnecting ? 'Connecting' : 'Connect'}
-              </Button>
-            </>
-          }
-
+          <VeridaConnectMenu disconnectButton={true} inviteFriendButton={true} />
           <Spacer />
           <Button
             variant='outline'

@@ -73,4 +73,3 @@ export const importDataTypes = (data, store, replaceData = false) => {
   }
   return true
 }
-

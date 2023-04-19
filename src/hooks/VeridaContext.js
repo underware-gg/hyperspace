@@ -1,5 +1,6 @@
 import React, { createContext, useReducer, useContext, useEffect } from 'react'
 import { useVeridaProfile } from '@/hooks/useVeridaProfile'
+import { clientUrl } from '@/core/networking/config'
 
 //--------------------------------
 // Context
@@ -10,6 +11,7 @@ export const initialState = {
   isConnecting: false,
   isConnected: false,
   profile: null,
+  requestedConnect: false,
 }
 const VeridaContext = createContext(initialState)
 
@@ -19,6 +21,7 @@ const VeridaActions = {
   setIsConnecting: 'setIsConnecting',
   setIsConnected: 'setIsConnected',
   setProfile: 'setProfile',
+  setRequestConnect: 'setRequestConnect',
 }
 
 //--------------------------------
@@ -44,6 +47,9 @@ const VeridaProvider = ({
         break
       case VeridaActions.setProfile:
         newState.profile = action.payload
+        break
+      case VeridaActions.setRequestConnect:
+        newState.requestedConnect = action.payload
         break
       default:
         console.warn(`VeridaProvider: Unknown action [${action.type}]`)
@@ -133,6 +139,10 @@ export { VeridaProvider, VeridaContext, VeridaActions }
 export const useVeridaContext = () => {
   const { state, dispatchVerida } = useContext(VeridaContext)
 
+  const download = () => {
+    window.open('https://www.verida.io/', '_blank', 'noreferrer')
+  }
+
   const connect = async () => {
     console.log(`Verida connect...`)
     dispatchVerida(VeridaActions.setIsConnecting, true)
@@ -145,17 +155,15 @@ export const useVeridaContext = () => {
     await state.VeridaUser.disconnect()
   }
 
-  const getRoom = async () => {
-    return await state.VeridaUser.getRoom(slug)
+  const saveData = async (id, data) => {
+    return await state.VeridaUser.saveData(id, data)
   }
 
-  const saveRoom = async (slug) => {
-    if (!clientRoom) return
-    const snapshotOps = clientRoom.getSnapshotOps()
-    await state.VeridaUser.saveRoom(slug, snapshotOps)
+  const getData = async (id) => {
+    return await state.VeridaUser.getData(id)
   }
 
-  const inviteFriend = async () => {
+  const inviteFriend = async (slug) => {
     const recipientDid = window.prompt('DID to invite', 'did:vda:....')
     if (!recipientDid) {
       return
@@ -163,7 +171,7 @@ export const useVeridaContext = () => {
     const subject = `Hyperbox invite!`
     const message = `Join me in ${slug} on Hyperbox`
     // @todo: Get app URL from next.js
-    const url = `http://192.168.68.124:3000/${slug}`
+    const url = `${clientUrl}/${slug}`
     const text = `Open (${slug})`
     await state.VeridaUser.sendMessage(recipientDid, subject, message, url, text)
   }
@@ -180,12 +188,15 @@ export const useVeridaContext = () => {
   const didAddress = state.VeridaUser?.getDidAddress() ?? null
 
   return {
+    dispatchVerida,
     veridaIsConnecting: state.isConnecting,
     veridaIsConnected: state.isConnected,
     veridaProfile: state.profile,
+    requestedConnect: state.requestedConnect,
     did, didAddress,
+    download,
     connect, disconnect,
-    saveRoom, getRoom,
+    saveData, getData,
     inviteFriend,
     retrieveLastTweet,
     getPublicProfile: state.getPublicProfile,

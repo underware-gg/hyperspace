@@ -16,7 +16,6 @@ import ModalHelp from '@/components/ModalHelp'
 import ModalSnapshots from '@/components/ModalSnapshots'
 import InteractMenu from '@/components/InteractMenu'
 import ExportImportMenu from '@/components/ExportImportMenu'
-import VeridaMenu from '@/components/VeridaMenu'
 import { useRoomContext } from '@/hooks/RoomContext'
 import usePermission from '@/hooks/usePermission'
 import { AvatarButton } from '@/components/Avatar'
@@ -130,7 +129,6 @@ const RoomPage = () => {
           <HStack>
             <ExportImportMenu />
             <Spacer />
-            <VeridaMenu />
           </HStack>
         </GridItem>
 

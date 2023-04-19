@@ -3,3 +3,5 @@
 // export const serverUrl = 'wss://metaverse-in-a-box.herokuapp.com/'
 // export const serverUrl = 'wss://crdt-server.offlinefirst.workers.dev'
 export const serverUrl = 'wss://crdt-server.fundaomental.workers.dev'
+
+export const clientUrl = 'https://hyperbox-stage-2301.fundaomental.com'

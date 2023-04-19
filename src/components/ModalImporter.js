@@ -8,9 +8,11 @@ import {
 } from '@chakra-ui/react'
 import { isCrdtData, importCrdtData, importDataTypes } from '@/core/export-import'
 import { useRoomContext } from '@/hooks/RoomContext'
+import { useVeridaContext } from '@/hooks/VeridaContext'
 import usePermission from '@/hooks/usePermission'
 import FileSelectButton from '@/components/FileSelectButton'
 import Button from '@/components/Button'
+import { VeridaConnectMenu } from '@/components/Verida'
 import * as CrawlerData from '@rsodre/crawler-data'
 const BN = require('bn.js');
 

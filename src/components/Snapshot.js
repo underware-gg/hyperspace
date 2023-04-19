@@ -12,6 +12,7 @@ import { useDocumentTypes } from '@/hooks/useDocumentTypes'
 
 const Snapshot = ({
   store,
+  height = '400px',
   expanded = false,
   excludeTypes = [],
   onTypesSelected = null, // (types) => {}
@@ -59,7 +60,7 @@ const Snapshot = ({
   }, [types])
 
   return (
-    <Box overflowY='scroll' height='400px' maxH='400px'>
+    <Box overflowY='scroll' height={height} maxH={height}>
       {items.length > 0 &&
         <Accordion allowMultiple defaultIndex={expanded ? Array.from(Array(types.length).keys()) : []} >
           {items}

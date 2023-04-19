@@ -20,8 +20,9 @@ class HyperboxWebUser extends WebUser {
   }
 
   // @todo: Create a proper schema
-  async saveRoom(roomId, snapshot) {
-    console.log(`saveRoom(${roomId})`)
+  async saveData(roomId, snapshot) {
+    console.log(`verida.saveData(${roomId}, ${roomId})`)
+    if(!roomId || !snapshot) return false
     const roomSnapshotsDb = await VeridaUser.getSnapshotDb()
     let roomItem = {
       _id: roomId
@@ -37,8 +38,7 @@ class HyperboxWebUser extends WebUser {
 
     roomItem.snapshot = JSON.stringify(snapshot)
     const result = await roomSnapshotsDb.save(roomItem)
-    console.log('Room saved!')
-    console.log(result)
+    console.log('Room saved!', result)
 
     if (!result) {
       console.log('Save room error')
@@ -49,8 +49,9 @@ class HyperboxWebUser extends WebUser {
     return true
   }
 
-  async getRoom(roomId) {
-    console.log(`getRoom(${roomId})`)
+  async getData(roomId) {
+    console.log(`verida.getData(${roomId})`)
+    if (!roomId) return false
     const roomSnapshotsDb = await VeridaUser.getSnapshotDb()
     try {
       const roomItem = await roomSnapshotsDb.get(roomId)
