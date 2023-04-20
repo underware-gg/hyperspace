@@ -5,8 +5,8 @@ import {
   VStack,
   Spacer,
 } from '@chakra-ui/react'
+import { MapPreviewFromSlugToRoomContext } from '@/components/Map2D'
 import Button from '@/components/Button'
-import Map2D from '@/components/Map2D'
 import SlugSelector from '@/components/SlugSelector'
 
 const ModalRoom = ({
@@ -42,7 +42,7 @@ const ModalRoom = ({
         <ModalBody pb={4}>
           <VStack spacing={4}>
             <SlugSelector selectedValue={slug} onChange={setSlug} />
-            <Map2D slug={slug} onLoaded={setLoaded} />
+            <MapPreviewFromSlugToRoomContext slug={slug} onLoaded={setLoaded} />
           </VStack>
         </ModalBody>
         <ModalFooter>

@@ -12,6 +12,17 @@ export const DEFAULT_MAP_HEIGHT = 15
 
 export const DEFAULT_MAP_TILE = 4
 
+const defaultBounds = {
+  start: {
+    x: 0,
+    y: 0,
+  },
+  end: {
+    x: MAX_MAP_SIZE - 1,
+    y: MAX_MAP_SIZE - 1,
+  }
+}
+
 const cellWidth = 1
 
 export const walls = [
@@ -192,30 +203,10 @@ class Map extends RoomCollection {
       y: -(gravityMap ? MAX_MAP_SIZE : mapBounds.size.height) / 2,
     }
 
-    // tiles grid, for easy reference
-    const tiles = []
-    for (let y = 0; y < MAX_MAP_SIZE; y++) {
-      const row = []
-      for (let x = 0; x < MAX_MAP_SIZE; x++) {
-        row.push({
-          start: {
-            x,
-            y,
-          },
-          end: {
-            x: x + 1,
-            y: y + 1,
-          }
-        })
-      }
-      tiles.push(row)
-    }
-
     this.viewport = {
       offset,
       scale,
       start,
-      tiles,
     }
   }
 
@@ -534,7 +525,20 @@ class Map extends RoomCollection {
     const mapBounds = this.localStore.getDocument('mapBounds', 'world')
     this.drawRect(context, mapBounds.start.x, mapBounds.start.y, mapBounds.size.width, mapBounds.size.height, 0.05, gravityMap ? 'red' : '#fff1')
 
-    const crdtTileset = this.remoteStore.getDocument('tileset', id)
+    const bounds = this.getCurrentBounds()
+
+    Map.draw2dMap(id, context, this.remoteStore, bounds)
+
+    const settings = this.remoteStore.getDocument('settings', id)
+    const { entry } = settings
+    this.drawTextureAtTile(context, entry.x, entry.y, 'entry')
+  }
+
+  static draw2dMap(id, context, store, bounds = null) {
+    const map = store.getDocument('map', id)
+    if(!map) return
+
+    const crdtTileset = store.getDocument('tileset', id)
 
     let image
     let imageTileSize
@@ -548,32 +552,27 @@ class Map extends RoomCollection {
       imageTileSize = image?.height ?? 32
     }
 
-    const bounds = this.getCurrentBounds()
+    const start = bounds?.start ?? defaultBounds.start
+    const end = bounds?.end ?? defaultBounds.end
 
-    for (let y = bounds.start.y; y <= bounds.end.y; y++) {
-      const row = this.viewport.tiles[y]
-      for (let x = bounds.start.x; x <= bounds.end.x; x++) {
+    for (let y = start.y; y <= end.y; y++) {
+      for (let x = start.x; x <= end.x; x++) {
         let tileIndex = map[y]?.[x] ?? null
         if (tileIndex == null || tileIndex < 0 || tileIndex > 9) continue
 
-        const tile = row[x]
         context.drawImage(
           image,
           tileIndex * imageTileSize,
           0,
           imageTileSize,
           imageTileSize,
-          tile.start.x,
-          tile.start.y,
+          x,
+          y,
           1,
           1,
         )
       }
     }
-
-    const settings = this.remoteStore.getDocument('settings', id)
-    const { entry } = settings
-    this.drawTextureAtTile(context, entry.x, entry.y, 'entry')
   }
 
   drawTextureAtTile(context, x, y, textureName, altTextureName = null) {
@@ -587,11 +586,10 @@ class Map extends RoomCollection {
       return
     }
 
-    const tile = this.viewport.tiles[y][x]
     context.drawImage(
       texture,
-      tile.start.x,
-      tile.start.y,
+      x,
+      y,
       1,
       1,
     )
@@ -614,16 +612,7 @@ class Map extends RoomCollection {
     const mapBounds = this.localStore.getDocument('mapBounds', 'world')
     
     if (gravityMap || !mapBounds) {
-      return {
-        start: {
-          x: 0,
-          y: 0,
-        },
-        end: {
-          x: MAX_MAP_SIZE - 1,
-          y: MAX_MAP_SIZE - 1,
-        }
-      }
+      return defaultBounds
     }
 
     return mapBounds

@@ -119,10 +119,8 @@ class Portal extends RoomCollection {
       t = new Date().getTime() / 10000
     }
 
-    const tile = this.Map.viewport.tiles[y][x]
-
     context.save()
-    context.translate(tile.start.x + 0.5, tile.start.y + 0.5)
+    context.translate(x + 0.5, y + 0.5)
     context.rotate((t % 1) * Math.PI * 2)
     context.translate(-0.5, -0.5)
     context.drawImage(

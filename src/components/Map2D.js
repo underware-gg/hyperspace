@@ -3,10 +3,11 @@
 
 import React, { useRef, useEffect } from 'react'
 import { useRoomContext } from '@/hooks/RoomContext'
-import { useDocument } from '@/hooks/useDocument'
+import { useDocument, useStoreDocument } from '@/hooks/useDocument'
 import { useRoom } from '@/hooks/useRoom'
+import Map, { MAX_MAP_SIZE } from '@/core/components/map'
 
-const Map2D = ({
+const MapPreviewFromSlugToRoomContext = ({
   slug,
   onLoaded = (loaded) => { }
 }) => {
@@ -50,4 +51,45 @@ const Map2D = ({
   )
 }
 
-export default Map2D
+const MapPreview = ({
+  store,
+}) => {
+  const canvasRef = useRef()
+
+  useEffect(() => {
+    if (canvasRef.current) {
+      const context = canvasRef.current?.getContext('2d') ?? null
+      if (context) {
+        context.save()
+        context.scale(process.env.RENDER_HEIGHT / MAX_MAP_SIZE, process.env.RENDER_HEIGHT / MAX_MAP_SIZE)
+
+        
+
+        context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
+        Map.draw2dMap('world', context, store)
+        context.restore()
+      }
+    }
+  }, [canvasRef])
+
+  return (
+    <div>
+      <canvas
+        id='room'
+        ref={canvasRef}
+        border='1px'
+        width={process.env.RENDER_HEIGHT}
+        height={process.env.RENDER_HEIGHT}
+        className='FillParent Map2D'
+      >
+        Canvas not supported by your browser.
+      </canvas>
+    </div>
+  )
+}
+
+
+export {
+  MapPreviewFromSlugToRoomContext,
+  MapPreview,
+}

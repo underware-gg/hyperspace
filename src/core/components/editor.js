@@ -314,8 +314,8 @@ class Editor extends RoomCollection {
     context.strokeStyle = isRemoteUser ? 'red' : 'blue'
 
     context.strokeRect(
-      this.Map.viewport.tiles[y][x].start.x,
-      this.Map.viewport.tiles[y][x].start.y,
+      x,
+      y,
       1,
       1,
     )

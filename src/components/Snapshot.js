@@ -5,10 +5,12 @@ import {
   Text,
   Box,
   Checkbox,
+  VStack,
 } from '@chakra-ui/react'
 import { DownloadIcon } from '@chakra-ui/icons'
 import { useDocumentIds } from '@/hooks/useDocumentIds'
 import { useDocumentTypes } from '@/hooks/useDocumentTypes'
+import { MapPreview } from '@/components/Map2D'
 
 const Snapshot = ({
   store,
@@ -95,14 +97,17 @@ const Type = ({
       const name = doc.name ?? doc.slug ?? doc?.id ?? null
       const content = doc.content ? doc.content.slice(0, 20) : null
       result.push(
-        <HStack key={id}>
-          <DownloadIcon boxSize='0.8em' className='Clickable' onClick={() => _log(type, id, doc)} />
-          <Text>
-            {id}
-            {name && ` (${name})`}
-            {content && ` : ${content}...`}
-          </Text>
-        </HStack>
+        <VStack key={id} alignItems='left'>
+          <HStack>
+            <DownloadIcon boxSize='0.8em' className='Clickable' onClick={() => _log(type, id, doc)} />
+            <Text>
+              {id}
+              {name && ` (${name})`}
+              {content && ` : ${content}...`}
+            </Text>
+          </HStack>
+          {type == 'map' && <MapPreview store={store} />}
+        </VStack>
       )
     }
     return result
