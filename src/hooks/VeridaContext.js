@@ -159,8 +159,8 @@ export const useVeridaContext = () => {
     return await state.VeridaUser.saveData(id, data)
   }
 
-  const getData = async (id) => {
-    return await state.VeridaUser.getData(id)
+  const restoreData = async (id) => {
+    return await state.VeridaUser.restoreData(id)
   }
 
   const inviteFriend = async (slug) => {
@@ -196,7 +196,7 @@ export const useVeridaContext = () => {
     did, didAddress,
     download,
     connect, disconnect,
-    saveData, getData,
+    saveData, restoreData,
     inviteFriend,
     retrieveLastTweet,
     getPublicProfile: state.getPublicProfile,

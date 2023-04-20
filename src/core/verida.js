@@ -19,24 +19,38 @@ class HyperboxWebUser extends WebUser {
     return this.did?.split(':')?.slice(-1)?.[0] ?? null
   }
 
+  //
+  // Database API:
+  // https://developers.verida.network/docs/api/verida-js/interfaces/verida_client_ts.Database
+  async getSnapshotDb() {
+    const context = await VeridaUser.getContext()
+    const roomSnapshotsDb = await context.openDatabase(SNAPSPHOT_DB_NAME, {
+      permissions: {
+        read: 'public',
+        write: 'users',
+      }
+    })
+    return roomSnapshotsDb
+  }
+
   // @todo: Create a proper schema
-  async saveData(roomId, snapshot) {
-    console.log(`verida.saveData(${roomId}, ${roomId})`)
-    if(!roomId || !snapshot) return false
+  async saveData(docId, data) {
+    console.log(`verida.saveData(${docId}, ${docId})`)
+    if (!docId || !data) return false
     const roomSnapshotsDb = await VeridaUser.getSnapshotDb()
     let roomItem = {
-      _id: roomId
+      _id: docId
     }
 
     try {
-      roomItem = await roomSnapshotsDb.get(roomId)
+      roomItem = await roomSnapshotsDb.get(docId)
     } catch (err) {
       if (err.name != 'not_found') {
         throw err
       }
     }
 
-    roomItem.snapshot = JSON.stringify(snapshot)
+    roomItem.snapshot = JSON.stringify(data)
     const result = await roomSnapshotsDb.save(roomItem)
     console.log('Room saved!', result)
 
@@ -49,34 +63,25 @@ class HyperboxWebUser extends WebUser {
     return true
   }
 
-  async getData(roomId) {
-    console.log(`verida.getData(${roomId})`)
-    if (!roomId) return false
+  async restoreData(docId) {
+    console.log(`verida.restoreData(${docId})`)
+    if (!docId) return false
     const roomSnapshotsDb = await VeridaUser.getSnapshotDb()
     try {
-      const roomItem = await roomSnapshotsDb.get(roomId)
-      console.log(roomItem)
+      const roomItem = await roomSnapshotsDb.get(docId)
+      console.log(`verida.restored:`, roomItem)
       return roomItem.snapshot
     } catch (err) {
+      console.warn(`verida.restore error:`, err)
       // If the room isn't found, return empty
       // Otherwise re-raise the error
       if (err.error != 'not_found') {
         throw err
       }
     }
+    return false
   }
 
-  async getSnapshotDb() {
-    const context = await VeridaUser.getContext()
-    const roomSnapshotsDb = await context.openDatabase(SNAPSPHOT_DB_NAME, {
-      permissions: {
-        read: 'public',
-        write: 'users'
-      }
-    })
-
-    return roomSnapshotsDb
-  }
 
   async retrieveLastTweet(onFinished) {
     await VeridaUser.requireConnection()

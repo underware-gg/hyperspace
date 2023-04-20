@@ -10,6 +10,8 @@ import Button from '@/components/Button'
 export const VeridaConnectMenu = ({
   disconnectButton = false,
   inviteFriendButton = false,
+  connectLabel = 'Connect Verida',
+  disconnectLabel = 'Disconnect Verida',
 }) => {
   const { slug } = useRoomContext()
   const {
@@ -27,18 +29,18 @@ export const VeridaConnectMenu = ({
           Download Verida
         </Button>
         <Button disabled={_disabled} size='sm' onClick={() => connect()}>
-          {veridaIsConnecting ? 'Connecting' : 'Connect Verida'}
+          {veridaIsConnecting ? 'Connecting...' : connectLabel}
         </Button>
       </>
-      }
-      {veridaIsConnected && disconnectButton &&
-        <Button disabled={_disabled} size='sm' onClick={() => disconnect()}>
-          Disconnect Verida
-        </Button>
       }
       {veridaIsConnected && inviteFriendButton &&
         <Button disabled={_disabled} size='sm' onClick={() => inviteFriend(slug)}>
           Invite Friend
+        </Button>
+      }
+      {veridaIsConnected && disconnectButton &&
+        <Button disabled={_disabled} size='sm' onClick={() => disconnect()}>
+          {disconnectLabel}
         </Button>
       }
     </HStack>
@@ -53,7 +55,6 @@ export const VeridaStoreButton = ({
   label = 'Verida Save',
   onSaving = () => { },
   onSaved = (success) => {},
-  children = null,
 }) => {
   const { veridaIsConnected, saveData } = useVeridaContext()
   const [isSaving, setIsSaving] = useState(false)
@@ -68,11 +69,36 @@ export const VeridaStoreButton = ({
 
   return (
     <Button disabled={disabled || !veridaIsConnected || !id || !data || isSaving} variant={variant} size='sm' onClick={async () => await _saveData()}>
-      {children ?? label}
+      {label}
     </Button>
   )
 }
 
+export const VeridaRestoreButton = ({
+  id = null,
+  disabled = false,
+  variant = null,
+  label = 'Verida Restore',
+  onRestoring = () => { },
+  onRestored = (is, data) => { },
+}) => {
+  const { veridaIsConnected, restoreData } = useVeridaContext()
+  const [isRestoring, setIsRestoring] = useState(false)
+
+  const _restoreData = async () => {
+    setIsRestoring(true)
+    onRestoring()
+    const data = await restoreData(id)
+    onRestored(id, data)
+    setIsRestoring(false)
+  }
+
+  return (
+    <Button disabled={disabled || !veridaIsConnected || !id || isRestoring} variant={variant} size='sm' onClick={async () => await _restoreData()}>
+      {label}
+    </Button>
+  )
+}
 
 
 
@@ -113,7 +139,7 @@ export const VeridaMenu = () => {
       {veridaIsConnected &&
         <>
           <Spacer />
-        <Button disabled={!canEdit} variant='outline' size='sm' onClick={async () => await _saveDataData(slug)}>
+          <Button disabled={!canEdit} variant='outline' size='sm' onClick={async () => await _saveDataData(slug)}>
             Save Room Data
           </Button>
           <Button disabled={!canEdit} variant='outline' size='sm' onClick={async () => await _restoreRoomData(slug)}>

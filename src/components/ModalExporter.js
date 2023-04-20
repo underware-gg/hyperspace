@@ -38,7 +38,7 @@ const ModalExporter = ({
   }, [slug, clientRoom, isCrdtExport, isSelectiveExport, selectedTypes])
 
   const dataSize = useMemo(() => (data ? JSON.stringify(data).length : 0), [data])
-  const dataId = useMemo(() => (data ? `${slug}${isCrdtExport?'':':data'}` : null), [data])
+  const dataId = useMemo(() => (data ? `${slug}${isCrdtExport ? '' : ':data'}` : null), [data])
 
   //
   // Verida
@@ -113,12 +113,11 @@ const ModalExporter = ({
                 <HStack>
                   <VeridaConnectMenu disconnectButton={true} />
                   <VeridaStoreButton disabled={!canEdit}
+                    label={`Save ${isCrdtExport ? 'CRDT' : 'Data'}`}
                     id={dataId} data={data}
                     onSaving={() => setVeridaStatus('Saving...')}
                     onSaved={(success) => setVeridaStatus(success ? 'Saved!' : 'Error!')}
-                  >
-                    Verida Save
-                  </VeridaStoreButton>
+                  />
                   <div>as <b className='Important'>{dataId}</b> {veridaStatus}</div>
                 </HStack>
               </TabPanel>

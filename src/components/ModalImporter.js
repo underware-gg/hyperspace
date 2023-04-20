@@ -12,7 +12,7 @@ import { useVeridaContext } from '@/hooks/VeridaContext'
 import usePermission from '@/hooks/usePermission'
 import FileSelectButton from '@/components/FileSelectButton'
 import Button from '@/components/Button'
-import { VeridaConnectMenu } from '@/components/Verida'
+import { VeridaConnectMenu, VeridaRestoreButton } from '@/components/Verida'
 import * as CrawlerData from '@rsodre/crawler-data'
 const BN = require('bn.js');
 
@@ -74,6 +74,17 @@ const ModalImporter = ({
     setData(null)
   }, [isOpen])
 
+  const _importCrdt = (replaceData) => {
+    setImportStatus(importCrdtData(data, remoteStore, replaceData))
+  }
+
+  const _importData = (replaceData) => {
+    setImportStatus(importDataTypes(data, remoteStore, replaceData))
+  }
+
+
+  //
+  // Upload
   const _uploadRoomData = (fileObject) => {
     _setCurrentTabFilename(fileObject?.name ?? null)
     if (!fileObject) return
@@ -83,12 +94,34 @@ const ModalImporter = ({
         setData(JSON.parse(e2.target.result))
       } catch (e) {
         setData(false)
-        console.warn(`IMPORT ERROR:`, e)
+        console.warn(`BAD DATA:`, e)
       }
     }
     reader.readAsText(fileObject)
   }
 
+
+  //
+  // Verida
+  const { veridaIsConnected, dispatchVerida, requestedConnect } = useVeridaContext()
+  const _restoredVeridaData = (id, data) => {
+    _setCurrentTabFilename(id)
+    if (data) {
+      try {
+        setData(JSON.parse(data))
+      } catch (e) {
+        setData(false)
+        console.warn(`BAD DATA:`, e)
+      }
+    } else {
+      setData(null)
+    }
+  }
+
+
+
+  //
+  // Crawler
   // TODO: Review and fix!
   const _importCrawlerChamber = () => {
     const slug = window.prompt('DID to invite', 'S1W1')
@@ -109,14 +142,6 @@ const ModalImporter = ({
         return
       }
     }
-  }
-
-  const _importCrdt = (replaceData) => {
-    setImportStatus(importCrdtData(data, remoteStore, replaceData))
-  }
-
-  const _importData = (replaceData) => {
-    setImportStatus(importDataTypes(data, remoteStore, replaceData))
   }
 
 
@@ -166,7 +191,19 @@ const ModalImporter = ({
 
               <TabPanel className='NoPadding'>
                 <HStack>
-                  <Button disabled={!canEdit} variant={data && !filenames[1] ? 'outline' : null}>Restore from Verida</Button>
+                  <VeridaConnectMenu disconnectButton={true} connectLabel='Connect' disconnectLabel='Disconnect' />
+                  <VeridaRestoreButton disabled={!canEdit}
+                    label='Restore CRDT'
+                    id={slug}
+                    onRestored={(id, data) => _restoredVeridaData(id, data)}
+                  />
+
+                  <VeridaRestoreButton disabled={!canEdit}
+                    label='Restore Data'
+                    id={`${slug}:data`}
+                    onRestored={(id, data) => _restoredVeridaData(id, data)}
+                  />
+
                   <div>{filenames[1]}</div>
                 </HStack>
               </TabPanel>
