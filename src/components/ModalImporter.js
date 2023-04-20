@@ -12,24 +12,56 @@ import { useVeridaContext } from '@/hooks/VeridaContext'
 import usePermission from '@/hooks/usePermission'
 import FileSelectButton from '@/components/FileSelectButton'
 import Button from '@/components/Button'
+import Snapshot from '@/components/Snapshot'
 import { VeridaConnectMenu, VeridaRestoreButton } from '@/components/Verida'
+import Store from '@/core/store'
+import ClientRoom from '@/core/networking/client-room'
 import * as CrawlerData from '@rsodre/crawler-data'
 const BN = require('bn.js');
 
+const useImportedData = (data) => {
+  const [store, setStore] = useState(null)
+
+  useEffect(() => {
+    if (isCrdtData(data)) {
+      const _store = new Store()
+      if (importCrdtData(data, _store)) {
+        setStore(_store)
+        return
+      }
+    } else {
+      const _store = new Store()
+      if (importDataTypes(data, _store)) {
+        setStore(_store)
+        return
+      }
+    }
+    setStore(null)
+  }, [data])
+
+  return {
+    store,
+  }
+}
 
 const ImporterPreview = ({
   data = null,
-  isCrdt,
 }) => {
+  const isCrdt = useMemo(() => isCrdtData(data), [data])
+  const { store } = useImportedData(data)
   return (
     <div>
       {data === false && <div>Bad data!!!</div>}
       {data == null && <div>No data selected</div>}
       {data &&
         <div>
-          {isCrdt && <div>The importing data is a full CRDT snapshot</div>}
+          {isCrdt && <div>Preview (CRDT Snapshot)</div>}
+          {!isCrdt && <div>Preview (Data Types)</div>}
           <div>
-            (preview data)
+            {store
+              ? <Snapshot store={store} expanded={false} height='250px' />
+              : <div>(Preview not available)</div>
+            }
           </div>
         </div>
       }
@@ -225,7 +257,7 @@ const ModalImporter = ({
           </Tabs>
 
           <hr className='HR' />
-          <ImporterPreview data={data} isCrdt={isCrdt} />
+          <ImporterPreview data={data} />
 
         </ModalBody>
         <ModalFooter>

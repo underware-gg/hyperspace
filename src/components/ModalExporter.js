@@ -90,7 +90,7 @@ const ModalExporter = ({
           >
             <TabList mb='1em'>
               <Tab _selected={{ bg: 'teal' }}>Selective</Tab>
-              <Tab _selected={{ bg: 'teal' }}>Full CRDT</Tab>
+              <Tab _selected={{ bg: 'teal' }}>CRDT Snapshot</Tab>
             </TabList>
             <TabPanels>
               <TabPanel>
