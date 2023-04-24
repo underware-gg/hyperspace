@@ -43,10 +43,11 @@ const StateTokenPage = () => {
           <div suppressHydrationWarning>
             {isDisconnected && <div>Disconnected</div>}
             {isConnecting && <div>Connecting…</div>}
-            {isConnected && <div>{chain.name}: {address}</div>}
+            {isConnected && <div>Network: {chain.name}</div>}
           </div>
         </HStack>
 
+        <div>Account: {address}</div>
         <div>Contract: {contractName} / {contractAddress}</div>
         <HStack>
           <div>Minted Count: {totalSupply}</div>
@@ -71,12 +72,20 @@ export default StateTokenPage
 
 
 const Mint = () => {
+  const [data, setData] = useState('')
+
   const { address } = useAccount()
   const { contractAddress, abi } = useHyperboxStateContract()
-  const { write, hash, isLoading, isProcessing, isSuccess, isError, error } = useWrite('mint', [address], { contractAddress, abi })
+  const { write, hash, isLoading, isProcessing, isSuccess, isError, error } = useWrite('mint', [address, data], { contractAddress, abi })
 
   return (
     <HStack>
+      <Input
+        placeholder='Data'
+        value={data}
+        onChange={(e) => setData(e.target.value)}
+        w={300}
+      />
       <Button disabled={!write || isLoading || isProcessing} onClick={() => write?.()}>
         Mint
       </Button>
@@ -89,8 +98,9 @@ const Mint = () => {
 }
 
 const SetState = () => {
-  const [tokenId, setTokenId] = useState('')
   const [data, setData] = useState('')
+
+  const [tokenId, setTokenId] = useState('')
   const { contractAddress, abi } = useHyperboxStateContract()
   const { write, isLoading, isProcessing, isSuccess, isError, error } = useWrite('setState', [tokenId, data], { contractAddress, abi })
 
@@ -126,7 +136,7 @@ const GetState = ({ tokenId }) => {
     <HStack>
       <div>{tokenId}:</div>
       {isLoading && <div>Loading...</div>}
-      {isSuccess && <div>[{state}]</div>}
+      {isSuccess && <div className='Code'>{state}</div>}
       {isError && <div>Error: {error}</div>}
     </HStack>
   )
