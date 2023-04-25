@@ -7,11 +7,17 @@ import {
 } from '@chakra-ui/react'
 import { exportCrdtData, exportDataTypes, isCrdtData } from '@/core/export-import'
 import { useRoomContext } from '@/hooks/RoomContext'
-import { useVeridaContext } from '@/hooks/VeridaContext'
 import usePermission from '@/hooks/usePermission'
 import Snapshot from '@/components/Snapshot'
 import Button from '@/components/Button'
+// Verida
 import { VeridaConnectMenu, VeridaStoreButton } from '@/components/Verida'
+import { useVeridaContext } from '@/hooks/VeridaContext'
+// NFT
+import { ConnectKitButton } from 'connectkit'
+import MintButton from '@/web3/components/MintButton'
+import UpdateButton from '@/web3/components/UpdateButton'
+import StateSelector from '@/web3/components/StateSelector'
 
 
 const ModalExporter = ({
@@ -38,21 +44,6 @@ const ModalExporter = ({
   }, [slug, clientRoom, isCrdtExport, isSelectiveExport, selectedTypes])
 
   const dataSize = useMemo(() => (data ? JSON.stringify(data).length : 0), [data])
-  const dataId = useMemo(() => (data ? `${slug}${isCrdtExport ? '' : ':data'}` : null), [data])
-
-  //
-  // Verida
-  const { veridaIsConnected, dispatchVerida, requestedConnect } = useVeridaContext()
-  const [veridaStatus, setVeridaStatus] = useState(null)
-  useEffect(() => {
-    if (requestedConnect) {
-      handleClose(false)
-    }
-  }, [requestedConnect])
-  useEffect(() => {
-    setVeridaStatus(null)
-  }, [data])
-
 
   //
   // Download
@@ -110,34 +101,28 @@ const ModalExporter = ({
             </TabList>
             <TabPanels>
               <TabPanel>
-                <HStack>
-                  <VeridaConnectMenu disconnectButton={true} />
-                  <VeridaStoreButton disabled={!canEdit}
-                    label={`Save ${isCrdtExport ? 'CRDT' : 'Data'}`}
-                    id={dataId} data={data}
-                    onSaving={() => setVeridaStatus('Saving...')}
-                    onSaved={(success) => setVeridaStatus(success ? 'Saved!' : 'Error!')}
-                  />
-                  <div>as <b className='Important'>{dataId}</b> {veridaStatus}</div>
-                </HStack>
+                <VeridaExporterTab
+                  slug={slug}
+                  canEdit={canEdit}
+                  data={data}
+                  isCrdtExport={isCrdtExport}
+                  handleClose={handleClose}
+                />
               </TabPanel>
 
               <TabPanel>
-                <HStack>
-                  <Button size='sm' disabled={true} onClick={() => { }}>
-                    Mint NFT
-                  </Button>
-                  <Button size='sm' disabled={true} onClick={() => { }}>
-                    Select NFT
-                  </Button>
-                </HStack>
+                <NFTExporterTab
+                  canEdit={canEdit}
+                  data={data}
+                  isCrdtExport={isCrdtExport}
+                  handleClose={handleClose}
+                />
               </TabPanel>
 
               <TabPanel>
               </TabPanel>
             </TabPanels>
           </Tabs>
-
 
         </ModalBody>
         <ModalFooter>
@@ -165,3 +150,74 @@ const ModalExporter = ({
 }
 
 export default ModalExporter
+
+const VeridaExporterTab = ({
+  slug = null,
+  canEdit = false,
+  data = null,
+  isCrdtExport = false,
+  handleClose,
+}) => {
+  const dataId = useMemo(() => ((data && slug) ? `${slug}${isCrdtExport ? '' : ':data'}` : null), [data, isCrdtExport])
+
+  const { veridaIsConnected, dispatchVerida, requestedConnect } = useVeridaContext()
+  const [status, setStatus] = useState(null)
+  useEffect(() => {
+    if (requestedConnect) {
+      handleClose(false)
+    }
+  }, [requestedConnect])
+  useEffect(() => {
+    setStatus(null)
+  }, [data])
+
+  return (
+    <HStack>
+      <VeridaConnectMenu disconnectButton={true} />
+      <VeridaStoreButton disabled={!canEdit}
+        label={`Save ${isCrdtExport ? 'CRDT' : 'Data'}`}
+        id={dataId} data={data}
+        onSaving={() => setStatus('Saving...')}
+        onSaved={(success) => setStatus(success ? 'Saved!' : 'Error!')}
+      />
+      <div>as <b className='Important'>{dataId}</b> {status}</div>
+    </HStack>
+  )
+}
+
+
+const NFTExporterTab = ({
+  canEdit = false,
+  data = null,
+  handleClose,
+}) => {
+  const [status, setStatus] = useState(null)
+  const [tokenId, setTokenId] = useState(null)
+
+  return (
+    <HStack>
+      <ConnectKitButton />
+
+      <MintButton
+        data={data}
+        disabled={!canEdit}
+        label='Mint NFT'
+        onStatusChanged={setStatus}
+      />
+      <UpdateButton
+        tokenId={tokenId}
+        data={data}
+        disabled={!canEdit}
+        label='Update NFT'
+        onStatusChanged={setStatus}
+      />
+
+      <StateSelector
+        selectedValue={tokenId}
+        disabled={!canEdit}
+        onSelected={setTokenId}
+      />
+      <div>{status}</div>
+    </HStack>
+  )
+}
