@@ -8,14 +8,20 @@ import {
 } from '@chakra-ui/react'
 import { isCrdtData, importCrdtData, importDataTypes } from '@/core/export-import'
 import { useRoomContext } from '@/hooks/RoomContext'
-import { useVeridaContext } from '@/hooks/VeridaContext'
 import usePermission from '@/hooks/usePermission'
 import FileSelectButton from '@/components/FileSelectButton'
 import Button from '@/components/Button'
 import Snapshot from '@/components/Snapshot'
-import { VeridaConnectMenu, VeridaRestoreButton } from '@/components/Verida'
 import Store from '@/core/store'
-import ClientRoom from '@/core/networking/client-room'
+// Verida
+import { VeridaConnectMenu, VeridaRestoreButton } from '@/components/Verida'
+// NFT
+import { useAccount } from 'wagmi'
+import { ConnectKitButton } from 'connectkit'
+import { useHyperboxState } from '@/web3/hooks/useHyperboxState'
+import StateSelector from '@/web3/components/StateSelector'
+
+// Crawler
 import * as CrawlerData from '@rsodre/crawler-data'
 const BN = require('bn.js');
 
@@ -114,29 +120,7 @@ const ModalImporter = ({
     setImportStatus(importDataTypes(data, remoteStore, replaceData))
   }
 
-
-  //
-  // Upload
-  const _uploadRoomData = (fileObject) => {
-    _setCurrentTabFilename(fileObject?.name ?? null)
-    if (!fileObject) return
-    const reader = new FileReader()
-    reader.onload = (e2) => {
-      try {
-        setData(JSON.parse(e2.target.result))
-      } catch (e) {
-        setData(false)
-        console.warn(`BAD DATA:`, e)
-      }
-    }
-    reader.readAsText(fileObject)
-  }
-
-
-  //
-  // Verida
-  const { veridaIsConnected, dispatchVerida, requestedConnect } = useVeridaContext()
-  const _restoredVeridaData = (id, data) => {
+  const _setRestoredData = (id, data) => {
     _setCurrentTabFilename(id)
     if (data) {
       try {
@@ -150,8 +134,25 @@ const ModalImporter = ({
     }
   }
 
+  //
+  // Upload
+  const _uploadRoomData = (fileObject) => {
+    if (!fileObject) return
+    const reader = new FileReader()
+    reader.onload = (e2) => {
+      _setRestoredData(fileObject?.name ?? null, e2.target.result)
+    }
+    reader.readAsText(fileObject)
+  }
 
-
+  //
+  // NFT
+  const [tokenId, setTokenId] = useState(null)
+  const { state, isLoading, isSuccess, isError, error } = useHyperboxState(tokenId)
+  useEffect(() => {
+    console.log(isSuccess, isError, state)
+    _setRestoredData(tokenId, isSuccess ? state : null)
+  }, [state, isSuccess, isError])
   //
   // Crawler
   // TODO: Review and fix!
@@ -227,13 +228,13 @@ const ModalImporter = ({
                   <VeridaRestoreButton disabled={!canEdit}
                     label='Restore CRDT'
                     id={slug}
-                    onRestored={(id, data) => _restoredVeridaData(id, data)}
+                    onRestored={(id, data) => _setRestoredData(id, data)}
                   />
 
                   <VeridaRestoreButton disabled={!canEdit}
                     label='Restore Data'
                     id={`${slug}:data`}
-                    onRestored={(id, data) => _restoredVeridaData(id, data)}
+                    onRestored={(id, data) => _setRestoredData(id, data)}
                   />
 
                   <div>{filenames[1]}</div>
@@ -242,7 +243,13 @@ const ModalImporter = ({
 
               <TabPanel className='NoPadding'>
                 <HStack>
-                  <Button disabled={!canEdit} variant={data && !filenames[2] ? 'outline' : null}>Restore from State NFT</Button>
+                  <ConnectKitButton />
+                  {/* <Button disabled={!canEdit} variant={data && !filenames[2] ? 'outline' : null}>Restore from State NFT</Button> */}
+                  <StateSelector
+                    selectedValue={tokenId}
+                    disabled={!canEdit}
+                    onSelected={setTokenId}
+                  />
                   <div>{filenames[2]}</div>
                 </HStack>
               </TabPanel>
