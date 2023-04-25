@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react'
-import Link from 'next/link'
 import { ConnectKitButton } from 'connectkit'
 import {
   useAccount,
@@ -14,10 +13,11 @@ import {
 import { useHyperboxStateContract } from '@/web3/hooks/useHyperboxContract'
 import { useHyperboxState } from '@/web3/hooks/useHyperboxState'
 import { useTotalSupply } from '@/web3/hooks/useTotalSupply'
-import { useBalanceOf } from '@/web3/hooks/useBalanceOf'
-import { useWrite } from '@/web3/hooks/useWrite'
+import { useBalanceOf } from '@/web3/hooks/useBalance'
 import Layout from '@/components/Layout'
-import Button from '@/components/Button'
+import MintButton from '@/web3/components/MintButton'
+import UpdateButton from '@/web3/components/UpdateButton'
+import StateSelector from '@/web3/components/StateSelector'
 
 const StateTokenPage = () => {
   const { chain } = useNetwork()
@@ -47,18 +47,18 @@ const StateTokenPage = () => {
           </div>
         </HStack>
 
-        <div>Account: {address}</div>
-        <div>Contract: {contractName} / {contractAddress}</div>
+        <div>Account: <span className='Code'>{address}</span></div>
+        <div>Contract: {contractName} / <span className='Code'>{contractAddress}</span></div>
         <HStack>
-          <div>Minted Count: {totalSupply}</div>
-          <div>You own: {balanceOf}</div>
+          <div>Minted Count: <span className='Code'>{totalSupply}</span></div>
+          <div>You own: <span className='Code'>{balanceOf}</span></div>
         </HStack>
         <hr />
 
-        <Mint />
+        <MintForm />
         <hr />
 
-        <SetState />
+        <UpdateForm />
         <hr />
 
         {states}
@@ -71,12 +71,9 @@ const StateTokenPage = () => {
 export default StateTokenPage
 
 
-const Mint = () => {
+const MintForm = () => {
   const [data, setData] = useState('')
-
-  const { address } = useAccount()
-  const { contractAddress, abi } = useHyperboxStateContract()
-  const { write, hash, isLoading, isProcessing, isSuccess, isError, error } = useWrite('mint', [address, data], { contractAddress, abi })
+  const [status, setStatus] = useState(null)
 
   return (
     <HStack>
@@ -86,31 +83,25 @@ const Mint = () => {
         onChange={(e) => setData(e.target.value)}
         w={300}
       />
-      <Button disabled={!write || isLoading || isProcessing} onClick={() => write?.()}>
-        Mint
-      </Button>
-      {isLoading && <div>Approve Wallet...</div>}
-      {isProcessing && <div>Processing... [{hash}]</div>}
-      {isSuccess && <div>Success!</div>}
-      {isError && <div> Error: {error}</div>}
+      <MintButton
+        data={data}
+        onStatusChanged={(status) => setStatus(status)}
+      />
+      {status}
     </HStack>
   )
 }
 
-const SetState = () => {
+const UpdateForm = () => {
   const [data, setData] = useState('')
-
-  const [tokenId, setTokenId] = useState('')
-  const { contractAddress, abi } = useHyperboxStateContract()
-  const { write, isLoading, isProcessing, isSuccess, isError, error } = useWrite('setState', [tokenId, data], { contractAddress, abi })
+  const [tokenId, setTokenId] = useState(null)
+  const [status, setStatus] = useState(null)
 
   return (
     <HStack>
-      <Input
-        placeholder='Token Id'
-        value={tokenId}
-        onChange={(e) => setTokenId(e.target.value)}
-        w={120}
+      <StateSelector
+        selectedValue={tokenId}
+        onSelected={(tokenId) => setTokenId(tokenId)}
       />
       <Input
         placeholder='Data'
@@ -118,14 +109,12 @@ const SetState = () => {
         onChange={(e) => setData(e.target.value)}
         w={300}
       />
-      <Button disabled={!write || isLoading || isProcessing} onClick={() => write?.()}>
-        Set State
-      </Button>
-
-      {isLoading && <div>Approve Wallet...</div>}
-      {isProcessing && <div>Processing...</div>}
-      {isSuccess && <div>Success!</div>}
-      {isError && <div>Error: {error}</div>}
+      <UpdateButton
+        tokenId={tokenId}
+        data={data}
+        onStatusChanged={(status) => setStatus(status)}
+      />
+      {status}
     </HStack>
   )
 }
@@ -136,7 +125,7 @@ const GetState = ({ tokenId }) => {
     <HStack>
       <div>{tokenId}:</div>
       {isLoading && <div>Loading...</div>}
-      {isSuccess && <div className='Code'>{state}</div>}
+      {isSuccess && <div>[<span className='Code'>{state}</span>]</div>}
       {isError && <div>Error: {error}</div>}
     </HStack>
   )
