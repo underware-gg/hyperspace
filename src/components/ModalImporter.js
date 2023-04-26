@@ -61,7 +61,7 @@ const ImporterPreview = ({
       {data == null && <div>No data selected</div>}
       {data &&
         <div>
-          {isCrdt && <div>Preview (CRDT Snapshot)</div>}
+          {isCrdt && <div>Preview (Archive Snapshot)</div>}
           {!isCrdt && <div>Preview (Data Types)</div>}
           <div>
             {store
@@ -226,7 +226,7 @@ const ModalImporter = ({
                 <HStack>
                   <VeridaConnectMenu disconnectButton={true} connectLabel='Connect' disconnectLabel='Disconnect' />
                   <VeridaRestoreButton disabled={!canEdit}
-                    label='Restore CRDT'
+                    label='Restore Archive'
                     id={slug}
                     onRestored={(id, data) => _setRestoredData(id, data)}
                   />
@@ -278,10 +278,10 @@ const ModalImporter = ({
 
           <HStack>
             <Button size='sm' disabled={!canEdit || !data || !isCrdt} onClick={() => _importCrdt(true)}>
-              Replace CRDT
+              Replace Archive
             </Button>
             <Button size='sm' disabled={!canEdit || !data || !isCrdt} onClick={() => _importCrdt(false)}>
-              Merge CRDT
+              Merge Archive
             </Button>
           </HStack>
           <Spacer />

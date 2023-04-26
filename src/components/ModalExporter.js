@@ -81,7 +81,7 @@ const ModalExporter = ({
           >
             <TabList mb='1em'>
               <Tab _selected={{ bg: 'teal' }}>Selective</Tab>
-              <Tab _selected={{ bg: 'teal' }}>CRDT Snapshot</Tab>
+              <Tab _selected={{ bg: 'teal' }}>Archive Snapshot</Tab>
             </TabList>
             <TabPanels>
               <TabPanel>
@@ -137,7 +137,7 @@ const ModalExporter = ({
           <HStack>
             <a id='download-room-data' href='#' hidden></a>
             <Button size='sm' disabled={!canEdit || !data} onClick={() => _download()}>
-              Download {isCrdtExport ? 'CRDT' : 'Selected Data Types'}
+              Download {isCrdtExport ? 'Archive' : 'Selected Data Types'}
             </Button>
             <div>
               {(dataSize / 1000).toFixed(1)}K
@@ -175,7 +175,7 @@ const VeridaExporterTab = ({
     <HStack>
       <VeridaConnectMenu disconnectButton={true} />
       <VeridaStoreButton disabled={!canEdit}
-        label={`Save ${isCrdtExport ? 'CRDT' : 'Data'}`}
+        label={`Save ${isCrdtExport ? 'Archive' : 'Data'}`}
         id={dataId} data={data}
         onSaving={() => setStatus('Saving...')}
         onSaved={(success) => setStatus(success ? 'Saved!' : 'Error!')}
