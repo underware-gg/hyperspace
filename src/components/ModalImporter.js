@@ -52,6 +52,7 @@ const useImportedData = (data) => {
 
 const ImporterPreview = ({
   data = null,
+  onTypesSelected = (types) => { },
 }) => {
   const isCrdt = useMemo(() => isCrdtData(data), [data])
   const { store } = useImportedData(data)
@@ -65,7 +66,7 @@ const ImporterPreview = ({
           {!isCrdt && <div>Preview (Data Types)</div>}
           <div>
             {store
-              ? <Snapshot store={store} expanded={false} height='250px' />
+              ? <Snapshot store={store} expanded={false} height='250px' onTypesSelected={onTypesSelected} />
               : <div>(Preview not available)</div>
             }
           </div>
@@ -97,6 +98,11 @@ const ModalImporter = ({
   const [data, setData] = useState(null)
   const isCrdt = useMemo(() => isCrdtData(data), [data])
 
+  const [selectedTypes, setSelectedTypes] = useState([])
+  useEffect(() => {
+    console.log(`types:`, selectedTypes)
+  }, [selectedTypes])
+
   const [importStatus, setImportStatus] = useState(false)
   useEffect(() => {
     if (importStatus) {
@@ -110,14 +116,21 @@ const ModalImporter = ({
     _setCurrentTabFilename(null)
     setImportStatus(false)
     setData(null)
+    setTokenId(null)
   }, [isOpen])
+
+  const _canImportArchive = (canEdit && data && isCrdt)
+  const _canImportData = (canEdit && data && !isCrdt && selectedTypes.length > 0)
 
   const _importCrdt = (replaceData) => {
     setImportStatus(importCrdtData(data, remoteStore, replaceData))
   }
 
   const _importData = (replaceData) => {
-    setImportStatus(importDataTypes(data, remoteStore, replaceData))
+    const _data = Object.keys(data).reduce((result, key) => (
+      selectedTypes.includes(key) ? { ...result, [key]: data[key] } : result
+    ), {})
+    setImportStatus(importDataTypes(_data, remoteStore, replaceData))
   }
 
   const _setRestoredData = (id, data) => {
@@ -150,9 +163,9 @@ const ModalImporter = ({
   const [tokenId, setTokenId] = useState(null)
   const { state, isLoading, isSuccess, isError, error } = useHyperboxState(tokenId)
   useEffect(() => {
-    console.log(isSuccess, isError, state)
     _setRestoredData(tokenId, isSuccess ? state : null)
   }, [state, isSuccess, isError])
+
   //
   // Crawler
   // TODO: Review and fix!
@@ -176,7 +189,6 @@ const ModalImporter = ({
       }
     }
   }
-
 
   return (
     <Modal
@@ -264,7 +276,7 @@ const ModalImporter = ({
           </Tabs>
 
           <hr className='HR' />
-          <ImporterPreview data={data} />
+          <ImporterPreview data={data} onTypesSelected={setSelectedTypes} />
 
         </ModalBody>
         <ModalFooter>
@@ -277,20 +289,20 @@ const ModalImporter = ({
           <Spacer />
 
           <HStack>
-            <Button size='sm' disabled={!canEdit || !data || !isCrdt} onClick={() => _importCrdt(true)}>
+            <Button size='sm' disabled={!_canImportArchive} onClick={() => _importCrdt(true)}>
               Replace Archive
             </Button>
-            <Button size='sm' disabled={!canEdit || !data || !isCrdt} onClick={() => _importCrdt(false)}>
+            <Button size='sm' disabled={!_canImportArchive} onClick={() => _importCrdt(false)}>
               Merge Archive
             </Button>
           </HStack>
           <Spacer />
 
           <HStack>
-            <Button size='sm' disabled={!canEdit || !data || isCrdt} onClick={() => _importData(true)}>
+            <Button size='sm' disabled={!_canImportData} onClick={() => _importData(true)}>
               Replace Data
             </Button>
-            <Button size='sm' disabled={!canEdit || !data || isCrdt} onClick={() => _importData(false)}>
+            <Button size='sm' disabled={!_canImportData} onClick={() => _importData(false)}>
               Merge Data
             </Button>
           </HStack>
