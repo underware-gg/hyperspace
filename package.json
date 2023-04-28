@@ -36,6 +36,7 @@
     "sass": "^1.58.1",
     "swr": "^2.0.4",
     "three": "^0.145.0",
+    "use-local-storage-state": "^18.3.2",
     "wagmi": "^0.12.10"
   },
   "engines": {

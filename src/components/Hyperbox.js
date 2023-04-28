@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useContext } from 'react'
+import { useLocalStorageValue } from '@/hooks/useLocalStorage'
 import { RoomContext } from '@/hooks/RoomContext'
 import useGameCanvas from '@/hooks/useGameCanvas'
 import Screens from '@/components/Screens'
-import { render } from 'react-dom'
 
 const Hyperbox = ({
   slug,
@@ -18,6 +18,8 @@ const Hyperbox = ({
   const { gameCanvas, view3d } = useGameCanvas(render2d, render3d)
   const canvas2dRef = useRef()
   const canvas3dRef = useRef()
+
+  const { agentId } = useLocalStorageValue('agentId', false)
 
   useEffect(() => {
     return () => {
@@ -50,7 +52,7 @@ const Hyperbox = ({
   }
 
   useEffect(() => {
-    if (slug && canvasesReady && !isLoading && slug != game?.room?.slug) {
+    if (slug && canvasesReady && !isLoading && (slug != game?.room?.slug || agentId != game?.room?.agentId)) {
       _shutdownGame()
       setGame(null)
       setIsLoading(true)
@@ -64,7 +66,7 @@ const Hyperbox = ({
         setIsLoading(false)
       })
     }
-  }, [slug, canvasesReady])
+  }, [canvasesReady, slug, agentId])
 
   return (
     <div>

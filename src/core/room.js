@@ -169,6 +169,8 @@ class Room {
     this.clientSession = ClientRoom.create(`${slug}:session`, this.sessionStore)
     this.clientAgent = ClientRoom.create(':agents', this.agentStore)
 
+    this.agentId = this.clientRoom.agentId
+
     // instantiate components before this.clientRoom.init() to listen to snapshot loading events
     this.Settings = new Settings(this)
     this.Permission = new Permission(this)
@@ -190,8 +192,8 @@ class Room {
     this.clientSession.init(false)
     this.clientAgent.init(true)
 
-    this.Editor.init2d(this.canvas2d, this.clientRoom.agentId)
-    this.Editor.init3d(this.canvas3d, this.clientRoom.agentId)
+    this.Editor.init2d(this.canvas2d, this.agentId)
+    this.Editor.init3d(this.canvas3d, this.agentId)
 
     this.localStore.setDocument('user', 'VeridaUser', VeridaUser)
 
@@ -230,8 +232,8 @@ class Room {
   update(dt) {
     this.renderer2D.update(dt)
     this.renderer3D.update(dt)
-    this.Player.update(this.clientRoom.agentId, dt)
-    this.Editor.update(this.clientRoom.agentId, dt)
+    this.Player.update(this.agentId, dt)
+    this.Editor.update(this.agentId, dt)
   }
 
   render() {
@@ -264,7 +266,7 @@ class Room {
       this.Trigger.render2d(id, context)
     }
     for (const id of screenIds) {
-      this.Screen.render2d(id, context, this.clientRoom.agentId)
+      this.Screen.render2d(id, context, this.agentId)
     }
 
     // Should probably be able to just get them directly.
