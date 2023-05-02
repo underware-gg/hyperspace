@@ -22,11 +22,9 @@ const Header = ({
         >
           <Box>
             <Link href='/'>
-              <a>
-                <Heading as='h1' size='xl'>
-                  Hyperbox
-                </Heading>
-              </a>
+              <Heading as='h1' size='xl'>
+                Hyperbox
+              </Heading>
             </Link>
           </Box>
           <Spacer sx={{ flex: 1 }} />
