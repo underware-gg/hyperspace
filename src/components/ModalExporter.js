@@ -1,20 +1,21 @@
 import React, { useMemo, useState, useEffect } from 'react'
+import { useAccount } from 'wagmi'
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
   Tabs, TabList, TabPanels, Tab, TabPanel,
   Spacer,
   HStack,
 } from '@chakra-ui/react'
-import { exportCrdtData, exportDataTypes, isCrdtData } from '@/core/export-import'
+import { exportCrdtData, exportDataTypes } from '@/core/export-import'
 import { useRoomContext } from '@/hooks/RoomContext'
 import usePermission from '@/hooks/usePermission'
+import RequestSignInButton from '@/components/RequestSignInButton'
 import Snapshot from '@/components/Snapshot'
 import Button from '@/components/Button'
 // Verida
-import { VeridaConnectMenu, VeridaStoreButton } from '@/components/Verida'
+import { VeridaStoreButton } from '@/components/Verida'
 import { useVeridaContext } from '@/hooks/VeridaContext'
 // NFT
-import { ConnectKitButton } from 'connectkit'
 import MintButton from '@/web3/components/MintButton'
 import UpdateButton from '@/web3/components/UpdateButton'
 import StateSelector from '@/web3/components/StateSelector'
@@ -44,6 +45,13 @@ const ModalExporter = ({
   }, [slug, clientRoom, isCrdtExport, isSelectiveExport, selectedTypes])
 
   const dataSize = useMemo(() => (data ? JSON.stringify(data).length : 0), [data])
+
+  const { requestedSignIn } = useVeridaContext()
+  useEffect(() => {
+    if (requestedSignIn) {
+      handleClose(false)
+    }
+  }, [requestedSignIn])
 
   //
   // Download
@@ -106,7 +114,6 @@ const ModalExporter = ({
                   canEdit={canEdit}
                   data={data}
                   isCrdtExport={isCrdtExport}
-                  handleClose={handleClose}
                 />
               </TabPanel>
 
@@ -115,11 +122,14 @@ const ModalExporter = ({
                   canEdit={canEdit}
                   data={data}
                   isCrdtExport={isCrdtExport}
-                  handleClose={handleClose}
                 />
               </TabPanel>
 
               <TabPanel>
+                <a id='download-room-data' href='#' hidden></a>
+                <Button size='sm' disabled={!canEdit || !data} onClick={() => _download()}>
+                  Download {isCrdtExport ? 'Archive' : 'Selected Data Types'}
+                </Button>
               </TabPanel>
             </TabPanels>
           </Tabs>
@@ -135,12 +145,8 @@ const ModalExporter = ({
           <Spacer />
 
           <HStack>
-            <a id='download-room-data' href='#' hidden></a>
-            <Button size='sm' disabled={!canEdit || !data} onClick={() => _download()}>
-              Download {isCrdtExport ? 'Archive' : 'Selected Data Types'}
-            </Button>
             <div>
-              {(dataSize / 1000).toFixed(1)}K
+              Data size: {(dataSize / 1000).toFixed(1)}K
             </div>
           </HStack>
         </ModalFooter>
@@ -156,24 +162,21 @@ const VeridaExporterTab = ({
   canEdit = false,
   data = null,
   isCrdtExport = false,
-  handleClose,
 }) => {
   const dataId = useMemo(() => ((data && slug) ? `${slug}${isCrdtExport ? '' : ':data'}` : null), [data, isCrdtExport])
 
-  const { veridaIsConnected, dispatchVerida, requestedConnect } = useVeridaContext()
   const [status, setStatus] = useState(null)
-  useEffect(() => {
-    if (requestedConnect) {
-      handleClose(false)
-    }
-  }, [requestedConnect])
   useEffect(() => {
     setStatus(null)
   }, [data])
 
+  const { veridaIsConnected } = useVeridaContext()
+
   return (
     <HStack>
-      <VeridaConnectMenu disconnectButton={true} />
+      {!veridaIsConnected &&
+        <RequestSignInButton label='Sign In with Verida' />
+      }
       <VeridaStoreButton disabled={!canEdit}
         label={`Save ${isCrdtExport ? 'Archive' : 'Data'}`}
         id={dataId} data={data}
@@ -189,14 +192,16 @@ const VeridaExporterTab = ({
 const NFTExporterTab = ({
   canEdit = false,
   data = null,
-  handleClose,
 }) => {
+  const { address, isConnected } = useAccount()
   const [status, setStatus] = useState(null)
   const [tokenId, setTokenId] = useState(null)
 
   return (
     <HStack>
-      <ConnectKitButton />
+      {!isConnected &&
+        <RequestSignInButton label='Connect Wallet' />
+      }
 
       <MintButton
         data={data}
@@ -214,7 +219,7 @@ const NFTExporterTab = ({
 
       <StateSelector
         selectedValue={tokenId}
-        disabled={!canEdit}
+        disabled={!canEdit || !isConnected}
         onSelected={setTokenId}
       />
       <div>{status}</div>

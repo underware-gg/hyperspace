@@ -9,15 +9,16 @@ import {
 import { isCrdtData, importCrdtData, importDataTypes } from '@/core/export-import'
 import { useRoomContext } from '@/hooks/RoomContext'
 import usePermission from '@/hooks/usePermission'
+import RequestSignInButton from '@/components/RequestSignInButton'
 import FileSelectButton from '@/components/FileSelectButton'
 import Button from '@/components/Button'
 import Snapshot from '@/components/Snapshot'
 import Store from '@/core/store'
 // Verida
-import { VeridaConnectMenu, VeridaRestoreButton } from '@/components/Verida'
+import { VeridaRestoreButton } from '@/components/Verida'
+import { useVeridaContext } from '@/hooks/VeridaContext'
 // NFT
 import { useAccount } from 'wagmi'
-import { ConnectKitButton } from 'connectkit'
 import { useHyperboxState } from '@/web3/hooks/useHyperboxState'
 import StateSelector from '@/web3/components/StateSelector'
 
@@ -147,6 +148,13 @@ const ModalImporter = ({
     }
   }
 
+  const { veridaIsConnected, requestedSignIn } = useVeridaContext()
+  useEffect(() => {
+    if (requestedSignIn) {
+      handleClose(false)
+    }
+  }, [requestedSignIn])
+
   //
   // Upload
   const _uploadRoomData = (fileObject) => {
@@ -160,6 +168,7 @@ const ModalImporter = ({
 
   //
   // NFT
+  const { isConnected } = useAccount()
   const [tokenId, setTokenId] = useState(null)
   const { state, isLoading, isSuccess, isError, error } = useHyperboxState(tokenId)
   useEffect(() => {
@@ -236,7 +245,10 @@ const ModalImporter = ({
 
               <TabPanel className='NoPadding'>
                 <HStack>
-                  <VeridaConnectMenu disconnectButton={true} connectLabel='Sign In' disconnectLabel='Disconnect' />
+                  {!veridaIsConnected &&
+                    <RequestSignInButton label='Sign In with Verida' />
+                  }
+
                   <VeridaRestoreButton disabled={!canEdit}
                     label='Restore Archive'
                     id={slug}
@@ -255,11 +267,16 @@ const ModalImporter = ({
 
               <TabPanel className='NoPadding'>
                 <HStack>
-                  <ConnectKitButton />
+                  {!isConnected &&
+                    <RequestSignInButton label='Connect Wallet' />
+                  }
+
                   {/* <Button disabled={!canEdit} variant={data && !filenames[2] ? 'outline' : null}>Restore from State NFT</Button> */}
+
+                  <Text>State Token Id:</Text>
                   <StateSelector
                     selectedValue={tokenId}
-                    disabled={!canEdit}
+                    disabled={!canEdit || !isConnected}
                     onSelected={setTokenId}
                   />
                   <div>{filenames[2]}</div>

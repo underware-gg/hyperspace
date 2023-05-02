@@ -11,7 +11,7 @@ export const initialState = {
   isConnecting: false,
   isConnected: false,
   profile: null,
-  requestedConnect: false,
+  requestedSignIn: false,
 }
 const VeridaContext = createContext(initialState)
 
@@ -21,7 +21,7 @@ const VeridaActions = {
   setIsConnecting: 'setIsConnecting',
   setIsConnected: 'setIsConnected',
   setProfile: 'setProfile',
-  setRequestConnect: 'setRequestConnect',
+  setRequestSignIn: 'setRequestSignIn',
 }
 
 //--------------------------------
@@ -48,8 +48,8 @@ const VeridaProvider = ({
       case VeridaActions.setProfile:
         newState.profile = action.payload
         break
-      case VeridaActions.setRequestConnect:
-        newState.requestedConnect = action.payload
+      case VeridaActions.setRequestSignIn:
+        newState.requestedSignIn = action.payload
         break
       default:
         console.warn(`VeridaProvider: Unknown action [${action.type}]`)
@@ -199,7 +199,7 @@ export const useVeridaContext = () => {
     veridaIsConnecting: state.isConnecting,
     veridaIsConnected: state.isConnected,
     veridaProfile: state.profile,
-    requestedConnect: state.requestedConnect,
+    requestedSignIn: state.requestedSignIn,
     did, didAddress,
     download,
     connect, disconnect,

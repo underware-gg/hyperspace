@@ -58,7 +58,7 @@ export const AvatarButton = () => {
     veridaIsConnecting,
     veridaProfileName,
     veridaAvatarUri,
-    requestedConnect,
+    requestedSignIn,
     dispatchVerida,
   } = useVeridaContext()
 
@@ -71,11 +71,11 @@ export const AvatarButton = () => {
   }
 
   useEffect(() => {
-    if (requestedConnect) {
-      dispatchVerida(VeridaActions.setRequestConnect, false)
+    if (requestedSignIn) {
+      dispatchVerida(VeridaActions.setRequestSignIn, false)
       disclosure.onOpen()
     }
-  }, [requestedConnect])
+  }, [requestedSignIn])
 
   return (
     <div className='AvatarContainer' onClick={() => _openModal()}>
