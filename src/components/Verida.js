@@ -10,7 +10,7 @@ import Button from '@/components/Button'
 export const VeridaConnectMenu = ({
   disconnectButton = false,
   inviteFriendButton = false,
-  connectLabel = 'Connect Verida',
+  connectLabel = 'Sign In with Verida',
   disconnectLabel = 'Disconnect Verida',
 }) => {
   const { slug } = useRoomContext()
@@ -24,23 +24,23 @@ export const VeridaConnectMenu = ({
   return (
     <HStack>
       {!veridaIsConnected &&
-      <>
-        <Button disabled={_disabled} size='sm' onClick={() => download()}>
-          Download Verida
-        </Button>
-        <Button disabled={_disabled} size='sm' onClick={() => connect()}>
-          {veridaIsConnecting ? 'Connecting...' : connectLabel}
-        </Button>
-      </>
-      }
-      {veridaIsConnected && inviteFriendButton &&
-        <Button disabled={_disabled} size='sm' onClick={() => inviteFriend(slug)}>
-          Invite Friend
-        </Button>
+        <>
+          <Button disabled={_disabled} size='sm' onClick={() => connect()}>
+            {veridaIsConnecting ? 'Connecting...' : connectLabel}
+          </Button>
+          <Button disabled={_disabled} size='sm' variant='outline' onClick={() => download()}>
+            Download Verida
+          </Button>
+        </>
       }
       {veridaIsConnected && disconnectButton &&
         <Button disabled={_disabled} size='sm' onClick={() => disconnect()}>
           {disconnectLabel}
+        </Button>
+      }
+      {veridaIsConnected && inviteFriendButton &&
+        <Button disabled={_disabled} size='sm' variant='outline' onClick={() => inviteFriend(slug)}>
+          Invite Friend
         </Button>
       }
     </HStack>
@@ -54,7 +54,7 @@ export const VeridaStoreButton = ({
   variant = null,
   label = 'Verida Save',
   onSaving = () => { },
-  onSaved = (success) => {},
+  onSaved = (success) => { },
 }) => {
   const { veridaIsConnected, saveData } = useVeridaContext()
   const [isSaving, setIsSaving] = useState(false)

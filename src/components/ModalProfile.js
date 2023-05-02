@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useAccount } from 'wagmi'
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
   VStack, HStack,
@@ -6,6 +7,7 @@ import {
   Text,
   Box,
   Link,
+  Divider,
 } from '@chakra-ui/react'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { useRoomContext } from '@/hooks/RoomContext'
@@ -14,9 +16,10 @@ import useGameCanvas from '@/hooks/useGameCanvas'
 import useProfile from '@/hooks/useProfile'
 import CharacterSelector from '@/components/CharacterSelector'
 import Editable from '@/components/Editable'
-import Button from '@/components/Button'
-import { Avatar } from '@/components/Avatar'
 import { VeridaConnectMenu } from '@/components/Verida'
+import { ConnectKitButton } from 'connectkit'
+import { Avatar } from '@/components/Avatar'
+import { Address } from '@/components/Address'
 
 const ModalProfile = ({
   disclosure,
@@ -34,9 +37,14 @@ const ModalProfile = ({
     }
   }, [isOpen])
 
+  // Verida
   const {
     hasVeridaProfile, veridaProfileName, veridaAvatarUri, veridaProfileUrl,
+    veridaIsConnected, didAddress,
   } = useVeridaContext()
+
+  // Ethereum Wallet
+  const { isConnected, address } = useAccount()
 
   const _renameUser = (value) => {
     Profile.updateProfile(agentId, {
@@ -62,13 +70,14 @@ const ModalProfile = ({
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={4}>
+
           <HStack>
             <Avatar width={120}
               avatarUri={veridaAvatarUri ?? profileAvatarUrl}
               spriteUrl={profileCharacterUrl}
               externalProfileUrl={veridaProfileUrl}
             />
-            <Box style={{ height: '120px' }}>
+            <Box >
               <HStack>
                 <Text>User Name:</Text>
                 <Editable
@@ -92,18 +101,44 @@ const ModalProfile = ({
                 Agent ID: {agentId}
               </Text>
 
+              {process.env.ENV == 'desenv' &&
+                <Text>
+                  Profile ID: {agentId}
+                </Text>
+              }
+
             </Box>
           </HStack>
+
+          <hr className='HR2' />
+          <HStack>
+            <VeridaConnectMenu disconnectButton={true} inviteFriendButton={true} />
+            <Spacer />
+            {veridaIsConnected &&
+              <Address address={didAddress} />
+            }
+          </HStack>
+
+          <hr className='HR2' />
+          <HStack>
+            <ConnectKitButton />
+            <Spacer />
+            {isConnected &&
+              <Address address={address} />
+            }
+          </HStack>
+
         </ModalBody>
-        <ModalFooter>
-          <VeridaConnectMenu disconnectButton={true} inviteFriendButton={true} />
+
+        {/* <ModalFooter>
           <Spacer />
           <Button
             variant='outline'
             value='Close'
             onClick={() => onClose()}
           />
-        </ModalFooter>
+        </ModalFooter> */}
+
       </ModalContent>
     </Modal>
   )

@@ -236,7 +236,7 @@ const ModalImporter = ({
 
               <TabPanel className='NoPadding'>
                 <HStack>
-                  <VeridaConnectMenu disconnectButton={true} connectLabel='Connect' disconnectLabel='Disconnect' />
+                  <VeridaConnectMenu disconnectButton={true} connectLabel='Sign In' disconnectLabel='Disconnect' />
                   <VeridaRestoreButton disabled={!canEdit}
                     label='Restore Archive'
                     id={slug}

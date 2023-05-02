@@ -58,7 +58,7 @@ export const PermissionsForm = ({
               <Text>Owner: {permission?.owner ?? <span className='Important'>Unclaimed</span>}</Text>
             }
             {!veridaIsConnected &&
-              <Text>(connect to Verida for user profile)</Text>
+              <Text>(sign in with Verida for user profile)</Text>
             }
           </VStack>
         </HStack>
@@ -72,7 +72,7 @@ export const PermissionsForm = ({
           Anyone can Edit
         </Checkbox>
 
-        {!veridaIsConnected && <><Divider /><Text color='error'>Connect to Verida!</Text></>}
+        {!veridaIsConnected && <><Divider /><Text color='error'>Sign In with Verida!</Text></>}
         {veridaIsConnected && !canEdit && <><Divider /><Text color='error'>Not the owner!</Text></>}
 
       </VStack>
