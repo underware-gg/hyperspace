@@ -1,17 +1,18 @@
 import { EnvironmentType } from '@verida/types'
 import { Client } from '@verida/client-ts'
-import { WebUser } from '@verida/account-web-vault';
+import { WebUser } from '@verida/web-helpers'
 
 // (optional) Import WalletConnect if required
-//import WalletConnect from '@walletconnect/client';
+//import WalletConnect from '@walletconnect/client'
 
 // API docs:
 // https://developers.verida.network/docs/single-sign-on-sdk/web-user
 
 const VERIDA_ENVIRONMENT = EnvironmentType.TESTNET
 const CONTEXT_NAME = 'funDAOmental: Hyperbox'
+const VAULT_CONTEXT = 'Verida: Vault'
 const SNAPSPHOT_DB_NAME = 'room_snapshots'
-const LOGO_URL = '/oathring_512x512.png';
+const LOGO_URL = 'https://hyperbox-stage-2301.fundaomental.com/oathring_512x512.png'
 
 class HyperboxWebUser extends WebUser {
 
@@ -99,7 +100,7 @@ class HyperboxWebUser extends WebUser {
       userSelect: false
     }
     const config = {
-      recipientContextName: 'Verida: Vault'
+      recipientContextName: VAULT_CONTEXT
     }
 
     messaging.onMessage(function (message) {
@@ -156,7 +157,7 @@ export const getPublicProfile = async (didAddress) => {
   if (!client) return null
 
   const did = `did:vda:testnet:${didAddress}`
-  const profileConnection = await client.openPublicProfile(did, 'Verida: Vault', 'basicProfile')
+  const profileConnection = await client.openPublicProfile(did, VAULT_CONTEXT, 'basicProfile')
   const publicProfile = await profileConnection.getMany()
 
   return publicProfile
