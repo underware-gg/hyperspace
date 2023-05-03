@@ -16,8 +16,8 @@ import useGameCanvas from '@/hooks/useGameCanvas'
 import useProfile from '@/hooks/useProfile'
 import CharacterSelector from '@/components/CharacterSelector'
 import Editable from '@/components/Editable'
+import ConnectWalletButton from '@/web3/components/ConnectWalletButton'
 import { VeridaConnectMenu } from '@/components/Verida'
-import { ConnectKitButton } from 'connectkit'
 import { Avatar } from '@/components/Avatar'
 import { Address } from '@/components/Address'
 
@@ -27,7 +27,7 @@ const ModalProfile = ({
   const { agentId, Profile } = useRoomContext()
   const { gameCanvas } = useGameCanvas()
   const { isOpen, onOpen, onClose } = disclosure
-  const { profileName, profileAvatarUrl, profileCharacterUrl } = useProfile()
+  const { profileId, profileName, profileAvatarUrl, profileCharacterUrl } = useProfile()
   const nameRef = useRef()
   const finalRef = useRef()
 
@@ -101,11 +101,9 @@ const ModalProfile = ({
                 Agent ID: {agentId}
               </Text>
 
-              {process.env.ENV == 'desenv' &&
-                <Text>
-                  Profile ID: {agentId}
-                </Text>
-              }
+              <Text>
+                Profile ID: {profileId}
+              </Text>
 
             </Box>
           </HStack>
@@ -121,7 +119,7 @@ const ModalProfile = ({
 
           <hr className='HR2' />
           <HStack>
-            <ConnectKitButton />
+            <ConnectWalletButton />
             <Spacer />
             {isConnected &&
               <Address address={address} />
