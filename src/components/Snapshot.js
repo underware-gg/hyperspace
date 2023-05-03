@@ -74,7 +74,7 @@ const Snapshot = ({
 
 let _logged = false
 const _log = (type, id, content) => {
-  console.log(type, id, content)
+  console.log(`${type} [${id}]:`, content)
   if (!_logged) {
     alert(`Document dumped to the console`)
     _logged = true

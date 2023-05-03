@@ -122,7 +122,7 @@ const RoomPage = () => {
 
 
         <GridItem>
-          {process.env.ENV == 'desenv' && agentId}
+          {process.env.DEV && agentId}
         </GridItem>
 
         <GridItem colSpan={4}>

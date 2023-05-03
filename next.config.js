@@ -12,6 +12,7 @@ const nextConfig = {
   swcMinify: true,
   env: {
     ENV: process.env.ENV,
+    DEV: process.env.ENV === 'dev',
     TILE_SIZE: 32,  // pixels
     CANVAS_WIDTH,   // pixels
     CANVAS_HEIGHT,  // pixels

@@ -11,7 +11,7 @@ import Button from '@/components/Button'
 const ModalSnapshots = ({
   disclosure,
 }) => {
-  const { remoteStore, localStore } = useRoomContext()
+  const { remoteStore, localStore, agentStore } = useRoomContext()
   const { id, isOpen, onClose } = disclosure
 
   return (
@@ -37,6 +37,9 @@ const ModalSnapshots = ({
             <TabList mb='1em'>
               <Tab _selected={{ bg: 'teal' }}>Remote</Tab>
               <Tab _selected={{ bg: 'teal' }}>Local</Tab>
+              {process.env.DEV &&
+                <Tab _selected={{ bg: 'teal' }}>:agents</Tab>
+              }
               <Tab _selected={{ bg: 'teal' }}>Slug</Tab>
             </TabList>
             <TabPanels>
@@ -46,6 +49,11 @@ const ModalSnapshots = ({
               <TabPanel>
                 <Snapshot store={localStore} />
               </TabPanel>
+              {process.env.DEV &&
+                <TabPanel>
+                  <Snapshot store={agentStore} />
+                </TabPanel>
+              }
               <TabPanel>
                 <SnapshotSlug />
               </TabPanel>
