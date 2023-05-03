@@ -7,7 +7,7 @@ import useProfile from '@/hooks/useProfile'
 import useTexture from '@/hooks/useTexture'
 
 const CharacterSelector = ({ }) => {
-  const { agentId, Profile } = useRoomContext()
+  const { Profile } = useRoomContext()
   const { profileCharacterUrl } = useProfile()
   const { gameCanvas } = useGameCanvas()
 
@@ -36,12 +36,12 @@ const CharacterSelector = ({ }) => {
 
     setSelectedValue(_selectedValue)
     setOptions(_options)
-  }, [agentId, profileCharacterUrl])
+  }, [profileCharacterUrl])
 
   const _handleSelectSpritesheet = (e => {
     const fileName = e.target.value
-    if (agentId && fileName) {
-      Profile.updateProfile(agentId, {
+    if (fileName) {
+      Profile.updateCurrentProfile({
         spritesheet: fileName,
       })
     }

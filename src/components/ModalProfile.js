@@ -47,7 +47,7 @@ const ModalProfile = ({
   const { isConnected, address } = useAccount()
 
   const _renameUser = (value) => {
-    Profile.updateProfile(agentId, {
+    Profile.updateCurrentProfile({
       name: value,
     })
   }

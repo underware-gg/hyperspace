@@ -8,7 +8,7 @@ import RoomCollection from '@/core/interfaces/RoomCollection'
 // a random agentId is created with nanoid()
 // agentId is stored on the browser local storage
 // a new profile is NOT created automatically
-// useProfile() and Player.getPlayerTextureName() will choose a deterministic character/spritesheet based on the agentId hashed number
+// useProfile() and Player.getDefaultPlayerTextureName() will choose a deterministic character/spritesheet based on the agentId hashed number
 //
 // > user edits the name or select a new spritesheet
 // a profile will be created with the user's custom info
@@ -51,16 +51,37 @@ class Profile extends RoomCollection {
     super(room, 'profile')
 
     this.actions.addActionDownListener('toggle3d', () => {
-      const profile = this.agentStore.getDocument('profile', this.agentId)
+      const profile = this.getCurrentProfile()
 
-      let view3d = this.canvas3d != null && (profile ? !profile.view3d : true)
+      let view3d = (profile ? !profile.view3d : true) && this.canvas3d != null
       
-      this.updateProfile(this.agentId, {
+      this.updateCurrentProfile({
         view3d
       })
 
       this.localStore.setDocument('editGravityMap', 'world', false)
     })
+  }
+
+  getCurrentProfileId() {
+    return this.localStore.getDocument('profileId', this.agentId) ?? this.agentId
+  }
+
+  getCurrentProfile() {
+    const profileId = this.getCurrentProfileId()
+    const profile = this.agentStore.getDocument('profile', profileId) ?? {}
+    return profile
+  }
+
+  getAgentProfile(agentId) {
+    const profileId = (agentId == this.agentId) ? this.getCurrentProfileId() : agentId
+    const profile = this.agentStore.getDocument('profile', profileId) ?? {}
+    return profile
+  }
+
+  updateCurrentProfile(values) {
+    const profileId = this.getCurrentProfileId()
+    this.updateProfile(profileId, values)
   }
 
   updateProfile(id, values) {

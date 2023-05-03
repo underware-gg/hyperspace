@@ -226,7 +226,7 @@ class Player extends RoomCollection {
 
     let screenId = null
 
-    const profile = this.agentStore.getDocument('profile', id) ?? {}
+    const profile = this.Profile.getCurrentProfile()
     if (profile.view3d) {
       screenId = this.localStore.getDocument('screens', 'facing-3d')
     } else {
@@ -383,7 +383,7 @@ class Player extends RoomCollection {
     let { position: { x, y, z }, rotation } = player
     const rotationCopy = deepCopy(rotation)
 
-    const profile = this.agentStore.getDocument('profile', id) ?? {}
+    const profile = this.Profile.getCurrentProfile()
     const view3d = profile.view3d ?? false
 
     // Compute new XY position
@@ -619,19 +619,19 @@ class Player extends RoomCollection {
 
   }
 
-  getPlayerTexture(agentId = '') {
-    const profile = this.agentStore.getDocument('profile', agentId) ?? {}
+  getPlayerTexture(agentId) {
+    const profile = this.Profile.getAgentProfile(agentId)
 
     let texture = getTextureByName(profile?.spritesheet)
 
     if (!texture) {
-      texture = getTextureByName(this.getPlayerTextureName(agentId))
+      texture = getTextureByName(this.getDefaultPlayerTextureName(agentId))
     }
 
     return texture
   }
 
-  getPlayerTextureName(agentId = '') {
+  getDefaultPlayerTextureName(agentId) {
     const index = Math.abs(hashCode(agentId)) % spritesheets.length
     return spritesheets[index].src
   }

@@ -99,7 +99,7 @@ class Map extends RoomCollection {
 
     this.localStore.on({ type: 'editGravityMap', event: 'change' }, (id, enabled) => {
       if (enabled) {
-        this.Profile.updateProfile(this.agentId, { view3d: false })
+        this.Profile.updateCurrentProfile({ view3d: false })
       }
       this.init2D(id)
     })
