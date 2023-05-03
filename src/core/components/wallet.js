@@ -10,12 +10,15 @@ class Wallet extends RoomCollection {
   constructor(room) {
     super(room, 'wallet')
 
+    // clear profile for remote gents
+    this.agentStore.setDocument('wallet', this.agentId, null)
+
     this.localStore.on({ type: 'connectedWallets', event: 'change' }, (walletType, address) => {
     })
   }
 
   connectedWallet(walletType, address) {
-    console.log(`connectedWallet:`, walletType, address)
+    // console.log(`connectedWallet:`, walletType, address)
     this.localStore.setDocument('connectedWallets', walletType, address)
 
     this.linkWalletToProfile(walletType, address)
@@ -59,8 +62,14 @@ class Wallet extends RoomCollection {
       }
     }
 
-    console.log(`use wallet profile:`, walletType, profileId)
+    // console.log(`use wallet profile:`, walletType, profileId)
     this.localStore.setDocument('profileId', this.agentId, profileId)
+
+    // notify remote clients of my profileId
+    this.agentStore.setDocument('wallet', this.agentId, {
+      walletType: 'Agent',
+      profileId,
+    })
   }
 
 }

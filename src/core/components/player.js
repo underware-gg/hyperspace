@@ -99,15 +99,23 @@ class Player extends RoomCollection {
 
     // texture swapping
     this.agentStore.on({ type: 'profile', event: 'change' }, (agentId, profile) => {
-      const playerMesh = this.localStore.getDocument('player-mesh', agentId)
-
-      if (playerMesh !== null) {
-        const material = this.makePlayerMaterial(agentId)
-        playerMesh.material = material
-        playerMesh.needsUpdate = true
-        // console.log(`CHANGE MATERIAL`, agentId, material)
+      this.updatePlayerTexture(agentId)
+    })
+    this.agentStore.on({ type: 'wallet', event: 'change' }, (agentId, wallet) => {
+      if (!wallet || wallet.walletType == 'Agent') {
+        this.updatePlayerTexture(agentId)
       }
     })
+  }
+
+  updatePlayerTexture(agentId) {
+    const playerMesh = this.localStore.getDocument('player-mesh', agentId)
+    if (!playerMesh) return
+
+    const material = this.makePlayerMaterial(agentId)
+    playerMesh.material = material
+    playerMesh.needsUpdate = true
+    this.update3dSprite(agentId)
   }
 
   makePlayerMaterial(agentId) {

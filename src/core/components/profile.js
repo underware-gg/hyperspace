@@ -67,16 +67,23 @@ class Profile extends RoomCollection {
     return this.localStore.getDocument('profileId', this.agentId) ?? this.agentId
   }
 
+  getAgentProfileId(agentId) {
+    if (agentId == this.agentId) {
+      return this.getCurrentProfileId()
+    }
+    // check if remote agent is using a custom profile
+    const wallet = this.agentStore.getDocument('wallet', agentId)
+    return wallet?.profileId ?? agentId
+  }
+
   getCurrentProfile() {
     const profileId = this.getCurrentProfileId()
-    const profile = this.agentStore.getDocument('profile', profileId) ?? {}
-    return profile
+    return this.agentStore.getDocument('profile', profileId) ?? {}
   }
 
   getAgentProfile(agentId) {
-    const profileId = (agentId == this.agentId) ? this.getCurrentProfileId() : agentId
-    const profile = this.agentStore.getDocument('profile', profileId) ?? {}
-    return profile
+    const profileId = this.getAgentProfileId(agentId)
+    return this.agentStore.getDocument('profile', profileId) ?? {}
   }
 
   updateCurrentProfile(values) {
