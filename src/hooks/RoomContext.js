@@ -72,6 +72,7 @@ export const useRoomContext = () => {
     clientRoom: room?.clientRoom ?? null,
     Player: room?.Player ?? null,
     Profile: room?.Profile ?? null,
+    Wallet: room?.Wallet ?? null,
     Permission: room?.Permission ?? null,
     Settings: room?.Settings ?? null,
     Tileset: room?.Tileset ?? null,

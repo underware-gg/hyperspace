@@ -79,6 +79,10 @@ class RoomMate {
     return this.#room.Profile
   }
 
+  get Wallet() {
+    return this.#room.Wallet
+  }
+
   get Tileset() {
     return this.#room.Tileset
   }

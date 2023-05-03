@@ -147,13 +147,22 @@ export const editor = {
 // 
 // persistent data types
 
+// key: agentId or profileId (nanoid)
 export const profile = {
   name: 'string',
   spritesheet: 'string',
-  blob: 'string',
+  blob: 'string', // custom spritesheet (unused)
   view3d: 'boolean',
+  signed: 'boolean', // if signed, the key is a profileId linked to a wallet address with a wallet type
 }
 
+// key: wallet address (0x0a1b2c3d...)
+export const wallet = {
+  walletType: 'string', // 'Verida', 'Ethereum', ...
+  profileId: 'string',
+}
+
+// key: 'world'
 export const settings = {
   size: { // map size in tiles (deprecated)
     width: 'number',
@@ -165,6 +174,7 @@ export const settings = {
   },
 }
 
+// key: 'world'
 export const map = [
   ['number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number'],
   ['number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number'],
@@ -188,6 +198,17 @@ export const map = [
   ['number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number'],
 ]
 
+// key: 'world'
+export const tileset = {
+  name: 'string',
+  blob: 'string',
+  size: {
+    width: 'number',
+    height: 'number',
+  },
+}
+
+// key: portal id (nanoid)
 export const portal = {
   position: {
     x: 'number',
@@ -201,15 +222,7 @@ export const portal = {
   },
 }
 
-export const tileset = {
-  name: 'string',
-  blob: 'string',
-  size: {
-    width: 'number',
-    height: 'number',
-  },
-}
-
+// key: screen id (nanoid)
 export const screen = {
   name: 'string',
   type: 'string',
@@ -227,6 +240,7 @@ export const screen = {
   },
 }
 
+// key: 'world' or document id (nanoid)
 export const permission = {
   id: 'string',       // document id
   owner: 'string',    // owner address
@@ -234,6 +248,7 @@ export const permission = {
   public: 'boolean',  // anyone can edit
 }
 
+// key: trigger id (nanoid)
 export const trigger = {
   name: 'string',
   state: 'number',
@@ -246,11 +261,14 @@ export const trigger = {
 }
 
 // generic document
+// key: 'chat', or any document id
 export const document = {
   content: 'string',
 }
 
-export const book = { // deprecated
+// deprecated
+// key: book id (nanoid)
+export const book = {
   position: {
     x: 'number',
     y: 'number',
@@ -265,6 +283,7 @@ export const typeDefs = {
   editor: createTypeMetadata(editor),
   // persistent
   profile: createTypeMetadata(profile),
+  wallet: createTypeMetadata(wallet),
   settings: createTypeMetadata(settings),
   map: createTypeMetadata(map),
   portal: createTypeMetadata(portal),

@@ -9,6 +9,7 @@ import Screen from '@/core/components/screen'
 import Player from '@/core/components/player'
 import Profile from '@/core/components/profile'
 import Permission from '@/core/components/permission'
+import Wallet from '@/core/components/wallet'
 import Settings from '@/core/components/settings'
 import Tileset from '@/core/components/tileset'
 import Map from '@/core/components/map'
@@ -186,6 +187,7 @@ class Room {
 
     // agentStore
     this.Profile = new Profile(this)
+    this.Wallet = new Wallet(this)
 
     // loads snapshots
     this.clientRoom.init(true)
