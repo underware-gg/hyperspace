@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useEnsName as wagmiEnsName } from 'wagmi'
-import { validateAddress, formatAddress } from '@/web3/address'
+import { validateAddress, formatAddress } from '@/web3/utils'
 
 const useEnsName = (address) => {
 	return wagmiEnsName({

@@ -101,7 +101,7 @@ const ModalImporter = ({
 
   const [selectedTypes, setSelectedTypes] = useState([])
   useEffect(() => {
-    console.log(`types:`, selectedTypes)
+    // console.log(`types:`, selectedTypes)
   }, [selectedTypes])
 
   const [importStatus, setImportStatus] = useState(false)

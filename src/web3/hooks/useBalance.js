@@ -1,15 +1,18 @@
 import { useContractRead } from 'wagmi'
+import { validateArgs } from '@/web3/utils'
 
 // IERC721Enumerable access
 // https://docs.openzeppelin.com/contracts/4.x/api/token/erc721#IERC721Enumerable
 
 const useBalanceOf = (owner, options = {}) => {
+  const args = [owner]
   const { data, isLoading, isSuccess, isError } = useContractRead({
     address: options.contractAddress,
     abi: options.abi,
     functionName: 'balanceOf',
-    args: [owner],
+    args,
     watch: true,
+    enabled: validateArgs(args),
   })
 
   return {
@@ -21,12 +24,14 @@ const useBalanceOf = (owner, options = {}) => {
 }
 
 const useTokenOfOwnerByIndex = (owner, index, options = {}) => {
+  const args = [owner, index]
   const { data, isLoading, isSuccess, isError } = useContractRead({
     address: options.contractAddress,
     abi: options.abi,
     functionName: 'tokenOfOwnerByIndex',
-    args: [owner, index],
+    args,
     watch: true,
+    enabled: validateArgs(args),
   })
 
   return {

@@ -4,16 +4,17 @@ import {
   useContractWrite,
   useWaitForTransaction,
 } from 'wagmi'
+import { validateArgs } from '@/web3/utils'
 
 const useWrite = (functionName, args = [], options) => {
-  const hasNullArgs = args.reduce((result, value) => result || value == null, false)
   const { config } = usePrepareContractWrite({
     address: options.contractAddress,
     abi: options.abi,
     functionName,
     args,
-    enabled: (functionName && !hasNullArgs),
+    enabled: (functionName && validateArgs(args)),
   })
+
   const { write, data, isLoading, isSuccess, isError, error } = useContractWrite(config)
   const hash = isSuccess ? data?.hash : null
   const {

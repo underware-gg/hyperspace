@@ -21,3 +21,9 @@ export function formatAddress(address, short = false) {
 		result = result.substring(0, 6) + '…' + result.substring(result.length - 4)
 	return result
 }
+
+export function validateArgs(args=[]) {
+  const hasNullArgs = args.reduce((result, value) => result || value == null, false)
+  return !hasNullArgs
+}
+
