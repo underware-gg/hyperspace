@@ -1,4 +1,5 @@
 import RoomCollection from '@/core/interfaces/RoomCollection'
+import { WALLET } from '@/core/components/wallet'
 
 //
 // modus operandi
@@ -40,7 +41,7 @@ import RoomCollection from '@/core/interfaces/RoomCollection'
 // new session, new agentId, user signs in with Verida, profileId is created, linked to Verida address
 // new session, new agentId, user signs in with Ethereum, another profileId is created, linked to Ethereum address
 // if user signs in with both, we need to set precedency
-// currently: Ethereum, Verida
+// currently: Verida, Ethereum
 //
 // > unlink Wallet from profile
 // not implemented, but there could be a button 'Sign out and unlink'
@@ -54,12 +55,37 @@ class Profile extends RoomCollection {
       const profile = this.getCurrentProfile()
 
       let view3d = (profile ? !profile.view3d : true) && this.canvas3d != null
-      
+
       this.updateCurrentProfile({
         view3d
       })
 
       this.localStore.setDocument('editGravityMap', 'world', false)
+    })
+
+    this.localStore.on({ type: 'connectedWallets', event: 'change' }, (walletType, address) => {
+      let wallet = null
+
+      // independent of connected wallet, choose profile according to WALLET priority
+      for (const type of Object.values(WALLET)) {
+        // wallet is connected...?
+        const _address = this.localStore.getDocument('connectedWallets', type)
+        if (_address) {
+          // wallet has a profileId...?
+          wallet = this.agentStore.getDocument('wallet', _address)
+          if (wallet) break
+        }
+      }
+
+      console.log(`switch wallet profile:`, wallet?.walletType, wallet?.profileId)
+      this.localStore.setDocument('profileId', this.agentId, wallet?.profileId ?? null)
+
+      // notify remote clients of my profileId
+      this.agentStore.setDocument('wallet', this.agentId, {
+        walletType: 'Agent',
+        profileId: wallet?.profileId ?? null,
+      })
+
     })
   }
 
