@@ -42,15 +42,15 @@ class RoomMate {
   // the ClientRoom
 
   get slug() {
-    return this.#room.clientRoom.slug
+    return this.#room.clientRoom?.slug ?? null
   }
 
   get agentId() {
-    return this.#room.clientRoom.agentId
+    return this.#room.clientRoom?.agentId ?? null
   }
 
   get clientRoom() {
-    return this.#room.clientRoom
+    return this.#room.clientRoom ?? null
   }
 
   // get clientSession() {

@@ -3,23 +3,20 @@ import { useRoomContext } from '@/hooks/RoomContext'
 import { useLocalDocument, useAgentDocument } from '@/hooks/useDocument'
 import { getFilenameFromUrl } from '@/core/utils'
 
-const useProfile = (id = null) => {
-  const { agentId } = useRoomContext()
-  const { Player } = useRoomContext()
+const useProfile = () => {
+  const { agentId, Player } = useRoomContext()
   const [profileName, setProfileName] = useState(null)
   const [characterName, setCharacterName] = useState(null)
   const [profileAvatarUrl, setProfileAvatarUrl] = useState(null)
   const [profileCharacterUrl, setProfileCharacterUrl] = useState(null)
 
-  const _agentId = id ?? agentId
-
-  const wallet = useLocalDocument('profileWallet', _agentId)
-  const _profileId = wallet?.profileId ?? _agentId
+  const wallet = useLocalDocument('profileWallet', agentId)
+  const _profileId = wallet?.profileId ?? agentId
 
   const profile = useAgentDocument('profile', _profileId)
 
   useEffect(() => {
-    if (Player && _profileId) {
+    if (agentId && Player && _profileId) {
       let texture = Player.getPlayerTexture(_profileId)
       setProfileName(profile && profile.name != '' ? profile.name : null)
       setCharacterName(getFilenameFromUrl(texture?.src)?.split('.')[0] ?? null)
@@ -27,7 +24,7 @@ const useProfile = (id = null) => {
       // setProfileAvatarUrl(texture?.src ?? null)
       setProfileCharacterUrl(texture?.src ?? null)
     }
-  }, [id, profile, Player])
+  }, [agentId, profile, Player])
 
   return {
     profileId: _profileId,
