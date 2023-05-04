@@ -21,8 +21,6 @@ export const VeridaConnectMenu = ({
 
   const _disabled = (veridaIsConnecting)
 
-  // TODO: link to wallet
-
   return (
     <HStack>
       {!veridaIsConnected &&

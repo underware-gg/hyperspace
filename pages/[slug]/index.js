@@ -18,6 +18,7 @@ import InteractMenu from '@/components/InteractMenu'
 import ExportImportMenu from '@/components/ExportImportMenu'
 import { useRoomContext } from '@/hooks/RoomContext'
 import usePermission from '@/hooks/usePermission'
+import { ProfileDetector } from '@/components/ProfileDetector'
 import { AvatarButton } from '@/components/Avatar'
 import { ModalSettings, useSettingsDisclosure } from '@/components/ModalSettings'
 import { validateRoomSlug } from '@/core/utils'
@@ -63,6 +64,7 @@ const RoomPage = () => {
       <Grid templateColumns='repeat(5, 1fr)' gap={2}>
 
         <GridItem>
+          <ProfileDetector />
           <AvatarButton />
         </GridItem>
 

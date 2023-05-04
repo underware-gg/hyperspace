@@ -93,12 +93,6 @@ const VeridaProvider = ({
       _VeridaUser?.on('disconnected', _veridaDisconnected)
       _VeridaUser?.on('profileChanged', _veridaProfileChanged)
 
-
-      // Verida issue workaround
-      // Avoid stuck in connecting status after exception below
-      // https://github.com/verida/verida-js/issues/323
-      dispatchVerida(VeridaActions.setIsConnecting, false)
-
       try {
         const isConnected = await VeridaUser.isConnected()
         // .catch(e, () => {

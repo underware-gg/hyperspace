@@ -18,7 +18,7 @@ class Wallet extends RoomCollection {
   }
 
   connectedWallet(walletType, address) {
-    // console.log(`connectedWallet:`, walletType, address)
+    console.log(`connectedWallet:`, walletType, address)
     this.localStore.setDocument('connectedWallets', walletType, address)
 
     this.linkWalletToProfile(walletType, address)
@@ -36,8 +36,8 @@ class Wallet extends RoomCollection {
         profileId = wallet.profileId
       } else {
         // link wallet to profile
-        // agentId becomes the profileId
-        profileId = this.agentId
+        // inherits current profileId or agentId
+        profileId = this.Profile.getCurrentProfileId()
 
         this.agentStore.setDocument('wallet', address, {
           walletType,
@@ -56,13 +56,13 @@ class Wallet extends RoomCollection {
       for (const type of Object.values(WALLET)) {
         const addr = this.localStore.getDocument('connectedWallets', type)
         if (addr) {
-          linkWalletToProfile(type, addr)
+          this.linkWalletToProfile(type, addr)
           return
         }
       }
     }
 
-    // console.log(`use wallet profile:`, walletType, profileId)
+    console.log(`use wallet profile:`, walletType, profileId)
     this.localStore.setDocument('profileId', this.agentId, profileId)
 
     // notify remote clients of my profileId
