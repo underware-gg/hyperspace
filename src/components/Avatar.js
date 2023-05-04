@@ -1,14 +1,17 @@
-import { useState, useEffect, useContext } from 'react'
+import { useEffect } from 'react'
 import {
   HStack,
   VStack,
+  Spacer,
   Text,
+  Image,
   useDisclosure,
 } from '@chakra-ui/react'
-import { useVeridaContext, VeridaActions, VeridaContext } from '@/hooks/VeridaContext'
+import { useVeridaContext, VeridaActions } from '@/hooks/VeridaContext'
 import useProfile from '@/hooks/useProfile'
 import useTexture from '@/hooks/useTexture'
 import ModalProfile from '@/components/ModalProfile'
+import { textureData } from '@/core/texture-data'
 
 export const Avatar = ({
   isLoading = false,
@@ -18,6 +21,7 @@ export const Avatar = ({
   externalProfileUrl = null,
   width = 50,
 }) => {
+  const { walletType } = useProfile()
   const { sprite } = useTexture(spriteUrl ?? null)
 
   const _onClick = () => {
@@ -26,28 +30,48 @@ export const Avatar = ({
     }
   }
   // const defaultAvatarUrl = '/nosignal_noise.gif'
-  const defaultAvatarUrl = '/avatar.png'
+  const _defaultAvatarUrl = '/icons/avatar.png'
 
-  const avatarStyle = {
+  const _avatarStyle = {
     width: `${width}px`,
     height: `${width}px`,
     cursor: externalProfileUrl ? 'pointer' : undefined,
     // border: `1px solid #fff3`,
   }
 
+  const _logoWidth = Math.min(width / 2, 40)
+
   return (
-    <VStack>
-      <div style={avatarStyle} onClick={() => _onClick()}>
-        {isLoading ? <img src={defaultAvatarUrl} width={width} height={width} alt='avatar' />
-          : avatarUri ? <img src={avatarUri ?? defaultAvatarUrl} width={width} height={width} alt='avatar' />
-            : sprite ? <img src={spriteUrl} style={sprite.imgStyle} alt='sprite' />
-              : <img src={defaultAvatarUrl} width={width} height={width} alt='avatar' />
+    <HStack>
+      <Spacer />
+      
+      <VStack>
+        <div style={_avatarStyle} onClick={() => _onClick()}>
+          {isLoading ? <img src={_defaultAvatarUrl} width={width} height={width} alt='avatar' />
+            : avatarUri ? <img src={avatarUri ?? _defaultAvatarUrl} width={width} height={width} alt='avatar' />
+              : sprite ? <img src={spriteUrl} style={sprite.imgStyle} alt='sprite' />
+                : <img src={_defaultAvatarUrl} width={width} height={width} alt='avatar' />
+          }
+        </div>
+        {name &&
+          <Text className='NoMargin'>{isLoading ? '...' : name}</Text>
         }
-      </div>
-      {name &&
-        <Text className='NoMargin'>{isLoading ? '...' : name}</Text>
+      </VStack>
+
+      {walletType &&
+        <VStack h={`calc(${width}px + 1em)`}>
+          <Image
+            src={textureData[walletType].src}
+            alt='connected'
+            w={`${_logoWidth}px`}
+            h={`${_logoWidth}px`}
+          />
+          <Spacer />
+        </VStack>
       }
-    </VStack>
+
+      <Spacer />
+    </HStack>
   )
 }
 

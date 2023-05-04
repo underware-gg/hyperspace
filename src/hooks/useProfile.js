@@ -13,13 +13,14 @@ const useProfile = (id = null) => {
 
   const _agentId = id ?? agentId
 
-  const profileId = useLocalDocument('profileId', _agentId) ?? _agentId
+  const wallet = useLocalDocument('profileWallet', _agentId)
+  const _profileId = wallet?.profileId ?? _agentId
 
-  const profile = useAgentDocument('profile', profileId)
+  const profile = useAgentDocument('profile', _profileId)
 
   useEffect(() => {
-    if (Player && profileId) {
-      let texture = Player.getPlayerTexture(profileId)
+    if (Player && _profileId) {
+      let texture = Player.getPlayerTexture(_profileId)
       setProfileName(profile && profile.name != '' ? profile.name : null)
       setCharacterName(getFilenameFromUrl(texture?.src)?.split('.')[0] ?? null)
       // TODO: Extract PFP from texture
@@ -29,7 +30,8 @@ const useProfile = (id = null) => {
   }, [id, profile, Player])
 
   return {
-    profileId,
+    profileId: _profileId,
+    walletType: wallet?.walletType ?? null,
     profileName: profileName ?? characterName ?? '...',
     profileAvatarUrl,
     profileCharacterUrl,

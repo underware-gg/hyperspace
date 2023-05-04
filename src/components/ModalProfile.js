@@ -59,7 +59,7 @@ const ModalProfile = ({
       initialFocusRef={nameRef}
       finalFocusRef={finalRef}
       isCentered
-      size='lg'
+      size='xl'
     >
       <ModalOverlay />
       <ModalContent

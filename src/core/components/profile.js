@@ -77,8 +77,8 @@ class Profile extends RoomCollection {
         }
       }
 
-      console.log(`switch wallet profile:`, wallet?.walletType, wallet?.profileId)
-      this.localStore.setDocument('profileId', this.agentId, wallet?.profileId ?? null)
+      console.log(`switch profile wallet:`, wallet)
+      this.localStore.setDocument('profileWallet', this.agentId, wallet ?? null)
 
       // notify remote clients of my profileId
       this.agentStore.setDocument('wallet', this.agentId, {
@@ -90,7 +90,8 @@ class Profile extends RoomCollection {
   }
 
   getCurrentProfileId() {
-    return this.localStore.getDocument('profileId', this.agentId) ?? this.agentId
+    const wallet = this.localStore.getDocument('profileWallet', this.agentId)
+    return wallet?.profileId ?? this.agentId
   }
 
   getAgentProfileId(agentId) {

@@ -119,4 +119,10 @@ export const textureData = {
   'gridtile': {
     src: '/tiles/gridtile.png',
   },
+  'Ethereum': {
+    src: '/icons/Ethereum.svg',
+  },
+  'Verida': {
+    src: '/icons/Verida.png',
+  },
 }
