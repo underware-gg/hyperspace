@@ -10,7 +10,7 @@ import SlugSelector from '@/components/SlugSelector'
 
 const DualPage = () => {
   return (
-    <Layout height='100vh'>
+    <Layout>
       <HStack>
         <div style={{ height: '380px' }}>
           <AvatarButton />

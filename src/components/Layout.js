@@ -5,21 +5,23 @@ import Footer from '@/components/Footer'
 
 const Layout = ({
   children,
-  height='100%',
+  width = '1200',
+  height = '100vh',
   backgroundImage,
-  full=false,
+  profile = false,
+  full = false,
 }) => {
   return (
     <Box h={height} sx={{ display: 'flex', flexDirection: 'column' }} >
-      <Header full={full} />
+      <Header profile={profile} width={width} />
       <Box
         height={'100%'}
         backgroundImage={backgroundImage}
-        // backgroundColor={'#f00'}
+      // backgroundColor={'#f00'}
       >
         <Container
           as='main'
-          maxW='1200'
+          maxW={width}
           centerContent
           pt='1.5em'
           pb='1.5em'

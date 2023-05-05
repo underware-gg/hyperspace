@@ -27,7 +27,7 @@ const HomePage = ({ slug }) => {
   }
 
   return (
-    <Layout height='100vh' backgroundImage={'/gravity.jpg'} full>
+    <Layout profile backgroundImage={'/gravity.jpg'}>
       <Box backgroundColor='black' borderRadius='lg' borderWidth='0px'>
         <VStack align='stretch' w='100%' spacing={8} shouldWrapChildren padding='50px' alignItems='center'>
           <Heading as='h1' size='4xl'>

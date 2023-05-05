@@ -35,7 +35,7 @@ const StateTokenPage = () => {
   }, [totalSupply])
 
   return (
-    <Layout height='100vh'>
+    <Layout>
       <VStack align='stretch' w='100%' alignItems='center'>
         <HStack>
           <ConnectKitButton />

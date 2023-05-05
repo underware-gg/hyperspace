@@ -6,7 +6,7 @@ import Layout from '@/components/Layout'
 
 const PagesPage = () => {
   return (
-    <Layout height='100vh'>
+    <Layout>
       <VStack align='stretch' w='100%' alignItems='center'>
         <Link href='/pages/dual'>▫️ Dual Room Demo ▫️</Link>
         <Link href='/pages/stateToken'>▫️ Hyperbox State Token ▫️</Link>

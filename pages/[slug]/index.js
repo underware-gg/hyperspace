@@ -18,8 +18,6 @@ import InteractMenu from '@/components/InteractMenu'
 import ExportImportMenu from '@/components/ExportImportMenu'
 import { useRoomContext } from '@/hooks/RoomContext'
 import usePermission from '@/hooks/usePermission'
-import { ProfileDetector } from '@/components/ProfileDetector'
-import { AvatarButton } from '@/components/Avatar'
 import { ModalSettings, useSettingsDisclosure } from '@/components/ModalSettings'
 import { validateRoomSlug } from '@/core/utils'
 
@@ -59,16 +57,14 @@ const RoomPage = () => {
   }
 
   return (
-    <Layout height='100vh'>
+    <Layout profile>
 
       <Grid templateColumns='repeat(5, 1fr)' gap={2}>
 
-        <GridItem>
-          <ProfileDetector />
-          <AvatarButton />
-        </GridItem>
+        {/* <GridItem>
+        </GridItem> */}
 
-        <GridItem colSpan={4}>
+        <GridItem colSpan={5}>
           <VStack align='stretch' className='Stretch'>
             <HStack>
               <Button size='sm' onClick={() => actions?.emitAction('toggle3d')}>
@@ -80,6 +76,10 @@ const RoomPage = () => {
               <Button size='sm' onClick={() => snapshotDisclosure.onOpen()}>
                 Snapshots
               </Button>
+
+              <Spacer />
+              <ExportImportMenu />
+
               <Spacer />
               <InteractMenu />
             </HStack>
@@ -122,17 +122,11 @@ const RoomPage = () => {
         </GridItem>
 
 
-
-        <GridItem>
-          {process.env.DEV && agentId}
-        </GridItem>
-
-        <GridItem colSpan={4}>
-          <HStack>
-            <ExportImportMenu />
-            <Spacer />
-          </HStack>
-        </GridItem>
+        {process.env.DEV &&
+          <GridItem colSpan={5}>
+            {agentId}
+          </GridItem>
+        }
 
       </Grid>
 
