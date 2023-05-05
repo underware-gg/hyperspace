@@ -3,18 +3,14 @@ import {
   VStack, HStack, Spacer,
 } from '@chakra-ui/react'
 import { RoomProvider } from '@/hooks/RoomContext'
-import { AvatarButton } from '@/components/Avatar'
 import Layout from '@/components/Layout'
 import Hyperbox from '@/components/Hyperbox'
 import SlugSelector from '@/components/SlugSelector'
 
 const DualPage = () => {
   return (
-    <Layout>
+    <Layout profile>
       <HStack>
-        <div style={{ height: '380px' }}>
-          <AvatarButton />
-        </div>
         <Room />
         <Room />
       </HStack>

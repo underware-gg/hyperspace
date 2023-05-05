@@ -5,15 +5,12 @@ import {
   Spacer,
   Text,
   Image,
-  useDisclosure,
 } from '@chakra-ui/react'
-import { useVeridaContext, VeridaActions } from '@/hooks/VeridaContext'
 import useProfile from '@/hooks/useProfile'
 import useTexture from '@/hooks/useTexture'
-import ModalProfile from '@/components/ModalProfile'
 import { textureData } from '@/core/texture-data'
 
-export const Avatar = ({
+const Avatar = ({
   isLoading = false,
   name = null,
   avatarUri = null,
@@ -75,42 +72,6 @@ export const Avatar = ({
   )
 }
 
-
-export const AvatarButton = () => {
-  const { profileName, profileAvatarUrl, profileCharacterUrl } = useProfile()
-  const {
-    veridaIsConnecting,
-    veridaProfileName,
-    veridaAvatarUri,
-    requestedSignIn,
-    dispatchVerida,
-  } = useVeridaContext()
-
-  const disclosure = useDisclosure()
-
-  const _openModal = () => {
-    if (!veridaIsConnecting) {
-      disclosure.onOpen()
-    }
-  }
-
-  useEffect(() => {
-    if (requestedSignIn) {
-      dispatchVerida(VeridaActions.setRequestSignIn, false)
-      disclosure.onOpen()
-    }
-  }, [requestedSignIn])
-
-  return (
-    <div className='AvatarContainer' onClick={() => _openModal()}>
-      <Avatar 
-        isLoading={veridaIsConnecting}
-        name={veridaProfileName ?? profileName ?? '...'}
-        avatarUri={veridaAvatarUri ?? profileAvatarUrl}
-        spriteUrl={profileCharacterUrl}
-      />
-      <ModalProfile disclosure={disclosure} />
-    </div>
-  )
+export {
+  Avatar,
 }
-

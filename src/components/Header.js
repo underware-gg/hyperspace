@@ -1,8 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { Container, Box, HStack, Spacer, Heading, Image } from '@chakra-ui/react'
-import { ProfileDetector } from '@/components/ProfileDetector'
-import { AvatarButton } from '@/components/Avatar'
+import ProfileManager from '@/components/ProfileManager'
 
 const Header = ({
   profile = false,
@@ -24,7 +23,7 @@ const Header = ({
           w='100%'
           alignItems='end'
         >
-          <Box>
+          <Box w='280px'>
             <Link href='/'>
               <Heading as='h1' size='xl'>
                 Hyperbox
@@ -34,14 +33,12 @@ const Header = ({
           <Spacer sx={{ flex: 1 }} />
 
           {profile &&
-            <div>
-              <ProfileDetector />
-              <AvatarButton />
-            </div>
+            <ProfileManager />
           }
 
           <Spacer sx={{ flex: 1 }} />
-          <Box>
+          
+          <Box w='280px'>
             <a href='https://twitter.com/funDAOmental'>
               <Image
                 src='/funDAOmental-stamp.png'
