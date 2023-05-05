@@ -1,13 +1,9 @@
 import * as THREE from 'three'
 import RoomCollection from '@/core/interfaces/RoomCollection'
-import { defaultSettings } from '@/core/components/settings'
-import { getTextureByName, getTextureSprite } from '@/core/textures'
+import { getTextureSprite } from '@/core/textures'
 import { CONST, clamp, clampRadians, deepCompare, deepCopy } from '@/core/utils'
-import { floors } from '@/core/components/map'
-import { strokeRect } from '@/core/rendering/debug-render'
 import { getOverlappingTiles, rectanglesOverlap } from '@/core/collisions'
-import { spritesheets } from '@/core/texture-data'
-import { hashCode, toDegrees } from '@/core/utils'
+import { floors } from '@/core/components/map'
 import Cookies from 'universal-cookie'
 
 // all sizes, positions and dimensions are relative to tiles
@@ -119,7 +115,7 @@ class Player extends RoomCollection {
   }
 
   makePlayerMaterial(agentId) {
-    const texture = this.getPlayerTexture(agentId)
+    const texture = this.Profile.getProfileTexture(agentId)
     const materialTexture = new THREE.TextureLoader().load(texture.src)
     materialTexture.minFilter = THREE.NearestFilter
     materialTexture.magFilter = THREE.NearestFilter
@@ -160,7 +156,7 @@ class Player extends RoomCollection {
     )
 
     // UV
-    const texture = this.getPlayerTexture(id)
+    const texture = this.Profile.getProfileTexture(id)
 
     const rot = -(player.rotation.y + rotToThisPlayer + CONST.PI)
     const sprite = this.getPlayerSprite(texture, x, y, rot)
@@ -589,7 +585,7 @@ class Player extends RoomCollection {
 
     const { position: { x, y }, rotation } = player
 
-    const texture = this.getPlayerTexture(id)
+    const texture = this.Profile.getProfileTexture(id)
     if (!texture) return // texture not loaded yet
 
     const rect = this.getPlayerCollisionRect(id)
@@ -626,24 +622,6 @@ class Player extends RoomCollection {
     )
 
   }
-
-  getPlayerTexture(agentId) {
-    const profile = this.Profile.getAgentProfile(agentId)
-
-    let texture = getTextureByName(profile?.spritesheet)
-
-    if (!texture) {
-      texture = getTextureByName(this.getDefaultPlayerTextureName(agentId))
-    }
-
-    return texture
-  }
-
-  getDefaultPlayerTextureName(agentId) {
-    const index = Math.abs(hashCode(agentId)) % spritesheets.length
-    return spritesheets[index].src
-  }
-
 
   getPlayerSprite(texture, x, y, rot) {
     let cycleName

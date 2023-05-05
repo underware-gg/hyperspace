@@ -1,4 +1,5 @@
 import RoomCollection from '@/core/interfaces/RoomCollection'
+import { getTextureByName, getAgentTextureName } from '@/core/textures'
 import { WALLET } from '@/core/components/wallet'
 
 //
@@ -122,6 +123,21 @@ class Profile extends RoomCollection {
     let profile = this.agentStore.getDocument('profile', id) ?? {}
     this.agentStore.setDocument('profile', id, { ...profile, ...values })
   }
+
+  getProfileTexture(agentId) {
+    const profile = this.getAgentProfile(agentId)
+
+    let texture = getTextureByName(profile?.spritesheet)
+
+    if (!texture) {
+      const textureName = getAgentTextureName(agentId)
+      texture = getTextureByName(textureName)
+    }
+
+    return texture
+  }
+
+
 }
 
 export default Profile

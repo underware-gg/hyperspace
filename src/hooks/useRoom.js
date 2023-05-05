@@ -11,8 +11,8 @@ import * as ClientRoom from '@/core/networking'
 // good for 2D previews
 //
 // options = {
-//   slug       // 'slug' or null if loading, 
-//   canvas2d   // the canvas element, or null if loading
+//   slug       // 'slug', null if loading, undefined if not needed
+//   canvas2d   // the canvas element, null if loading, undefined if not needed
 // }
 const useRoom = (options = {}) => {
   const [room, setRoom] = useState(null)
@@ -22,22 +22,26 @@ const useRoom = (options = {}) => {
     let _mounted = true
     let _room = null
 
-    const _initRoom = async () => {
+    const _initRoom = async (slug, canvas2d) => {
       _room = new Room()
-      await _room.init(options.slug, options.canvas2d ?? null, null)
+      await _room.init(slug, canvas2d, null)
       if (_mounted) {
         setRoom(_room)
-        _room.clientRoom.on('patched', (patched) => {
+        if (!_room.clientRoom) {
           dispatchRoom(_room)
-        })
+        } else {
+          _room.clientRoom.on('patched', (patched) => {
+            dispatchRoom(_room)
+          })
+        }
       }
     }
 
     setRoom(null)
     dispatchRoom(null)
 
-    if (options.slug && (options.canvas2d || options.canvas2d === undefined)) {
-      _initRoom()
+    if ((options.slug || options.slug === undefined) && (options.canvas2d || options.canvas2d === undefined)) {
+      _initRoom(options.slug ?? null, options.canvas2d ?? null)
     }
 
     return () => {

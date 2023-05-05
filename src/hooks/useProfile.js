@@ -4,7 +4,7 @@ import { useLocalDocument, useAgentDocument } from '@/hooks/useDocument'
 import { getFilenameFromUrl } from '@/core/utils'
 
 const useProfile = () => {
-  const { agentId, Player } = useRoomContext()
+  const { agentId, Profile } = useRoomContext()
   const [profileName, setProfileName] = useState(null)
   const [characterName, setCharacterName] = useState(null)
   const [profileAvatarUrl, setProfileAvatarUrl] = useState(null)
@@ -15,16 +15,18 @@ const useProfile = () => {
 
   const profile = useAgentDocument('profile', _profileId)
 
+  // console.log(`useProfile()`, agentId, _profileId, wallet, profile)
+
   useEffect(() => {
-    if (agentId && Player && _profileId) {
-      let texture = Player.getPlayerTexture(_profileId)
+    if (_profileId && Profile) {
+      let texture = Profile.getProfileTexture(_profileId)
       setProfileName(profile && profile.name != '' ? profile.name : null)
       setCharacterName(getFilenameFromUrl(texture?.src)?.split('.')[0] ?? null)
       // TODO: Extract PFP from texture
       // setProfileAvatarUrl(texture?.src ?? null)
       setProfileCharacterUrl(texture?.src ?? null)
     }
-  }, [agentId, profile, Player])
+  }, [_profileId, profile, Profile])
 
   return {
     profileId: _profileId,

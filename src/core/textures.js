@@ -1,16 +1,16 @@
 import * as THREE from 'three'
 import { textureData, tilesets, spritesheets } from '@/core/texture-data'
 import { deepCopy } from '@/core/merge/tiny-merge'
+import { hashCode } from '@/core/utils'
 
 let textures = {}
-let texturesLoaded
+let _loadPromise
 
 export const loadTextures = async () => {
-  if (texturesLoaded !== undefined) {
-    return
+  if (_loadPromise) {
+    return _loadPromise
   }
-  texturesLoaded = false
-  return new Promise((resolve, reject) => {
+  _loadPromise = new Promise((resolve, reject) => {
     let _textureData = deepCopy(textureData)
     for (const t of tilesets) {
       _textureData[t.src] = t
@@ -53,23 +53,29 @@ export const loadTextures = async () => {
         }
         // console.log(`loadTextures(${td.src}) OK`)
         if (--imagesToLoad == 0) {
-          texturesLoaded = true
+          _loadPromise = true
           resolve()
         }
       }
       image.onerror = (e) => {
         console.warn(`loadTextures(${td.src}) NOT FOUND!`, e)
         if (--imagesToLoad == 0) {
-          texturesLoaded = true
+          _loadPromise = true
           resolve()
         }
       }
     })
   })
+  return _loadPromise
 }
 
 export const getTextureByName = (name, fallback) => textures[name] ?? textures[fallback] ?? null
 export const getTextureImageByName = name => textures[name]?.image ?? null
+
+export const getAgentTextureName = (agentId) => {
+  const index = Math.abs(hashCode(agentId)) % spritesheets.length
+  return spritesheets[index].src
+}
 
 export const getTextureSprite = (texture, step = 0, cycleName = 'idle') => {
 

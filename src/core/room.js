@@ -166,36 +166,38 @@ class Room {
     this.renderer2D.init(this.canvas2d)
     this.renderer3D.init(this.canvas3d)
 
-    this.clientRoom = ClientRoom.create(slug, this.remoteStore)
-    this.clientSession = ClientRoom.create(`${slug}:session`, this.sessionStore)
+    this.clientRoom = slug ? ClientRoom.create(slug, this.remoteStore) : null
+    this.clientSession = slug ? ClientRoom.create(`${slug}:session`, this.sessionStore) : null
     this.clientAgent = ClientRoom.create(':agents', this.agentStore)
 
-    this.agentId = this.clientRoom.agentId
+    this.agentId = this.clientAgent.agentId
 
-    // instantiate components before this.clientRoom.init() to listen to snapshot loading events
-    this.Settings = new Settings(this)
-    this.Permission = new Permission(this)
-    this.Player = new Player(this)
-    this.Portal = new Portal(this)
-    this.Trigger = new Trigger(this)
-    this.Screen = new Screen(this)
-    this.Tileset = new Tileset(this)
-    this.Map = new Map(this)
+    if (slug) {
+      // instantiate components before this.clientRoom.init() to listen to snapshot loading events
+      this.Settings = new Settings(this)
+      this.Permission = new Permission(this)
+      this.Player = new Player(this)
+      this.Portal = new Portal(this)
+      this.Trigger = new Trigger(this)
+      this.Screen = new Screen(this)
+      this.Tileset = new Tileset(this)
+      this.Map = new Map(this)
 
-    // sessionStore
-    this.Editor = new Editor(this)
+      // sessionStore
+      this.Editor = new Editor(this)
+    }
 
     // agentStore
     this.Profile = new Profile(this)
     this.Wallet = new Wallet(this)
 
     // loads snapshots
-    this.clientRoom.init(true)
-    this.clientSession.init(false)
+    this.clientRoom?.init(true)
+    this.clientSession?.init(false)
     this.clientAgent.init(true)
 
-    this.Editor.init2d(this.canvas2d, this.agentId)
-    this.Editor.init3d(this.canvas3d, this.agentId)
+    this.Editor?.init2d(this.canvas2d, this.agentId)
+    this.Editor?.init3d(this.canvas3d, this.agentId)
 
     this.localStore.setDocument('user', 'VeridaUser', VeridaUser)
 
@@ -213,11 +215,11 @@ class Room {
     this.canvas3d?.removeEventListener('keydown', this.handleKeyDown)
     this.canvas2d?.removeEventListener('keyup', this.handleKeyUp)
     this.canvas3d?.removeEventListener('keyup', this.handleKeyUp)
-    this.clientRoom.shutdown()
+    this.clientRoom?.shutdown()
     this.clientRoom = null
-    this.clientSession.shutdown()
+    this.clientSession?.shutdown()
     this.clientSession = null
-    this.clientAgent.shutdown()
+    this.clientAgent?.shutdown()
     this.clientAgent = null
   }
 
@@ -234,8 +236,8 @@ class Room {
   update(dt) {
     this.renderer2D.update(dt)
     this.renderer3D.update(dt)
-    this.Player.update(this.agentId, dt)
-    this.Editor.update(this.agentId, dt)
+    this.Player?.update(this.agentId, dt)
+    this.Editor?.update(this.agentId, dt)
   }
 
   render() {
