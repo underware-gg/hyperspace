@@ -1,5 +1,6 @@
 import React, { createContext, useReducer, useContext, useEffect } from 'react'
 import { useVeridaProfile } from '@/hooks/useVeridaProfile'
+import { useLocalStorageValue } from '@/hooks/useLocalStorage'
 import { clientUrl } from '@/core/networking/config'
 
 //--------------------------------
@@ -30,6 +31,8 @@ const VeridaActions = {
 const VeridaProvider = ({
   children,
 }) => {
+  // const { veridaAuthContext } = useLocalStorageValue('_verida_auth_context', false)
+
   const [state, dispatch] = useReducer((state, action) => {
     let newState = { ...state }
     switch (action.type) {

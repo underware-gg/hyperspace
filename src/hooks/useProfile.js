@@ -10,26 +10,27 @@ const useProfile = () => {
   const [profileAvatarUrl, setProfileAvatarUrl] = useState(null)
   const [profileCharacterUrl, setProfileCharacterUrl] = useState(null)
 
+  const agentProfile = useAgentDocument('wallet', agentId)
+  const profileId = agentProfile?.profileId ?? agentId
+
+  const profile = useAgentDocument('profile', profileId)
   const wallet = useLocalDocument('profileWallet', agentId)
-  const _profileId = wallet?.profileId ?? agentId
 
-  const profile = useAgentDocument('profile', _profileId)
-
-  // console.log(`useProfile()`, agentId, _profileId, wallet, profile)
+  // console.log(`useProfile()`, agentId, profileId, wallet, profile)
 
   useEffect(() => {
-    if (_profileId && Profile) {
-      let texture = Profile.getProfileTexture(_profileId)
+    if (profileId && Profile) {
+      let texture = Profile.getProfileTexture(profileId)
       setProfileName(profile && profile.name != '' ? profile.name : null)
       setCharacterName(getFilenameFromUrl(texture?.src)?.split('.')[0] ?? null)
       // TODO: Extract PFP from texture
       // setProfileAvatarUrl(texture?.src ?? null)
       setProfileCharacterUrl(texture?.src ?? null)
     }
-  }, [_profileId, profile, Profile])
+  }, [profileId, profile, Profile])
 
   return {
-    profileId: _profileId,
+    profileId,
     walletType: wallet?.walletType ?? null,
     profileName: profileName ?? characterName ?? '...',
     profileAvatarUrl,

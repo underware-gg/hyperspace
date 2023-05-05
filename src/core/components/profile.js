@@ -31,12 +31,14 @@ import { WALLET } from '@/core/components/wallet'
 // profile is flagged as 'signed', and can now only be loaded by a linked wallet
 // a user can have many wallet records (Verida, Ethereum, ...) linked to the same profile
 // the current agentId is now disposable
+// a wallet record is created to notify clients of the agent current profile: wallet[agentId]={walletType:'Agent',profileId}
 // 
 // > returning signed user, new browser session
 // new session, new agentId, with default hash profile
 // user signs in (Verida or Ethereum) to restore their Profile
 // we find the connected address record linking to the original profileId
 // stored profile is loaded, user is back!
+// a wallet record is created to notify clients of the agent current profile: wallet[agentId]={walletType:'Agent',profileId}
 //
 // > multiple Profiles
 // new session, new agentId, user signs in with Verida, profileId is created, linked to Verida address
@@ -78,10 +80,10 @@ class Profile extends RoomCollection {
         }
       }
 
-      console.log(`switch profile wallet:`, wallet)
       this.localStore.setDocument('profileWallet', this.agentId, wallet ?? null)
 
-      // notify remote clients of my profileId
+      // notify clients of my profileId
+      console.log(`switch agent wallet:`, this.agentId, wallet)
       this.agentStore.setDocument('wallet', this.agentId, {
         walletType: 'Agent',
         profileId: wallet?.profileId ?? null,
@@ -91,22 +93,16 @@ class Profile extends RoomCollection {
   }
 
   getCurrentProfileId() {
-    const wallet = this.localStore.getDocument('profileWallet', this.agentId)
-    return wallet?.profileId ?? this.agentId
+    return this.getAgentProfileId(this.agentId)
   }
 
   getAgentProfileId(agentId) {
-    if (agentId == this.agentId) {
-      return this.getCurrentProfileId()
-    }
-    // check if remote agent is using a custom profile
     const wallet = this.agentStore.getDocument('wallet', agentId)
     return wallet?.profileId ?? agentId
   }
 
   getCurrentProfile() {
-    const profileId = this.getCurrentProfileId()
-    return this.agentStore.getDocument('profile', profileId) ?? {}
+    return this.getAgentProfile(this.agent)
   }
 
   getAgentProfile(agentId) {
