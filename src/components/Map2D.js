@@ -11,10 +11,10 @@ const MapPreviewFromSlugToRoomContext = ({
   slug,
   onLoaded = (loaded) => { }
 }) => {
-  const canvasRef = useRef()
+  const canvasRef = useRef(null)
 
   // useRoom() will dispatch to RoomContext when the room is loaded
-  useRoom(slug, canvasRef.current, true)
+  useRoom({ slug, canvas2d: canvasRef.current })
   const { room } = useRoomContext()
 
   const map = useDocument('map', 'world')
@@ -63,7 +63,7 @@ const MapPreview = ({
         context.save()
         context.scale(process.env.RENDER_HEIGHT / MAX_MAP_SIZE, process.env.RENDER_HEIGHT / MAX_MAP_SIZE)
 
-        
+
 
         context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
         Map.draw2dMap('world', context, store)

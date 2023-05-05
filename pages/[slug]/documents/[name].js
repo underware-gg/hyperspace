@@ -13,7 +13,7 @@ const DocumentPage = () => {
   const { slug, name } = router.query
 
   // useRoom() will dispatch to RoomContext when the room is loaded
-  useRoom(slug, null, false)
+  useRoom({ slug })
 
   const { screenId, screen } = useScreen(name)
 

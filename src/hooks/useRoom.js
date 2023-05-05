@@ -10,7 +10,11 @@ import * as ClientRoom from '@/core/networking'
 // uses current agentId
 // good for 2D previews
 //
-const useRoom = (slug, canvas2d, needCanvas2d) => {
+// options = {
+//   slug       // 'slug' or null if loading, 
+//   canvas2d   // the canvas element, or null if loading
+// }
+const useRoom = (options = {}) => {
   const [room, setRoom] = useState(null)
   const { dispatchRoom } = useContext(RoomContext)
 
@@ -20,7 +24,7 @@ const useRoom = (slug, canvas2d, needCanvas2d) => {
 
     const _initRoom = async () => {
       _room = new Room()
-      await _room.init(slug, needCanvas2d ? canvas2d : null, null)
+      await _room.init(options.slug, options.canvas2d ?? null, null)
       if (_mounted) {
         setRoom(_room)
         _room.clientRoom.on('patched', (patched) => {
@@ -32,7 +36,7 @@ const useRoom = (slug, canvas2d, needCanvas2d) => {
     setRoom(null)
     dispatchRoom(null)
 
-    if (slug && (canvas2d || !needCanvas2d)) {
+    if (options.slug && (options.canvas2d || options.canvas2d === undefined)) {
       _initRoom()
     }
 
@@ -41,7 +45,7 @@ const useRoom = (slug, canvas2d, needCanvas2d) => {
       _room?.shutdown()
       _room = null
     }
-  }, [slug, canvas2d])
+  }, [options.slug, options.canvas2d])
 
   return {
     room,
