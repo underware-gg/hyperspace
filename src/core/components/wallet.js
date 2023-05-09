@@ -35,7 +35,7 @@ class Wallet extends RoomCollection {
       }
     }
 
-    console.log(`connectedWallet:`, walletType, address)
+    if (address) console.log(`connectedWallet:`, walletType, address)
     this.localStore.setDocument('connectedWallets', walletType, address)
   }
 

@@ -26,7 +26,7 @@ import { makeRoute } from '@/core/routes'
 const RoomPage = () => {
   const router = useRouter()
   const { slug, key } = useSlugs()
-  const slugIsValid = validateRoomSlug(slug)
+  const slugIsValid = validateRoomSlug(slug) && (!key || validateRoomSlug(key))
 
   useEffect(() => {
     if (router.isReady && !slugIsValid) {

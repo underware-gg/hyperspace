@@ -74,10 +74,12 @@ const InteractMenu = ({
 
   return (
     <HStack>
-      {editor?.interacting
-        ? <>Cursor@[{editor.position.x},{editor.position.y}]&nbsp;</>
-        : <>Player@[{tileX},{tileY}]&nbsp;</>
-      }
+      <Text w='130px' alignItems='right'>
+        {editor?.interacting
+          ? <>Cursor@[{editor.position.x},{editor.position.y}]&nbsp;</>
+          : <>Player@[{tileX},{tileY}]&nbsp;</>
+        }
+      </Text>
 
       {canPlace &&
         <>

@@ -108,7 +108,7 @@ const Type = ({
       result.push(
         <VStack key={id} alignItems='left' className={`SlugItem${i%2}`}>
           <HStack>
-            <DownloadIcon boxSize='0.8em' className='Clickable' onClick={() => _log(type, id, doc)} />
+            <DownloadIcon boxSize='0.8em' className='Clickable MarginSide' onClick={() => _log(type, id, doc)} />
             <Text>
               {id}
               {name && ` (${name})`}
@@ -116,7 +116,7 @@ const Type = ({
             </Text>
             <Spacer />
             {process.env.DEV &&
-              <DeleteIcon boxSize='0.8em' className='Clickable' onClick={() => _delete(type, id)} />
+              <DeleteIcon boxSize='0.8em' className='Clickable MarginSide' onClick={() => _delete(type, id)} />
             }
           </HStack>
           {type == 'map' && <MapPreview store={store} />}
