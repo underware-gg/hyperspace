@@ -14,6 +14,7 @@ import Button from '@/components/Button'
 import Editable from '@/components/Editable'
 import ScreenEditor from '@/components/ScreenEditor'
 import { PermissionsForm } from '@/components/PermissionsForm'
+import { makeRoute } from '@/core/routes'
 
 const ModalScreenEdit = ({
   screenId,
@@ -39,9 +40,12 @@ const ModalScreenEdit = ({
       name: value,
     })
   }
-  
+
   const _openDocumentLink = () => {
-    const url = `/${slug}/documents/${screen?.name}`
+    const url = makeRoute({
+      slug,
+      documentName: screen?.name ?? null,
+    })
     window.open(url, '_blank', 'noreferrer')
   }
 

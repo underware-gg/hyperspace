@@ -2,6 +2,7 @@ import React, { createContext, useReducer, useContext, useEffect } from 'react'
 import { useVeridaProfile } from '@/hooks/useVeridaProfile'
 import { useLocalStorageValue } from '@/hooks/useLocalStorage'
 import { clientUrl } from '@/core/networking/config'
+import { makeRoute } from '@/core/routes'
 
 //--------------------------------
 // Context
@@ -168,6 +169,10 @@ export const useVeridaContext = () => {
   }
 
   const inviteFriend = async (slug) => {
+    const url = makeRoute({
+      url: clientUrl,
+      slug,
+    })
     const recipientDid = window.prompt('DID to invite', 'did:vda:....')
     if (!recipientDid) {
       return
@@ -175,7 +180,6 @@ export const useVeridaContext = () => {
     const subject = `Hyperbox invite!`
     const message = `Join me in ${slug} on Hyperbox`
     // @todo: Get app URL from next.js
-    const url = `${clientUrl}/${slug}`
     const text = `Open (${slug})`
     await state.VeridaUser.sendMessage(recipientDid, subject, message, url, text)
   }

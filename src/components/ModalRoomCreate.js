@@ -9,13 +9,13 @@ import {
   Spacer,
 } from '@chakra-ui/react'
 import Button from '@/components/Button'
-import { TileInput, useInputValidator } from '@/components/Inputs'
+import { useInputValidator } from '@/components/Inputs'
 import { useDbRooms } from '@/hooks/useApi'
 import { useClientRoom } from '@/hooks/useRoom'
 import { useStoreDocument } from '@/hooks/useDocument'
 import { map, validateRoomSlug } from '@/core/utils'
 import { defaultSettings } from '@/core/components/settings'
-import { MIN_MAP_SIZE, MAX_MAP_SIZE } from '@/core/components/map'
+import { makeRoute } from '@/core/routes'
 
 const ModalRoomCreate = ({
   disclosure,
@@ -153,7 +153,7 @@ const RoomCreator = ({
 
   useEffect(() => {
     if (settings?.size?.width == width && settings?.size?.height == height) {
-      router.push(`/${slug}`)
+      router.push(makeRoute({ slug }))
     }
   }, [settings])
 

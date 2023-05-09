@@ -6,6 +6,7 @@ import {
 import { useVeridaContext } from '@/hooks/VeridaContext'
 import { useRoomContext } from '@/hooks/RoomContext'
 import Button from '@/components/Button'
+import { useSlugs } from '@/hooks/useSlugs'
 
 export const VeridaConnectMenu = ({
   disconnectButton = false,
@@ -13,7 +14,7 @@ export const VeridaConnectMenu = ({
   connectLabel = 'Sign In with Verida',
   disconnectLabel = 'Disconnect Verida',
 }) => {
-  const { slug } = useRoomContext()
+  const { slug } = useSlugs()
   const {
     download, connect, disconnect, inviteFriend,
     veridaIsConnected, veridaIsConnecting,
@@ -107,7 +108,8 @@ export const VeridaRestoreButton = ({
 //
 import usePermission from '@/hooks/usePermission'
 export const VeridaMenu = () => {
-  const { remoteStore, clientRoom, slug } = useRoomContext()
+  const { slug } = useSlugs()
+  const { remoteStore, clientRoom } = useRoomContext()
   const { veridaIsConnected, veridaProfile, saveData, getData } = useVeridaContext()
   const { canEdit } = usePermission('world')
 

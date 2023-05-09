@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React from 'react'
 import { useRouter } from 'next/router'
 import { nanoid } from 'nanoid'
 import {
@@ -13,6 +13,7 @@ import Button from '@/components/Button'
 import Layout from '@/components/Layout'
 import ModalRoomCreate from '@/components/ModalRoomCreate'
 import ModalRoomSelector from '@/components/ModalRoomSelector'
+import { makeRoute } from '@/core/routes'
 
 const HomePage = ({ slug }) => {
   const disclosure = useDisclosure()
@@ -22,8 +23,7 @@ const HomePage = ({ slug }) => {
   function enterRoom(roomName) {
     disclosure.onClose();
     const slug = roomName?.length > 0 ? roomName : nanoid();
-    const url = `/${slug}`
-    router.push(url);
+    router.push(makeRoute({ slug }))
   }
 
   return (

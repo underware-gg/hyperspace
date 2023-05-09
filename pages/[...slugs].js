@@ -21,6 +21,7 @@ import { useRoomContext } from '@/hooks/RoomContext'
 import usePermission from '@/hooks/usePermission'
 import { ModalSettings, useSettingsDisclosure } from '@/components/ModalSettings'
 import { validateRoomSlug } from '@/core/utils'
+import { makeRoute } from '@/core/routes'
 
 const RoomPage = () => {
   const router = useRouter()
@@ -45,7 +46,7 @@ const RoomPage = () => {
     if (!room?.clientRoom) return
     const _travel = (slug) => {
       console.log(`Travel to...`, slug)
-      router.push(`/${slug}`)
+      router.push(makeRoute({slug}))
     }
     room.clientRoom.on('travel', _travel)
     return () => {
