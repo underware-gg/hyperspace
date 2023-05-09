@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
+import React from 'react'
 import { VStack, Heading, Box, Text } from '@chakra-ui/react'
+import { useSlugs } from '@/hooks/useSlugs'
 import { useRoom } from '@/hooks/useRoom'
 import { useScreen } from '@/hooks/useScreen'
 import Layout from '@/components/Layout'
@@ -9,13 +9,12 @@ import ScreenEditor from '@/components/ScreenEditor'
 
 
 const DocumentPage = () => {
-  const router = useRouter()
-  const { slug, name } = router.query
+  const { slug, key, documentName } = useSlugs()
 
   // useRoom() will dispatch to RoomContext when the room is loaded
   useRoom({ slug })
 
-  const { screenId, screen } = useScreen(name)
+  const { screenId, screen } = useScreen(documentName)
 
   return (
     <Layout>

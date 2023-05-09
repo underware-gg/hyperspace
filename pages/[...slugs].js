@@ -16,6 +16,7 @@ import ModalHelp from '@/components/ModalHelp'
 import ModalSnapshots from '@/components/ModalSnapshots'
 import InteractMenu from '@/components/InteractMenu'
 import ExportImportMenu from '@/components/ExportImportMenu'
+import { useSlugs } from '@/hooks/useSlugs'
 import { useRoomContext } from '@/hooks/RoomContext'
 import usePermission from '@/hooks/usePermission'
 import { ModalSettings, useSettingsDisclosure } from '@/components/ModalSettings'
@@ -23,7 +24,7 @@ import { validateRoomSlug } from '@/core/utils'
 
 const RoomPage = () => {
   const router = useRouter()
-  const { slug } = router.query
+  const { slug, key } = useSlugs()
   const slugIsValid = validateRoomSlug(slug)
 
   useEffect(() => {

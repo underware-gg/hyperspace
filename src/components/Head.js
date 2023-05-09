@@ -1,10 +1,9 @@
 import React from 'react'
 import NextHead from 'next/head'
-import { useRouter } from 'next/router'
+import { useSlugs } from '@/hooks/useSlugs'
 
 const Head = () => {
-  const router = useRouter()
-  const { slug } = router.query
+  const { slug, key } = useSlugs()
   const title = `Hyperbox | ${slug ?? 'funDAOmental'}`
 
   return (
