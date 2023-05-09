@@ -16,130 +16,6 @@ import Map from '@/core/components/map'
 import Editor from '@/core/components/editor'
 import Store from '@/core/store'
 
-const _actions = [
-  {
-    name: 'left',
-    keycode: '65', // a
-  },
-  {
-    name: 'right',
-    keycode: '68', // d
-  },
-  {
-    name: 'up',
-    keycode: '87', // w
-  },
-  {
-    name: 'down',
-    keycode: '83', // s
-  },
-  {
-    name: '1',
-    keycode: '49',
-  },
-  {
-    name: '2',
-    keycode: '50',
-  },
-  {
-    name: '3',
-    keycode: '51',
-  },
-  {
-    name: '4',
-    keycode: '52',
-  },
-  {
-    name: '5',
-    keycode: '53',
-  },
-  {
-    name: '6',
-    keycode: '54',
-  },
-  {
-    name: '7',
-    keycode: '55',
-  },
-  {
-    name: '8',
-    keycode: '56',
-  },
-  {
-    name: '9',
-    keycode: '57',
-  },
-  {
-    name: '0',
-    keycode: '48',
-  },
-  {
-    name: '-',
-    keycode: '189',
-  },
-  {
-    name: 'createScreen',
-    keycode: '78', // n
-  },
-  {
-    name: 'createBook',
-    keycode: '66', // b
-  },
-  {
-    name: 'interact',
-    keycode: '69', // e (enter)
-  },
-  {
-    name: 'moveForward',
-    keycode: '73', // i
-  },
-  {
-    name: 'turnLeft',
-    keycode: '74', // j
-  },
-  {
-    name: 'turnRight',
-    keycode: '76', // l
-  },
-  {
-    name: 'moveBack',
-    keycode: '75', // k
-  },
-  {
-    // name: 'createPortal',
-    name: 'editPortal',
-    keycode: '80', // p
-  },
-  {
-    name: 'toggle3d',
-    keycode: '84', // t
-  },
-  {
-    name: 'jump',
-    keycode: '32', // space
-  },
-  {
-    name: 'delete',
-    keycode: '46', // delete
-  },
-  {
-    name: 'turnLeft',
-    keycode: '37', // right
-  },
-  {
-    name: 'up',
-    keycode: '38', // up
-  },
-  {
-    name: 'turnRight',
-    keycode: '39', // left
-  },
-  {
-    name: 'down',
-    keycode: '40', // down
-  },
-]
-
 class Room {
 
   constructor() {
@@ -202,7 +78,7 @@ class Room {
     this.localStore.setDocument('user', 'VeridaUser', VeridaUser)
 
     // Event listeners
-    this.actions.registerActions(_actions)
+    this.actions.registerActions()
 
     this.canvas2d?.addEventListener('keydown', this.handleKeyDown, false)
     this.canvas3d?.addEventListener('keydown', this.handleKeyDown, false)
