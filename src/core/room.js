@@ -36,7 +36,13 @@ class Room {
     canvas2d = null,
     canvas3d = null,
   }) {
-    this.slug = slug
+    // source slug is the source of room data
+    this.sourceSlug = slug?.toLowerCase() ?? null
+    
+    // slug is the actual room in use, synched to the server
+    // usually is the same as source slug
+    this.slug = (this.sourceSlug && key) ? `${this.sourceSlug}:${key}` : this.sourceSlug
+
     this.canvas2d = canvas2d
     this.canvas3d = canvas3d
 
@@ -47,16 +53,32 @@ class Room {
     this.renderer2D.init(this.canvas2d)
     this.renderer3D.init(this.canvas3d)
 
-    this.clientRoom = slug ? ClientRoom.create({
-      slug,
+    // source client: contains the room initial data
+    // if is the same as room client, no need to start
+    // can be null
+    if (this.sourceSlug != this.slug) {
+      this.clientSource = this.slug ? ClientRoom.create({
+        slug: this.sourceSlug,
+        store: this.remoteStore,
+      }) : null
+    }
+
+    // room client: the actual room in use, synched with the server
+    // can be null
+    this.clientRoom = this.slug ? ClientRoom.create({
+      slug: this.slug,
       store: this.remoteStore,
     }) : null
 
-    this.clientSession = slug ? ClientRoom.create({
-      slug: `${slug}:session`,
+    // session client: transient data (player, editor)
+    // can be null
+    this.clientSession = this.slug ? ClientRoom.create({
+      slug: `${this.slug}::session`,
       store: this.sessionStore,
     }) : null
 
+    // agents client: persistent agents data (profiles)
+    // cannot be null
     this.clientAgent = ClientRoom.create({
       slug: ':agents',
       store: this.agentStore,
@@ -64,7 +86,7 @@ class Room {
 
     this.agentId = this.clientAgent.agentId
 
-    if (slug) {
+    if (this.slug) {
       // instantiate components before this.clientRoom.init() to listen to snapshot loading events
       this.Settings = new Settings(this)
       this.Permission = new Permission(this)
@@ -83,10 +105,44 @@ class Room {
     this.Profile = new Profile(this)
     this.Wallet = new Wallet(this)
 
-    // loads snapshots
-    this.clientRoom?.init(true)
-    this.clientSession?.init(false)
-    this.clientAgent.init(true)
+    this.sourceData = null
+
+    // load data from source client
+    if (this.clientSource) {
+      // start source client to fetch initial data
+      this.clientSource.init({
+        connectCallback: (data) => {
+          this.sourceData = data
+        }
+      })
+
+      // await source data to be loaded
+      const _that = this
+      await new Promise(function (resolve) {
+        (function waitForData() {
+          if (_that.sourceData != null) return resolve()
+          setTimeout(waitForData, 100)
+        })()
+      })
+      console.log(`[${this.sourceSlug}] data >> [${this.slug}]`)
+
+      // close source client
+      this.clientSource.shutdown()
+      this.clientSource = null
+    }
+
+    // start clients
+
+    this.clientRoom?.init({
+      sourceData: this.sourceData,  // use this data
+      loadLocalSnapshot: true,      // or else load from local storage
+    })
+
+    this.clientSession?.init({})
+    
+    this.clientAgent.init({
+      loadLocalSnapshot: true,
+    })
 
     this.Editor?.init2d(this.canvas2d, this.agentId)
     this.Editor?.init3d(this.canvas3d, this.agentId)

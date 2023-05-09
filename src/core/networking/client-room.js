@@ -17,19 +17,29 @@ class ClientRoom extends EventEmitter {
     this.store = store
     this.store.on(null, this.handleStoreChange)
     this.uri = uri
-    this.slug = slug.toLowerCase()
+    this.slug = slug
     this.agentId = agentId ?? getAgentId()
     this.agentIds = [
       this.agentId,
     ]
   }
 
-  init(loadLocalSnapshot) {
-    if (loadLocalSnapshot) {
-      const snapshot = getSnapshot(this.slug)
-      if (snapshot.length !== 0) {
-        this.kernal.applyOps(snapshot, 'database')
-      }
+  init({
+    sourceData = null,
+    loadLocalSnapshot = false,
+    connectCallback = null,
+  }) {
+    this.initialized = sourceData != null
+    this.connectCallback = connectCallback
+
+    // load snapshot from browser local store
+    if (!this.initialized && loadLocalSnapshot === true) {
+      sourceData = getSnapshot(this.slug)
+    }
+
+    // initialize store data
+    if (sourceData?.length > 0) {
+      this.kernal.applyOps(sourceData, 'database')
     }
 
     this.client = new Client(
@@ -127,20 +137,29 @@ class ClientRoom extends EventEmitter {
     return this.agentIds.some((id) => id === agentId)
   }
 
-  applyMessageOps = (ops) => {
-    this.kernal.applyOps(ops, 'remote')
-    // console.log('patched', ops.length > 0)
+  applyMessageOps = (ops, from) => {
+    // console.warn(`[${this.slug}]+PATCHED from [${from}]`, ops.length > 0)
     this.emit('patched', ops.length > 0)
+
+    if (from == 'connect') {
+      if (this.connectCallback) {
+        this.connectCallback(ops)
+      } else if (this.initialized) {
+        return
+      }
+    }
+    
+    this.kernal.applyOps(ops, 'remote')
   }
 
   handleMessage = (message) => {
     switch (message.type) {
       case 'connect': {
-        this.applyMessageOps(message.ops)
+        this.applyMessageOps(message.ops, 'connect')
         break
       }
       case 'patch': {
-        this.applyMessageOps(message.ops)
+        this.applyMessageOps(message.ops, 'patch')
         break
       }
       case 'connected': {
