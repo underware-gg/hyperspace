@@ -54,18 +54,6 @@ class Profile extends RoomCollection {
   constructor(room) {
     super(room, 'profile')
 
-    this.actions.addActionDownListener('toggle3d', () => {
-      const profile = this.getCurrentProfile()
-
-      let view3d = (profile ? !profile.view3d : true) && this.canvas3d != null
-
-      this.updateCurrentProfile({
-        view3d
-      })
-
-      this.localStore.setDocument('editGravityMap', 'world', false)
-    })
-
     this.localStore.on({ type: 'connectedWallets', event: 'change' }, (walletType, address) => {
       let wallet = null
 
@@ -92,17 +80,9 @@ class Profile extends RoomCollection {
     })
   }
 
-  getCurrentProfileId() {
-    return this.getAgentProfileId(this.agentId)
-  }
-
   getAgentProfileId(agentId) {
     const wallet = this.agentStore.getDocument('wallet', agentId)
     return wallet?.profileId ?? agentId
-  }
-
-  getCurrentProfile() {
-    return this.getAgentProfile(this.agent)
   }
 
   getAgentProfile(agentId) {
@@ -110,8 +90,13 @@ class Profile extends RoomCollection {
     return this.agentStore.getDocument('profile', profileId) ?? {}
   }
 
+  getCurrentProfile() {
+    const profileId = this.getAgentProfileId(this.agentId)
+    return this.getAgentProfile(profileId)
+  }
+
   updateCurrentProfile(values) {
-    const profileId = this.getCurrentProfileId()
+    const profileId = this.getAgentProfileId(this.agentId)
     this.updateProfile(profileId, values)
   }
 

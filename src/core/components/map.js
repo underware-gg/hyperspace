@@ -97,6 +97,19 @@ class Map extends RoomCollection {
       this.localStore.setDocument('editGravityMap', 'world', gravityMap)
     })
 
+    this.actions.addActionDownListener('toggle3d', () => {
+      const profile = this.Profile.getCurrentProfile()
+
+      let view3d = (profile ? !profile.view3d : true) && this.canvas3d != null
+
+      this.Profile.updateCurrentProfile({
+        view3d
+      })
+
+      this.localStore.setDocument('editGravityMap', 'world', false)
+    })
+
+
     this.localStore.on({ type: 'editGravityMap', event: 'change' }, (id, enabled) => {
       if (enabled) {
         this.Profile.updateCurrentProfile({ view3d: false })

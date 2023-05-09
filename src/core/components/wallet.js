@@ -21,7 +21,7 @@ class Wallet extends RoomCollection {
 
       if (!wallet?.profileId) {
         // inherits current profileId or agentId
-        const profileId = this.Profile.getCurrentProfileId()
+        const profileId = this.Profile.getAgentProfileId(this.agentId)
 
         this.agentStore.setDocument('wallet', address, {
           walletType,
