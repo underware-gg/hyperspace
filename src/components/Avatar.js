@@ -1,7 +1,6 @@
-import { useEffect } from 'react'
+import React from 'react'
 import {
-  HStack,
-  VStack,
+  HStack, VStack,
   Spacer,
   Text,
   Image,
@@ -42,30 +41,34 @@ const Avatar = ({
     <HStack>
       <Spacer />
       
-      <VStack>
-        <div style={_avatarStyle} onClick={() => _onClick()}>
-          {isLoading ? <img src={_defaultAvatarUrl} width={width} height={width} alt='avatar' />
-            : avatarUri ? <img src={avatarUri ?? _defaultAvatarUrl} width={width} height={width} alt='avatar' />
-              : sprite ? <img src={spriteUrl} style={sprite.imgStyle} alt='sprite' />
-                : <img src={_defaultAvatarUrl} width={width} height={width} alt='avatar' />
+      <VStack alignItems='left'>
+        <HStack>
+          <div style={_avatarStyle} onClick={() => _onClick()}>
+            {isLoading ? <img src={_defaultAvatarUrl} width={width} height={width} alt='avatar' />
+              : avatarUri ? <img src={avatarUri ?? _defaultAvatarUrl} width={width} height={width} alt='avatar' />
+                : sprite ? <img src={spriteUrl} style={sprite.imgStyle} alt='sprite' />
+                  : <img src={_defaultAvatarUrl} width={width} height={width} alt='avatar' />
+            }
+          </div>
+
+          {walletType &&
+            <VStack h={`${width}px`}>
+              <Image
+                src={textureData[walletType].src}
+                alt='connected'
+                w={`${_logoWidth}px`}
+                h={`${_logoWidth}px`}
+              />
+              <Spacer />
+            </VStack>
           }
-        </div>
+        </HStack>
+
         {name &&
           <Text className='NoMargin'>{isLoading ? '...' : name}</Text>
         }
       </VStack>
 
-      {walletType &&
-        <VStack h={`calc(${width}px + 1em)`}>
-          <Image
-            src={textureData[walletType].src}
-            alt='connected'
-            w={`${_logoWidth}px`}
-            h={`${_logoWidth}px`}
-          />
-          <Spacer />
-        </VStack>
-      }
 
       <Spacer />
     </HStack>

@@ -1,15 +1,26 @@
 import React from 'react'
 import Link from 'next/link'
-import { Container, Box, HStack, Spacer, Heading, Image } from '@chakra-ui/react'
+import {
+  Container,
+  HStack, VStack,
+  Spacer,
+  Box,
+  Text,
+  Heading,
+  Image,
+  Divider,
+} from '@chakra-ui/react'
 import ProfileManager from '@/components/ProfileManager'
+import { useSlugs } from '@/hooks/useSlugs'
 
 const Header = ({
   profile = false,
   width = 'container.lg',
 }) => {
+  const { slug, key, server } = useSlugs()
   return (
     <Box
-      borderWidth='0 0 1px 0'
+      className='Header'
       sx={{ display: 'flex', width: '100%' }}
     >
       <Container maxW={width}>
@@ -21,6 +32,7 @@ const Header = ({
           pl={4}
           pr={4}
           w='100%'
+          h='100%'
           alignItems='end'
         >
           <Box w='280px'>
@@ -32,12 +44,21 @@ const Header = ({
           </Box>
           <Spacer sx={{ flex: 1 }} />
 
-          {profile &&
+          {profile && <>
             <ProfileManager />
-          }
+            {slug && <>
+              <Divider orientation='vertical' />
+              <VStack h='100%' alignItems='left'>
+                <Text className='NoMargin'>Room: {slug}</Text>
+                <Text className='NoMargin'>Key: {key ?? 'Global'}</Text>
+                <Text className='NoMargin'>Server: {server}</Text>
+                <Spacer />
+              </VStack>
+            </>}
+          </>}
 
           <Spacer sx={{ flex: 1 }} />
-          
+
           <Box w='280px'>
             <a href='https://twitter.com/funDAOmental'>
               <Image

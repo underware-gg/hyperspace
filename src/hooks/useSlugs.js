@@ -22,6 +22,7 @@ const useSlugs = () => {
     slug,
     key,
     documentName,
+    server: 'funDAOmental',
   }
 }
 
