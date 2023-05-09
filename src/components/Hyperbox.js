@@ -6,6 +6,7 @@ import Screens from '@/components/Screens'
 
 const Hyperbox = ({
   slug,
+  serverKey = null,
   autoFocus = true,
   render2d = true,
   render3d = true,
@@ -43,7 +44,7 @@ const Hyperbox = ({
     }
   }, [canvas2dRef.current, canvas3dRef.current, render2d, render3d])
 
- const _shutdownGame = () => {
+  const _shutdownGame = () => {
     if (game) {
       console.log(`[${game.room.slug}] <Hyperbox> shutdown...`)
       game.shutdown()
@@ -60,7 +61,12 @@ const Hyperbox = ({
       import('src/core/game').then(async ({ default: Game }) => {
         console.log(`[${slug}] <Hyperbox> init...`)
         const _game = new Game()
-        await _game.init(slug, canvas2dRef.current, canvas3dRef.current)
+        await _game.init({
+          slug,
+          key: serverKey,
+          canvas2d: canvas2dRef.current,
+          canvas3d: canvas3dRef.current,
+        })
         dispatchRoom(_game.room)
         setGame(_game)
         setIsLoading(false)

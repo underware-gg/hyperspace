@@ -119,7 +119,7 @@ const RoomPage = () => {
             maxH='700'
           // h='700'
           >
-            <Hyperbox slug={slug} />
+            <Hyperbox slug={slug} serverKey={key} />
           </Box>
         </GridItem>
 

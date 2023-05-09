@@ -7,14 +7,18 @@ import { getAgentId, getSnapshot, setSnapshot } from './persistence'
 import Client from './client'
 
 class ClientRoom extends EventEmitter {
-  constructor(uri, slug, store = null, agent = null) {
+  constructor(uri, {
+    slug,
+    store = null,
+    agentId = null,
+  }) {
     super()
     this.kernal = new Kernal(this.handleOps)
     this.store = store
     this.store.on(null, this.handleStoreChange)
     this.uri = uri
     this.slug = slug.toLowerCase()
-    this.agentId = agent ?? getAgentId()
+    this.agentId = agentId ?? getAgentId()
     this.agentIds = [
       this.agentId,
     ]

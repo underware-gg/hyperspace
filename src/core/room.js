@@ -30,7 +30,12 @@ class Room {
     this.actions = new Actions()
   }
 
-  async init(slug, canvas2d, canvas3d) {
+  async init({
+    slug = null,
+    key = null,
+    canvas2d = null,
+    canvas3d = null,
+  }) {
     this.slug = slug
     this.canvas2d = canvas2d
     this.canvas3d = canvas3d
@@ -42,9 +47,20 @@ class Room {
     this.renderer2D.init(this.canvas2d)
     this.renderer3D.init(this.canvas3d)
 
-    this.clientRoom = slug ? ClientRoom.create(slug, this.remoteStore) : null
-    this.clientSession = slug ? ClientRoom.create(`${slug}:session`, this.sessionStore) : null
-    this.clientAgent = ClientRoom.create(':agents', this.agentStore)
+    this.clientRoom = slug ? ClientRoom.create({
+      slug,
+      store: this.remoteStore,
+    }) : null
+
+    this.clientSession = slug ? ClientRoom.create({
+      slug: `${slug}:session`,
+      store: this.sessionStore,
+    }) : null
+
+    this.clientAgent = ClientRoom.create({
+      slug: ':agents',
+      store: this.agentStore,
+    })
 
     this.agentId = this.clientAgent.agentId
 

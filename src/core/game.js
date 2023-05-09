@@ -7,15 +7,15 @@ class Game {
     this.render = this.render.bind(this)
 
     this.room = new Room()
-    
+
     this.lastTime = (new Date()).getTime()
     this.currentTime = 0
     this.dt = 0
   }
 
-  async init(slug, canvas2d, canvas3d) {
-    
-    await this.room.init(slug, canvas2d, canvas3d)
+  async init(options) {
+
+    await this.room.init(options)
 
     this.lastTime = (new Date()).getTime()
     this.currentTime = 0
@@ -39,11 +39,11 @@ class Game {
     this.dt = (this.currentTime - this.lastTime) / 1000
 
     this.room.update(this.dt)
-  
+
     this.room.render()
-  
+
     this.lastTime = this.currentTime
-  
+
     window.requestAnimationFrame(this.render)
   }
 }

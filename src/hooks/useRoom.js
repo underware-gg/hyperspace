@@ -24,7 +24,7 @@ const useRoom = (options = {}) => {
 
     const _initRoom = async (slug, canvas2d) => {
       _room = new Room()
-      await _room.init(slug, canvas2d, null)
+      await _room.init({ slug, canvas2d })
       if (_mounted) {
         setRoom(_room)
         if (!_room.clientRoom) {
@@ -77,7 +77,11 @@ const useClientRoom = (slug) => {
 
     if (slug && agentId) {
       const _store = new Store()
-      _clientRoom = ClientRoom.create(slug, _store, agentId)
+      _clientRoom = ClientRoom.create({
+        slug,
+        store: _store,
+        agentId,
+      })
       _clientRoom.init()
       // _room.on('agent-join', (id) => {
       //   if (id === agentId && _mounted) {
