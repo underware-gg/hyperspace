@@ -60,13 +60,14 @@ class Map extends RoomCollection {
     this.clientRoom.on('patched', (patched) => {
       if (this.patched) return
 
-      console.log(`[${this.slug}] PATCHED MAP:`, patched, `exists:`, this.exists('world'))
+      const mapExists = this.exists('world')
+      console.log(`[${this.slug}] PATCHED MAP:`, patched, `exists:`, mapExists)
 
-      if (!this.exists('world')) {
+      if (!mapExists) {
         this.resetMap('world')
       }
 
-      // update old maps with smaller map size
+      // update older maps created with a 20x15 grid
       let map = this.remoteStore.getDocument('map', 'world')
       if (Object.keys(map).length < MAX_MAP_SIZE) {
         while (Object.keys(map).length < MAX_MAP_SIZE) {

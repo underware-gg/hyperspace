@@ -53,11 +53,11 @@ const Hyperbox = ({
   }
 
   useEffect(() => {
-    if (slug && canvasesReady && !isLoading && (slug != game?.room?.slug || agentId != game?.room?.agentId)) {
+    if (canvasesReady && slug && !isLoading && (slug != game?.room?.slug || agentId != game?.room?.agentId)) {
       _shutdownGame()
       setGame(null)
       setIsLoading(true)
-      console.log(`[${slug}] <Hyperbox> import...`)
+      // console.log(`[${slug}] <Hyperbox> import...`, isLoading, canvasesReady, slug, agentId)
       import('src/core/game').then(async ({ default: Game }) => {
         console.log(`[${slug}] <Hyperbox> init...`)
         const _game = new Game()

@@ -33,6 +33,7 @@ class Room {
   async init({
     slug = null,
     key = null,
+    // sourceData = null,
     canvas2d = null,
     canvas3d = null,
   }) {
@@ -43,6 +44,8 @@ class Room {
     // usually is the same as source slug
     this.slug = (this.sourceSlug && key) ? `${this.sourceSlug}:${key}` : this.sourceSlug
 
+    // this.sourceData = sourceData
+
     this.canvas2d = canvas2d
     this.canvas3d = canvas3d
 
@@ -52,16 +55,6 @@ class Room {
 
     this.renderer2D.init(this.canvas2d)
     this.renderer3D.init(this.canvas3d)
-
-    // source client: contains the room initial data
-    // if is the same as room client, no need to start
-    // can be null
-    if (this.sourceSlug != this.slug) {
-      this.clientSource = this.slug ? ClientRoom.create({
-        slug: this.sourceSlug,
-        store: this.remoteStore,
-      }) : null
-    }
 
     // room client: the actual room in use, synched with the server
     // can be null
@@ -105,44 +98,30 @@ class Room {
     this.Profile = new Profile(this)
     this.Wallet = new Wallet(this)
 
-    this.sourceData = null
-
-    // load data from source client
-    if (this.clientSource) {
-      // start source client to fetch initial data
-      this.clientSource.init({
-        connectCallback: (data) => {
-          this.sourceData = data
-        }
-      })
-
-      // await source data to be loaded
-      const _that = this
-      await new Promise(function (resolve) {
-        (function waitForData() {
-          if (_that.sourceData != null) return resolve()
-          setTimeout(waitForData, 100)
-        })()
-      })
-      console.log(`[${this.sourceSlug}] data >> [${this.slug}]`)
-
-      // close source client
-      this.clientSource.shutdown()
-      this.clientSource = null
-    }
+    // Read source data, if available
+    // do it before client connections to avoid rate limiting
+    const sourceData = await this.fetchSourceData()
 
     // start clients
 
     this.clientRoom?.init({
-      sourceData: this.sourceData,  // use this data
-      loadLocalSnapshot: true,      // or else load from local storage
+      loadLocalSnapshot: true,
     })
 
     this.clientSession?.init({})
-    
+
     this.clientAgent.init({
       loadLocalSnapshot: true,
     })
+
+    // wait for Room client to load
+    const hasClientData = await this.clientRoom?.waitForConnection()
+    // console.log(`CLIENT CONNECTED!`, hasClientData)
+
+    // apply initial to room
+    if (hasClientData === false && sourceData) {
+      this.clientRoom.applySnapshotOps(sourceData)
+    }
 
     this.Editor?.init2d(this.canvas2d, this.agentId)
     this.Editor?.init3d(this.canvas3d, this.agentId)
@@ -156,6 +135,36 @@ class Room {
     this.canvas3d?.addEventListener('keydown', this.handleKeyDown, false)
     this.canvas2d?.addEventListener('keyup', this.handleKeyUp, false)
     this.canvas3d?.addEventListener('keyup', this.handleKeyUp, false)
+  }
+
+  fetchSourceData = async () => {
+    let result = null
+    if (this.sourceSlug && this.sourceSlug != this.slug) {
+      let sourceStore = new Store()
+
+      let sourceClient = ClientRoom.create({
+        slug: this.sourceSlug,
+        store: sourceStore,
+      })
+
+      sourceClient.init({
+        loadLocalSnapshot: true,
+      })
+
+      const hasSourceData = await sourceClient.waitForConnection()
+      // console.log(`loadSourceData()`, hasSourceData)
+
+      if (hasSourceData === true) {
+        result = sourceClient.getSnapshotOps()
+        console.log(`[${this.sourceSlug}] data > [${this.slug}]`, hasSourceData, result)
+        // this.clientRoom.applySnapshotOps(ops)
+      }
+
+      // close source client
+      sourceClient.shutdown()
+      sourceClient = null
+    }
+    return result
   }
 
   shutdown = () => {

@@ -22,24 +22,21 @@ class ClientRoom extends EventEmitter {
     this.agentIds = [
       this.agentId,
     ]
+    this.connectionStatus = undefined // when connected, true if room existed, false if new room
   }
 
   init({
-    sourceData = null,
     loadLocalSnapshot = false,
     connectCallback = null,
   }) {
-    this.initialized = sourceData != null
     this.connectCallback = connectCallback
 
     // load snapshot from browser local store
-    if (!this.initialized && loadLocalSnapshot === true) {
-      sourceData = getSnapshot(this.slug)
-    }
-
-    // initialize store data
-    if (sourceData?.length > 0) {
-      this.kernal.applyOps(sourceData, 'database')
+    if (loadLocalSnapshot === true) {
+      const snapshot = getSnapshot(this.slug)
+      if (snapshot.length > 0) {
+        this.kernal.applyOps(snapshot, 'database')
+      }
     }
 
     this.client = new Client(
@@ -50,12 +47,14 @@ class ClientRoom extends EventEmitter {
     this.client.addListener('close', this.handleClose)
     this.client.addListener('error', this.handleError)
     this.client.addListener('message', this.handleMessage)
+    // console.log(`[${this.slug}] new Client()...`, this.client)
   }
 
   shutdown = () => {
-    this.store.off(null, this.handleStoreChange)
+    console.log(`[${this.slug}] shutdown`)
+    this.store?.off(null, this.handleStoreChange)
     this.store = null
-    this.client.shutdown()
+    this.client?.shutdown()
     this.client = null
   }
 
@@ -64,7 +63,7 @@ class ClientRoom extends EventEmitter {
   }
 
   handleOpen = () => {
-    const ops = this.kernal.getSnapshotOps()
+    const ops = this.getSnapshotOps()
     this.client.addMessage(createMessage.connect(this.agentId, ops))
   }
 
@@ -77,7 +76,7 @@ class ClientRoom extends EventEmitter {
   }
 
   applySnapshotOps = (ops) => {
-    this.kernal.applyOps(ops, 'database')
+    this.kernal.applyOps(ops, 'remote')
   }
 
   handleStoreChange = (source, type, id, path, value) => {
@@ -98,14 +97,15 @@ class ClientRoom extends EventEmitter {
   handleOps = (ops, source) => {
     if (source === 'remote') {
       // Ideally we'd be pushing ops somewhere and then periodically squashing them.
-      setSnapshot(this.slug, this.kernal.getSnapshotOps())
+      setSnapshot(this.slug, this.getSnapshotOps())
     } else if (source === 'local') {
       // this.client.addMessage(createMessage.patch(ops))
       // Add changes...
+      // console.log(`[${this.slug}]`,this.client, this)
       this.client.addOps(ops)
 
       // Ideally we'd be pushing ops somewhere and then periodically squashing them.
-      setSnapshot(this.slug, this.kernal.getSnapshotOps())
+      setSnapshot(this.slug, this.getSnapshotOps())
     }
 
     if (source !== 'local') {
@@ -138,18 +138,30 @@ class ClientRoom extends EventEmitter {
   }
 
   applyMessageOps = (ops, from) => {
-    // console.warn(`[${this.slug}]+PATCHED from [${from}]`, ops.length > 0)
-    this.emit('patched', ops.length > 0)
+    this.kernal.applyOps(ops, 'remote')
 
     if (from == 'connect') {
+      this.connectionStatus = ops.length > 0
       if (this.connectCallback) {
         this.connectCallback(ops)
-      } else if (this.initialized) {
-        return
       }
     }
-    
-    this.kernal.applyOps(ops, 'remote')
+    // console.warn(`[${this.slug}] PATCHED from [${from}]`, ops.length > 0)
+
+    this.emit('patched', ops.length > 0)
+  }
+
+  waitForConnection = async () => {
+    let that = this
+    await new Promise(function (resolve) {
+      (function loopUntilConnected() {
+        if (that.connectionStatus !== undefined) {
+          return resolve()
+        }
+        setTimeout(loopUntilConnected, 100)
+      })()
+    })
+    return this.connectionStatus
   }
 
   handleMessage = (message) => {
