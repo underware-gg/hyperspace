@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
   Tabs, TabList, TabPanels, Tab, TabPanel,
+  Text,
 } from '@chakra-ui/react'
 import { useRoomContext } from '@/hooks/RoomContext'
 import Snapshot from '@/components/Snapshot'
@@ -11,7 +12,10 @@ import Button from '@/components/Button'
 const ModalSnapshots = ({
   disclosure,
 }) => {
-  const { remoteStore, localStore, agentStore } = useRoomContext()
+  const {
+    remoteStore, localStore, sessionStore, agentStore,
+    slug, slugSession, slugAgent,
+  } = useRoomContext()
   const { id, isOpen, onClose } = disclosure
 
   return (
@@ -33,24 +37,31 @@ const ModalSnapshots = ({
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={4} minHeight='300px'>
-          <Tabs isFitted variant='enclosed'>
+          <Tabs defaultIndex={1} isFitted variant='enclosed'>
             <TabList mb='1em'>
-              <Tab _selected={{ bg: 'teal' }}>Remote</Tab>
               <Tab _selected={{ bg: 'teal' }}>Local</Tab>
+              <Tab _selected={{ bg: 'teal' }}>Remote</Tab>
+              <Tab _selected={{ bg: 'teal' }}>Session</Tab>
               {process.env.DEV &&
-                <Tab _selected={{ bg: 'teal' }}>:agents</Tab>
+                <Tab _selected={{ bg: 'teal' }}>Agents</Tab>
               }
               <Tab _selected={{ bg: 'teal' }}>Slug</Tab>
             </TabList>
             <TabPanels>
               <TabPanel>
+                <Snapshot store={localStore} />
+              </TabPanel>
+              <TabPanel>
+                <Text>[<span className='Important'>{slug}</span>]</Text>
                 <Snapshot store={remoteStore} />
               </TabPanel>
               <TabPanel>
-                <Snapshot store={localStore} />
+                <Text>[<span className='Important'>{slugSession}</span>]</Text>
+                <Snapshot store={sessionStore} />
               </TabPanel>
               {process.env.DEV &&
                 <TabPanel>
+                  <Text>[<span className='Important'>{slugAgent}</span>]</Text>
                   <Snapshot store={agentStore} />
                 </TabPanel>
               }

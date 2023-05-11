@@ -61,6 +61,8 @@ export const useRoomContext = () => {
   return {
     room,
     slug: room?.clientRoom?.slug ?? null,
+    slugAgent: room?.clientAgent?.slug ?? null,
+    slugSession: room?.clientSession?.slug ?? null,
     localStore: room?.localStore ?? null,
     remoteStore: room?.remoteStore ?? null,
     sessionStore: room?.sessionStore ?? null,

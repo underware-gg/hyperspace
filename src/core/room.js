@@ -1,6 +1,7 @@
 import Actions from '@/core/actions'
 import * as ClientRoom from '@/core/networking'
 import { loadTextures } from '@/core/textures'
+import { importCrdtData } from '@/core/export-import'
 import Renderer2D from '@/core/rendering/renderer2D'
 import Renderer3D from '@/core/rendering/renderer3D'
 import Portal from '@/core/components/portal'
@@ -157,7 +158,6 @@ class Room {
       if (hasSourceData === true) {
         result = sourceClient.getSnapshotOps()
         console.log(`[${this.sourceSlug}] data > [${this.slug}]`, hasSourceData, result)
-        // this.clientRoom.applySnapshotOps(ops)
       }
 
       // close source client
@@ -165,6 +165,15 @@ class Room {
       sourceClient = null
     }
     return result
+  }
+
+  revertToSourceRoom = async () => {
+    const sourceData = await this.fetchSourceData()
+    if(!sourceData) return false
+
+    console.log(`REVERT....`)
+    importCrdtData(sourceData, this.remoteStore, true)
+    return true
   }
 
   shutdown = () => {

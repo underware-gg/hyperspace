@@ -32,7 +32,7 @@ const useImportedData = (data) => {
   useEffect(() => {
     if (isCrdtData(data)) {
       const _store = new Store()
-      if (importCrdtData(data, _store)) {
+      if (importCrdtData(data, _store, false)) {
         setStore(_store)
         return
       }

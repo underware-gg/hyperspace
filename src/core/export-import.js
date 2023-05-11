@@ -26,7 +26,7 @@ const eraseData = (store) => {
   }
 }
 
-export const importCrdtData = (data, store, replaceData = false) => {
+export const importCrdtData = (data, store, replaceData) => {
   if (!isCrdtData(data) || !store?.setDocument) {
     console.warn(`importCrdtData() bad data or store`, data, store)
     return false

@@ -11,6 +11,7 @@ import {
   Divider,
 } from '@chakra-ui/react'
 import ProfileManager from '@/components/ProfileManager'
+import RoomManager from '@/components/RoomManager'
 import { useSlugs } from '@/hooks/useSlugs'
 
 const Header = ({
@@ -48,12 +49,7 @@ const Header = ({
             <ProfileManager />
             {slug && <>
               <Divider orientation='vertical' />
-              <VStack h='100%' alignItems='left'>
-                <Text className='NoMargin'>Room: {slug}</Text>
-                <Text className='NoMargin'>Key: {key ?? 'Global'}</Text>
-                <Text className='NoMargin'>Server: {server}</Text>
-                <Spacer />
-              </VStack>
+              <RoomManager />
             </>}
           </>}
 
