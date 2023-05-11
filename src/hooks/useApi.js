@@ -7,7 +7,7 @@ const useApi = (route) => {
   const { data, error, isLoading } = useSWR(route, fetcher)
   const _error = data?.error ?? error ?? null
   if (_error) {
-    console.warn(`ueApi(${route}) error:`, _error)
+    console.warn(`useApi(${route}) error:`, _error)
     return {
       data: null,
       error: _error,

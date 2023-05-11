@@ -56,7 +56,8 @@ class Room {
     
     // slug is the actual room in use, synched to the server
     // usually is the same as source slug
-    this.slug = (this.sourceSlug && key) ? `${this.sourceSlug}:${key}` : this.sourceSlug
+    this.key = key
+    this.slug = (this.sourceSlug && this.key) ? `${this.sourceSlug}:${this.key}` : this.sourceSlug
 
     // this.sourceData = sourceData
 

@@ -59,6 +59,10 @@ $color-error: #F34000;
   @extend .HR;
   margin: 1em 0 !important;
 }
+.HR0 {
+  @extend .HR;
+  color: #0000 !important;
+}
 
 //-----------------------------------
 // Chakra

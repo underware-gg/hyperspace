@@ -53,7 +53,7 @@ const Hyperbox = ({
   }
 
   useEffect(() => {
-    if (canvasesReady && slug && !isLoading && (slug != game?.room?.slug || agentId != game?.room?.agentId)) {
+    if (canvasesReady && slug && !isLoading && (slug != game?.room?.slug || serverKey != game?.room?.key || agentId != game?.room?.agentId)) {
       _shutdownGame()
       setGame(null)
       setIsLoading(true)
@@ -72,7 +72,7 @@ const Hyperbox = ({
         setIsLoading(false)
       })
     }
-  }, [canvasesReady, slug, agentId])
+  }, [canvasesReady, slug, serverKey, agentId])
 
   return (
     <div>
