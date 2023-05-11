@@ -1,23 +1,42 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
   HStack, VStack,
   Text,
   Spacer,
+  useDisclosure,
 } from '@chakra-ui/react'
 import { useSlugs } from '@/hooks/useSlugs'
 import { useRoomContext } from '@/hooks/RoomContext'
+import ModalRoomCreate from '@/components/ModalRoomCreate'
+import ModalRoomSelector from '@/components/ModalRoomSelector'
 import Button from '@/components/Button'
 
 const ModalRoomSwitcher = ({
   isOpen,
   handleClose,
 }) => {
+  const { room } = useRoomContext()
   const { slug, key, server } = useSlugs()
   const _key = key ?? 'Global'
   const _keyClass = key ? 'Important' : null
 
-  const { agentId, room, actions } = useRoomContext()
+  const disclosureNewRoom = useDisclosure()
+  const disclosureSelectRoom = useDisclosure()
+
+  // detect room change
+  useEffect(() => {
+    if (slug) {
+      handleClose()
+    }
+  }, [slug, key])
+
+  useEffect(() => {
+    if (!isOpen) {
+      disclosureNewRoom.onClose()
+      disclosureSelectRoom.onClose()
+    }
+  }, [isOpen])
 
   const _revertRoom = () => {
     room.revertToSourceRoom()
@@ -35,15 +54,11 @@ const ModalRoomSwitcher = ({
         backgroundColor='#000a'
       >
         <ModalHeader>
-          Keyboard shortcuts
+          <Text className='NoMargin'>Room: <span className='Important'>{slug}</span></Text>
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={4}>
 
-          <HStack>
-            <Text className='NoMargin'>Room: <span className='Important'>{slug}</span></Text>
-            <Spacer />
-          </HStack>
           <Text className='NoMargin'>Key:  <span className={_keyClass}>{_key}</span></Text>
           <Text className='NoMargin'>Server: {server}</Text>
 
@@ -56,13 +71,35 @@ const ModalRoomSwitcher = ({
 
         </ModalBody>
         <ModalFooter>
-          <Button
-            variant='outline'
-            fullWidth
-            value='Close'
-            onClick={handleClose}
-          />
+          <HStack w='100%'>
+            <Button
+              size='sm'
+              onClick={() => disclosureSelectRoom.onOpen()}
+            >
+              Open Another Room
+            </Button>
+            <Button
+              size='sm'
+              onClick={() => disclosureNewRoom.onOpen()}
+            >
+              Create New Room
+            </Button>
+
+            <Spacer />
+
+            <Button
+              variant='outline'
+              fullWidth
+              value='Close'
+              onClick={handleClose}
+            />
+          </HStack>
         </ModalFooter>
+
+        <ModalRoomCreate disclosure={disclosureNewRoom} />
+
+        <ModalRoomSelector disclosure={disclosureSelectRoom} />
+
       </ModalContent>
     </Modal>
   )

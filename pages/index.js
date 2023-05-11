@@ -1,6 +1,4 @@
 import React from 'react'
-import { useRouter } from 'next/router'
-import { nanoid } from 'nanoid'
 import {
   VStack, HStack,
   Heading,
@@ -13,18 +11,10 @@ import Button from '@/components/Button'
 import Layout from '@/components/Layout'
 import ModalRoomCreate from '@/components/ModalRoomCreate'
 import ModalRoomSelector from '@/components/ModalRoomSelector'
-import { makeRoute } from '@/core/routes'
 
 const HomePage = ({ slug }) => {
-  const disclosure = useDisclosure()
-  const disclosureSelector = useDisclosure()
-  const router = useRouter()
-
-  function enterRoom(roomName) {
-    disclosure.onClose();
-    const slug = roomName?.length > 0 ? roomName : nanoid();
-    router.push(makeRoute({ slug }))
-  }
+  const disclosureNewRoom = useDisclosure()
+  const disclosureSelectRoom = useDisclosure()
 
   return (
     <Layout profile backgroundImage={'/gravity.jpg'}>
@@ -43,7 +33,7 @@ const HomePage = ({ slug }) => {
             <Button
               size='sm'
               variant='outline'
-              onClick={() => disclosureSelector.onOpen()}
+              onClick={() => disclosureSelectRoom.onOpen()}
             >
               Select Room
             </Button>
@@ -51,7 +41,7 @@ const HomePage = ({ slug }) => {
             <Button
               size='sm'
               variant='outline'
-              onClick={() => disclosure.onOpen()}
+              onClick={() => disclosureNewRoom.onOpen()}
             >
               Create Room
             </Button>
@@ -60,12 +50,11 @@ const HomePage = ({ slug }) => {
       </Box>
 
       <ModalRoomCreate
-        disclosure={disclosure}
+        disclosure={disclosureNewRoom}
       />
 
       <ModalRoomSelector
-        disclosure={disclosureSelector}
-        onSubmit={(roomName) => enterRoom(roomName)}
+        disclosure={disclosureSelectRoom}
       />
 
     </Layout>

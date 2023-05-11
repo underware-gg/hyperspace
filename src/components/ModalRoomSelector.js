@@ -1,23 +1,30 @@
 import React, { useState, useRef } from 'react'
 import { useRouter } from 'next/router'
+import { nanoid } from 'nanoid'
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
   VStack,
   Spacer,
 } from '@chakra-ui/react'
+import { makeRoute } from '@/core/routes'
 import { MapPreviewFromSlugToRoomContext } from '@/components/Map2D'
-import Button from '@/components/Button'
 import SlugSelector from '@/components/SlugSelector'
+import Button from '@/components/Button'
 
-const ModalRoom = ({
+const ModalRoomSelector = ({
   disclosure,
-  onSubmit,
 }) => {
   const { isOpen, onOpen, onClose } = disclosure
   const selectorRef = useRef()
-  const [slug, setSlug] = useState(null)
+  const [newSlug, setNewSlug] = useState(null)
   const [loaded, setLoaded] = useState(false)
   const router = useRouter()
+
+  function _enterRoom() {
+    disclosure.onClose()
+    const slug = newSlug?.length > 0 ? newSlug : nanoid()
+    router.push(makeRoute({ slug }))
+  }
 
   return (
     <Modal
@@ -41,8 +48,8 @@ const ModalRoom = ({
         <ModalCloseButton />
         <ModalBody pb={4}>
           <VStack spacing={4}>
-            <SlugSelector selectedValue={slug} onChange={setSlug} />
-            <MapPreviewFromSlugToRoomContext slug={slug} onLoaded={setLoaded} />
+            <SlugSelector selectedValue={newSlug} onChange={setNewSlug} />
+            <MapPreviewFromSlugToRoomContext slug={newSlug} onLoaded={setLoaded} />
           </VStack>
         </ModalBody>
         <ModalFooter>
@@ -57,8 +64,8 @@ const ModalRoom = ({
             variant='outline'
             fullWidth
             value={'Enter Room'}
-            disabled={!slug || !loaded}
-            onClick={() => onSubmit(slug)}
+            disabled={!newSlug || !loaded}
+            onClick={() => _enterRoom()}
             type='submit'
           />
         </ModalFooter>
@@ -67,4 +74,4 @@ const ModalRoom = ({
   )
 }
 
-export default ModalRoom
+export default ModalRoomSelector
