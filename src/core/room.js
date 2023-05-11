@@ -17,6 +17,9 @@ import Map from '@/core/components/map'
 import Editor from '@/core/components/editor'
 import Store from '@/core/store'
 
+let _roomCounter = 0
+let _openRooms = 0
+
 class Room {
 
   constructor() {
@@ -29,14 +32,24 @@ class Room {
     this.renderer3D = new Renderer3D(this)
 
     this.actions = new Actions()
+
+    this.roomId = ++_roomCounter
+    ++_openRooms
+    // console.warn(`[${this.roomId}] new Room() open [${_openRooms}]`)
   }
 
   async init({
+    // opens Room client if slug is defined
     slug = null,
     key = null,
-    // sourceData = null,
+    // opens Room Session client if slug is defined AND openSession
+    openSession = true,
+    // opens Agents Session
+    openAgents = true,
+    // Render only defined canvases
     canvas2d = null,
     canvas3d = null,
+    // sourceData = null,
   }) {
     // source slug is the source of room data
     this.sourceSlug = slug?.toLowerCase() ?? null
@@ -59,26 +72,30 @@ class Room {
 
     // room client: the actual room in use, synched with the server
     // can be null
-    this.clientRoom = this.slug ? ClientRoom.create({
+    this.clientRoom = (this.slug) ? ClientRoom.create({
       slug: this.slug,
       store: this.remoteStore,
+      roomId: this.roomId,
     }) : null
 
     // session client: transient data (player, editor)
     // can be null
-    this.clientSession = this.slug ? ClientRoom.create({
+    console.log(`Room open...`, this.slug, openSession, (this.slug && openSession))
+    this.clientSession = (this.slug && openSession) ? ClientRoom.create({
       slug: `${this.slug}::session`,
       store: this.sessionStore,
+      roomId: this.roomId,
     }) : null
 
     // agents client: persistent agents data (profiles)
     // cannot be null
-    this.clientAgent = ClientRoom.create({
+    this.clientAgent = (openAgents) ? ClientRoom.create({
       slug: ':agents',
       store: this.agentStore,
-    })
+      roomId: this.roomId,
+    }) : null
 
-    this.agentId = this.clientAgent.agentId
+    this.agentId = this.clientAgent?.agentId ?? this.clientRoom?.agentId ?? null
 
     if (this.slug) {
       // instantiate components before this.clientRoom.init() to listen to snapshot loading events
@@ -111,7 +128,7 @@ class Room {
 
     this.clientSession?.init({})
 
-    this.clientAgent.init({
+    this.clientAgent?.init({
       loadLocalSnapshot: true,
     })
 
@@ -138,6 +155,21 @@ class Room {
     this.canvas3d?.addEventListener('keyup', this.handleKeyUp, false)
   }
 
+  shutdown = () => {
+    --_openRooms
+    // console.warn(`[${this.roomId}] SHUTDOWN open [${_openRooms}]`)
+    this.canvas2d?.removeEventListener('keydown', this.handleKeyDown)
+    this.canvas3d?.removeEventListener('keydown', this.handleKeyDown)
+    this.canvas2d?.removeEventListener('keyup', this.handleKeyUp)
+    this.canvas3d?.removeEventListener('keyup', this.handleKeyUp)
+    this.clientRoom?.shutdown()
+    this.clientRoom = null
+    this.clientSession?.shutdown()
+    this.clientSession = null
+    this.clientAgent?.shutdown()
+    this.clientAgent = null
+  }
+
   fetchSourceData = async () => {
     let result = null
     if (this.sourceSlug && this.sourceSlug != this.slug) {
@@ -146,6 +178,7 @@ class Room {
       let sourceClient = ClientRoom.create({
         slug: this.sourceSlug,
         store: sourceStore,
+        roomId: this.roomId,
       })
 
       sourceClient.init({
@@ -174,19 +207,6 @@ class Room {
     console.log(`REVERT....`)
     importCrdtData(sourceData, this.remoteStore, true)
     return true
-  }
-
-  shutdown = () => {
-    this.canvas2d?.removeEventListener('keydown', this.handleKeyDown)
-    this.canvas3d?.removeEventListener('keydown', this.handleKeyDown)
-    this.canvas2d?.removeEventListener('keyup', this.handleKeyUp)
-    this.canvas3d?.removeEventListener('keyup', this.handleKeyUp)
-    this.clientRoom?.shutdown()
-    this.clientRoom = null
-    this.clientSession?.shutdown()
-    this.clientSession = null
-    this.clientAgent?.shutdown()
-    this.clientAgent = null
   }
 
   handleKeyDown = (e) => {
@@ -241,7 +261,7 @@ class Room {
 
     // Should probably be able to just get them directly.
     for (const playerId of playerIds) {
-      if (this.clientRoom.hasAgentId(playerId)) {
+      if (this.clientRoom?.hasAgentId(playerId)) {
         this.Player.render2d(playerId, context)
         this.Editor.render2d(playerId, context)
       }

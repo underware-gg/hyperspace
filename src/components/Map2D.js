@@ -14,7 +14,13 @@ const MapPreviewFromSlugToRoomContext = ({
   const canvasRef = useRef(null)
 
   // useRoom() will dispatch to RoomContext when the room is loaded
-  useRoom({ slug, canvas2d: canvasRef.current })
+  useRoom({
+    slug,
+    canvas2d: canvasRef.current,
+  }, {
+    openSession: false,
+    openAgents: false,
+  })
   const { room } = useRoomContext()
 
   const map = useDocument('map', 'world')
@@ -30,10 +36,10 @@ const MapPreviewFromSlugToRoomContext = ({
   }, [room])
 
   useEffect(() => {
-    if (map && room) {
+    if (room && map) {
       room.render()
     }
-  }, [map, room])
+  }, [room, map])
 
   return (
     <div>
@@ -62,9 +68,6 @@ const MapPreview = ({
       if (context) {
         context.save()
         context.scale(process.env.RENDER_HEIGHT / MAX_MAP_SIZE, process.env.RENDER_HEIGHT / MAX_MAP_SIZE)
-
-
-
         context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
         Map.draw2dMap('world', context, store)
         context.restore()

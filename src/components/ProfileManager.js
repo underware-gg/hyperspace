@@ -64,7 +64,7 @@ const AvatarButton = () => {
   } = useVeridaContext()
 
   // useRoom() will dispatch to RoomContext when the room is loaded
-  const { room } = useRoom()
+  useRoom({})
 
   const disclosure = useDisclosure()
 

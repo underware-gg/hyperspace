@@ -11,6 +11,7 @@ class ClientRoom extends EventEmitter {
     slug,
     store = null,
     agentId = null,
+    roomId = null,
   }) {
     super()
     this.kernal = new Kernal(this.handleOps)
@@ -23,6 +24,7 @@ class ClientRoom extends EventEmitter {
       this.agentId,
     ]
     this.connectionStatus = undefined // when connected, true if room existed, false if new room
+    this.roomId = roomId
   }
 
   init({
@@ -47,11 +49,11 @@ class ClientRoom extends EventEmitter {
     this.client.addListener('close', this.handleClose)
     this.client.addListener('error', this.handleError)
     this.client.addListener('message', this.handleMessage)
-    // console.log(`[${this.slug}] new Client()...`, this.client)
+    // console.log(`[${this.slug}][${this.roomId}] new Client()...`, this.client)
   }
 
   shutdown = () => {
-    console.log(`[${this.slug}] shutdown`)
+    console.log(`[${this.slug}][${this.roomId}] shutdown`)
     this.store?.off(null, this.handleStoreChange)
     this.store = null
     this.client?.shutdown()
@@ -101,7 +103,7 @@ class ClientRoom extends EventEmitter {
     } else if (source === 'local') {
       // this.client.addMessage(createMessage.patch(ops))
       // Add changes...
-      // console.log(`[${this.slug}]`,this.client, this)
+      // console.log(`[${this.slug}][${this.roomId}]`,this.client, this)
       this.client.addOps(ops)
 
       // Ideally we'd be pushing ops somewhere and then periodically squashing them.
@@ -146,7 +148,7 @@ class ClientRoom extends EventEmitter {
         this.connectCallback(ops)
       }
     }
-    // console.warn(`[${this.slug}] PATCHED from [${from}]`, ops.length > 0)
+    // console.warn(`[${this.slug}][${this.roomId}] PATCHED from [${from}]`, ops.length > 0)
 
     this.emit('patched', ops.length > 0)
   }
@@ -175,12 +177,12 @@ class ClientRoom extends EventEmitter {
         break
       }
       case 'connected': {
-        console.log(`[${this.slug}] connected:`, message.agentId)
+        console.log(`[${this.slug}][${this.roomId}] connected:`, message.agentId)
         this.addAgentId(message.agentId)
         break
       }
       case 'disconnected': {
-        console.log(`[${this.slug}] disconnected:`, message.agentId)
+        console.log(`[${this.slug}][${this.roomId}] disconnected:`, message.agentId)
         this.removeAgentId(message.agentId)
         break
       }

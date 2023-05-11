@@ -61,7 +61,6 @@ const ModalRoomSelector = ({
           />
           <Spacer />
           <Button
-            variant='outline'
             fullWidth
             value={'Enter Room'}
             disabled={!newSlug || !loaded}

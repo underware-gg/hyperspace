@@ -8,7 +8,7 @@ const CANVAS_SCALE = 3
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  // reactStrictMode: true, // helps to debug React
   swcMinify: true,
   env: {
     ENV: process.env.ENV,

@@ -14,7 +14,7 @@ import * as ClientRoom from '@/core/networking'
 //   slug       // 'slug', null if loading, undefined if not needed
 //   canvas2d   // the canvas element, null if loading, undefined if not needed
 // }
-const useRoom = (options = {}) => {
+const useRoom = (options = {}, init = {}) => {
   const [room, setRoom] = useState(null)
   const { dispatchRoom } = useContext(RoomContext)
 
@@ -24,16 +24,10 @@ const useRoom = (options = {}) => {
 
     const _initRoom = async (slug, canvas2d) => {
       _room = new Room()
-      await _room.init({ slug, canvas2d })
+      await _room.init({ slug, canvas2d, ...init })
       if (_mounted) {
         setRoom(_room)
-        if (!_room.clientRoom) {
-          dispatchRoom(_room)
-        } else {
-          _room.clientRoom.on('patched', (patched) => {
-            dispatchRoom(_room)
-          })
-        }
+        dispatchRoom(_room)
       }
     }
 
@@ -82,7 +76,7 @@ const useClientRoom = (slug) => {
         store: _store,
         agentId,
       })
-      _clientRoom.init()
+      _clientRoom.init({})
       // _room.on('agent-join', (id) => {
       //   if (id === agentId && _mounted) {
       //     setStore(_store)

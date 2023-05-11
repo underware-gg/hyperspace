@@ -106,7 +106,6 @@ const ModalRoomCreate = ({
           <Spacer />
           {!roomSlug ?
             <Button
-              variant='outline'
               fullWidth
               value={_isCasual ? 'Create Casual Room' : roomExists ? 'Enter Room' : 'Create Room'}
               onClick={() => _enterRoom()}
@@ -159,7 +158,6 @@ const RoomCreator = ({
 
   return (
     <Button
-      variant='outline'
       fullWidth
       value='Creating Room...'
       onClick={() => _enterRoom()}
