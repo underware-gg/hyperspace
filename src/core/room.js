@@ -42,6 +42,7 @@ class Room {
     // opens Room client if slug is defined
     slug = null,
     key = null,
+    isLocal = false,
     forceRevert = false,
     // opens Room Session client if slug is defined AND openSession
     openSession = true,
@@ -56,9 +57,10 @@ class Room {
     this.sourceSlug = slug?.toLowerCase() ?? null
     
     // slug is the actual room in use, synched to the server
-    // usually is the same as source slug
+    // same as source slug, unless using a key
     this.key = key
     this.slug = (this.sourceSlug && this.key) ? `${this.sourceSlug}:${this.key}` : this.sourceSlug
+    this.isLocal = isLocal
 
     // this.sourceData = sourceData
 
@@ -82,7 +84,6 @@ class Room {
 
     // session client: transient data (player, editor)
     // can be null
-    console.log(`Room open...`, this.slug, openSession, (this.slug && openSession))
     this.clientSession = (this.slug && openSession) ? ClientRoom.create({
       slug: `${this.slug}::session`,
       store: this.sessionStore,
@@ -126,9 +127,12 @@ class Room {
 
     this.clientRoom?.init({
       loadLocalSnapshot: true,
+      isLocal: this.isLocal,
     })
 
-    this.clientSession?.init({})
+    this.clientSession?.init({
+      isLocal: this.isLocal,
+    })
 
     this.clientAgent?.init({
       loadLocalSnapshot: true,
@@ -139,8 +143,7 @@ class Room {
     // console.log(`CLIENT CONNECTED!`, hasClientData)
 
     // apply initial to room
-    console.warn(`REVERT:`, forceRevert, (forceRevert || hasClientData === false))
-    if ((forceRevert || hasClientData === false) && sourceData) {
+    if ((forceRevert || isLocal || hasClientData === false) && sourceData) {
       console.warn(`REVERTING...`)
       importCrdtData(sourceData, this.remoteStore, true)
     }
@@ -207,8 +210,7 @@ class Room {
   revertToSourceRoom = async () => {
     const sourceData = await this.fetchSourceData()
     if(!sourceData) return false
-
-    console.log(`REVERT....`)
+    
     importCrdtData(sourceData, this.remoteStore, true)
     return true
   }

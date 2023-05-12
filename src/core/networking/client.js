@@ -11,6 +11,35 @@ const PING_PERIOD = 4000
 const PONG_TIMEOUT = 7000
 const SEND_RATE = 33.333
 
+class LocalClient extends EventEmitter {
+  constructor() {
+    super()
+    this.openTimeout = setTimeout(() => {
+      // 01 < Client sends 'open' to the Room
+      this.emit('open', null)
+    }, 100)
+  }
+  shutdown = () => {
+    clearTimeout(this.openTimeout)
+  }
+  addMessage(message) {
+    switch (message.type) {
+      case 'connect': {
+        // 02 > Client receives 'connect' with local data
+        // 03 < Client responds 'connect' with same data, will 'patch' the Room
+        this.emit('message', message)
+        // 04 < Client responds 'connected' with agent Id
+        const connected = createMessage.connected(message.agentId)
+        this.emit('message', connected)
+        break
+      }
+    }
+  }
+  addOps(ops) {
+    // supposed to sync this data, do nothing
+  }
+}
+
 class Client extends EventEmitter {
 	constructor(options, kernal) {
 		super()
@@ -137,4 +166,7 @@ class Client extends EventEmitter {
 	}
 }
 
-export default Client
+export {
+  Client,
+  LocalClient,
+}

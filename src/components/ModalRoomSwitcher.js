@@ -23,7 +23,7 @@ const ModalRoomSwitcher = ({
   const router = useRouter()
   const { room } = useRoomContext()
   const [newKey, setNewKey] = useState('')
-  const { slug, key, server } = useSlugs()
+  const { slug, key, isLocal, serverDisplay } = useSlugs()
   const _key = key ?? 'Global'
   const _keyClass = key ? 'Important' : null
 
@@ -79,26 +79,35 @@ const ModalRoomSwitcher = ({
         <ModalCloseButton />
 
         <ModalBody pb={4}>
-          <Text>Server: {server}</Text>
+          <Text>Server: {serverDisplay}</Text>
 
           <hr className='HR2' />
           <HStack>
             <Text>Current Key:  <span className={_keyClass}>{_key}</span></Text>
-            {key != null && <>
-              <HStack className='Padded'>
+            <HStack className='Padded'>
+              {key != null &&
                 <Button
                   size='xs'
-                  value='Exit to Original'
-                  onClick={() => _switchKey(null)}
-                />
-                <Button
-                  size='xs'
-                  value='Revert'
+                  value='Revert Global State'
                   variant='outline'
                   onClick={() => _revertRoom()}
                 />
-              </HStack>
-            </>}
+              }
+              {key != null &&
+                <Button
+                  size='xs'
+                  value='Open Global'
+                  onClick={() => _switchKey(null)}
+                />
+              }
+              {!isLocal &&
+                <Button
+                  size='xs'
+                  value='Open Local'
+                  onClick={() => _switchKey('local')}
+                />
+              }
+            </HStack>
             <Spacer />
           </HStack>
 
@@ -117,7 +126,7 @@ const ModalRoomSwitcher = ({
             <Button
               size='xs'
               fullWidth
-              value='Join or Create'
+              value='Join'
               disabled={!validateRoomSlug(newKey)}
               onClick={() => _switchKey(newKey, false)}
             />

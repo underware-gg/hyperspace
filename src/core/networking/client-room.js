@@ -4,7 +4,7 @@ import { createOp } from '@/core/merge/tiny-merge'
 import { createMessage } from '@/core/merge/messages'
 import { typeDefs } from '@/core/merge/crdt-type'
 import { getAgentId, getSnapshot, setSnapshot } from './persistence'
-import Client from './client'
+import { Client, LocalClient } from './client'
 
 class ClientRoom extends EventEmitter {
   constructor(uri, {
@@ -25,11 +25,13 @@ class ClientRoom extends EventEmitter {
     ]
     this.connectionStatus = undefined // when connected, true if room existed, false if new room
     this.roomId = roomId
+    this.isLocal = false
   }
 
   init({
     loadLocalSnapshot = false,
     connectCallback = null,
+    isLocal = false,
   }) {
     this.connectCallback = connectCallback
 
@@ -41,10 +43,10 @@ class ClientRoom extends EventEmitter {
       }
     }
 
-    this.client = new Client(
-      { uri: this.uri + '/api/room/' + this.slug + '/websocket' },
-      this.kernal,
-    )
+    this.client = isLocal ? new LocalClient() : new Client({
+      uri: this.uri + '/api/room/' + this.slug + '/websocket',
+    }, this.kernal )
+
     this.client.addListener('open', this.handleOpen)
     this.client.addListener('close', this.handleClose)
     this.client.addListener('error', this.handleError)
@@ -102,9 +104,7 @@ class ClientRoom extends EventEmitter {
       // Ideally we'd be pushing ops somewhere and then periodically squashing them.
       setSnapshot(this.slug, this.getSnapshotOps())
     } else if (source === 'local') {
-      // this.client.addMessage(createMessage.patch(ops))
       // Add changes...
-      // console.log(`[${this.slug}][${this.roomId}]`,this.client, this)
       this.client.addOps(ops)
 
       // Ideally we'd be pushing ops somewhere and then periodically squashing them.
@@ -178,12 +178,12 @@ class ClientRoom extends EventEmitter {
         break
       }
       case 'connected': {
-        console.log(`[${this.slug}][${this.roomId}] connected:`, message.agentId)
+        console.log(`[${this.slug}][${this.roomId}] agent connected:`, message.agentId)
         this.addAgentId(message.agentId)
         break
       }
       case 'disconnected': {
-        console.log(`[${this.slug}][${this.roomId}] disconnected:`, message.agentId)
+        console.log(`[${this.slug}][${this.roomId}] agent disconnected:`, message.agentId)
         this.removeAgentId(message.agentId)
         break
       }
