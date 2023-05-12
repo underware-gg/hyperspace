@@ -7,6 +7,7 @@ import Screens from '@/components/Screens'
 const Hyperbox = ({
   slug,
   serverKey = null,
+  forceRevert = false, // force revert the room when using a serverKey
   autoFocus = true,
   render2d = true,
   render3d = true,
@@ -64,6 +65,7 @@ const Hyperbox = ({
         await _game.init({
           slug,
           key: serverKey,
+          forceRevert,
           canvas2d: canvas2dRef.current,
           canvas3d: canvas3dRef.current,
         })

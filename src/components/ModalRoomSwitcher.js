@@ -47,12 +47,15 @@ const ModalRoomSwitcher = ({
     }
   }, [isOpen])
 
-  const _switchKey = (newKey, revert) => {
-    const url = makeRoute({
+  const _switchKey = (newKey, forceRevert) => {
+    const pathname = makeRoute({
       slug,
       key: newKey,
     })
-    router.push(url)
+    router.push({
+      pathname,
+      query: forceRevert ? { forceRevert } : {},
+    })
   }
 
   const _revertRoom = () => {
@@ -102,7 +105,7 @@ const ModalRoomSwitcher = ({
           <hr className='HR0' />
 
           <HStack>
-            <Text>New Key:</Text>
+            <Text>Use Key:</Text>
             <Input
               size='xs'
               w='200px'
@@ -116,7 +119,7 @@ const ModalRoomSwitcher = ({
               fullWidth
               value='Join or Create'
               disabled={!validateRoomSlug(newKey)}
-              onClick={() => _switchKey(newKey, true)}
+              onClick={() => _switchKey(newKey, false)}
             />
             <Button
               size='xs'
@@ -124,13 +127,13 @@ const ModalRoomSwitcher = ({
               value='Revert and Join'
               variant='outline'
               disabled={!validateRoomSlug(newKey)}
-              onClick={() => _switchKey(newKey, false)}
+              onClick={() => _switchKey(newKey, true)}
             />
             <Spacer />
           </HStack>
 
           <hr className='HR0' />
-          <Text>* Keys clones a Room, preserving the original</Text>
+          <Text>* Keys open Room clones, preserving the original</Text>
 
           <hr className='HR2' />
         </ModalBody>

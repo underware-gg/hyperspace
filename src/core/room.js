@@ -42,6 +42,7 @@ class Room {
     // opens Room client if slug is defined
     slug = null,
     key = null,
+    forceRevert = false,
     // opens Room Session client if slug is defined AND openSession
     openSession = true,
     // opens Agents Session
@@ -138,8 +139,10 @@ class Room {
     // console.log(`CLIENT CONNECTED!`, hasClientData)
 
     // apply initial to room
-    if (hasClientData === false && sourceData) {
-      this.clientRoom.applySnapshotOps(sourceData)
+    console.warn(`REVERT:`, forceRevert, (forceRevert || hasClientData === false))
+    if ((forceRevert || hasClientData === false) && sourceData) {
+      console.warn(`REVERTING...`)
+      importCrdtData(sourceData, this.remoteStore, true)
     }
 
     this.Editor?.init2d(this.canvas2d, this.agentId)

@@ -77,9 +77,10 @@ class ClientRoom extends EventEmitter {
     return this.kernal.getSnapshotOps()
   }
 
-  applySnapshotOps = (ops) => {
-    this.kernal.applyOps(ops, 'remote')
-  }
+  // use importCrdtData()
+  // applySnapshotOps = (ops) => {
+  //   this.kernal.applyOps(ops, 'remote')
+  // }
 
   handleStoreChange = (source, type, id, path, value) => {
     if (source === 'local') {

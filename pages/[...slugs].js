@@ -25,7 +25,7 @@ import { makeRoute } from '@/core/routes'
 
 const RoomPage = () => {
   const router = useRouter()
-  const { slug, key } = useSlugs()
+  const { slug, key, forceRevert } = useSlugs()
   const slugIsValid = validateRoomSlug(slug) && (!key || validateRoomSlug(key))
 
   useEffect(() => {
@@ -119,7 +119,7 @@ const RoomPage = () => {
             maxH='700'
           // h='700'
           >
-            <Hyperbox slug={slug} serverKey={key} />
+            <Hyperbox slug={slug} serverKey={key} forceRevert={forceRevert} />
           </Box>
         </GridItem>
 

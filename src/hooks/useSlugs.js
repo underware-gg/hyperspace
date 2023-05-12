@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 const useSlugs = () => {
   const router = useRouter()
   const { route } = router
-  const { slugs } = router.query
+  const { slugs, forceRevert } = router.query
   const isDocument = route?.startsWith('/document/') ?? false
 
   const [slug, key, documentName] = useMemo(() => {
@@ -21,6 +21,7 @@ const useSlugs = () => {
   return {
     slug,
     key,
+    forceRevert: (forceRevert === 'true'),
     documentName,
     server: 'funDAOmental',
   }
