@@ -22,9 +22,9 @@ const ModalRoomSwitcher = ({
 }) => {
   const router = useRouter()
   const { room } = useRoomContext()
-  const [newKey, setNewKey] = useState('')
-  const { slug, key, keyName, isLocal, serverDisplay } = useSlugs()
-  const _keyClass = key ? 'Important' : null
+  const [newBranch, setNewBranch] = useState('')
+  const { slug, branch, branchName, isMain, isLocal, serverDisplay } = useSlugs()
+  const _branchClass = (!isMain && !isLocal) ? 'Important' : null
 
   const disclosureNewRoom = useDisclosure()
   const disclosureSelectRoom = useDisclosure()
@@ -34,11 +34,11 @@ const ModalRoomSwitcher = ({
     if (slug) {
       handleClose()
     }
-  }, [slug, key])
+  }, [slug, branch])
 
   useEffect(() => {
     if (isOpen) {
-      setNewKey('')
+      setNewBranch('')
     }
     if (!isOpen) {
       disclosureNewRoom.onClose()
@@ -46,10 +46,10 @@ const ModalRoomSwitcher = ({
     }
   }, [isOpen])
 
-  const _switchKey = (newKey, forceRevert) => {
+  const _switchBranch = (newBranch, forceRevert) => {
     const pathname = makeRoute({
       slug,
-      key: newKey,
+      branch: newBranch,
     })
     router.push({
       pathname,
@@ -70,6 +70,7 @@ const ModalRoomSwitcher = ({
     >
       <ModalOverlay />
       <ModalContent
+        w='700px'
         backgroundColor='#000a'
       >
         <ModalHeader>
@@ -82,9 +83,9 @@ const ModalRoomSwitcher = ({
 
           <hr className='HR2' />
           <HStack>
-            <Text>Current Key:  <span className={_keyClass}>{keyName}</span></Text>
+            <Text>Current Branch:  <span className={_branchClass}>{branchName}</span></Text>
             <HStack className='Padded'>
-              {key != null &&
+              {branch != null &&
                 <Button
                   size='xs'
                   value='Revert State from Main'
@@ -92,18 +93,18 @@ const ModalRoomSwitcher = ({
                   onClick={() => _revertRoom()}
                 />
               }
-              {key != null &&
+              {branch != null &&
                 <Button
                   size='xs'
-                  value='Open Main'
-                  onClick={() => _switchKey(null)}
+                  value='Open [Main]'
+                  onClick={() => _switchBranch(null)}
                 />
               }
               {!isLocal &&
                 <Button
                   size='xs'
-                  value='Open Local'
-                  onClick={() => _switchKey('local')}
+                  value='Open [Local]'
+                  onClick={() => _switchBranch('local')}
                 />
               }
             </HStack>
@@ -113,35 +114,35 @@ const ModalRoomSwitcher = ({
           <hr className='HR0' />
 
           <HStack>
-            <Text>Use Key:</Text>
+            <Text>Use Branch:</Text>
             <Input
               size='xs'
               w='200px'
-              placeholder={'enter key'}
-              value={newKey}
-              onChange={(e) => setNewKey(e.target.value)}
-              onKeyDown={(e) => { if (e.code == 'Enter') _switchKey(newKey) }}
+              placeholder={'enter branch'}
+              value={newBranch}
+              onChange={(e) => setNewBranch(e.target.value)}
+              onKeyDown={(e) => { if (e.code == 'Enter') _switchBranch(newBranch) }}
             />
             <Button
               size='xs'
               fullWidth
               value='Join'
-              disabled={!validateRoomSlug(newKey)}
-              onClick={() => _switchKey(newKey, false)}
+              disabled={!validateRoomSlug(newBranch)}
+              onClick={() => _switchBranch(newBranch, false)}
             />
             <Button
               size='xs'
               fullWidth
               value='Revert and Join'
               variant='outline'
-              disabled={!validateRoomSlug(newKey)}
-              onClick={() => _switchKey(newKey, true)}
+              disabled={!validateRoomSlug(newBranch)}
+              onClick={() => _switchBranch(newBranch, true)}
             />
             <Spacer />
           </HStack>
 
           <hr className='HR0' />
-          <Text>* Keys open Room clones, preserving the original</Text>
+          <Text>* Branches create Room clones, preserving the original</Text>
 
           <hr className='HR2' />
         </ModalBody>

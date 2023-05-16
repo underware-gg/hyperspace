@@ -2,7 +2,7 @@
 export const makeRoute = ({
   url = null,
   slug,
-  key = null,
+  branch = null,
   documentName = null,
 }) => {
   if (!slug) {
@@ -12,7 +12,7 @@ export const makeRoute = ({
   let result = url ?? ''
   if (documentName) result += `/document`
   result += `/${slug}`
-  if (key) result += `/${key}`
+  if (branch) result += `/${branch}`
   if (documentName) result += `/${documentName}`
   return result
 }

@@ -9,8 +9,8 @@ import { useSlugs } from '@/hooks/useSlugs'
 import ModalRoomSwitcher from '@/components/ModalRoomSwitcher'
 
 const RoomManager = () => {
-  const { slug, key, keyName, serverDisplay } = useSlugs()
-  const _keyClass = key ? 'Important' : null
+  const { slug, isMain, isLocal, branchName, serverDisplay } = useSlugs()
+  const _branchClass = (!isMain && !isLocal) ? 'Important' : null
 
   const [showSwitcher, setShowSwitcher] = useState(false)
 
@@ -21,7 +21,7 @@ const RoomManager = () => {
         <Spacer />
         <SettingsIcon boxSize='0.8em' className='Clickable' onClick={() => setShowSwitcher(true)} />
       </HStack>
-      <Text className='NoMargin'>Key:  <span className={_keyClass}>{keyName}</span></Text>
+      <Text className='NoMargin'>Branch:  <span className={_branchClass}>{branchName}</span></Text>
       <Text className='NoMargin'>Server: {serverDisplay}</Text>
       <Spacer />
       <ModalRoomSwitcher

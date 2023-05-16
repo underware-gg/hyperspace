@@ -41,7 +41,7 @@ class Room {
   async init({
     // opens Room client if slug is defined
     slug = null,
-    key = null,
+    branch = null,
     isLocal = false,
     forceRevert = false,
     // opens Room Session client if slug is defined AND openSession
@@ -57,9 +57,9 @@ class Room {
     this.sourceSlug = slug?.toLowerCase() ?? null
     
     // slug is the actual room in use, synched to the server
-    // same as source slug, unless using a key
-    this.key = key
-    this.slug = (this.sourceSlug && this.key) ? `${this.sourceSlug}:${this.key}` : this.sourceSlug
+    // same as source slug, unless using a branch
+    this.branch = branch
+    this.slug = (this.sourceSlug && this.branch) ? `${this.sourceSlug}:${this.branch}` : this.sourceSlug
     this.isLocal = isLocal
 
     // this.sourceData = sourceData

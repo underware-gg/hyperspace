@@ -9,7 +9,7 @@ import ScreenEditor from '@/components/ScreenEditor'
 
 
 const DocumentPage = () => {
-  const { slug, key, documentName } = useSlugs()
+  const { slug, documentName } = useSlugs()
 
   // useRoom() will dispatch to RoomContext when the room is loaded
   useRoom({ slug })
