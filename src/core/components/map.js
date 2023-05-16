@@ -2,15 +2,19 @@ import * as THREE from 'three'
 import RoomCollection from '@/core/interfaces/RoomCollection'
 import { getTextureImageByName } from '@/core/textures'
 import { defaultTileset } from '@/core/texture-data'
-import { clamp } from '@/core/utils'
 
 export const MIN_MAP_SIZE = 5
-export const MAX_MAP_SIZE = 20
+export const MAX_MAP_WIDTH = 32
+export const MAX_MAP_HEIGHT = 24
 
-export const DEFAULT_MAP_WIDTH = 20
-export const DEFAULT_MAP_HEIGHT = 15
-
+export const DEFAULT_MAP_WIDTH = 16
+export const DEFAULT_MAP_HEIGHT = 16
 export const DEFAULT_MAP_TILE = 4
+export const DEFAULT_ENTRY = { x: 15, y: 10 }
+
+export const VIEWPORT_MAP_WIDTH = 20
+export const VIEWPORT_MAP_HEIGHT = 15
+
 
 const defaultBounds = {
   start: {
@@ -18,8 +22,8 @@ const defaultBounds = {
     y: 0,
   },
   end: {
-    x: MAX_MAP_SIZE - 1,
-    y: MAX_MAP_SIZE - 1,
+    x: MAX_MAP_WIDTH - 1,
+    y: MAX_MAP_HEIGHT - 1,
   }
 }
 
@@ -69,9 +73,16 @@ class Map extends RoomCollection {
 
       // update older maps created with a 20x15 grid
       let map = this.remoteStore.getDocument('map', 'world')
-      if (Object.keys(map).length < MAX_MAP_SIZE) {
-        while (Object.keys(map).length < MAX_MAP_SIZE) {
-          map[Object.keys(map).length] = new Array(MAX_MAP_SIZE).fill(null)
+      if (map[0].length < MAX_MAP_WIDTH || Object.keys(map).length < MAX_MAP_HEIGHT) {
+        // fill missing heights
+        while (Object.keys(map).length < MAX_MAP_HEIGHT) {
+          map[Object.keys(map).length] = new Array(MAX_MAP_WIDTH).fill(null)
+        }
+        // fill missing widths
+        for (let y = 0; y < MAX_MAP_HEIGHT; y++) {
+          while (map[y].length < MAX_MAP_WIDTH) {
+            map[y].push(null)
+          }
         }
         this.remoteStore.setDocument('map', 'world', map)
       }
@@ -128,9 +139,9 @@ class Map extends RoomCollection {
     let end = { ...entry }
 
     // find x start/end
-    for (let x = 0; x < MAX_MAP_SIZE; x++) {
+    for (let x = 0; x < MAX_MAP_WIDTH; x++) {
       let filled = false
-      for (let y = 0; y < MAX_MAP_SIZE && !filled; y++) {
+      for (let y = 0; y < MAX_MAP_HEIGHT && !filled; y++) {
         if (map[y]?.[x] != null) {
           filled = true
         }
@@ -144,9 +155,9 @@ class Map extends RoomCollection {
     }
 
     // find y start/end
-    for (let y = 0; y < MAX_MAP_SIZE; y++) {
+    for (let y = 0; y < MAX_MAP_HEIGHT; y++) {
       let filled = false
-      for (let x = 0; x < MAX_MAP_SIZE && !filled; x++) {
+      for (let x = 0; x < MAX_MAP_WIDTH && !filled; x++) {
         if (map[y]?.[x] != null) {
           filled = true
         }
@@ -165,14 +176,14 @@ class Map extends RoomCollection {
       height: (end.y - start.y + 1),
     })
     while (_size().width < MIN_MAP_SIZE) {
-      if (end.x < MAX_MAP_SIZE - 1) {
+      if (end.x < MAX_MAP_WIDTH - 1) {
         end.x++
       } else {
         start.x--
       }
     }
     while (_size().height < MIN_MAP_SIZE) {
-      if (end.y < MAX_MAP_SIZE - 1) {
+      if (end.y < MAX_MAP_HEIGHT - 1) {
         end.y++
       } else {
         start.y--
@@ -199,8 +210,8 @@ class Map extends RoomCollection {
     const canvasHeight = process.env.RENDER_HEIGHT
 
     // map size in tiles
-    const mapWidth = gravityMap ? MAX_MAP_SIZE : Math.max(mapBounds.size.width, DEFAULT_MAP_WIDTH)
-    const mapHeight = gravityMap ? MAX_MAP_SIZE : Math.max(mapBounds.size.height, DEFAULT_MAP_HEIGHT)
+    const mapWidth = gravityMap ? MAX_MAP_WIDTH : Math.max(mapBounds.size.width, VIEWPORT_MAP_WIDTH)
+    const mapHeight = gravityMap ? MAX_MAP_HEIGHT : Math.max(mapBounds.size.height, VIEWPORT_MAP_HEIGHT)
 
     // tile size inside canvas, in pixels
     const scale = Math.min(canvasWidth / mapWidth, canvasHeight / mapHeight)
@@ -213,8 +224,8 @@ class Map extends RoomCollection {
 
     // map start, used to draw tiles in map space
     const start = {
-      x: -(gravityMap ? MAX_MAP_SIZE : mapBounds.size.width) / 2,
-      y: -(gravityMap ? MAX_MAP_SIZE : mapBounds.size.height) / 2,
+      x: -(gravityMap ? MAX_MAP_WIDTH : mapBounds.size.width) / 2,
+      y: -(gravityMap ? MAX_MAP_HEIGHT : mapBounds.size.height) / 2,
     }
 
     this.viewport = {
@@ -239,9 +250,9 @@ class Map extends RoomCollection {
     const groundMaterial = new THREE.MeshBasicMaterial({
       color: 0x000,
     })
-    const groundGeometry = new THREE.PlaneGeometry(MAX_MAP_SIZE, MAX_MAP_SIZE, 1, 1)
+    const groundGeometry = new THREE.PlaneGeometry(MAX_MAP_WIDTH, MAX_MAP_HEIGHT, 1, 1)
     const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial)
-    groundMesh.position.set(MAX_MAP_SIZE / 2, -MAX_MAP_SIZE / 2, -1)
+    groundMesh.position.set(MAX_MAP_WIDTH / 2, -MAX_MAP_HEIGHT / 2, -1)
     scene.add(groundMesh)
 
     const geometryFloor = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
@@ -321,9 +332,9 @@ class Map extends RoomCollection {
 
     const gridContainer = new THREE.Object3D()
 
-    let map3D = new Array(MAX_MAP_SIZE)
-    for (let x = 0; x < MAX_MAP_SIZE; x++) {
-      map3D[x] = new Array(MAX_MAP_SIZE)
+    let map3D = new Array(MAX_MAP_HEIGHT)
+    for (let y = 0; y < MAX_MAP_HEIGHT; y++) {
+      map3D[y] = new Array(MAX_MAP_WIDTH)
     }
 
     const MakeWall = (object3D) => {
@@ -361,8 +372,8 @@ class Map extends RoomCollection {
       object3D.add(wall3Ds)
     }
 
-    for (let x = 0; x < MAX_MAP_SIZE; x++) {
-      for (let y = 0; y < MAX_MAP_SIZE; y++) {
+    for (let y = 0; y < MAX_MAP_HEIGHT; y++) {
+      for (let x = 0; x < MAX_MAP_WIDTH; x++) {
         let gridCell3D = new THREE.Mesh(geometryFloor, materialUV)
 
         const wallStack1 = new THREE.Object3D()
@@ -394,7 +405,7 @@ class Map extends RoomCollection {
 
         const pos = {
           x: x * cellWidth + cellWidth * 0.5,
-          y: y * cellWidth - MAX_MAP_SIZE * cellWidth - cellWidth * 0.5,
+          y: y * cellWidth - MAX_MAP_HEIGHT * cellWidth - cellWidth * 0.5,
         }
 
         gridCell3D.position.x = pos.x
@@ -420,23 +431,24 @@ class Map extends RoomCollection {
   resetMap(id) {
     let map = []
 
-    const start = {
-      x: Math.floor(MAX_MAP_SIZE * 0.25),
-      y: Math.floor(MAX_MAP_SIZE * 0.25),
-    }
-    const end = {
-      x: Math.floor(MAX_MAP_SIZE * 0.75),
-      y: Math.floor(MAX_MAP_SIZE * 0.75),
-    }
-    const entry = {
-      x: Math.floor(MAX_MAP_SIZE * 0.5),
-      y: Math.floor(MAX_MAP_SIZE * 0.5),
-    }
+    // const start = {
+    //   x: Math.floor(MAX_MAP_WIDTH * 0.25),
+    //   y: Math.floor(MAX_MAP_HEIGHT * 0.25),
+    // }
+    // const end = {
+    //   x: Math.floor(MAX_MAP_WIDTH * 0.75),
+    //   y: Math.floor(MAX_MAP_HEIGHT * 0.75),
+    // }
 
-    for (let y = 0; y < MAX_MAP_SIZE; y++) {
-      let row = new Array(MAX_MAP_SIZE).fill(null)
-      for (let x = 0; x < MAX_MAP_SIZE; x++) {
-        row[x] = (x >= start.x && x <= end.x && y >= start.y && y <= end.y) ? DEFAULT_MAP_TILE : null
+    const gapx = (MAX_MAP_WIDTH - DEFAULT_MAP_WIDTH) / 2
+    const gapy = (MAX_MAP_HEIGHT - DEFAULT_MAP_HEIGHT) / 2
+    for (let y = 0; y < MAX_MAP_HEIGHT; y++) {
+      let row = new Array(MAX_MAP_WIDTH).fill(null)
+      for (let x = 0; x < MAX_MAP_WIDTH; x++) {
+        row[x] = (
+          x >= gapx && x < gapx + DEFAULT_MAP_WIDTH &&
+          y >= gapy && y < gapy + DEFAULT_MAP_HEIGHT
+        ) ? DEFAULT_MAP_TILE : null
       }
       map.push(row)
     }
@@ -446,7 +458,7 @@ class Map extends RoomCollection {
     const settings = this.Settings.get(id)
     this.remoteStore.setDocument('settings', 'world', {
       ...settings,
-      entry,
+      entry: DEFAULT_ENTRY,
     })
   }
 
@@ -525,12 +537,14 @@ class Map extends RoomCollection {
 
     const gravityMap = this.localStore.getDocument('editGravityMap', id) ?? false
     if (gravityMap) {
+      // draw gravity map twice, side by side
       const gravityImage = getTextureImageByName('gravity')
-      context.drawImage(gravityImage, 0, 0, MAX_MAP_SIZE, MAX_MAP_SIZE)
+      context.drawImage(gravityImage, 0, 0, MAX_MAP_HEIGHT, MAX_MAP_HEIGHT)
+      context.drawImage(gravityImage, MAX_MAP_HEIGHT, 0, MAX_MAP_HEIGHT, MAX_MAP_HEIGHT)
 
       const gridImage = getTextureImageByName('gridtile')
-      for (let x = 0; x < MAX_MAP_SIZE; x++) {
-        for (let y = 0; y < MAX_MAP_SIZE; y++) {
+      for (let x = 0; x < MAX_MAP_WIDTH; x++) {
+        for (let y = 0; y < MAX_MAP_HEIGHT; y++) {
           context.drawImage(gridImage, x, y, 1, 1)
         }
       }
@@ -667,34 +681,22 @@ class Map extends RoomCollection {
 
   render3d(id) {
     const map = this.remoteStore.getDocument('map', id)
-
-    if (map === null) {
-      return
-    }
+    if (map == null) return
 
     const map3D = this.localStore.getDocument('map3d', id)
-
-    if (map3D === null) {
-      return
-    }
+    if (map3D == null) return
 
     const floorGeometries = this.localStore.getDocument('floor-geometries', id)
-
-    if (floorGeometries === null) {
-      return
-    }
+    if (floorGeometries == null) return
 
     const wallGeometries = this.localStore.getDocument('wall-geometries', id)
-
-    if (wallGeometries === null) {
-      return
-    }
+    if (wallGeometries == null) return
 
     const settings = this.Settings.get(id)
 
-    for (let x = 0; x < MAX_MAP_SIZE; x++) {
-      for (let y = 0; y < MAX_MAP_SIZE; y++) {
-        let mapCell = map3D[MAX_MAP_SIZE - 1 - y][x]
+    for (let x = 0; x < MAX_MAP_WIDTH; x++) {
+      for (let y = 0; y < MAX_MAP_HEIGHT; y++) {
+        let mapCell = map3D[MAX_MAP_HEIGHT - 1 - y][x]
 
         let tileIndex = map[y][x]
         if (typeof tileIndex != 'number' || tileIndex < 0 || tileIndex > 9) {

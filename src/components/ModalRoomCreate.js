@@ -15,6 +15,7 @@ import { useClientRoom } from '@/hooks/useRoom'
 import { useStoreDocument } from '@/hooks/useDocument'
 import { map, validateRoomSlug } from '@/core/utils'
 import { defaultSettings } from '@/core/components/settings'
+import { DEFAULT_ENTRY } from '@/core/components/map'
 import { makeRoute } from '@/core/routes'
 
 const ModalRoomCreate = ({
@@ -90,8 +91,8 @@ const ModalRoomCreate = ({
               name='Size'
               minX={MIN_MAP_SIZE}
               minY={MIN_MAP_SIZE}
-              maxX={MAX_MAP_SIZE}
-              maxY={MAX_MAP_SIZE}
+              maxX={MAX_MAP_WIDTH}
+              maxY={MAX_MAP_HEIGHT}
               valueX={sizeX}
               valueY={sizeY}
               onChangeX={setSizeX}
@@ -139,8 +140,8 @@ const RoomCreator = ({
           height,
         },
         entry: {
-          x: Math.floor(map(defaultSettings.entry.x, 1, defaultSettings.size.width, 1, width)),
-          y: Math.floor(map(defaultSettings.entry.y, 1, defaultSettings.size.height, 1, height)),
+          x: Math.floor(map(DEFAULT_ENTRY.x, 1, defaultSettings.size.width, 1, width)),
+          y: Math.floor(map(DEFAULT_ENTRY.y, 1, defaultSettings.size.height, 1, height)),
         }
       }
       console.log(`New Room [${slug}] settings:`, settings)
