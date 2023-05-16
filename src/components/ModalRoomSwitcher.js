@@ -23,8 +23,7 @@ const ModalRoomSwitcher = ({
   const router = useRouter()
   const { room } = useRoomContext()
   const [newKey, setNewKey] = useState('')
-  const { slug, key, isLocal, serverDisplay } = useSlugs()
-  const _key = key ?? 'Global'
+  const { slug, key, keyName, isLocal, serverDisplay } = useSlugs()
   const _keyClass = key ? 'Important' : null
 
   const disclosureNewRoom = useDisclosure()
@@ -83,12 +82,12 @@ const ModalRoomSwitcher = ({
 
           <hr className='HR2' />
           <HStack>
-            <Text>Current Key:  <span className={_keyClass}>{_key}</span></Text>
+            <Text>Current Key:  <span className={_keyClass}>{keyName}</span></Text>
             <HStack className='Padded'>
               {key != null &&
                 <Button
                   size='xs'
-                  value='Revert Global State'
+                  value='Revert State from Main'
                   variant='outline'
                   onClick={() => _revertRoom()}
                 />
@@ -96,7 +95,7 @@ const ModalRoomSwitcher = ({
               {key != null &&
                 <Button
                   size='xs'
-                  value='Open Global'
+                  value='Open Main'
                   onClick={() => _switchKey(null)}
                 />
               }
