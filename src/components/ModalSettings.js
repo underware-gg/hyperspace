@@ -8,7 +8,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
-import { DEFAULT_ENTRY, MAX_MAP_WIDTH, MAX_MAP_HEIGHT } from '@/core/components/map'
+import { DEFAULT_ENTRY, MAX_MAP_SIZE } from '@/core/components/map'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
 import usePermission from '@/hooks/usePermission'
@@ -107,8 +107,8 @@ export const ModalSettings = ({
                   valueY={entryY}
                   minX={0}
                   minY={0}
-                  maxX={MAX_MAP_WIDTH -1}
-                  maxY={MAX_MAP_HEIGHT-1}
+                  maxX={MAX_MAP_SIZE.width -1}
+                  maxY={MAX_MAP_SIZE.height-1}
                   onChangeX={setEntryX}
                   onChangeY={setEntryY}
                   validator={validator}

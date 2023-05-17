@@ -5,7 +5,7 @@ import React, { useRef, useEffect } from 'react'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument, useStoreDocument } from '@/hooks/useDocument'
 import { useRoom } from '@/hooks/useRoom'
-import Map, { MAX_MAP_WIDTH, MAX_MAP_HEIGHT } from '@/core/components/map'
+import Map, { MAX_MAP_SIZE } from '@/core/components/map'
 
 const MapPreviewFromSlugToRoomContext = ({
   slug,
@@ -66,7 +66,7 @@ const MapPreview = ({
     if (canvasRef.current) {
       const context = canvasRef.current?.getContext('2d') ?? null
       if (context) {
-        const scale = process.env.RENDER_HEIGHT / MAX_MAP_HEIGHT
+        const scale = process.env.RENDER_HEIGHT / MAX_MAP_SIZE.height
         context.save()
         context.scale(scale, scale)
         context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
