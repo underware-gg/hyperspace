@@ -71,22 +71,7 @@ class Map extends RoomCollection {
         this.resetMap('world')
       }
 
-      // update older maps created with a 20x15 grid
-      let map = this.remoteStore.getDocument('map', 'world')
-      if (map[0].length < MAX_MAP_WIDTH || Object.keys(map).length < MAX_MAP_HEIGHT) {
-        // fill missing heights
-        while (Object.keys(map).length < MAX_MAP_HEIGHT) {
-          map[Object.keys(map).length] = new Array(MAX_MAP_WIDTH).fill(null)
-        }
-        // fill missing widths
-        for (let y = 0; y < MAX_MAP_HEIGHT; y++) {
-          while (map[y].length < MAX_MAP_WIDTH) {
-            map[y].push(null)
-          }
-        }
-        this.remoteStore.setDocument('map', 'world', map)
-      }
-
+      this.validateMap()
       this.init2D('world')
       this.init3D('world')
 
@@ -101,7 +86,11 @@ class Map extends RoomCollection {
     })
 
     this.remoteStore.on({ type: 'map', event: 'change' }, (id, map) => {
+      const updated = this.validateMap()
       this.init2D(id)
+      if (updated) {
+        this.init3D(id)
+      }
     })
 
     this.actions.addActionDownListener('toggleGravityMap', () => {
@@ -128,6 +117,28 @@ class Map extends RoomCollection {
       }
       this.init2D(id)
     })
+  }
+
+  validateMap = () => {
+    let map = this.remoteStore.getDocument('map', 'world')
+
+    // update older maps created with a 20x15 grid
+    if (map[0].length < MAX_MAP_WIDTH || Object.keys(map).length < MAX_MAP_HEIGHT) {
+      // fill missing heights
+      while (Object.keys(map).length < MAX_MAP_HEIGHT) {
+        map[Object.keys(map).length] = new Array(MAX_MAP_WIDTH).fill(null)
+      }
+      // fill missing widths
+      for (let y = 0; y < MAX_MAP_HEIGHT; y++) {
+        while (map[y].length < MAX_MAP_WIDTH) {
+          map[y].push(null)
+        }
+      }
+      this.remoteStore.setDocument('map', 'world', map)
+      return true // map was updated
+    }
+
+    return false // map was not updated
   }
 
   calculateMapBounds = (id) => {
@@ -246,6 +257,15 @@ class Map extends RoomCollection {
     //3D STUFF//
     ////////////
 
+    let mapPivot = this.localStore.getDocument('mapPivot', id)
+    if (mapPivot) {
+      scene.remove(mapPivot)
+    }
+
+    mapPivot = new THREE.Object3D()
+    scene.add(mapPivot)
+    this.localStore.setDocument('mapPivot', id, mapPivot)
+
     // hide everything under map
     const groundMaterial = new THREE.MeshBasicMaterial({
       color: 0x000,
@@ -253,7 +273,7 @@ class Map extends RoomCollection {
     const groundGeometry = new THREE.PlaneGeometry(MAX_MAP_WIDTH, MAX_MAP_HEIGHT, 1, 1)
     const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial)
     groundMesh.position.set(MAX_MAP_WIDTH / 2, -MAX_MAP_HEIGHT / 2, -1)
-    scene.add(groundMesh)
+    mapPivot.add(groundMesh)
 
     const geometryFloor = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
     const geometryWall = new THREE.PlaneGeometry(cellWidth, cellWidth, 1, 1)
@@ -415,7 +435,7 @@ class Map extends RoomCollection {
       }
     }
 
-    scene.add(gridContainer)
+    mapPivot.add(gridContainer)
 
     this.localStore.setDocument('map3d', id, map3D)
     this.localStore.setDocument('floor-geometries', id, floorGeometries)
