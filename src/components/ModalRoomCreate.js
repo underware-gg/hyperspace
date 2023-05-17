@@ -117,6 +117,7 @@ const RoomCreator = ({
   useEffect(() => {
     if (store) {
       const settings = {
+        timestamp: Date.now(),
         entry: DEFAULT_ENTRY,
       }
       console.log(`New Room [${slug}] settings:`, settings)

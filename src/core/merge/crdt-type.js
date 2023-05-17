@@ -164,7 +164,7 @@ export const wallet = {
 
 // key: 'world'
 export const settings = {
-  // timestamp: 'number',
+  timestamp: 'number',
   entry: { // default entry tile
     x: 'number',
     y: 'number',

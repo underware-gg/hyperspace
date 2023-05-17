@@ -12,6 +12,7 @@ import { validateRoomSlug } from '@/core/utils'
 import { makeRoute } from '@/core/routes'
 import { useSlugs } from '@/hooks/useSlugs'
 import { useRoomContext } from '@/hooks/RoomContext'
+import { useDocument } from '@/hooks/useDocument'
 import ModalRoomCreate from '@/components/ModalRoomCreate'
 import ModalRoomSelector from '@/components/ModalRoomSelector'
 import Button from '@/components/Button'
@@ -28,6 +29,8 @@ const ModalRoomSwitcher = ({
 
   const disclosureNewRoom = useDisclosure()
   const disclosureSelectRoom = useDisclosure()
+
+  const settings = useDocument('settings', 'world')
 
   // detect room change
   useEffect(() => {
@@ -110,6 +113,8 @@ const ModalRoomSwitcher = ({
             </HStack>
             <Spacer />
           </HStack>
+
+          <Text>Creation Date: {settings?.timestamp ? (new Date(settings.timestamp)).toString() : '?'}</Text>
 
           <hr className='HR0' />
 

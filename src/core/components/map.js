@@ -89,7 +89,7 @@ class Map extends RoomCollection {
     })
 
     this.remoteStore.on({ type: 'map', event: 'change' }, (id, map) => {
-      const updated = this.validateMap()
+      const updated = this.patched ? this.validateMap() : false
       this.init2D(id)
       if (updated) {
         this.init3D(id)
