@@ -8,14 +8,13 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
+import { DEFAULT_ENTRY, MAX_MAP_WIDTH, MAX_MAP_HEIGHT } from '@/core/components/map'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
 import usePermission from '@/hooks/usePermission'
 import { PermissionsForm } from '@/components/PermissionsForm'
 import { TileInput, useInputValidator } from '@/components/Inputs'
-import { defaultSettings } from '@/core/components/settings'
 import Button from '@/components/Button'
-import { DEFAULT_ENTRY, MAX_MAP_WIDTH, MAX_MAP_HEIGHT } from '@/core/components/map'
 
 
 export const useSettingsDisclosure = (id) => {
@@ -37,8 +36,6 @@ export const ModalSettings = ({
   const { id, isOpen, onClose } = settingsDisclosure
   const { canEdit } = usePermission('world')
 
-  const [sizeX, setSizeX] = useState(defaultSettings.size.width);
-  const [sizeY, setSizeY] = useState(defaultSettings.size.height);
   const [entryX, setEntryX] = useState(DEFAULT_ENTRY.x);
   const [entryY, setEntryY] = useState(DEFAULT_ENTRY.y);
   const validator = useInputValidator()
@@ -47,8 +44,6 @@ export const ModalSettings = ({
 
   useEffect(() => {
     if (settings) {
-      setSizeX(settings.size.width)
-      setSizeY(settings.size.height)
       setEntryX(settings.entry.x)
       setEntryY(settings.entry.y)
     }
@@ -66,11 +61,6 @@ export const ModalSettings = ({
       }
     }
     if (newRoom) {
-      // TODO: NEW ROOM
-      options.size = {
-        width: sizeX,
-        height: sizeY,
-      }
     } else {
       Settings.updateSettings(id, options)
     }
@@ -111,16 +101,6 @@ export const ModalSettings = ({
                   />
                 </HStack>
                 <Spacer pt={3} />
-                {/* <TileInput
-                  name='Map Size'
-                  valueX={sizeX}
-                  valueY={sizeY}
-                  onChangeX={setSizeX}
-                  onChangeY={setSizeY}
-                  validator={validator}
-                  disabled={!newRoom}
-                />
-                <Spacer pt={3} /> */}
                 <TileInput
                   name='Entry'
                   valueX={entryX}

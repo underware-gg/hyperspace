@@ -8,15 +8,14 @@ import {
   Text,
   Spacer,
 } from '@chakra-ui/react'
-import Button from '@/components/Button'
-import { useInputValidator } from '@/components/Inputs'
+import { useStoreDocument } from '@/hooks/useDocument'
+import { validateRoomSlug } from '@/core/utils'
 import { useDbRooms } from '@/hooks/useApi'
 import { useClientRoom } from '@/hooks/useRoom'
-import { useStoreDocument } from '@/hooks/useDocument'
-import { map, validateRoomSlug } from '@/core/utils'
-import { defaultSettings } from '@/core/components/settings'
-import { DEFAULT_ENTRY } from '@/core/components/map'
+import Button from '@/components/Button'
+import { useInputValidator } from '@/components/Inputs'
 import { makeRoute } from '@/core/routes'
+import { DEFAULT_ENTRY } from '@/core/components/map'
 
 const ModalRoomCreate = ({
   disclosure,
@@ -30,8 +29,6 @@ const ModalRoomCreate = ({
   const [roomSlug, setRoomSlug] = useState(null)
   const roomNameRef = useRef()
 
-  const [sizeX, setSizeX] = useState(defaultSettings.size.width)
-  const [sizeY, setSizeY] = useState(defaultSettings.size.height)
   const validator = useInputValidator()
 
   const _isCasual = (roomName.length == 0)
@@ -50,7 +47,7 @@ const ModalRoomCreate = ({
     if (roomExists) {
       router.push(`/${roomName}`)
     } else {
-      const slug = _isCasual ? nanoid() : roomName
+      const slug = _isCasual ? nanoid().toLowerCase() : roomName
       setRoomSlug(slug)
     }
   }
@@ -87,19 +84,6 @@ const ModalRoomCreate = ({
               onChange={(e) => _onChange(e.target.value)}
               onKeyDown={(e) => { if (e.code == 'Enter' && _canSubmit) _enterRoom() }}
             />
-            {/* <TileInput
-              name='Size'
-              minX={MIN_MAP_SIZE}
-              minY={MIN_MAP_SIZE}
-              maxX={MAX_MAP_WIDTH}
-              maxY={MAX_MAP_HEIGHT}
-              valueX={sizeX}
-              valueY={sizeY}
-              onChangeX={setSizeX}
-              onChangeY={setSizeY}
-              validator={validator}
-              disabled={roomExists}
-            /> */}
           </VStack>
         </ModalBody>
         <ModalFooter>
@@ -113,7 +97,7 @@ const ModalRoomCreate = ({
               disabled={!_canSubmit}
               type='submit'
             />
-            : <RoomCreator slug={roomSlug} width={sizeX} height={sizeY} />
+            : <RoomCreator slug={roomSlug} />
           }
         </ModalFooter>
       </ModalContent>
@@ -125,8 +109,6 @@ export default ModalRoomCreate
 
 const RoomCreator = ({
   slug,
-  width,
-  height,
 }) => {
   const router = useRouter()
 
@@ -135,14 +117,7 @@ const RoomCreator = ({
   useEffect(() => {
     if (store) {
       const settings = {
-        size: {
-          width,
-          height,
-        },
-        entry: {
-          x: Math.floor(map(DEFAULT_ENTRY.x, 1, defaultSettings.size.width, 1, width)),
-          y: Math.floor(map(DEFAULT_ENTRY.y, 1, defaultSettings.size.height, 1, height)),
-        }
+        entry: DEFAULT_ENTRY,
       }
       console.log(`New Room [${slug}] settings:`, settings)
       store.setDocument('settings', 'world', settings)
@@ -152,7 +127,7 @@ const RoomCreator = ({
   const settings = useStoreDocument('settings', 'world', store)
 
   useEffect(() => {
-    if (settings?.size?.width == width && settings?.size?.height == height) {
+    if (settings) {
       router.push(makeRoute({ slug }))
     }
   }, [settings])

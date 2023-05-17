@@ -165,10 +165,6 @@ export const wallet = {
 // key: 'world'
 export const settings = {
   // timestamp: 'number',
-  size: { // map size in tiles (deprecated)
-    width: 'number',
-    height: 'number',
-  },
   entry: { // default entry tile
     x: 'number',
     y: 'number',

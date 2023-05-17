@@ -5,8 +5,7 @@ import {
   Input,
   Text,
 } from '@chakra-ui/react'
-import { useDocument } from '@/hooks/useDocument'
-import { defaultSettings } from '@/core/components/settings'
+import { MAX_MAP_WIDTH, MAX_MAP_HEIGHT } from '@/core/components/map'
 
 const useInputValidator = () => {
   const [inputs, setInputs] = useState({})
@@ -98,8 +97,6 @@ const TileInput = ({
   children,
 }) => {
 
-  const settings = useDocument('settings', 'world')
-
   return (
     <HStack>
       <Text w='220px'>{name}</Text>
@@ -107,7 +104,7 @@ const TileInput = ({
       <ValidatedInput
         value={valueX}
         minValue={minX}
-        maxValue={maxX ?? settings?.size?.width}
+        maxValue={maxX ?? MAX_MAP_WIDTH}
         disabled={disabled}
         onChange={onChangeX}
         validator={validator}
@@ -116,7 +113,7 @@ const TileInput = ({
       <ValidatedInput
         value={valueY}
         minValue={minY}
-        maxValue={maxY ?? settings?.size?.height}
+        maxValue={maxY ?? MAX_MAP_HEIGHT}
         disabled={disabled}
         onChange={onChangeY}
         validator={validator}
