@@ -1,7 +1,11 @@
 
-# Hyperbox
+# Hyperspace
 
-A collaborative, composable metaverse using CRDTs for state synchronisation.
+A collaborative, self-sovereign metaverse for the Hyperbox Protocol.
+
+Each room is a Hyperbox, which can encapsulate code, state and permissions, and integrate composably with other Hyperboxes.
+
+Each client is local-first and uses CRDT state-synchronisation via an cloud edge worker to communicate with other peers.
 
 ## Development Server
 

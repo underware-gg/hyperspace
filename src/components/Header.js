@@ -39,7 +39,7 @@ const Header = ({
           <Box w='280px'>
             <Link href='/'>
               <Heading as='h1' size='xl'>
-                Hyperbox
+                Hyperspace
               </Heading>
             </Link>
           </Box>
