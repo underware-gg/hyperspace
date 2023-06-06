@@ -23,7 +23,7 @@ const MapPreviewFromSlugToRoomContext = ({
   })
   const { room } = useRoomContext()
 
-  const map = useDocument('map', 'world')
+  const map = useDocument('map2', 'world')
 
   useEffect(() => {
     onLoaded(room != null)

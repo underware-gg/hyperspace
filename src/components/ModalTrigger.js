@@ -140,7 +140,7 @@ const MapTileSwitch = ({
     let result = null
     if (validator.isValid) {
       result = {
-        type: 'map',
+        type: 'map2',
         x: parseInt(x),
         y: parseInt(y),
         stateOff,

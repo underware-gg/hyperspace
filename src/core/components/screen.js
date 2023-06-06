@@ -83,7 +83,7 @@ class Screen extends RoomCollection {
       _deleteScreen(screenId)
     })
 
-    this.remoteStore.on({ type: 'map', event: 'update' }, (mapId, map) => {
+    this.remoteStore.on({ type: 'map2', event: 'update' }, (mapId, map) => {
       const screenIds = this.remoteStore.getIds('screen')
 
       // update all screens because we don't know what changed

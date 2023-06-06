@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import RoomCollection from '@/core/interfaces/RoomCollection'
 import { getTextureImageByName } from '@/core/textures'
 import { defaultTileset } from '@/core/texture-data'
+import { isPowerOfTwo } from 'three/src/math/MathUtils'
 
 export const MIN_MAP_SIZE = 5
 export const MAX_MAP_SIZE = {
@@ -60,14 +61,22 @@ export const floors = [
 
 class Map extends RoomCollection {
   constructor(room) {
-    super(room, 'map')
+    super(room, 'map2')
 
     this.patched = false
 
     this.clientRoom.on('patched', (patched) => {
-      if (this.patched) return
 
+      const oldMap = this.remoteStore.getDocument('map', 'world')
+      if (oldMap) {
+        console.warn(`CONVERT MAP....`)
+        this.remoteStore.setDocument('map2', 'world', oldMap)
+        this.remoteStore.setDocument('map', 'world', null)
+      }
+
+      if (this.patched) return
       const mapExists = this.exists('world')
+
       console.log(`[${this.slug}] PATCHED MAP:`, patched, `exists:`, mapExists)
 
       if (!mapExists) {
@@ -81,18 +90,18 @@ class Map extends RoomCollection {
       this.patched = true
     })
 
-    // texture swapping
-    this.remoteStore.on({ type: 'tileset', event: 'change' }, (id, tileset) => {
-      if (id === 'world') {
-        this.swapTileset(id, tileset)
-      }
-    })
-
-    this.remoteStore.on({ type: 'map', event: 'change' }, (id, map) => {
+    this.remoteStore.on({ type: 'map2', event: 'change' }, (id, map) => {
       const updated = this.patched ? this.validateMap() : false
       this.init2D(id)
       if (updated) {
         this.init3D(id)
+      }
+    })
+
+    // texture swapping
+    this.remoteStore.on({ type: 'tileset', event: 'change' }, (id, tileset) => {
+      if (id === 'world') {
+        this.swapTileset(id, tileset)
       }
     })
 
@@ -123,7 +132,7 @@ class Map extends RoomCollection {
   }
 
   validateMap = () => {
-    let map = this.remoteStore.getDocument('map', 'world')
+    let map = this.remoteStore.getDocument('map2', 'world')
 
     // update older maps created with a 20x15 grid
     if (map[0].length < MAX_MAP_SIZE.width || Object.keys(map).length < MAX_MAP_SIZE.height) {
@@ -137,7 +146,7 @@ class Map extends RoomCollection {
           map[y].push(null)
         }
       }
-      this.remoteStore.setDocument('map', 'world', map)
+      this.remoteStore.setDocument('map2', 'world', map)
       return true // map was updated
     }
 
@@ -147,7 +156,7 @@ class Map extends RoomCollection {
   calculateMapBounds = (id) => {
     const settings = this.Settings.get(id)
     const entry = settings.entry
-    const map = this.remoteStore.getDocument('map', id)
+    const map = this.remoteStore.getDocument('map2', id)
 
     let start = { ...entry }
     let end = { ...entry }
@@ -476,7 +485,7 @@ class Map extends RoomCollection {
       map.push(row)
     }
 
-    this.remoteStore.setDocument('map', id, map)
+    this.remoteStore.setDocument('map2', id, map)
 
     const settings = this.Settings.get(id)
     this.remoteStore.setDocument('settings', 'world', {
@@ -504,8 +513,8 @@ class Map extends RoomCollection {
   }
 
   updateTile(id, x, y, value) {
-    const map = this.remoteStore.getDocument('map', id)
-    if (!map) return 
+    const map = this.remoteStore.getDocument('map2', id)
+    if (!map) return
 
     if (!this.validateTile(x, y)) {
       return // invalid tile
@@ -524,13 +533,13 @@ class Map extends RoomCollection {
       return // invalid value
     }
 
-    this.remoteStore.setValueAtPath('map', id, `/${y}.${x}`, value)
+    this.remoteStore.setValueAtPath('map2', id, `/${y}.${x}`, value)
   }
 
   render2d(id, context, canvas) {
     if (!this.viewport) return // not initialized
 
-    const map = this.remoteStore.getDocument('map', id)
+    const map = this.remoteStore.getDocument('map2', id)
 
     if (map === null) {
       console.log(`[${this.slug}] Map.render2d() Map [${id}] is null`)
@@ -586,8 +595,8 @@ class Map extends RoomCollection {
   }
 
   static draw2dMap(id, context, store, bounds = null) {
-    const map = store.getDocument('map', id)
-    if(!map) return
+    const map = store.getDocument('map2', id)
+    if (!map) return
 
     const crdtTileset = store.getDocument('tileset', id)
 
@@ -661,7 +670,7 @@ class Map extends RoomCollection {
   getCurrentBounds() {
     const gravityMap = this.localStore.getDocument('editGravityMap', 'world') ?? false
     const mapBounds = this.localStore.getDocument('mapBounds', 'world')
-    
+
     if (gravityMap || !mapBounds) {
       return defaultBounds
     }
@@ -679,13 +688,13 @@ class Map extends RoomCollection {
     if (!this.validateTile(x, y)) {
       return null
     }
-    const map = this.remoteStore.getDocument('map', id)
+    const map = this.remoteStore.getDocument('map2', id)
     return map?.[y]?.[x] ?? null
   }
 
   canvasPositionToTile(x, y) {
     const m = this.canvasInverseTransform
-    
+
     if (!this.Map.viewport || !m) {
       return null // not initialized
     }
@@ -703,7 +712,7 @@ class Map extends RoomCollection {
   }
 
   render3d(id) {
-    const map = this.remoteStore.getDocument('map', id)
+    const map = this.remoteStore.getDocument('map2', id)
     if (map == null) return
 
     const map3D = this.localStore.getDocument('map3d', id)
