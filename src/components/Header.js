@@ -18,7 +18,7 @@ const Header = ({
   profile = false,
   width = 'container.lg',
 }) => {
-  const { slug, key, server } = useSlugs()
+  const { slug } = useSlugs()
   return (
     <Box
       className='Header'

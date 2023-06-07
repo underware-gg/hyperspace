@@ -1,11 +1,17 @@
 //-------------------------------
 // World tilesets
 //
+export const TilesetPaths = {
+  Castle: '/tilesets/castle.png',
+  Library: '/tilesets/library.png',
+  Dungeon: '/tilesets/dungeon.png',
+  Warehouse: '/tilesets/warehouse.png',
+}
 export const tilesets = [
-  { src: '/tilesets/castle.png' },
-  { src: '/tilesets/library.png' },
-  { src: '/tilesets/dungeon.png' },
-  { src: '/tilesets/warehouse.png' },
+  { src: TilesetPaths.Castle },
+  { src: TilesetPaths.Library },
+  { src: TilesetPaths.Dungeon },
+  { src: TilesetPaths.Warehouse },
 ]
 export const defaultTileset = tilesets[0]
 

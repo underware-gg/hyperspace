@@ -8,14 +8,13 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
+import { DEFAULT_ENTRY, MAX_MAP_SIZE } from '@/core/components/map'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
 import usePermission from '@/hooks/usePermission'
 import { PermissionsForm } from '@/components/PermissionsForm'
 import { TileInput, useInputValidator } from '@/components/Inputs'
-import { defaultSettings } from '@/core/components/settings'
 import Button from '@/components/Button'
-import { MAX_MAP_SIZE, MIN_MAP_SIZE } from '@/core/components/map'
 
 
 export const useSettingsDisclosure = (id) => {
@@ -37,18 +36,14 @@ export const ModalSettings = ({
   const { id, isOpen, onClose } = settingsDisclosure
   const { canEdit } = usePermission('world')
 
-  const [sizeX, setSizeX] = useState(defaultSettings.size.width);
-  const [sizeY, setSizeY] = useState(defaultSettings.size.height);
-  const [entryX, setEntryX] = useState(defaultSettings.entry.x);
-  const [entryY, setEntryY] = useState(defaultSettings.entry.y);
+  const [entryX, setEntryX] = useState(DEFAULT_ENTRY.x);
+  const [entryY, setEntryY] = useState(DEFAULT_ENTRY.y);
   const validator = useInputValidator()
 
   const settings = useDocument('settings', id)
 
   useEffect(() => {
     if (settings) {
-      setSizeX(settings.size.width)
-      setSizeY(settings.size.height)
       setEntryX(settings.entry.x)
       setEntryY(settings.entry.y)
     }
@@ -66,11 +61,6 @@ export const ModalSettings = ({
       }
     }
     if (newRoom) {
-      // TODO: NEW ROOM
-      options.size = {
-        width: sizeX,
-        height: sizeY,
-      }
     } else {
       Settings.updateSettings(id, options)
     }
@@ -111,24 +101,14 @@ export const ModalSettings = ({
                   />
                 </HStack>
                 <Spacer pt={3} />
-                {/* <TileInput
-                  name='Map Size'
-                  valueX={sizeX}
-                  valueY={sizeY}
-                  onChangeX={setSizeX}
-                  onChangeY={setSizeY}
-                  validator={validator}
-                  disabled={!newRoom}
-                />
-                <Spacer pt={3} /> */}
                 <TileInput
                   name='Entry'
                   valueX={entryX}
                   valueY={entryY}
                   minX={0}
                   minY={0}
-                  maxX={MAX_MAP_SIZE-1}
-                  maxY={MAX_MAP_SIZE-1}
+                  maxX={MAX_MAP_SIZE.width -1}
+                  maxY={MAX_MAP_SIZE.height-1}
                   onChangeX={setEntryX}
                   onChangeY={setEntryY}
                   validator={validator}

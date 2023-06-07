@@ -55,7 +55,7 @@ class Trigger extends RoomCollection {
     })
 
     // If we had something that said "how the data has changed" it would help a lot.
-    this.remoteStore.on({ type: 'map', event: 'update' }, (id, map) => {
+    this.remoteStore.on({ type: 'map2', event: 'update' }, (id, map) => {
       if (id !== 'world') {
         return
       }
@@ -102,7 +102,7 @@ class Trigger extends RoomCollection {
     // console.log(data)
 
     for (const i of data) {
-      if (i.type == 'map') {
+      if (i.type == 'map2') {
         console.log(`switch map:`, i)
         let tileNumber = state == 0 ? i.stateOff : i.stateOn
         let tileIndex = this.tileNumberToIndex(tileNumber)

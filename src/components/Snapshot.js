@@ -119,7 +119,7 @@ const Type = ({
               <DeleteIcon boxSize='0.8em' className='Clickable MarginSide' onClick={() => _delete(type, id)} />
             }
           </HStack>
-          {type == 'map' && <MapPreview store={store} />}
+          {type == 'map2' && <MapPreview store={store} />}
         </VStack>
       )
     }

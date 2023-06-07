@@ -28,7 +28,7 @@ class Portal extends RoomCollection {
     this.remoteStore.on({ type: 'portal', event: 'create' }, (portalId, portal) => {
       const portalMesh = new THREE.Mesh(portalGeometry, portalMaterial)
 
-      const map = this.remoteStore.getDocument('map', 'world')
+      const map = this.remoteStore.getDocument('map2', 'world')
       if (map === null) return
 
       portalMesh.rotation.set(Math.PI / 2, 0, 0);
@@ -48,7 +48,7 @@ class Portal extends RoomCollection {
     })
 
     // If we had something that said "how the data has changed" it would help a lot.
-    this.remoteStore.on({ type: 'map', event: 'update' }, (id, map) => {
+    this.remoteStore.on({ type: 'map2', event: 'update' }, (id, map) => {
       if (id !== 'world') return
 
       const portalIds = this.remoteStore.getIds('portal')

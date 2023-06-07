@@ -2099,10 +2099,10 @@
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.7.tgz#ccab5c8f7dc557a52ca3288c10075c9ccd37fff7"
   integrity sha512-Cr4OjIkipTtcXKjAsm8agyleBuDHvxzeBoa1v543lbv1YaIwQjESsVcmjiWiPEbC1FIeHOG/Op9kdCmAmiS3Kw==
 
-"@rsodre/crawler-data@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@rsodre/crawler-data/-/crawler-data-0.0.3.tgz#03f4af417707e430f00a4cd553f9345310ea5ac2"
-  integrity sha512-uK/Zlb81MQ+K04/TpXtIr0AJPXaItaDdTAbBX7jwahyZJhFu6t3p8r9Cdi6ReiFvuhNvpuxwf0o1MRF7id57Sg==
+"@rsodre/crawler-data@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@rsodre/crawler-data/-/crawler-data-0.0.5.tgz#a1540943495afdba9ff7d7d05275c34a1e1a9dc3"
+  integrity sha512-BBw8DmXtufjGWtqoRV9U/2QVMZ2/5573coVCGBuD1Bg5XgF7tdCE3s9usqbEQAKembXaNSUqnnomERls8KiAvA==
 
 "@rushstack/eslint-patch@^1.1.3":
   version "1.2.0"

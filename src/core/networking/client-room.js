@@ -149,7 +149,7 @@ class ClientRoom extends EventEmitter {
         this.connectCallback(ops)
       }
     }
-    // console.warn(`[${this.slug}][${this.roomId}] PATCHED from [${from}]`, ops.length > 0)
+    // console.warn(`[${this.slug}][${this.roomId}] PATCHED from [${from}]`, ops)
 
     this.emit('patched', ops.length > 0)
   }

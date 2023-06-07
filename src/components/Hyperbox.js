@@ -6,9 +6,9 @@ import Screens from '@/components/Screens'
 
 const Hyperbox = ({
   slug,
-  serverKey = null,
+  branch = null,
   isLocal = false,
-  forceRevert = false, // force revert the room when using a serverKey
+  forceRevert = false, // force revert the room when using a branch
   autoFocus = true,
   render2d = true,
   render3d = true,
@@ -55,7 +55,7 @@ const Hyperbox = ({
   }
 
   useEffect(() => {
-    if (canvasesReady && slug && !isLoading && (slug != game?.room?.slug || serverKey != game?.room?.key || agentId != game?.room?.agentId)) {
+    if (canvasesReady && slug && !isLoading && (slug != game?.room?.slug || branch != game?.room?.branch || agentId != game?.room?.agentId)) {
       _shutdownGame()
       setGame(null)
       setIsLoading(true)
@@ -65,7 +65,7 @@ const Hyperbox = ({
         const _game = new Game()
         await _game.init({
           slug,
-          key: serverKey,
+          branch,
           isLocal,
           forceRevert,
           canvas2d: canvas2dRef.current,
@@ -76,7 +76,7 @@ const Hyperbox = ({
         setIsLoading(false)
       })
     }
-  }, [canvasesReady, slug, serverKey, agentId])
+  }, [canvasesReady, slug, branch, agentId])
 
   return (
     <div>

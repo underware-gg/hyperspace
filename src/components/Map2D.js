@@ -23,7 +23,7 @@ const MapPreviewFromSlugToRoomContext = ({
   })
   const { room } = useRoomContext()
 
-  const map = useDocument('map', 'world')
+  const map = useDocument('map2', 'world')
 
   useEffect(() => {
     onLoaded(room != null)
@@ -66,8 +66,9 @@ const MapPreview = ({
     if (canvasRef.current) {
       const context = canvasRef.current?.getContext('2d') ?? null
       if (context) {
+        const scale = process.env.RENDER_HEIGHT / MAX_MAP_SIZE.height
         context.save()
-        context.scale(process.env.RENDER_HEIGHT / MAX_MAP_SIZE, process.env.RENDER_HEIGHT / MAX_MAP_SIZE)
+        context.scale(scale, scale)
         context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
         Map.draw2dMap('world', context, store)
         context.restore()

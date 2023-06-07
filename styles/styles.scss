@@ -50,6 +50,12 @@ $color-error: #F34000;
 .ClearBackground {
   background-color: #0000;
 }
+.Disabled {
+  color: #888;
+}
+input::placeholder {
+  @extend .Disabled;
+}
 
 .HR {
   color: #fff8;

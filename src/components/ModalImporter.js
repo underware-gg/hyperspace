@@ -5,6 +5,7 @@ import {
   VStack, HStack,
   Spacer,
   Text,
+  Input,
 } from '@chakra-ui/react'
 import { isCrdtData, importCrdtData, importDataTypes } from '@/core/export-import'
 import { useRoomContext } from '@/hooks/RoomContext'
@@ -21,10 +22,9 @@ import { useVeridaContext } from '@/hooks/VeridaContext'
 import { useAccount } from 'wagmi'
 import { useHyperboxState } from '@/web3/hooks/useHyperboxState'
 import StateSelector from '@/web3/components/StateSelector'
-
 // Crawler
-import * as CrawlerData from '@rsodre/crawler-data'
-const BN = require('bn.js');
+import * as Crawler from '@rsodre/crawler-data'
+import { crawlerSlugToChamberData, crawlerSlugToRoom } from '@/core/crawler'
 
 const useImportedData = (data) => {
   const [store, setStore] = useState(null)
@@ -81,7 +81,7 @@ const ModalImporter = ({
   isOpen,
   handleClose,
 }) => {
-  const { remoteStore, clientRoom, slug } = useRoomContext()
+  const { slug, remoteStore, agentId, Player, Tileset } = useRoomContext()
   const { canEdit } = usePermission('world')
 
   const [tabIndex, setTabIndex] = useState(0)
@@ -176,26 +176,24 @@ const ModalImporter = ({
   }, [state, isSuccess, isError])
 
   //
-  // Crawler
-  // TODO: Review and fix!
+  // Endless Crawler
+  const [crawlerSlug, setCrawlerSlug] = useState('')
+  useEffect(() => {
+    if (isOpen) setCrawlerSlug('')
+  }, [isOpen])
   const _importCrawlerChamber = () => {
-    const slug = window.prompt('DID to invite', 'S1W1')
-    if (!slug) return
-    for (let tokenId = 1; tokenId <= CrawlerData.getChamberCount(); ++tokenId) {
-      const coords = CrawlerData.getTokenIdToCoords(tokenId)
-      if (coords.slug == slug) {
-        const chamberData = CrawlerData.getChamberData(coords.coord)
-        // console.log(chamberData)
-        const bitmap = new BN(chamberData.bitmap.slice(2), 16)
-        for (let x = 0; x < 16; ++x) {
-          for (let y = 0; y < 15; ++y) {
-            const i = y * 16 + x
-            const bit = bitmap.and(new BN('1').shln(255 - i)).eq(new BN('0')) ? 0 : 1
-            map.updateTile('world', x, y, bit ? 8 : 5)
-          }
-        }
-        return
-      }
+    const chamber = crawlerSlugToRoom(crawlerSlug)
+    if (chamber) {
+      // update map
+      remoteStore.setDocument('map2', 'world', chamber.map)
+      // update entry
+      let settings = remoteStore.getDocument('settings', 'world')
+      settings.entry = chamber.entry
+      remoteStore.setDocument('settings', 'world', settings)
+      // move player
+      Player.moveToTile(agentId, chamber.entry.x, chamber.entry.y)
+      // switch tileset
+      Tileset.updateTileset('world', chamber.tileset, 32, 32, null)
     }
   }
 
@@ -285,7 +283,16 @@ const ModalImporter = ({
 
               <TabPanel className='NoPadding'>
                 <HStack>
-                  <Button disabled={!canEdit} variant={data && !filenames[3] ? 'outline' : null}>Import Endless Crawler Map</Button>
+                  <Button
+                    disabled={!canEdit || !Crawler.validateSlug(crawlerSlug)}
+                    variant={data && !filenames[3] ? 'outline' : null}
+                    onClick={() => _importCrawlerChamber()}
+                  >Import Endless Crawler Map</Button>
+                  <Input w={100}
+                    value={crawlerSlug}
+                    onChange={(e) => setCrawlerSlug(e.target.value)}
+                    onKeyDown={(e) => { if (e.code == 'Enter') _importCrawlerChamber() }}
+                  />
                   <div>{filenames[3]}</div>
                 </HStack>
               </TabPanel>
