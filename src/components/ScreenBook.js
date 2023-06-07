@@ -34,7 +34,7 @@ export const ScreenBook = ({
 export const ScreenBookImage = ({
   url,
 }) => {
-  const [imageSize, setImageSize] = useState(null);
+  const [imageSize, setImageSize] = useState(null)
   const imageRef = useRef()
 
   const _loaded = (loaded) => {
@@ -48,9 +48,13 @@ export const ScreenBookImage = ({
     }
   }
 
+  const style = {
+    objectFit: 'fill',
+  }
+
   return (
     <ScreenCenteredContainer width={imageSize?.width ?? 100} height={imageSize?.height ?? 100}>
-      <img src={url} ref={imageRef} onLoad={() => _loaded(true)} onError={() => _loaded(false)} crossOrigin='anonymous' />
+      <img style={style} src={url} ref={imageRef} onLoad={() => _loaded(true)} onError={() => _loaded(false)} crossOrigin='anonymous' />
     </ScreenCenteredContainer>
   )
 }
