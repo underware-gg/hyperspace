@@ -1,21 +1,16 @@
 import { useState, useMemo, useRef } from 'react'
+import { getFilenameExtensionFromUrl } from '@/core/utils'
+import { useRedirectUrl } from '@/hooks/useApi'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
 import useGameCanvas from '@/hooks/useGameCanvas'
-import { getFilenameExtensionFromUrl } from '@/core/utils'
-
 
 export const ScreenBook = ({
   screenId,
   url,
 }) => {
-  const extension = useMemo(() => getFilenameExtensionFromUrl(url), [url]);
-  const bookUrl = useMemo(() => {
-    if (typeof url == 'string' && (url.startsWith('https://') || url.startsWith('http://'))) {
-      return `/api/geturl/${url}`
-    }
-    return url
-  }, [url])
+  const extension = useMemo(() => getFilenameExtensionFromUrl(url), [url])
+  const { redirectUrl: bookUrl } = useRedirectUrl(url)
 
   if (extension == 'pdf') {
     return <ScreenBookPdf screenId={screenId} url={bookUrl} />

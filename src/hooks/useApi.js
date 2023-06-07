@@ -1,5 +1,6 @@
-
+import { useMemo } from 'react'
 import useSWR from 'swr'
+import { getFilenameExtensionFromUrl } from '@/core/utils'
 
 const fetcher = (...args) => fetch(...args).then(res => res.json())
 
@@ -27,16 +28,22 @@ const useDbRooms = (id, includeSession = false) => {
   }
 }
 
-const useGetUrl = (url) => {
-  const { data, error, isLoading } = useApi(`/api/geturl/${url}`)
+const useRedirectUrl = (url) => {
+  const extension = useMemo(() => getFilenameExtensionFromUrl(url), [url])
+  const redirectUrl = useMemo(() => {
+    if (typeof url == 'string' && (url.startsWith('https://') || url.startsWith('http://'))) {
+      return `/api/geturl/${encodeURIComponent(url)}`
+    }
+    return url
+  }, [url])
+
   return {
-    rooms: (data && !error) ? data.filter(n => n) : [],
-    isLoading,
-    error,
+    redirectUrl,
   }
 }
 
 export {
+  useApi,
   useDbRooms,
-  useGetUrl,
+  useRedirectUrl,
 }

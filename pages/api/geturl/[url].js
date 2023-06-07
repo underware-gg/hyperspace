@@ -1,9 +1,6 @@
 
 export default async function api(req, res) {
-  const { geturl } = req.query
-
-  geturl.splice(1, 0, '')
-  const url = geturl.join('/')
+  const { url } = req.query
 
   console.log(`GETURL:`, url)
 
