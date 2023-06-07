@@ -536,6 +536,13 @@ class Map extends RoomCollection {
     this.remoteStore.setValueAtPath('map2', id, `/${y}.${x}`, value)
   }
 
+  // tiles from crawlerSlugToMapTiles()
+  updateTiles(id, tiles) {
+    tiles.forEach((t) => {
+      this.updateTile(id, t.x, t.y, t.tile)
+    })
+  }
+
   render2d(id, context, canvas) {
     if (!this.viewport) return // not initialized
 

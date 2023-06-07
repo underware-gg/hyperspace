@@ -22,10 +22,9 @@ import { useVeridaContext } from '@/hooks/VeridaContext'
 import { useAccount } from 'wagmi'
 import { useHyperboxState } from '@/web3/hooks/useHyperboxState'
 import StateSelector from '@/web3/components/StateSelector'
-
 // Crawler
 import * as Crawler from '@rsodre/crawler-data'
-import { MAX_MAP_SIZE } from '@/core/components/map'
+import { crawlerSlugToChamberData, crawlerSlugToRoom } from '@/core/crawler'
 
 const useImportedData = (data) => {
   const [store, setStore] = useState(null)
@@ -82,7 +81,7 @@ const ModalImporter = ({
   isOpen,
   handleClose,
 }) => {
-  const { remoteStore, Map, slug } = useRoomContext()
+  const { slug, remoteStore, agentId, Player, Tileset } = useRoomContext()
   const { canEdit } = usePermission('world')
 
   const [tabIndex, setTabIndex] = useState(0)
@@ -183,23 +182,18 @@ const ModalImporter = ({
     if (isOpen) setCrawlerSlug('')
   }, [isOpen])
   const _importCrawlerChamber = () => {
-    if (!Crawler.validateSlug(crawlerSlug)) {
-      console.log(`Invalid Crawler slug:`, crawlerSlug)
-      return
-    }
-    const coord = Crawler.slugToCoord(crawlerSlug)
-    const chamberData = Crawler.getChamberData(coord)
-    // console.log(coord, chamberData)
-    const start = {
-      x: (MAX_MAP_SIZE.width - 16) / 2,
-      y: (MAX_MAP_SIZE.height - 16) / 2,
-    }
-    console.log(start)
-    for (let i = 0; i < 256; ++i) {
-      const tile = chamberData.tilemap[i]
-      const x = start.x + (i % 16)
-      const y = start.y + Math.floor(i / 16)
-      Map.updateTile('world', x, y, tile == 0 ? 5 : 8)
+    const chamber = crawlerSlugToRoom(crawlerSlug)
+    if (chamber) {
+      // update map
+      remoteStore.setDocument('map2', 'world', chamber.map)
+      // update entry
+      let settings = remoteStore.getDocument('settings', 'world')
+      settings.entry = chamber.entry
+      remoteStore.setDocument('settings', 'world', settings)
+      // move player
+      Player.moveToTile(agentId, chamber.entry.x, chamber.entry.y)
+      // switch tileset
+      Tileset.updateTileset('world', chamber.tileset, 32, 32, null)
     }
   }
 
