@@ -3,8 +3,8 @@ import NextHead from 'next/head'
 import { useSlugs } from '@/hooks/useSlugs'
 
 const Head = () => {
-  const { slug } = useSlugs()
-  const title = `Hyperbox | ${slug ?? 'funDAOmental'}`
+  const { slug, key } = useSlugs()
+  const title = `Hyperspace | ${slug ?? 'funDAOmental'}`
 
   return (
     <NextHead>
