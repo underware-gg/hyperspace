@@ -21,12 +21,12 @@ const HomePage = ({ slug }) => {
       <Box backgroundColor='black' borderRadius='lg' borderWidth='0px'>
         <VStack align='stretch' w='100%' spacing={8} shouldWrapChildren padding='50px' alignItems='center'>
           <Heading as='h1' size='4xl'>
-            Hyperbox
+            Hyperspace
           </Heading>
           <Text>
-            A collaborative, composable metaverse
+            A collaborative, self-sovereign
             <br />
-            using CRDTs for state synchronisation
+            metaverse for Hyperbox Protocol
           </Text>
 
           <HStack>
