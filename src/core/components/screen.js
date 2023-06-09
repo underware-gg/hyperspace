@@ -7,6 +7,7 @@ import { floors } from '@/core/components/map'
 export const TYPE = {
   DOCUMENT: 'document',
   PDF_BOOK: 'pdf_book',
+  CODE: 'code',
 }
 
 class Screen extends RoomCollection {
@@ -204,16 +205,14 @@ class Screen extends RoomCollection {
     }
   }
 
-  createDocument(id, x, y, rot, text, name) {
-    const screen = this.makeScreen(TYPE.DOCUMENT, x, y, rot, text, name)
-    console.log(`New screen:`, screen)
+  createScreen(id, type, x, y, rot, content, name) {
+    const screen = this.makeScreen(type, x, y, rot, content, name)
+    console.log(`New Screen [${type}]:`, screen)
     return this.upsert(id, screen, true)
   }
 
   createBook(id, x, y, rot, url, name) {
-    const screen = this.makeScreen(TYPE.PDF_BOOK, x, y, rot, url, name)
-    console.log(`New Book:`, screen)
-    return this.upsert(id, screen, true)
+    return this.createScreen(id, TYPE.PDF_BOOK, x, y, rot, url, name)
   }
 
   updateScreen(id, values) {

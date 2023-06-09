@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import RoomCollection from '@/core/interfaces/RoomCollection'
 import { boxGeometryToLineSegmentsGeometry } from '@/core/rendering/mesh-utils'
 import { getFilenameFromUrl } from '@/core/utils'
+import { TYPE } from '@/core/components/screen'
 
 const normalMatrix = new THREE.Matrix3() // create once and reuse
 const worldNormal = new THREE.Vector3() // create once and reuse
@@ -62,21 +63,20 @@ class Editor extends RoomCollection {
       this.Trigger.createAtPosition(nanoid(), trigger, x, y)
     })
 
-    this.actions.addActionDownListener('createScreen', () => {
+    this.actions.addActionDownListener('createScreen', (options = {}) => {
       if (!this.Player.canPlaceOverPlayer(agentId)) {
         return
       }
 
-      const name = window.prompt('Screen name', '')
-      if (name == null || name == '') {
-        return
-      }
-
       const screenId = nanoid()
-      const text = `# Screen: ${name}\n\nThis is a MarkDown shared document\n\nid: ${screenId}`
+      const type = options.type ?? TYPE.DOCUMENT
+      const name = options.name ?? type
+      const content = options.content ??
+        type == TYPE.DOCUMENT ? `# Screen: ${name}\n\nThis is a MarkDown shared document\n\nid: ${screenId}`
+        : '???'
 
       const { x, y, rot } = this.getCreateTileRotation(agentId)
-      this.Screen.createDocument(screenId, x, y, rot, text, name)
+      this.Screen.createScreen(screenId, type, x, y, rot, content, name)
     })
 
     this.actions.addActionDownListener('createBook', () => {

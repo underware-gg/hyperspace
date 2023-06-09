@@ -12,6 +12,7 @@ import useActionDownListener from '@/hooks/useActionDownListener'
 import { DialogConfirm, useConfirmDisclosure } from '@/components/DialogConfirm'
 import ModalPortal from '@/components/ModalPortal'
 import ModalTrigger from '@/components/ModalTrigger'
+import ModalScreen from '@/components/ModalScreen'
 import Button from '@/components/Button'
 
 const InteractMenu = ({
@@ -35,6 +36,7 @@ const InteractMenu = ({
 
   const portalDisclosure = useDisclosure()
   const triggerDisclosure = useDisclosure()
+  const screenDisclosure = useDisclosure()
 
   useActionDownListener('editPortal', () => {
     portalDisclosure.onOpen()
@@ -43,6 +45,11 @@ const InteractMenu = ({
   useActionDownListener('editTrigger', () => {
     triggerDisclosure.onOpen()
   })
+
+  useActionDownListener('createScreen', () => {
+    screenDisclosure.onOpen()
+  })
+
 
   const deletePortalDisclosure = useConfirmDisclosure({
     header: 'Delete Portal',
@@ -86,7 +93,7 @@ const InteractMenu = ({
           <Button size='sm' disabled={!canEditRoom} onClick={() => actions.emitAction('editPortal')}>
             New [P]ortal
           </Button>
-          <Button size='sm' disabled={!canEditRoom} onClick={() => actions.emitAction('createScreen')}>
+          <Button size='sm' disabled={!canEditRoom} onClick={() => screenDisclosure.onOpen()}>
             New scree[N]
           </Button>
           <Button size='sm' disabled={!canEditRoom} onClick={() => actions.emitAction('createBook')}>
@@ -155,6 +162,9 @@ const InteractMenu = ({
           }
         </>
       }
+
+      <ModalScreen screenId={screenId} disclosure={screenDisclosure} />
+
     </HStack>
   )
 }
