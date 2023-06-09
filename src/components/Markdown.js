@@ -95,15 +95,15 @@ const components = {
   },
 }
 
-const Markdown = ({
+const Markdown = React.forwardRef(({
   children = '',
   className = 'MarkdownScreen',
-}) => {
+}, ref) => {
   return (
-    <div className={className}>
+    <div className={className} ref={ref}>
       <ReactMarkdown components={components}>{children}</ReactMarkdown>
     </div>
   )
-}
+})
 
 export default Markdown

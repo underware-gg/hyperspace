@@ -13,7 +13,7 @@ import { useVeridaContext } from '@/hooks/VeridaContext'
 import usePermission from '@/hooks/usePermission'
 import Button from '@/components/Button'
 import Textarea from '@/components/Textarea'
-import { SliderPage } from '@/components/Sliders'
+import { SliderPage, SliderProgress } from '@/components/Sliders'
 import { getFilenameFromUrl } from '@/core/utils'
 import { TYPE } from '@/core/components/screen'
 
@@ -77,6 +77,12 @@ const ScreenEditorDocument = ({
     console.warn(`USE THIS TWEET:`, content)
   }
 
+  const _onProgressChange = (value) => {
+    Screen.updateScreen(screenId, {
+      page: value,
+    })
+  }
+
   return (
     <div>
       <VStack align='stretch'>
@@ -88,6 +94,7 @@ const ScreenEditorDocument = ({
           minRows={options.minRows}
           maxRows={options.maxRows}
         />
+        <SliderProgress defaultValue={screen?.page ?? 0} onChange={(value) => _onProgressChange(value)} />
         <HStack>
           <Button size='sm' onClick={async () => await _lastTweet()} disabled={!veridaIsConnected || isFetchingTweet}>
             Append Last Tweet
@@ -136,7 +143,7 @@ const ScreenEditorPdfBook = ({
           disabled={disabled}
         />
       </HStack>
-      <SliderPage defaultValue={screen?.page} pageCount={pageCount} onChange={(value) => _onProgressChange(value)} disabled={disabled} />
+      <SliderPage defaultValue={screen?.page ?? 1} pageCount={pageCount} onChange={(value) => _onProgressChange(value)} disabled={disabled} />
     </VStack>
   )
 }

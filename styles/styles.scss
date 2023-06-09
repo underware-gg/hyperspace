@@ -120,6 +120,15 @@ input::placeholder {
   padding: 1em;
 }
 
+.ScrollContainer {
+  @extend .FillParent;
+  overflow-y: scroll;
+}
+
+.ScrollContent {
+  @extend .FillParent;
+}
+
 .PdfBook {
   background-color: #fff0;
 }

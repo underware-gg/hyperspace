@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument, useLocalDocument } from '@/hooks/useDocument'
 import { useRemoteDocumentIds } from '@/hooks/useDocumentIds'
@@ -67,7 +67,7 @@ export const ScreenComponent = ({
   const screen = useDocument('screen', screenId)
 
   if (screen?.type == TYPE.DOCUMENT) {
-    return <DocumentScreen screenId={screenId} content={screen.content || `# Screen [${screenId}] has no content`} />
+    return <DocumentScreen screenId={screenId} scrollProg={screen.page} content={screen.content || `# Screen [${screenId}] has no content`} />
   }
 
   if (screen?.type == TYPE.PDF_BOOK) {
@@ -91,8 +91,28 @@ import Markdown from '@/components/Markdown'
 const DocumentScreen = ({
   screenId,
   content,
+  scrollProg,
 }) => {
+  const outerDiv = useRef()
+  const innerDiv = useRef()
+
+  useEffect(() => {
+    if (outerDiv.current && innerDiv.current) {
+      const outerHeight = Math.floor(outerDiv.current.clientHeight)
+      const innerHeight = Math.floor(innerDiv.current.scrollHeight)
+      const diff = (innerHeight - outerHeight)
+      console.log(outerHeight, innerHeight, diff, scrollProg)
+      if (diff > 0) {
+        outerDiv.current?.scrollTo(0, diff * scrollProg)
+      }
+    }
+  }, [outerDiv.current, innerDiv.current, scrollProg])
+
   return (
-    <Markdown>{content}</Markdown>
+    <div className='MarkdownScreen'>
+      <div className='ScrollContainer' ref={outerDiv}>
+        <Markdown className='ScrollContent' ref={innerDiv}>{content}</Markdown>
+      </div>
+    </div>
   )
 }
