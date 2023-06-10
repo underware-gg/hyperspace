@@ -11,6 +11,8 @@ const Button = forwardRef(({
   fullWidth,
   disabled,
   variant,
+  className = null,
+  style = {},
   onClick = () => { },
   children,
 }, ref) => {
@@ -30,6 +32,8 @@ const Button = forwardRef(({
       isLoading={loading}
       isDisabled={disabled}
       type={type}
+      className={className}
+      style={style}
       onClick={() => _onClick()}
     >
       {value ?? children}

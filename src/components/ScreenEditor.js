@@ -83,6 +83,8 @@ const ScreenEditorDocument = ({
     })
   }
 
+  const canPasteTwitt = (veridaIsConnected && !isFetchingTweet)
+
   return (
     <div>
       <VStack align='stretch'>
@@ -95,12 +97,14 @@ const ScreenEditorDocument = ({
           maxRows={options.maxRows}
         />
         <SliderProgress defaultValue={screen?.page ?? 0} onChange={(value) => _onProgressChange(value)} />
-        <HStack>
-          <Button size='sm' onClick={async () => await _lastTweet()} disabled={!veridaIsConnected || isFetchingTweet}>
-            Append Last Tweet
-          </Button>
-          <Spacer />
-        </HStack>
+        {veridaIsConnected &&
+          <HStack>
+            <Button size='sm' onClick={async () => await _lastTweet()} disabled={!veridaIsConnected || isFetchingTweet}>
+              Append Last Tweet
+            </Button>
+            <Spacer />
+          </HStack>
+        }
       </VStack>
     </div>
   )
