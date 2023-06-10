@@ -16,6 +16,7 @@ import Textarea from '@/components/Textarea'
 import { SliderPage, SliderProgress } from '@/components/Sliders'
 import { getFilenameFromUrl } from '@/core/utils'
 import { TYPE } from '@/core/components/screen'
+import CodeEditor from './CodeEditor'
 
 //----------------------
 // Generic Screen Editor
@@ -62,8 +63,7 @@ const ScreenEditorDocument = ({
   const { Screen } = useRoomContext()
   const { veridaIsConnected, retrieveLastTweet } = useVeridaContext()
 
-  const _onContentChange = (e) => {
-    const content = e.target.value
+  const _onContentChange = (content) => {
     Screen.updateScreen(screenId, {
       content,
     })
@@ -88,14 +88,26 @@ const ScreenEditorDocument = ({
   return (
     <div>
       <VStack align='stretch'>
-        <Textarea
+        <div className='CodeEditor ScrollContainer'>
+          <div className='ScrollContent '>
+            {/* <Textarea
           ref={initialFocusRef}
           value={screen?.content ?? `Screen [${screenId}] not found`}
           onChange={(e) => _onContentChange(e)}
           disabled={disabled}
           minRows={options.minRows}
           maxRows={options.maxRows}
-        />
+        /> */}
+            <CodeEditor
+              ref={initialFocusRef}
+              value={screen?.content ?? `Screen [${screenId}] not found`}
+              onChange={(content) => _onContentChange(content)}
+              disabled={disabled}
+              minRows={options.minRows}
+              maxRows={options.maxRows}
+            />
+          </div>
+        </div>
         <SliderProgress defaultValue={screen?.page ?? 0} onChange={(value) => _onProgressChange(value)} />
         {veridaIsConnected &&
           <HStack>

@@ -28,6 +28,15 @@ const nextConfig = {
 
     return config
   },
+
+  // for react-textarea-code-editor
+  experimental: { esmExternals: true }
 }
 
-module.exports = nextConfig
+// react-textarea-code-editor
+// https://uiwjs.github.io/react-textarea-code-editor/
+const removeImports = require('next-remove-imports')()
+module.exports = removeImports(nextConfig)
+
+
+// module.exports = nextConfig

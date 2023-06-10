@@ -86,6 +86,7 @@ const Type = ({
 
   const _log = (type, id, content) => {
     console.log(`${type} [${id}]:`, content)
+    try { console.log(JSON.stringify(content)) } catch (e) { }
     if (!_logged) {
       alert(`Document dumped to the console`)
       _logged = true
