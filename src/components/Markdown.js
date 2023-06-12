@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactMarkdown from 'react-markdown'
+import gfm from 'remark-gfm'
 import {
   Heading,
   Box,
@@ -12,7 +13,7 @@ import {
   OrderedList,
 } from '@chakra-ui/react'
 import { LinkIcon } from '@chakra-ui/icons'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { Prism } from 'react-syntax-highlighter'
 import { theme } from '@/styles/markdown-theme'
 
 const components = {
@@ -79,7 +80,7 @@ const components = {
     const match = /language-(\w+)/.exec(className || '')
     return !inline && match ? (
       <Box
-        as={SyntaxHighlighter}
+        as={Prism}
         w='100%'
         language={match[1]}
         style={theme}
@@ -101,7 +102,10 @@ const Markdown = React.forwardRef(({
 }, ref) => {
   return (
     <div className={className} ref={ref}>
-      <ReactMarkdown components={components}>{children}</ReactMarkdown>
+      <ReactMarkdown
+        components={components}
+        remarkPlugins={[gfm]}
+      >{children}</ReactMarkdown>
     </div>
   )
 })

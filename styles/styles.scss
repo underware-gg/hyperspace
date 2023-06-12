@@ -114,13 +114,6 @@ input::placeholder {
   // image-rendering: pixelated;
 }
 
-.MarkdownScreen {
-  @extend .FillParent;
-  background-color: $color-important;
-  border: solid 2px #fff8;
-  padding: 1em;
-}
-
 .ScrollContainer {
   @extend .FillParent;
   overflow-y: scroll;
@@ -182,6 +175,40 @@ input::placeholder {
 .Map2D {
   background-color: #222;
 }
+
+
+
+//----------------------
+// MArkdown
+//
+.MarkdownScreen {
+  @extend .FillParent;
+  background-color: $color-important;
+  border: solid 2px #fff8;
+  padding: 1em;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.MarkdownScreen h1, h2, h3, h4, h5 {
+  font-family: Helvetica, Arial, sans-serif !important;
+}
+
+.MarkdownScreen table {
+  table-layout: fixed;
+  border-collapse: collapse;
+  border: 1px solid #fff;
+  margin: 1em;
+}
+
+.MarkdownScreen th, td {
+  border: 1px solid #fff;
+  padding: 0.5em;
+}
+
+.MarkdownScreen hr {
+  margin: 1em 0 !important;
+}
+
 
 
 //----------------------
