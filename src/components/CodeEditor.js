@@ -7,22 +7,22 @@ const _CodeEditor = dynamic(
   { ssr: false }
 )
 
-function CodeEditor({
+const CodeEditor = React.forwardRef(({
   value,
   minRows = 15,
   maxRows = 25,
   onChange,
   colorMode = 'dark',
-  language = 'json',
+  language = '',
   placeholder = 'Markdown shared document',
   disabled = false,
-}) {
-
+}, ref) => {
   if (disabled) return <></>
 
   return (
     <div className='FillParent'>
       <_CodeEditor
+        ref={ref}
         value={value}
         language={language}
         placeholder={placeholder}
@@ -38,6 +38,6 @@ function CodeEditor({
       />
     </div>
   )
-}
+})
 
 export default CodeEditor

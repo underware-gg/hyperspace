@@ -32,7 +32,7 @@ const ScreenEditor = ({
   const _disabled = !screen || !canEdit
 
   if (screen?.type == TYPE.DOCUMENT) {
-    return <ScreenEditorDocument screen={screen} screenId={screenId} initialFocusRef={initialFocusRef} options={options} disabled={_disabled} />
+    return <ScreenEditorDocument language='markdown' screen={screen} screenId={screenId} initialFocusRef={initialFocusRef} options={options} disabled={_disabled} />
   }
 
   if (screen?.type == TYPE.PDF_BOOK) {
@@ -54,6 +54,7 @@ export default ScreenEditor
 //
 
 const ScreenEditorDocument = ({
+  language = null,
   screen,
   screenId,
   disabled = true,
@@ -90,22 +91,26 @@ const ScreenEditorDocument = ({
       <VStack align='stretch'>
         <div className='CodeEditor ScrollContainer'>
           <div className='ScrollContent '>
-            {/* <Textarea
-          ref={initialFocusRef}
-          value={screen?.content ?? `Screen [${screenId}] not found`}
-          onChange={(e) => _onContentChange(e)}
-          disabled={disabled}
-          minRows={options.minRows}
-          maxRows={options.maxRows}
-        /> */}
-            <CodeEditor
-              ref={initialFocusRef}
-              value={screen?.content ?? `Screen [${screenId}] not found`}
-              onChange={(content) => _onContentChange(content)}
-              disabled={disabled}
-              minRows={options.minRows}
-              maxRows={options.maxRows}
-            />
+            {!language &&
+              <Textarea
+                ref={initialFocusRef}
+                value={screen?.content ?? `Screen [${screenId}] not found`}
+                onChange={(e) => _onContentChange(e)}
+                disabled={disabled}
+                minRows={options.minRows}
+                maxRows={options.maxRows}
+              />}
+            {language &&
+              <CodeEditor
+              language={language}
+                ref={initialFocusRef}
+                value={screen?.content ?? `Screen [${screenId}] not found`}
+                onChange={(content) => _onContentChange(content)}
+                disabled={disabled}
+                minRows={options.minRows}
+                maxRows={options.maxRows}
+              />
+            }
           </div>
         </div>
         <SliderProgress defaultValue={screen?.page ?? 0} onChange={(value) => _onProgressChange(value)} />

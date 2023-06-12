@@ -97,7 +97,7 @@ const components = {
 
 const Markdown = React.forwardRef(({
   children = '',
-  className = 'MarkdownScreen',
+  className = null,
 }, ref) => {
   return (
     <div className={className} ref={ref}>

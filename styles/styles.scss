@@ -6,6 +6,7 @@
 // 
 
 $color-important: #F39C12;
+$color-green: #50fa7b;
 $color-error: #F34000;
 
 //-----------------------------------
@@ -182,8 +183,19 @@ input::placeholder {
   background-color: #222;
 }
 
+
+//----------------------
+// Customize code editor
+//
 .CodeEditor {
   width: 100%;
   height: 500px;
   border: solid 1px #fff8;
+}
+
+.token.bold, .token.title {
+  color: $color-important !important;
+}
+.token.punctuation {
+  color: $color-error !important;
 }
