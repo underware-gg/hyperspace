@@ -34,6 +34,8 @@ class HTMLMesh extends THREE.Mesh {
 
     super(geometry, material);
 
+    this.texture = texture
+
     function onEvent(event) {
       material.map.dispatchDOMEvent(event);
     }
@@ -58,6 +60,10 @@ class HTMLMesh extends THREE.Mesh {
     };
   }
 
+  update() {
+    this.texture?.scheduleUpdate()
+  }
+
 }
 
 class HTMLTexture extends THREE.CanvasTexture {
@@ -75,10 +81,7 @@ class HTMLTexture extends THREE.CanvasTexture {
 
     // Create an observer on the DOM, and run html2canvas update in the next loop
     const observer = new MutationObserver(() => {
-      if (!this.scheduleUpdate) {
-        // ideally should use xr.requestAnimationFrame, here setTimeout to avoid passing the renderer
-        this.scheduleUpdate = setTimeout(() => this.update(), 16);
-      }
+      this.scheduleUpdate()
     });
 
     const config = { attributes: true, childList: true, subtree: true, characterData: true };
@@ -93,17 +96,24 @@ class HTMLTexture extends THREE.CanvasTexture {
     }
   }
 
+  scheduleUpdate() {
+    if (!this.scheduledUpdate) {
+      // ideally should use xr.requestAnimationFrame, here setTimeout to avoid passing the renderer
+      this.scheduledUpdate = setTimeout(() => this.update(), 16);
+    }
+  }
+
   update() {
     this.image = html2canvas(this.dom);
     this.needsUpdate = true;
-    this.scheduleUpdate = null;
+    this.scheduledUpdate = null;
   }
 
   dispose() {
     if (this.observer) {
       this.observer.disconnect();
     }
-    this.scheduleUpdate = clearTimeout(this.scheduleUpdate);
+    this.scheduledUpdate = clearTimeout(this.scheduledUpdate);
     super.dispose();
   }
 }

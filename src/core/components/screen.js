@@ -84,6 +84,11 @@ class Screen extends RoomCollection {
       _deleteScreen(screenId)
     })
 
+    this.remoteStore.on({ type: 'screen', event: 'update' }, (screenId) => {
+      const screenMesh = this.localStore.getDocument('screen-mesh', screenId)
+      screenMesh?.update()
+    })
+
     this.remoteStore.on({ type: 'map2', event: 'update' }, (mapId, map) => {
       const screenIds = this.remoteStore.getIds('screen')
 
