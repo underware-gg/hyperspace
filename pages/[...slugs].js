@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import {
   Box,
@@ -20,19 +20,30 @@ import { useSlugs } from '@/hooks/useSlugs'
 import { useRoomContext } from '@/hooks/RoomContext'
 import usePermission from '@/hooks/usePermission'
 import { ModalSettings, useSettingsDisclosure } from '@/components/ModalSettings'
-import { validateRoomSlug } from '@/core/utils'
 import { makeRoute } from '@/core/routes'
+import { crawlerSlugToRoom } from '@/core/crawler'
 
 const RoomPage = () => {
   const router = useRouter()
-  const { slug, branch, isLocal, forceRevert } = useSlugs()
-  const slugIsValid = validateRoomSlug(slug) && (!branch || validateRoomSlug(branch))
+  const {
+    slug,
+    branch,
+    isLocal,
+    slugIsValid,
+    isCrawlerSlug,
+    forceRevert,
+  } = useSlugs()
 
   useEffect(() => {
     if (router.isReady && !slugIsValid) {
       router.replace('/limbo')
     }
   }, [router.isReady, slugIsValid])
+
+  const sourceData = useMemo(() => {
+    return isCrawlerSlug ? crawlerSlugToRoom(slug) : null
+  }, [slug, isCrawlerSlug])
+  const resetAgent = (sourceData != null)
 
   const { agentId, room, actions } = useRoomContext()
   const { canEdit } = usePermission('world')
@@ -46,7 +57,7 @@ const RoomPage = () => {
     if (!room?.clientRoom) return
     const _travel = (slug) => {
       console.log(`Travel to...`, slug)
-      router.push(makeRoute({slug}))
+      router.push(makeRoute({ slug }))
     }
     room.clientRoom.on('travel', _travel)
     return () => {
@@ -119,7 +130,14 @@ const RoomPage = () => {
             maxH='700'
           // h='700'
           >
-            <Hyperbox slug={slug} branch={branch} isLocal={isLocal} forceRevert={forceRevert} />
+            <Hyperbox
+              slug={slug}
+              branch={branch}
+              isLocal={isLocal}
+              forceRevert={forceRevert}
+              sourceData={sourceData}
+              resetAgent={resetAgent}
+            />
           </Box>
         </GridItem>
 

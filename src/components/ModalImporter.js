@@ -185,15 +185,17 @@ const ModalImporter = ({
     const chamber = crawlerSlugToRoom(crawlerSlug)
     if (chamber) {
       // update map
-      remoteStore.setDocument('map2', 'world', chamber.map)
+      remoteStore.setDocument('map2', 'world', chamber.map2.world)
       // update entry
-      let settings = remoteStore.getDocument('settings', 'world')
-      settings.entry = chamber.entry
-      remoteStore.setDocument('settings', 'world', settings)
+      let settings = remoteStore.getDocument('settings', 'world') ?? {}
+      remoteStore.setDocument('settings', 'world', {
+        ...settings,
+        ...chamber.settings.world,
+      })
       // move player
-      Player.moveToTile(agentId, chamber.entry.x, chamber.entry.y)
+      Player.moveToTile(agentId, settings.entry.x, settings.entry.y)
       // switch tileset
-      Tileset.updateTileset('world', chamber.tileset, 32, 32, null)
+      Tileset.updateTileset('world', chamber.tileset.world, 32, 32, null)
     }
   }
 

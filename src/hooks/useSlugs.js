@@ -1,6 +1,8 @@
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'
 import { SyncIcon } from '@/components/Icons'
+import { validateRoomSlug } from '@/core/utils'
+import { validateSlug } from '@rsodre/crawler-data'
 
 const useSlugs = () => {
   const router = useRouter()
@@ -24,6 +26,8 @@ const useSlugs = () => {
   const inSync = slug && !isLocal
   const serverName = !slug ? '?' : inSync ? 'funDAOmental' : 'Local'
   const serverDisplay = <span>{serverName} <SyncIcon inSync={inSync} /></span>
+  const slugIsValid = (validateRoomSlug(slug) && (!branch || validateRoomSlug(branch)))
+  const isCrawlerSlug = slugIsValid && validateSlug(slug)
 
   return {
     slug: slug ?? null,
@@ -36,6 +40,8 @@ const useSlugs = () => {
     inSync,
     isMain,
     isLocal,
+    slugIsValid,
+    isCrawlerSlug,
   }
 }
 

@@ -1,7 +1,7 @@
 import Actions from '@/core/actions'
 import * as ClientRoom from '@/core/networking'
 import { loadTextures } from '@/core/textures'
-import { importCrdtData } from '@/core/export-import'
+import { importCrdtData, importDataTypes } from '@/core/export-import'
 import Renderer2D from '@/core/rendering/renderer2D'
 import Renderer3D from '@/core/rendering/renderer3D'
 import Portal from '@/core/components/portal'
@@ -51,18 +51,19 @@ class Room {
     // Render only defined canvases
     canvas2d = null,
     canvas3d = null,
-    // sourceData = null,
+    sourceData = null,
+    resetAgent = false,
   }) {
     // source slug is the source of room data
     this.sourceSlug = slug?.toLowerCase() ?? null
-    
+
     // slug is the actual room in use, synched to the server
     // same as source slug, unless using a branch
     this.branch = branch
     this.slug = (this.sourceSlug && this.branch) ? `${this.sourceSlug}:${this.branch}` : this.sourceSlug
     this.isLocal = isLocal
 
-    // this.sourceData = sourceData
+    this.sourceData = sourceData
 
     this.canvas2d = canvas2d
     this.canvas3d = canvas3d
@@ -121,7 +122,7 @@ class Room {
 
     // Read source data, if available
     // do it before client connections to avoid rate limiting
-    const sourceData = await this.fetchSourceData()
+    const sourceSnapshot = this.sourceData ? null : await this.fetchSourceSnapshot()
 
     // start clients
 
@@ -143,9 +144,16 @@ class Room {
     // console.log(`CLIENT CONNECTED!`, hasClientData)
 
     // apply initial to room
-    if ((forceRevert || isLocal || hasClientData === false) && sourceData) {
+    if (this.sourceData) {
+      console.warn(`SOURCE DATA:`, this.sourceData)
+      importDataTypes(this.sourceData, this.remoteStore, false)
+    } else if ((forceRevert || isLocal || hasClientData === false) && sourceSnapshot) {
       console.warn(`REVERTING...`)
-      importCrdtData(sourceData, this.remoteStore, true)
+      importCrdtData(sourceSnapshot, this.remoteStore, true)
+    }
+
+    if (resetAgent) {
+      this.sessionStore.setDocument('player', this.agentId, null)
     }
 
     this.Editor?.init2d(this.canvas2d, this.agentId)
@@ -177,7 +185,7 @@ class Room {
     this.clientAgent = null
   }
 
-  fetchSourceData = async () => {
+  fetchSourceSnapshot = async () => {
     let result = null
     if (this.sourceSlug && this.sourceSlug != this.slug) {
       let sourceStore = new Store()
@@ -192,12 +200,12 @@ class Room {
         loadLocalSnapshot: true,
       })
 
-      const hasSourceData = await sourceClient.waitForConnection()
-      // console.log(`loadSourceData()`, hasSourceData)
+      const hasSourceSnapshot = await sourceClient.waitForConnection()
+      // console.log(`fetchSourceSnapshot()`, hasSourceSnapshot)
 
-      if (hasSourceData === true) {
+      if (hasSourceSnapshot === true) {
         result = sourceClient.getSnapshotOps()
-        console.log(`[${this.sourceSlug}] data > [${this.slug}]`, hasSourceData, result)
+        console.log(`[${this.sourceSlug}] data > [${this.slug}]`, hasSourceSnapshot, result)
       }
 
       // close source client
@@ -208,10 +216,10 @@ class Room {
   }
 
   revertToSourceRoom = async () => {
-    const sourceData = await this.fetchSourceData()
-    if(!sourceData) return false
-    
-    importCrdtData(sourceData, this.remoteStore, true)
+    const sourceSnapshot = await this.fetchSourceSnapshot()
+    if (!sourceSnapshot) return false
+
+    importCrdtData(sourceSnapshot, this.remoteStore, true)
     return true
   }
 

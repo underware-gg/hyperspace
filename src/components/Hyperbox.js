@@ -13,6 +13,8 @@ const Hyperbox = ({
   render2d = true,
   render3d = true,
   renderScreens = true,
+  sourceData = null,
+  resetAgent = false,
 }) => {
   const [canvasesReady, setCanvasesReady] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -70,6 +72,8 @@ const Hyperbox = ({
           forceRevert,
           canvas2d: canvas2dRef.current,
           canvas3d: canvas3dRef.current,
+          sourceData,
+          resetAgent,
         })
         dispatchRoom(_game.room)
         setGame(_game)
