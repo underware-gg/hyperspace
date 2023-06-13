@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   HStack,
   Spacer,
@@ -14,7 +14,7 @@ import usePermission from '@/hooks/usePermission'
 import Button from '@/components/Button'
 import Textarea from '@/components/Textarea'
 import { SliderPage, SliderProgress } from '@/components/Sliders'
-import { getFilenameFromUrl } from '@/core/utils'
+import { getFilenameFromUrl, getScrollProg } from '@/core/utils'
 import { TYPE } from '@/core/components/screen'
 import CodeEditor from './CodeEditor'
 
@@ -63,19 +63,18 @@ const ScreenEditorDocument = ({
 }) => {
   const { Screen } = useRoomContext()
   const { veridaIsConnected, retrieveLastTweet } = useVeridaContext()
+  const outerDiv = useRef()
+  const innerDiv = useRef()
 
-  const _onContentChange = (content) => {
+  const [content, setContent] = useState('')
+  useEffect(() => {
+    setContent(screen?.content ?? `Screen [${screenId}] not found`)
+  }, [screen?.content])
+
+  const _onContentChange = (value) => {
     Screen.updateScreen(screenId, {
-      content,
+      content: value,
     })
-  }
-
-  const [isFetchingTweet, setIsFetchingTweet] = useState(false)
-  const _lastTweet = async () => {
-    setIsFetchingTweet(true)
-    const content = await retrieveLastTweet()
-    setIsFetchingTweet(false)
-    console.warn(`USE THIS TWEET:`, content)
   }
 
   const _onProgressChange = (value) => {
@@ -84,28 +83,49 @@ const ScreenEditorDocument = ({
     })
   }
 
-  const canPasteTwitt = (veridaIsConnected && !isFetchingTweet)
+  const _handleScroll = (e) => {
+    const scrollProg = getScrollProg(outerDiv.current)
+    // _onProgressChange(scrollProg) // it deselects the CodeEditor text!!!!
+    // console.log(initialFocusRef.current.selectionStart, initialFocusRef.current.selectionEnd) // not working!!
+    // console.log(initialFocusRef)
+  }
+
+  useEffect(() => {
+    outerDiv.current?.addEventListener('scroll', _handleScroll, false)
+    return () => {
+      outerDiv.current?.removeEventListener('scroll', _handleScroll, false)
+    }
+  }, [outerDiv.current])
+
+  const [isFetchingTweet, setIsFetchingTweet] = useState(false)
+  const _lastTweet = async () => {
+    setIsFetchingTweet(true)
+    const tweet = await retrieveLastTweet()
+    setIsFetchingTweet(false)
+    console.warn(`USE THIS TWEET:`, tweet)
+  }
+
 
   return (
     <div>
       <VStack align='stretch'>
-        <div className='CodeEditor ScrollContainer'>
-          <div className='ScrollContent '>
+        <div className='CodeEditor ScrollContainer' ref={outerDiv}>
+          <div className='ScrollContent ' ref={innerDiv}>
             {!language &&
               <Textarea
                 ref={initialFocusRef}
-                value={screen?.content ?? `Screen [${screenId}] not found`}
-                onChange={(e) => _onContentChange(e)}
+                content={content}
+                onChange={(value) => _onContentChange(value)}
                 disabled={disabled}
                 minRows={options.minRows}
                 maxRows={options.maxRows}
               />}
             {language &&
               <CodeEditor
-              language={language}
+                language={language}
                 ref={initialFocusRef}
-                value={screen?.content ?? `Screen [${screenId}] not found`}
-                onChange={(content) => _onContentChange(content)}
+                content={content}
+                onChange={(value) => _onContentChange(value)}
                 disabled={disabled}
                 minRows={options.minRows}
                 maxRows={options.maxRows}
@@ -113,7 +133,7 @@ const ScreenEditorDocument = ({
             }
           </div>
         </div>
-        <SliderProgress defaultValue={screen?.page ?? 0} onChange={(value) => _onProgressChange(value)} />
+        <SliderProgress value={screen?.page ?? 0} onChange={(value) => _onProgressChange(value)} />
         {veridaIsConnected &&
           <HStack>
             <Button size='sm' onClick={async () => await _lastTweet()} disabled={!veridaIsConnected || isFetchingTweet}>

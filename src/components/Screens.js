@@ -88,6 +88,7 @@ export const ScreenComponent = ({
 //
 // Markdown document
 import Markdown from '@/components/Markdown'
+import { applyScrollProg } from '@/core/utils'
 const DocumentScreen = ({
   screenId,
   content,
@@ -97,15 +98,7 @@ const DocumentScreen = ({
   const innerDiv = useRef()
 
   useEffect(() => {
-    if (outerDiv.current && innerDiv.current) {
-      const outerHeight = Math.floor(outerDiv.current.clientHeight)
-      const innerHeight = Math.floor(innerDiv.current.scrollHeight)
-      const diff = (innerHeight - outerHeight)
-      console.log(outerHeight, innerHeight, diff, scrollProg)
-      if (diff > 0) {
-        outerDiv.current?.scrollTo(0, diff * scrollProg)
-      }
-    }
+    applyScrollProg(outerDiv.current, innerDiv.current, scrollProg)
   }, [outerDiv.current, innerDiv.current, scrollProg])
 
   return (

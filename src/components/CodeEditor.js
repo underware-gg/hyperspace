@@ -8,7 +8,7 @@ const _CodeEditor = dynamic(
 )
 
 const CodeEditor = React.forwardRef(({
-  value,
+  content,
   minRows = 15,
   maxRows = 25,
   onChange,
@@ -23,7 +23,7 @@ const CodeEditor = React.forwardRef(({
     <div className='FillParent'>
       <_CodeEditor
         ref={ref}
-        value={value}
+        value={content}
         language={language}
         placeholder={placeholder}
         data-color-mode={colorMode}

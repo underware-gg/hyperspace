@@ -22,6 +22,7 @@ const labelStyles = {
 
 const SliderProgress = ({
   defaultValue = 0,
+  value = null,
   precision = 100,
   onChange = (progress) => { },
 }) => {
@@ -39,6 +40,7 @@ const SliderProgress = ({
       <Box pt={8} />
       <ChakraSlider
         defaultValue={defaultValue * precision}
+        value={value != null ? (value * precision) : undefined}
         min={0} max={precision} step={1}
         aria-label='slider-ex-6'
         onChange={(value) => _onChange(value)}

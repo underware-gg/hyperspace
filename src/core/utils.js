@@ -92,3 +92,20 @@ export const validateRoomSlug = (slug) => {
   if (!slug) return false
   return /^[a-zA-Z0-9-+_]+$/.test(slug)
 }
+
+export const applyScrollProg = (outerDiv, innerDiv, scrollProg) => {
+  if (outerDiv && innerDiv) {
+    const outerHeight = Math.floor(outerDiv.clientHeight)
+    const innerHeight = Math.floor(innerDiv.scrollHeight)
+    const diff = (innerHeight - outerHeight)
+    if (diff > 0) {
+      outerDiv.scrollTo(0, diff * scrollProg)
+    }
+  }
+}
+
+export const getScrollProg = (outerDiv) => {
+  const { scrollHeight, scrollTop, clientHeight } = outerDiv
+  const scrollProg = scrollTop / (scrollHeight - clientHeight)
+  return scrollProg
+}

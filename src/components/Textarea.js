@@ -3,7 +3,7 @@ import { Textarea as ChakraTextarea } from '@chakra-ui/react'
 import ResizeTextarea from 'react-textarea-autosize'
 
 const Textarea = forwardRef(({
-  value,
+  content,
   minRows = 15,
   maxRows = 25,
   onChange,
@@ -24,9 +24,9 @@ const Textarea = forwardRef(({
       minRows={minRows}
       maxRows={maxRows}
       as={ResizeTextarea}
-      disabled={disabled || value == null}
-      placeholder={value == null ? 'No content' : 'Start editing the document'}
-      value={value}
+      disabled={disabled || content == null}
+      placeholder={content == null ? 'No content' : 'Start editing the document'}
+      value={content}
       onChange={handleChange}
     />
   )
