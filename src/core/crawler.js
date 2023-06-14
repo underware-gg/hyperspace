@@ -1,6 +1,7 @@
 import * as Crawler from '@rsodre/crawler-data'
 import { MAX_MAP_SIZE } from '@/core/components/map'
 import { TilesetPaths } from './texture-data'
+import { nanoid } from 'nanoid'
 
 export const crawlerSlugToChamberData = (slug) => {
   if (!Crawler.validateSlug(slug)) {
@@ -27,6 +28,7 @@ export const crawlerSlugToRoom = (slug, agentId = null) => {
     map2: {
       world: []
     },
+    portal: {},
   }
 
   const PATH = 4
@@ -64,11 +66,47 @@ export const crawlerSlugToRoom = (slug, agentId = null) => {
     const y = start.y + Math.floor(i / 16)
     const tile = isDoor ? DOOR : isGem ? GEM : chamberTile == 0 ? WALL : PATH
     result.map2.world[y][x] = tile
-    if (i == chamberData.doors[Crawler.Dir.North]) { result.map2.world[y - 1][x] = tile, result.map2.world[y - 2][x] = tile }
-    if (i == chamberData.doors[Crawler.Dir.East]) { result.map2.world[y][x + 1] = tile, result.map2.world[y][x + 2] = tile }
-    if (i == chamberData.doors[Crawler.Dir.West]) { result.map2.world[y][x - 1] = tile, result.map2.world[y][x - 2] = tile }
-    if (i == chamberData.doors[Crawler.Dir.South]) { result.map2.world[y + 1][x] = tile, result.map2.world[y + 2][x] = tile }
-    if (i == chamberData.doors[chamberData.entryDir]) { result.settings.world.entry = { x, y } }
+    // door corridors
+    if (i == chamberData.doors[Crawler.Dir.North]) {
+      result.map2.world[y - 1][x] = tile
+      result.map2.world[y - 2][x] = tile
+      // result.portal[nanoid()] = {
+      //   slug: slug,
+      //   position: {},
+      //   tile: { x, y: y - 2 }, // entry
+      // }
+    }
+    if (i == chamberData.doors[Crawler.Dir.East]) {
+      result.map2.world[y][x + 1] = tile
+      result.map2.world[y][x + 2] = tile
+      // result.portal[nanoid()] = {
+      //   slug: slug,
+      //   position: {},
+      //   tile: { x: x + 2, y }, // entry
+      // }
+    }
+    if (i == chamberData.doors[Crawler.Dir.West]) {
+      result.map2.world[y][x - 1] = tile
+      result.map2.world[y][x - 2] = tile
+      // result.portal[nanoid()] = {
+      //   slug: slug,
+      //   position: {},
+      //   tile: { x: x - 2, y }, // entry
+      // }
+    }
+    if (i == chamberData.doors[Crawler.Dir.South]) {
+      result.map2.world[y + 1][x] = tile
+      result.map2.world[y + 2][x] = tile
+      // result.portal[nanoid()] = {
+      //   slug: slug,
+      //   position: {},
+      //   tile: { x, y: y + 2 }, // entry
+      // }
+    }
+    // Entry door
+    if (i == chamberData.doors[chamberData.entryDir]) {
+      result.settings.world.entry = { x, y }
+    }
   }
 
   result.tileset.world =
