@@ -13,8 +13,8 @@ const ModalSnapshots = ({
   disclosure,
 }) => {
   const {
-    remoteStore, localStore, sessionStore, agentStore,
-    slug, slugSession, slugAgent,
+    remoteStore, localStore, sessionStore, agentStore, metadataStore,
+    slug, slugSession, slugAgent, slugMetadata,
   } = useRoomContext()
   const { id, isOpen, onClose } = disclosure
 
@@ -42,9 +42,8 @@ const ModalSnapshots = ({
               <Tab _selected={{ bg: 'teal' }}>Local</Tab>
               <Tab _selected={{ bg: 'teal' }}>Remote</Tab>
               <Tab _selected={{ bg: 'teal' }}>Session</Tab>
-              {process.env.DEV &&
-                <Tab _selected={{ bg: 'teal' }}>Agents</Tab>
-              }
+              {process.env.DEV && <Tab _selected={{ bg: 'teal' }}>Agents</Tab>}
+              {slugMetadata && <Tab _selected={{ bg: 'teal' }}>Metadata</Tab>}
               <Tab _selected={{ bg: 'teal' }}>Slug</Tab>
             </TabList>
             <TabPanels>
@@ -63,6 +62,12 @@ const ModalSnapshots = ({
                 <TabPanel>
                   <Text>[<span className='Important'>{slugAgent}</span>]</Text>
                   <Snapshot store={agentStore} />
+                </TabPanel>
+              }
+              {slugMetadata &&
+                <TabPanel>
+                  <Text>[<span className='Important'>{slugMetadata}</span>]</Text>
+                  <Snapshot store={metadataStore} />
                 </TabPanel>
               }
               <TabPanel>

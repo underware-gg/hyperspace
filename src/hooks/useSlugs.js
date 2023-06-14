@@ -9,6 +9,7 @@ const useSlugs = () => {
   const { route } = router
   const { slugs, forceRevert } = router.query
   const isDocument = route?.startsWith('/document/') ?? false
+  const isQuest = route?.startsWith('/endlessquest/') ?? false
 
   const [slug, branch, documentName] = useMemo(() => {
     if (isDocument && slugs?.length == 2) {
@@ -40,6 +41,8 @@ const useSlugs = () => {
     inSync,
     isMain,
     isLocal,
+    isDocument,
+    isQuest,
     slugIsValid,
     isCrawlerSlug,
   }

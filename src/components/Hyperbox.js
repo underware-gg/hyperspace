@@ -14,6 +14,7 @@ const Hyperbox = ({
   render3d = true,
   renderScreens = true,
   sourceData = null,
+  metadataSlug = null,
   resetAgent = false,
 }) => {
   const [canvasesReady, setCanvasesReady] = useState(false)
@@ -74,6 +75,7 @@ const Hyperbox = ({
           canvas3d: canvas3dRef.current,
           sourceData,
           resetAgent,
+          metadataSlug,
         })
         dispatchRoom(_game.room)
         setGame(_game)

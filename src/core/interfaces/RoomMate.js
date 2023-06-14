@@ -61,6 +61,10 @@ class RoomMate {
   //   return this.#room.clientAgent
   // }
 
+  // get clientMetadata() {
+  //   return this.#room.clientMetadata
+  // }
+
   // other RoomMates
 
   get Settings() {

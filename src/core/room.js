@@ -27,6 +27,7 @@ class Room {
     this.remoteStore = new Store()
     this.sessionStore = new Store()
     this.agentStore = new Store()
+    this.metadataStore = new Store()
 
     this.renderer2D = new Renderer2D(this)
     this.renderer3D = new Renderer3D(this)
@@ -52,6 +53,7 @@ class Room {
     canvas2d = null,
     canvas3d = null,
     sourceData = null,
+    metadataSlug = null,
     resetAgent = false,
   }) {
     // source slug is the source of room data
@@ -62,6 +64,7 @@ class Room {
     this.branch = branch
     this.slug = (this.sourceSlug && this.branch) ? `${this.sourceSlug}:${this.branch}` : this.sourceSlug
     this.isLocal = isLocal
+    this.metadataSlug = metadataSlug
 
     this.sourceData = sourceData
 
@@ -101,6 +104,12 @@ class Room {
 
     this.agentId = this.clientAgent?.agentId ?? this.clientRoom?.agentId ?? null
 
+    this.clientMetadata = (this.metadataSlug) ? ClientRoom.create({
+      slug: this.metadataSlug,
+      store: this.metadataStore,
+      roomId: this.roomId,
+    }) : null
+
     if (this.slug) {
       // instantiate components before this.clientRoom.init() to listen to snapshot loading events
       this.Settings = new Settings(this)
@@ -139,6 +148,10 @@ class Room {
       loadLocalSnapshot: true,
     })
 
+    this.clientMetadata?.init({
+      loadLocalSnapshot: false,
+    })
+
     // wait for Room client to load
     const hasClientData = await this.clientRoom?.waitForConnection()
     // console.log(`CLIENT CONNECTED!`, hasClientData)
@@ -152,9 +165,9 @@ class Room {
       importCrdtData(sourceSnapshot, this.remoteStore, true)
     }
 
-    if (resetAgent) {
-      this.sessionStore.setDocument('player', this.agentId, null)
-    }
+    // if (resetAgent) {
+    //   this.sessionStore.setDocument('player', this.agentId, null)
+    // }
 
     this.Editor?.init2d(this.canvas2d, this.agentId)
     this.Editor?.init3d(this.canvas3d, this.agentId)
@@ -183,6 +196,8 @@ class Room {
     this.clientSession = null
     this.clientAgent?.shutdown()
     this.clientAgent = null
+    this.clientMetadata?.shutdown()
+    this.clientMetadata = null
   }
 
   fetchSourceSnapshot = async () => {
