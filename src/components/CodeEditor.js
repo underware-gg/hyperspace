@@ -16,6 +16,7 @@ const CodeEditor = React.forwardRef(({
   language = '',
   placeholder = 'Markdown shared document',
   disabled = false,
+  readOnly = false,
 }, ref) => {
   if (disabled) return <></>
 
@@ -25,15 +26,15 @@ const CodeEditor = React.forwardRef(({
         ref={ref}
         value={content}
         language={language}
+        readOnly={readOnly}
         placeholder={placeholder}
         data-color-mode={colorMode}
         onChange={(e) => onChange(e.target.value)}
         padding={15}
         style={{
           fontSize: 14,
+          fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace'
           // backgroundColor: '#f5f5f5',
-          fontFamily:
-            'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace'
         }}
       />
     </div>

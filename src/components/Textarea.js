@@ -8,6 +8,7 @@ const Textarea = forwardRef(({
   maxRows = 25,
   onChange,
   disabled,
+  readOnly = false,
 }, ref) => {
 
   const handleChange = (e) => {
@@ -23,6 +24,7 @@ const Textarea = forwardRef(({
       resize={true}
       minRows={minRows}
       maxRows={maxRows}
+      readOnly={readOnly}
       as={ResizeTextarea}
       disabled={disabled || content == null}
       placeholder={content == null ? 'No content' : 'Start editing the document'}

@@ -42,7 +42,7 @@ const ModalSnapshots = ({
               <Tab _selected={{ bg: 'teal' }}>Local</Tab>
               <Tab _selected={{ bg: 'teal' }}>Remote</Tab>
               <Tab _selected={{ bg: 'teal' }}>Session</Tab>
-              {process.env.DEV && <Tab _selected={{ bg: 'teal' }}>Agents</Tab>}
+              <Tab _selected={{ bg: 'teal' }}>Agents</Tab>
               {slugMetadata && <Tab _selected={{ bg: 'teal' }}>Metadata</Tab>}
               <Tab _selected={{ bg: 'teal' }}>Slug</Tab>
             </TabList>
@@ -58,12 +58,10 @@ const ModalSnapshots = ({
                 <Text>[<span className='Important'>{slugSession}</span>]</Text>
                 <Snapshot store={sessionStore} />
               </TabPanel>
-              {process.env.DEV &&
-                <TabPanel>
-                  <Text>[<span className='Important'>{slugAgent}</span>]</Text>
-                  <Snapshot store={agentStore} />
-                </TabPanel>
-              }
+              <TabPanel>
+                <Text>[<span className='Important'>{slugAgent}</span>]</Text>
+                <Snapshot store={agentStore} />
+              </TabPanel>
               {slugMetadata &&
                 <TabPanel>
                   <Text>[<span className='Important'>{slugMetadata}</span>]</Text>

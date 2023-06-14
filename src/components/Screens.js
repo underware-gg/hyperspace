@@ -73,7 +73,7 @@ export const ScreenComponent = ({
   }
 
   if (screen?.type == TYPE.METADATA) {
-    return <MetadataScreen screenId={screenId} scrollProg={screen.page} content={screen.content || `# No Metadata!`} />
+    return <MetadataScreen screenId={screenId} scrollProg={screen.page} content={screen.content} />
   }
 
   if (screen?.type == TYPE.PDF_BOOK) {
@@ -118,7 +118,7 @@ const DocumentScreen = ({
 // Json document
 const MetadataScreen = ({
   screenId,
-  content = 'No Metadata!',
+  content,
   scrollProg,
 }) => {
   const outerDiv = useRef()
@@ -130,7 +130,7 @@ const MetadataScreen = ({
 
   const _content = `
 \`\`\`json
-${content}
+${content ? content : '# Open Editor to load metadata'}
 \`\`\`
 `
 
