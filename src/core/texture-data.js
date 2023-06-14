@@ -107,6 +107,12 @@ export const textureData = {
   'document_over': {
     src: '/tiles/screen_document2.png',
   },
+  'metadata': {
+    src: '/tiles/screen_metadata.png',
+  },
+  'metadata_over': {
+    src: '/tiles/screen_metadata.png',
+  },
   'pdf_book': {
     src: '/tiles/screen_book.png',
   },

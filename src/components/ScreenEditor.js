@@ -10,6 +10,7 @@ import {
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument, useLocalDocument } from '@/hooks/useDocument'
 import { useVeridaContext } from '@/hooks/VeridaContext'
+import { useMetadata } from '@/hooks/useMetadata'
 import usePermission from '@/hooks/usePermission'
 import Button from '@/components/Button'
 import Textarea from '@/components/Textarea'
@@ -35,6 +36,10 @@ const ScreenEditor = ({
     return <ScreenEditorDocument language='markdown' screen={screen} screenId={screenId} initialFocusRef={initialFocusRef} options={options} disabled={_disabled} />
   }
 
+  if (screen?.type == TYPE.METADATA) {
+    return <ScreenEditorMetadata screen={screen} screenId={screenId} />
+  }
+
   if (screen?.type == TYPE.PDF_BOOK) {
     return <ScreenEditorPdfBook screen={screen} screenId={screenId} initialFocusRef={initialFocusRef} options={options} disabled={_disabled} />
   }
@@ -53,12 +58,34 @@ export default ScreenEditor
 // Specialized Screen Editors
 //
 
+const ScreenEditorMetadata = ({
+  screen,
+  screenId,
+}) => {
+  const { Screen } = useRoomContext()
+  const { metadata, prettyMetadata } = useMetadata()
+
+  useEffect(() => {
+    if (prettyMetadata) {
+      Screen.updateScreen(screenId, {
+        content: prettyMetadata,
+      })
+    }
+  }, [prettyMetadata])
+  
+  return (
+    <ScreenEditorDocument language='json' screen={screen} screenId={screenId} readOnly={true} />
+  )
+}
+
+
 const ScreenEditorDocument = ({
   language = null,
   screen,
   screenId,
-  disabled = true,
+  disabled = false,
   initialFocusRef,
+  readOnly = false,
   options = {},
 }) => {
   const { Screen } = useRoomContext()
@@ -72,6 +99,7 @@ const ScreenEditorDocument = ({
   }, [screen?.content])
 
   const _onContentChange = (value) => {
+    if (readOnly) return
     Screen.updateScreen(screenId, {
       content: value,
     })
@@ -119,6 +147,7 @@ const ScreenEditorDocument = ({
                 disabled={disabled}
                 minRows={options.minRows}
                 maxRows={options.maxRows}
+                readOnly={readOnly}
               />}
             {language &&
               <CodeEditor
@@ -129,8 +158,8 @@ const ScreenEditorDocument = ({
                 disabled={disabled}
                 minRows={options.minRows}
                 maxRows={options.maxRows}
-              />
-            }
+                readOnly={readOnly}
+              />}
           </div>
         </div>
         <SliderProgress value={screen?.page ?? 0} onChange={(value) => _onProgressChange(value)} />
@@ -148,6 +177,10 @@ const ScreenEditorDocument = ({
 }
 
 
+
+//-------------------------------------
+// PDF Editor
+//
 const ScreenEditorPdfBook = ({
   screen,
   screenId,

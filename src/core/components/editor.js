@@ -73,7 +73,8 @@ class Editor extends RoomCollection {
       const name = options.name ?? type
       const content = options.content ??
         type == TYPE.DOCUMENT ? `# Screen: ${name}\n\nThis is a MarkDown shared document\n\nid: ${screenId}`
-        : '???'
+        : type == TYPE.METADATA ? `# Metadata`
+          : '???'
 
       const { x, y, rot } = this.getCreateTileRotation(agentId)
       this.Screen.createScreen(screenId, type, x, y, rot, content, name)

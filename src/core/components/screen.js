@@ -7,7 +7,7 @@ import { floors } from '@/core/components/map'
 export const TYPE = {
   DOCUMENT: 'document',
   PDF_BOOK: 'pdf_book',
-  CODE: 'code',
+  METADATA: 'metadata',
 }
 
 class Screen extends RoomCollection {

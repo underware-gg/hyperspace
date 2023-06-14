@@ -24,6 +24,7 @@
     "events": "^3.3.0",
     "file-loader": "^6.2.0",
     "framer-motion": "^8.5.5",
+    "json-stringify": "^1.0.0",
     "messagepack": "^1.1.12",
     "nanoid": "^4.0.1",
     "next": "^13.3.4",

@@ -7,6 +7,8 @@ import useProfile from '@/hooks/useProfile'
 import ModalScreenEdit from '@/components/ModalScreenEdit'
 import { ScreenBook } from '@/components/ScreenBook'
 import { TYPE } from '@/core/components/screen'
+import { applyScrollProg } from '@/core/utils'
+import Markdown from '@/components/Markdown'
 
 const Screens = ({ }) => {
   const { localStore, actions } = useRoomContext()
@@ -70,6 +72,10 @@ export const ScreenComponent = ({
     return <DocumentScreen screenId={screenId} scrollProg={screen.page} content={screen.content || `# Screen [${screenId}] has no content`} />
   }
 
+  if (screen?.type == TYPE.METADATA) {
+    return <MetadataScreen screenId={screenId} scrollProg={screen.page} content={screen.content || `# No Metadata!`} />
+  }
+
   if (screen?.type == TYPE.PDF_BOOK) {
     return <ScreenBook screenId={screenId} url={screen.content} page={screen.page} />
   }
@@ -87,8 +93,6 @@ export const ScreenComponent = ({
 
 //
 // Markdown document
-import Markdown from '@/components/Markdown'
-import { applyScrollProg } from '@/core/utils'
 const DocumentScreen = ({
   screenId,
   content,
@@ -105,6 +109,35 @@ const DocumentScreen = ({
     <div className='MarkdownScreen'>
       <div className='ScrollContainer' ref={outerDiv}>
         <Markdown className='ScrollContent' ref={innerDiv}>{content}</Markdown>
+      </div>
+    </div>
+  )
+}
+
+//
+// Json document
+const MetadataScreen = ({
+  screenId,
+  content = 'No Metadata!',
+  scrollProg,
+}) => {
+  const outerDiv = useRef()
+  const innerDiv = useRef()
+
+  useEffect(() => {
+    applyScrollProg(outerDiv.current, innerDiv.current, scrollProg)
+  }, [outerDiv.current, innerDiv.current, scrollProg])
+
+  const _content = `
+\`\`\`json
+${content}
+\`\`\`
+`
+
+  return (
+    <div className='MarkdownScreen'>
+      <div className='ScrollContainer' ref={outerDiv}>
+        <Markdown className='ScrollContent' ref={innerDiv}>{_content}</Markdown>
       </div>
     </div>
   )

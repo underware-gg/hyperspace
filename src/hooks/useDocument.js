@@ -21,6 +21,11 @@ const useAgentDocument = (type, id) => {
   return useStoreDocument(type, id, agentStore)
 }
 
+const useMetadataDocument = (type, id) => {
+  const { metadataStore } = useRoomContext()
+  return useStoreDocument(type, id, metadataStore)
+}
+
 const useStoreDocument = (type, id, store) => {
   const [document, setDocument] = useState(null)
 
@@ -58,5 +63,6 @@ export {
   useLocalDocument,
   useSessionDocument,
   useAgentDocument,
+  useMetadataDocument,
   useStoreDocument,
 } 

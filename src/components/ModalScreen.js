@@ -5,11 +5,39 @@ import {
   Input,
   Spacer,
   Text,
+  Select,
 } from '@chakra-ui/react'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
+import { useSlugs } from '@/hooks/useSlugs'
 import useGameCanvas from '@/hooks/useGameCanvas'
 import Button from '@/components/Button'
+import { TYPE } from '@/core/components/screen'
+
+
+const ScreenTypeSelector = ({
+  disabled = false,
+  value = null,
+  onSelected = (value) => { },
+}) => {
+  const { slug, isQuest } = useSlugs()
+  return (
+    <Select
+      // w='400px'
+      // size='sm'
+      disabled={disabled}
+      value={value ?? ''}
+      onChange={(e) => onSelected(e.target.value)}
+    >
+      <option value={TYPE.DOCUMENT}>Markdown Document</option>
+      {isQuest &&
+        <option value={TYPE.METADATA}>Endless Quest Metadata</option>
+      }
+    </Select>
+  )
+}
+
+
 
 const ModalScreen = ({
   disclosure,
@@ -18,12 +46,15 @@ const ModalScreen = ({
   const { Screen, actions } = useRoomContext()
   const { gameCanvas } = useGameCanvas()
   const { isOpen, onOpen, onClose } = disclosure
+  const [screenType, setScreenType] = useState('')
   const [screenName, setScreenName] = useState('')
+
   const roomNameRef = useRef()
   const finalRef = useRef()
 
   useEffect(() => {
     if (isOpen) {
+      setScreenType(TYPE.DOCUMENT)
       finalRef.current = gameCanvas
     }
   }, [isOpen])
@@ -43,6 +74,7 @@ const ModalScreen = ({
   const _onSave = () => {
     const options = {
       name: screenName,
+      type: screenType,
     }
     if (newScreen) {
       actions.emitAction('createScreen', options)
@@ -77,6 +109,13 @@ const ModalScreen = ({
         <ModalCloseButton />
         <ModalBody pb={4}>
           <VStack spacing={4} align='stretch'>
+            <HStack>
+              <Text w='150px'>Screen Type:</Text>
+              <ScreenTypeSelector
+                value={screenType}
+                onSelected={(value) => setScreenType(value)}
+              />
+            </HStack>
             <HStack>
               <Text w='150px'>Screen Name:</Text>
               <Input

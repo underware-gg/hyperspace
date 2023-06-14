@@ -36,15 +36,15 @@ const useSlugs = () => {
     branchName: isMain ? '[Main]' : isLocal ? '[Local] (Private)' : (branch ?? 'Main'),
     documentName: documentName ?? null,
     forceRevert: (forceRevert === 'true'),
+    slugIsValid,
     serverName,
     serverDisplay,
     inSync,
     isMain,
     isLocal,
     isDocument,
-    isQuest,
-    slugIsValid,
     isCrawlerSlug,
+    isQuest: isQuest && isCrawlerSlug,
   }
 }
 
