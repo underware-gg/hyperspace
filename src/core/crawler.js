@@ -2,6 +2,7 @@ import * as Crawler from '@rsodre/crawler-data'
 import { MAX_MAP_SIZE } from '@/core/components/map'
 import { TilesetPaths } from './texture-data'
 import { nanoid } from 'nanoid'
+import { TYPE } from './components/screen'
 
 export const crawlerSlugToChamberData = (slug) => {
   if (!Crawler.validateSlug(slug)) {
@@ -29,6 +30,7 @@ export const crawlerSlugToRoom = (slug, agentId = null) => {
       world: []
     },
     portal: {},
+    screen: {},
   }
 
   const PATH = 4
@@ -106,6 +108,17 @@ export const crawlerSlugToRoom = (slug, agentId = null) => {
     // Entry door
     if (i == chamberData.doors[chamberData.entryDir]) {
       result.settings.world.entry = { x, y }
+    }
+    // Grm / Agent
+    if (i == chamberData.gemPos) {
+      result.screen[nanoid()] = {
+        type: TYPE.METADATA,
+        name: 'Agent',
+        content: '',
+        page: 0,
+        position: { x, y, z: 0 },
+        rotation: { x: 0, y: 0, z: 0 },
+      }
     }
   }
 
