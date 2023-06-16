@@ -257,8 +257,8 @@ function html2canvas(element) {
         return undefined;
       }
 
-      const canvasWidth = _getCanvasDim(element, 'width');
-      const canvasHeight = _getCanvasDim(element, 'height');
+      const canvasWidth = element.naturalWidth ?? _getCanvasDim(element, 'width');
+      const canvasHeight = element.naturalHeight ?? _getCanvasDim(element, 'height');
       // console.log(`HTML canvas:`, canvasWidth, canvasHeight, {x,y,width,height}, element)
 
       context.drawImage(
