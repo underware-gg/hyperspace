@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import RoomCollection from '@/core/interfaces/RoomCollection'
 import { getTextureSprite } from '@/core/textures'
-import { CONST, clamp, clampRadians, deepCompare, deepCopy } from '@/core/utils'
+import { CONST, clamp, clampRadians, deepCompare, deepCopy, toDegrees } from '@/core/utils'
 import { getOverlappingTiles, rectanglesOverlap } from '@/core/collisions'
 import { floors } from '@/core/components/map'
 import Cookies from 'universal-cookie'
@@ -289,10 +289,12 @@ class Player extends RoomCollection {
 
     // portal navigation
     let portalCookie = cookies.get('portal') ?? null
+    // console.warn(`PORTAL COOKIE GET <<<`, portalCookie?.entry, portalCookie)
     if (portalCookie) {
       if (portalCookie.agentId == agentId) {
         // coming in from a portal
-        if (portalCookie.to == slug) {
+        // portal slug can be /endlesscrawler/S1W1 and slug s1w1
+        if (portalCookie.to?.toLowerCase()?.endsWith(slug.toLowerCase())) {
           portalCookie.to = null
           cookies.set('portal', JSON.stringify(portalCookie), { path: '/' })
           this.moveToTile(agentId, portalCookie.entry)
