@@ -6,12 +6,20 @@ export const TilesetPaths = {
   Library: '/tilesets/library.png',
   Dungeon: '/tilesets/dungeon.png',
   Warehouse: '/tilesets/warehouse.png',
+  Quest1: '/tilesets/quest1.png',
+  Quest2: '/tilesets/quest2.png',
+  Quest3: '/tilesets/quest3.png',
+  Quest4: '/tilesets/quest4.png',
 }
 export const tilesets = [
   { src: TilesetPaths.Castle },
   { src: TilesetPaths.Library },
   { src: TilesetPaths.Dungeon },
   { src: TilesetPaths.Warehouse },
+  // { src: TilesetPaths.Quest1 },
+  // { src: TilesetPaths.Quest2 },
+  // { src: TilesetPaths.Quest3 },
+  // { src: TilesetPaths.Quest4 },
 ]
 export const defaultTileset = tilesets[0]
 
@@ -73,10 +81,9 @@ export const spritesheets = [
   { sprites: japanSet, src: '/spritesheets/japan/Sol.png' },
   { sprites: japanSet, src: '/spritesheets/japan/Rocky.png' },
   { sprites: japanSet, src: '/spritesheets/japan/Punky.png' },
+  { sprites: japanSet, src: '/spritesheets/japan/Witchy.png' },
   { sprites: japanSet, src: '/spritesheets/japan/Ronin.png' },
   { sprites: japanSet, src: '/spritesheets/japan/OnnaMusha.png' },
-  { sprites: japanSet, src: '/spritesheets/japan/Witchy.png' },
-  { sprites: japanSet, src: '/spritesheets/japan/Doge.png' },
   { sprites: schoolSet, src: '/spritesheets/school/Madison.png' },
   { sprites: schoolSet, src: '/spritesheets/school/Morgan.png' },
   { sprites: schoolSet, src: '/spritesheets/school/Kim.png' },
@@ -86,6 +93,7 @@ export const spritesheets = [
   { sprites: ghostSet, src: '/spritesheets/ghost/Pinky.png' },
   { sprites: ghostSet, src: '/spritesheets/ghost/Inky.png' },
   { sprites: ghostSet, src: '/spritesheets/ghost/Clyde.png' },
+  { sprites: japanSet, src: '/spritesheets/japan/Doge.png' },
   // { src: '/spritesheets/ghost/ghost2.png', scale: 2 }, // flat image works too!
 ]
 

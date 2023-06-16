@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { textureData, tilesets, spritesheets } from '@/core/texture-data'
+import { textureData, TilesetPaths, spritesheets } from '@/core/texture-data'
 import { deepCopy } from '@/core/merge/tiny-merge'
 import { hashCode } from '@/core/utils'
 
@@ -12,8 +12,8 @@ export const loadTextures = async () => {
   }
   _loadPromise = new Promise((resolve, reject) => {
     let _textureData = deepCopy(textureData)
-    for (const t of tilesets) {
-      _textureData[t.src] = t
+    for (const t of Object.values(TilesetPaths)) {
+      _textureData[t] = { src: t }
     }
     for (const t of spritesheets) {
       _textureData[t.src] = t

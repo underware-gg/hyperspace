@@ -17,7 +17,7 @@ const TilesetSelector = ({ }) => {
   const [selectedValue, setSelectedValue] = useState('')
   const [options, setOptions] = useState([])
 
-  // Chamge current tileset
+  // Change current tileset
   useEffect(() => {
     const selectedTilesetName = tileset?.name ?? defaultTileset.src
     let _selectedValue = ''
@@ -29,6 +29,9 @@ const TilesetSelector = ({ }) => {
       if (src === selectedTilesetName) {
         _selectedValue = src
       }
+    }
+    if (_selectedValue == '') {
+      _options.push(<option key={'selected'} value={''}>custom</option>)
     }
     if (tileset?.blob) {
       _selectedValue = 'custom'

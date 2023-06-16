@@ -124,12 +124,16 @@ export const crawlerSlugToRoom = (slug, options = {}) => {
       }
     }
 
-  result.tileset.world =
-    chamberData.terrain == Crawler.Terrain.Earth ? TilesetPaths.Library :
-      chamberData.terrain == Crawler.Terrain.Water ? TilesetPaths.Warehouse :
-        chamberData.terrain == Crawler.Terrain.Air ? TilesetPaths.Castle :
-          chamberData.terrain == Crawler.Terrain.Fire ? TilesetPaths.Dungeon :
-            null
+    // tilesets
+    result.tileset.world = {
+      name: (
+        chamberData.terrain == Crawler.Terrain.Earth ? TilesetPaths.Quest1 :
+          chamberData.terrain == Crawler.Terrain.Water ? TilesetPaths.Quest2 :
+            chamberData.terrain == Crawler.Terrain.Air ? TilesetPaths.Quest3 :
+              chamberData.terrain == Crawler.Terrain.Fire ? TilesetPaths.Quest4 :
+                null
+      )
+    }
   }
 
   // console.log(`crawlerSlugToRoom()`, result)
