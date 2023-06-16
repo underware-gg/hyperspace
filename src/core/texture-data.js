@@ -67,6 +67,20 @@ const ghostSet = {
   stepScale: 0.75,
   template: '/spritesheets/ghost/GhostTemplate.png',
 }
+const forgottenRunesSet = {
+  scale: 0.75,
+  rows: 4,
+  columns: 4,
+  cycles: {
+    idle: [[0, 0]],
+    walkDown: [[0, 0], [1, 0], [2, 0], [3, 0]],
+    walkLeft: [[0, 1], [1, 1], [2, 1], [3, 1]],
+    walkUp: [[0, 2], [1, 2], [2, 2], [3, 2]],
+    walkRight: [[0, 3], [1, 3], [2, 3], [3, 3]],
+  },
+  template: '/spritesheets/forgottenrunes/wizards-1488.png',
+}
+
 export const spritesheets = [
   { sprites: japanSet, src: '/spritesheets/japan/Blair.png' },
   { sprites: japanSet, src: '/spritesheets/japan/Corey.png' },
@@ -94,6 +108,8 @@ export const spritesheets = [
   { sprites: ghostSet, src: '/spritesheets/ghost/Inky.png' },
   { sprites: ghostSet, src: '/spritesheets/ghost/Clyde.png' },
   { sprites: japanSet, src: '/spritesheets/japan/Doge.png' },
+  { sprites: forgottenRunesSet, src: '/spritesheets/forgottenrunes/wizards-1488.png' },
+  { sprites: forgottenRunesSet, src: '/spritesheets/forgottenrunes/warriors-5133.png' },
   // { src: '/spritesheets/ghost/ghost2.png', scale: 2 }, // flat image works too!
 ]
 
