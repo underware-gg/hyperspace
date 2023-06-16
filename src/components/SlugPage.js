@@ -42,7 +42,7 @@ const SlugPage = () => {
   }, [router.isReady, slugIsValid])
 
   const sourceData = useMemo(() => {
-    return isCrawlerSlug ? crawlerSlugToRoom(slug) : null
+    return isCrawlerSlug ? crawlerSlugToRoom(slug, { isQuest }) : null
   }, [slug, isCrawlerSlug])
   const resetAgent = (sourceData != null)
   const metadataSlug = isQuest ? ':endlessquest' : null

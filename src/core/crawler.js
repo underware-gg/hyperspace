@@ -14,7 +14,7 @@ export const crawlerSlugToChamberData = (slug) => {
   return chamberData
 }
 
-export const crawlerSlugToRoom = (slug, agentId = null) => {
+export const crawlerSlugToRoom = (slug, options = {}) => {
   const chamberData = crawlerSlugToChamberData(slug)
   if (!chamberData) return null
 
@@ -68,59 +68,61 @@ export const crawlerSlugToRoom = (slug, agentId = null) => {
     const y = start.y + Math.floor(i / 16)
     const tile = isDoor ? DOOR : isGem ? GEM : chamberTile == 0 ? WALL : PATH
     result.map2.world[y][x] = tile
+
     // door corridors
+    let nextCoord, portalPosition
     if (i == chamberData.doors[Crawler.Dir.North]) {
       result.map2.world[y - 1][x] = tile
       result.map2.world[y - 2][x] = tile
-      // result.portal[nanoid()] = {
-      //   slug: slug,
-      //   position: {},
-      //   tile: { x, y: y - 2 }, // entry
-      // }
-    }
-    if (i == chamberData.doors[Crawler.Dir.East]) {
+      nextCoord = Crawler.offsetCoord(BigInt(chamberData.coord), Crawler.Dir.North)
+      portalPosition = { x, y: y - 2, z: 0 }
+    } else if (i == chamberData.doors[Crawler.Dir.East]) {
       result.map2.world[y][x + 1] = tile
       result.map2.world[y][x + 2] = tile
-      // result.portal[nanoid()] = {
-      //   slug: slug,
-      //   position: {},
-      //   tile: { x: x + 2, y }, // entry
-      // }
-    }
-    if (i == chamberData.doors[Crawler.Dir.West]) {
+      nextCoord = Crawler.offsetCoord(BigInt(chamberData.coord), Crawler.Dir.East)
+      portalPosition = { x: x + 2, y, z: 0 }
+    } else if (i == chamberData.doors[Crawler.Dir.West]) {
       result.map2.world[y][x - 1] = tile
       result.map2.world[y][x - 2] = tile
-      // result.portal[nanoid()] = {
-      //   slug: slug,
-      //   position: {},
-      //   tile: { x: x - 2, y }, // entry
-      // }
-    }
-    if (i == chamberData.doors[Crawler.Dir.South]) {
+      nextCoord = Crawler.offsetCoord(BigInt(chamberData.coord), Crawler.Dir.West)
+      portalPosition = { x: x - 2, y, z: 0 }
+    } else if (i == chamberData.doors[Crawler.Dir.South]) {
       result.map2.world[y + 1][x] = tile
       result.map2.world[y + 2][x] = tile
-      // result.portal[nanoid()] = {
-      //   slug: slug,
-      //   position: {},
-      //   tile: { x, y: y + 2 }, // entry
-      // }
+      nextCoord = Crawler.offsetCoord(BigInt(chamberData.coord), Crawler.Dir.South)
+      portalPosition = { x, y: y + 2, z: 0 }
     }
+    if (nextCoord) {
+      const nextDoor = Crawler.flipDoorPositionXY(Crawler.bitmapPosToXY(i))
+      result.portal[nanoid()] = {
+        slug: `${options.isQuest ? 'endlessquest/': ''}${Crawler.coordToSlug(nextCoord, null)}`,
+        position: portalPosition,
+        tile: {
+          x: start.x + nextDoor.x,
+          y: start.y + nextDoor.y,
+        }, // entry
+      }
+    }
+
     // Entry door
     if (i == chamberData.doors[chamberData.entryDir]) {
       result.settings.world.entry = { x, y }
     }
-    // Grm / Agent
-    if (i == chamberData.gemPos) {
-      result.screen[nanoid()] = {
-        type: TYPE.METADATA,
-        name: 'Agent',
-        content: '',
-        page: 0,
-        position: { x, y, z: 0 },
-        rotation: { x: 0, y: 0, z: 0 },
+
+    // Endless Quest
+    if (options.isQuest) {
+      // Gems
+      if (i == chamberData.gemPos) {
+        result.screen[nanoid()] = {
+          type: TYPE.METADATA,
+          name: 'Agent',
+          content: '',
+          page: 0,
+          position: { x, y, z: 0 },
+          rotation: { x: 0, y: 0, z: 0 },
+        }
       }
     }
-  }
 
   result.tileset.world =
     chamberData.terrain == Crawler.Terrain.Earth ? TilesetPaths.Library :
@@ -128,6 +130,7 @@ export const crawlerSlugToRoom = (slug, agentId = null) => {
         chamberData.terrain == Crawler.Terrain.Air ? TilesetPaths.Castle :
           chamberData.terrain == Crawler.Terrain.Fire ? TilesetPaths.Dungeon :
             null
+  }
 
   // console.log(`crawlerSlugToRoom()`, result)
   return result
