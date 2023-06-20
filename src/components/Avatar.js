@@ -41,7 +41,7 @@ const Avatar = ({
     <HStack>
       <Spacer />
       
-      <VStack alignItems='left'>
+      <VStack alignItems='center'>
         <HStack>
           <div style={_avatarStyle} onClick={() => _onClick()}>
             {isLoading ? <img src={_defaultAvatarUrl} width={width} height={width} alt='avatar' />

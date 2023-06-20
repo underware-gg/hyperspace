@@ -16,12 +16,16 @@ const RoomManager = () => {
 
   return (
     <VStack h='100%' alignItems='left'>
-      <HStack>
-        <Text className='NoMargin'>Room: <span className='Important'>{slug}</span></Text>
-        <Spacer />
-        <SettingsIcon boxSize='0.8em' className='Clickable' onClick={() => setShowSwitcher(true)} />
-      </HStack>
-      <Text className='NoMargin'>Branch:  <span className={_branchClass}>{branchName}</span></Text>
+      {slug &&
+      <>
+        <HStack>
+          <Text className='NoMargin'>Room: <span className='Important'>{slug}</span></Text>
+          <Spacer />
+          <SettingsIcon boxSize='0.8em' className='Clickable' onClick={() => setShowSwitcher(true)} />
+        </HStack>
+        <Text className='NoMargin'>Branch:  <span className={_branchClass}>{branchName}</span></Text>
+      </>
+      }
       <Text className='NoMargin'>Server: {serverDisplay}</Text>
       <Spacer />
       <ModalRoomSwitcher

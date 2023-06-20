@@ -20,6 +20,12 @@ yarn run dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser and there you have it!
 
+To use a local [sync server](https://github.com/funDAOmental/hyperbox-server), edit `.env.local` to contain, and restart:
+
+```
+SERVER_URL=ws://localhost:8787
+```
+
 
 ## Deployment
 

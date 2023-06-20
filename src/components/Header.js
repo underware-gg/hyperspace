@@ -12,13 +12,11 @@ import {
 } from '@chakra-ui/react'
 import ProfileManager from '@/components/ProfileManager'
 import RoomManager from '@/components/RoomManager'
-import { useSlugs } from '@/hooks/useSlugs'
 
 const Header = ({
   profile = false,
   width = 'container.lg',
 }) => {
-  const { slug } = useSlugs()
   return (
     <Box
       className='Header'
@@ -47,10 +45,8 @@ const Header = ({
 
           {profile && <>
             <ProfileManager />
-            {slug && <>
-              <Divider orientation='vertical' />
-              <RoomManager />
-            </>}
+            <Divider orientation='vertical' />
+            <RoomManager />
           </>}
 
           <Spacer sx={{ flex: 1 }} />
