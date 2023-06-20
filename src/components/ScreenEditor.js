@@ -18,6 +18,7 @@ import { SliderPage, SliderProgress } from '@/components/Sliders'
 import { getFilenameFromUrl, getScrollProg } from '@/core/utils'
 import { TYPE } from '@/core/components/screen'
 import CodeEditor from './CodeEditor'
+import MonacoEditor from './MonacoEditor'
 
 //----------------------
 // Generic Screen Editor
@@ -150,16 +151,24 @@ const ScreenEditorDocument = ({
                 readOnly={readOnly}
               />}
             {language &&
-              <CodeEditor
+              <MonacoEditor
                 language={language}
-                ref={initialFocusRef}
                 content={content}
                 onChange={(value) => _onContentChange(value)}
                 disabled={disabled}
-                minRows={options.minRows}
-                maxRows={options.maxRows}
                 readOnly={readOnly}
-              />}
+              />
+              // <CodeEditor
+              //   language={language}
+              //   ref={initialFocusRef}
+              //   content={content}
+              //   onChange={(value) => _onContentChange(value)}
+              //   disabled={disabled}
+              //   minRows={options.minRows}
+              //   maxRows={options.maxRows}
+              //   readOnly={readOnly}
+              // />
+            }
           </div>
         </div>
         <SliderProgress value={screen?.page ?? 0} onChange={(value) => _onProgressChange(value)} />
