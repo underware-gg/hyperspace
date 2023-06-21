@@ -22,14 +22,17 @@ const _themes = {
 }
 
 const MonacoEditor = ({
-  content,
-  onChange,
-  colorMode = 'dark',
   language = '',
+  content,
+  onChange = () => {},
   placeholder = 'Markdown shared document',
+  className = null,
+  colorMode = 'dark',
   disabled = false,
   readOnly = false,
   wordWrap = false,
+  lineNumbers = true,
+  miniMap = true,
 }) => {
   const monacoEditorRef = useRef(null)
   const editorRef = useRef(null)
@@ -68,6 +71,7 @@ const MonacoEditor = ({
     onChange={(value, _event) => {
       onChange(value)
     }}
+    className={className}
     onMount={(editor, monaco) => {
       monacoEditorRef.current = monaco.editor
       editorRef.current = editor
@@ -76,10 +80,13 @@ const MonacoEditor = ({
       stopRenderingLineAfter: 1000,
       readOnly,
       wordWrap,
+      lineNumbers,
+      minimap: { enabled: miniMap },
+      scrollBeyondLastLine: !readOnly,
     }}
     theme={_themes[colorMode]} // preference
     // width='60em'    // preference
-    height='40em' // preference
+    height='41em' // preference
   />
 }
 

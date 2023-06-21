@@ -114,15 +114,6 @@ input::placeholder {
   // image-rendering: pixelated;
 }
 
-.ScrollContainer {
-  @extend .FillParent;
-  overflow-y: scroll;
-}
-
-.ScrollContent {
-  @extend .FillParent;
-}
-
 .PdfBook {
   background-color: #fff0;
 }
@@ -188,6 +179,10 @@ input::placeholder {
   padding: 1em;
   font-family: Helvetica, Arial, sans-serif;
 }
+.MetadataScreen {
+  @extend .MarkdownScreen;
+  background-color: #444;
+}
 
 .MarkdownScreen h1, h2, h3, h4, h5 {
   font-family: Helvetica, Arial, sans-serif !important;
@@ -242,9 +237,19 @@ input::placeholder {
 }
 
 .ScreenModalMapPreview {
-  width: 400px;
-  height: 300px;
+  width: 300px;
+  height: 225px;
 }
+
+.ScrollContainer {
+  @extend .FillParent;
+  overflow-y: scroll;
+}
+
+.ScrollContent {
+  @extend .FillParent;
+}
+
 
 
 
@@ -253,7 +258,7 @@ input::placeholder {
 //
 .CodeEditor {
   width: 100%;
-  height: 100%;
+  height: 620px;
   border: solid 1px #fff8;
 }
 

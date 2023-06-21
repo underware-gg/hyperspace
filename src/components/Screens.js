@@ -6,9 +6,10 @@ import usePermission from '@/hooks/usePermission'
 import useProfile from '@/hooks/useProfile'
 import ModalScreenEdit from '@/components/ModalScreenEdit'
 import { ScreenBook } from '@/components/ScreenBook'
+import Markdown from '@/components/Markdown'
+import MonacoEditor from '@/components/MonacoEditor'
 import { TYPE } from '@/core/components/screen'
 import { applyScrollProg } from '@/core/utils'
-import Markdown from '@/components/Markdown'
 
 const Screens = ({ }) => {
   const { localStore, actions } = useRoomContext()
@@ -128,16 +129,19 @@ const MetadataScreen = ({
     applyScrollProg(outerDiv.current, innerDiv.current, scrollProg)
   }, [outerDiv.current, innerDiv.current, scrollProg])
 
-  const _content = `
-\`\`\`json
-${content ? content : '# Open Editor to load metadata'}
-\`\`\`
-`
-
   return (
-    <div className='MarkdownScreen'>
+    <div className='MetadataScreen'>
       <div className='ScrollContainer' ref={outerDiv}>
-        <Markdown className='ScrollContent' ref={innerDiv}>{_content}</Markdown>
+        <div className='ScrollContent' ref={innerDiv}>
+          <MonacoEditor
+            language='json'
+            content={content}
+            wordWrap
+            readOnly
+            lineNumbers={false}
+            miniMap={false}
+          />
+        </div>
       </div>
     </div>
   )

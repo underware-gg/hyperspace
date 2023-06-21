@@ -135,14 +135,22 @@ const ScreenEditorDocument = ({
   }
 
   // editor options
+  const [lineNumbers, setLineNumbers] = useState(true)
   const [wordWrap, setWordWrap] = useState(false)
+  const [miniMap, setMiniMap] = useState(false)
 
   return (
     <div className='FillParent'>
       <VStack align='stretch'>
         <HStack>
+          <Button size='sm' toggle onClick={() => setLineNumbers(!lineNumbers)} variant={!lineNumbers ? 'outline' : null}>
+            #Lines
+          </Button>
           <Button size='sm' toggle onClick={() => setWordWrap(!wordWrap)} variant={!wordWrap ? 'outline' : null}>
             Wrap
+          </Button>
+          <Button size='sm' toggle onClick={() => setMiniMap(!miniMap)} variant={!miniMap ? 'outline' : null}>
+            MiniMap
           </Button>
           
           <Spacer />
@@ -173,7 +181,9 @@ const ScreenEditorDocument = ({
                 onChange={(value) => _onContentChange(value)}
                 disabled={disabled}
                 readOnly={readOnly}
+                lineNumbers={lineNumbers}
                 wordWrap={wordWrap}
+                miniMap={miniMap}
               />
               // <CodeEditor
               //   language={language}
