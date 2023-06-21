@@ -179,7 +179,7 @@ input::placeholder {
 
 
 //----------------------
-// MArkdown
+// Markdown
 //
 .MarkdownScreen {
   @extend .FillParent;
@@ -212,11 +212,48 @@ input::placeholder {
 
 
 //----------------------
+// Screen Editor
+//
+
+.ScreenModalContainer {
+  display: flex;
+  flex-flow: column;
+}
+
+.ScreenModalColumnLeft {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  // min-height: 100%;
+  // overflow: hidden;
+  flex-grow: 1;
+}
+
+.ScreenModalColumnRight {
+  @extend .ScreenModalColumnLeft;
+  left: 50%;
+}
+
+.ScreenModalPreview {
+  width: 100%;
+  max-height: 500px;
+}
+
+.ScreenModalMapPreview {
+  width: 400px;
+  height: 300px;
+}
+
+
+
+//----------------------
 // Customize code editor
 //
 .CodeEditor {
   width: 100%;
-  height: 500px;
+  height: 100%;
   border: solid 1px #fff8;
 }
 

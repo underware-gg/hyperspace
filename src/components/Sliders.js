@@ -37,7 +37,6 @@ const SliderProgress = ({
 
   return (
     <Box p={'0 1.3em'}>
-      <Box pt={8} />
       <ChakraSlider
         defaultValue={defaultValue * precision}
         value={value != null ? (value * precision) : undefined}
@@ -65,7 +64,7 @@ const SliderProgress = ({
           textAlign='center'
           bg='teal.500'
           color='white'
-          mt='-10'
+          mt='2'
           ml='-5'
           w='12'
         >
@@ -123,7 +122,6 @@ const SliderPage = ({
 
   return (
     <Box p={'0 1.3em'}>
-      <Box pt={8} />
       <ChakraSlider
         defaultValue={_defaultValue}
         min={_firstPage} max={_lastPage} step={1}
@@ -138,7 +136,7 @@ const SliderPage = ({
             textAlign='center'
             bg='teal.500'
             color='white'
-            mt='-10'
+            mt='2'
             ml='-5'
             w='12'
           >

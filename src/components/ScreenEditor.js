@@ -17,8 +17,8 @@ import Textarea from '@/components/Textarea'
 import { SliderPage, SliderProgress } from '@/components/Sliders'
 import { getFilenameFromUrl, getScrollProg } from '@/core/utils'
 import { TYPE } from '@/core/components/screen'
-import CodeEditor from './CodeEditor'
-import MonacoEditor from './MonacoEditor'
+import CodeEditor from '@/components/CodeEditor'
+import MonacoEditor from '@/components/MonacoEditor'
 
 //----------------------
 // Generic Screen Editor
@@ -134,10 +134,26 @@ const ScreenEditorDocument = ({
     console.warn(`USE THIS TWEET:`, tweet)
   }
 
+  // editor options
+  const [wordWrap, setWordWrap] = useState(false)
 
   return (
-    <div>
+    <div className='FillParent'>
       <VStack align='stretch'>
+        <HStack>
+          <Button size='sm' toggle onClick={() => setWordWrap(!wordWrap)} variant={!wordWrap ? 'outline' : null}>
+            Wrap
+          </Button>
+          
+          <Spacer />
+          
+          {veridaIsConnected &&
+            <Button size='sm' onClick={async () => await _lastTweet()} disabled={!veridaIsConnected || isFetchingTweet}>
+              Append Last Tweet
+            </Button>
+          }
+        </HStack>
+
         <div className='CodeEditor ScrollContainer' ref={outerDiv}>
           <div className='ScrollContent ' ref={innerDiv}>
             {!language &&
@@ -157,6 +173,7 @@ const ScreenEditorDocument = ({
                 onChange={(value) => _onContentChange(value)}
                 disabled={disabled}
                 readOnly={readOnly}
+                wordWrap={wordWrap}
               />
               // <CodeEditor
               //   language={language}
@@ -171,15 +188,9 @@ const ScreenEditorDocument = ({
             }
           </div>
         </div>
+
+        <Spacer />
         <SliderProgress value={screen?.page ?? 0} onChange={(value) => _onProgressChange(value)} />
-        {veridaIsConnected &&
-          <HStack>
-            <Button size='sm' onClick={async () => await _lastTweet()} disabled={!veridaIsConnected || isFetchingTweet}>
-              Append Last Tweet
-            </Button>
-            <Spacer />
-          </HStack>
-        }
       </VStack>
     </div>
   )

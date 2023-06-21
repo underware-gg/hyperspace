@@ -27,7 +27,7 @@ const Screens = ({ }) => {
         <div key={screenId}
           className='FillParent Absolute'
           style={{
-            zIndex: overlayScreen ? '100' : '-100',
+            zIndex: overlayScreen ? '-100' : '-100',
           }}
         >
           <div id={screenId}

@@ -67,8 +67,9 @@ const MapPreview = ({
       const context = canvasRef.current?.getContext('2d') ?? null
       if (context) {
         const scale = process.env.RENDER_HEIGHT / MAX_MAP_SIZE.height
+        const aspect = MAX_MAP_SIZE.width / MAX_MAP_SIZE.height
         context.save()
-        context.scale(scale, scale)
+        context.scale(scale / aspect, scale)
         context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
         Map.draw2dMap('world', context, store)
         context.restore()
@@ -77,7 +78,7 @@ const MapPreview = ({
   }, [canvasRef])
 
   return (
-    <div>
+    <div className='FillParent'>
       <canvas
         id='room'
         ref={canvasRef}

@@ -79,7 +79,7 @@ const MonacoEditor = ({
     }}
     theme={_themes[colorMode]} // preference
     // width='60em'    // preference
-    // height='42.9em' // preference
+    height='40em' // preference
   />
 }
 

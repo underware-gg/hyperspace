@@ -5,6 +5,7 @@ import {
   HStack,
   Spacer,
   Text,
+  VStack,
 } from '@chakra-ui/react'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
@@ -14,12 +15,14 @@ import Button from '@/components/Button'
 import Editable from '@/components/Editable'
 import ScreenEditor from '@/components/ScreenEditor'
 import { PermissionsForm } from '@/components/PermissionsForm'
+import { MapPreview } from '@/components/Map2D'
+import { ScreenComponent } from '@/components/Screens'
 import { makeRoute } from '@/core/routes'
 
 const ModalScreenEdit = ({
   screenId,
 }) => {
-  const { localStore, slug, Screen } = useRoomContext()
+  const { remoteStore, localStore, slug, Screen } = useRoomContext()
   const { gameCanvas } = useGameCanvas()
   const { permission, isOwner, canEdit, canView } = usePermission(screenId)
   const screen = useDocument('screen', screenId)
@@ -61,12 +64,13 @@ const ModalScreenEdit = ({
       isOpen={isOpen}
       onClose={() => _handleClose()}
       isCentered
-      size='xl'
+      size='full'
     >
       <ModalOverlay />
       <ModalContent
-        maxW='56rem'
-        backgroundColor='#000a'
+        // maxW='56rem'
+        // backgroundColor='#000a'
+        backgroundColor='#000'
       >
         <ModalHeader>
           <HStack>
@@ -78,31 +82,52 @@ const ModalScreenEdit = ({
             <Spacer />
           </HStack>
         </ModalHeader>
+
         <ModalCloseButton />
-        <ModalBody pb={4} minHeight='300px'>
-          <Tabs isFitted variant='enclosed'>
-            <TabList mb='1em'>
-              <Tab _selected={{ bg: 'teal' }}>Edit</Tab>
-              <Tab _selected={{ bg: 'teal' }}>Permissions</Tab>
-            </TabList>
-            <TabPanels>
-              <TabPanel>
-                <ScreenEditor
-                  screenId={screenId}
-                  initialFocusRef={initialFocusRef}
-                />
-              </TabPanel>
-              <TabPanel>
-                <PermissionsForm
-                  type={screen?.type}
-                  name={screen?.name ?? '???'}
-                  id={screenId}
-                  disabled={screen == null}
-                />
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
+
+        <ModalBody pb={4} minHeight='300px' className='ScreenModalContainer'>
+
+          <div className='FillParent Relative'>
+
+            <Tabs isFitted variant='enclosed' className='ScreenModalColumnLeft'>
+              <TabList mb='1em'>
+                <Tab _selected={{ bg: 'teal' }}>Edit</Tab>
+                <Tab _selected={{ bg: 'teal' }}>Permissions</Tab>
+              </TabList>
+
+              <TabPanels className='FillParent'>
+                <TabPanel className=''>
+                  <ScreenEditor
+                    screenId={screenId}
+                    initialFocusRef={initialFocusRef}
+                  />
+                </TabPanel>
+
+                <TabPanel>
+                  <PermissionsForm
+                    type={screen?.type}
+                    name={screen?.name ?? '???'}
+                    id={screenId}
+                    disabled={screen == null}
+                  />
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
+
+            <VStack className='ScreenModalColumnRight Padded'>
+              <div className='ScreenModalMapPreview'>
+                <MapPreview store={remoteStore} />
+              </div>
+              <div className='ScreenModalPreview'>
+                <ScreenComponent screenId={screenId} />
+              </div>
+            </VStack>
+
+          </div>
+
+
         </ModalBody>
+
         <ModalFooter>
           <Button
             variant='outline'
@@ -119,6 +144,7 @@ const ModalScreenEdit = ({
             onClick={() => _handleClose()}
           />
         </ModalFooter>
+
       </ModalContent>
     </Modal>
   )
