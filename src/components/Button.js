@@ -10,7 +10,8 @@ const Button = forwardRef(({
   loading,
   fullWidth,
   disabled,
-  variant,
+  toggleState = null,
+  variant = null,
   className = null,
   style = {},
   onClick = () => { },
@@ -28,7 +29,7 @@ const Button = forwardRef(({
       ref={ref}
       colorScheme={colorScheme}
       size={size}
-      variant={variant}
+      variant={toggleState === false ? 'outline' : toggleState === true ? null : variant}
       isLoading={loading}
       isDisabled={disabled}
       type={type}
@@ -43,4 +44,6 @@ const Button = forwardRef(({
 
 Button.displayName = 'Button'
 
-export default Button
+export {
+  Button,
+}

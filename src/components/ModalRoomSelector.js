@@ -9,7 +9,7 @@ import {
 import { makeRoute } from '@/core/routes'
 import { MapPreviewFromSlugToRoomContext } from '@/components/Map2D'
 import SlugSelector from '@/components/SlugSelector'
-import Button from '@/components/Button'
+import { Button } from '@/components/Button'
 
 const ModalRoomSelector = ({
   disclosure,

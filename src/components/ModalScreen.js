@@ -11,7 +11,7 @@ import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
 import { useSlugs } from '@/hooks/useSlugs'
 import useGameCanvas from '@/hooks/useGameCanvas'
-import Button from '@/components/Button'
+import { Button } from '@/components/Button'
 import { TYPE } from '@/core/components/screen'
 
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import { useVeridaContext, VeridaActions } from '@/hooks/VeridaContext'
-import Button from '@/components/Button'
+import { Button } from '@/components/Button'
 
 const RequestSignInButton = ({
   label = 'Sign In',

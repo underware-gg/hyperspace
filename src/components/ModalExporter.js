@@ -11,7 +11,7 @@ import { useRoomContext } from '@/hooks/RoomContext'
 import usePermission from '@/hooks/usePermission'
 import RequestSignInButton from '@/components/RequestSignInButton'
 import Snapshot from '@/components/Snapshot'
-import Button from '@/components/Button'
+import { Button } from '@/components/Button'
 // Verida
 import { VeridaStoreButton } from '@/components/Verida'
 import { useVeridaContext } from '@/hooks/VeridaContext'

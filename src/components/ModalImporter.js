@@ -12,7 +12,7 @@ import { useRoomContext } from '@/hooks/RoomContext'
 import usePermission from '@/hooks/usePermission'
 import RequestSignInButton from '@/components/RequestSignInButton'
 import FileSelectButton from '@/components/FileSelectButton'
-import Button from '@/components/Button'
+import { Button } from '@/components/Button'
 import Snapshot from '@/components/Snapshot'
 import Store from '@/core/store'
 // Verida

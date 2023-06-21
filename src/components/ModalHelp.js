@@ -4,7 +4,7 @@ import {
   VStack,
   Text,
 } from '@chakra-ui/react'
-import Button from '@/components/Button'
+import { Button } from '@/components/Button'
 
 const ModalHelp = ({
   isOpen,

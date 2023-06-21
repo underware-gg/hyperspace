@@ -12,7 +12,7 @@ import useGameCanvas from '@/hooks/useGameCanvas'
 import { TileInput, useInputValidator } from '@/components/Inputs'
 import { DEFAULT_ENTRY } from '@/core/components/map'
 import { validateRoomSlug } from '@/core/utils'
-import Button from '@/components/Button'
+import { Button } from '@/components/Button'
 
 const ModalPortal = ({
   disclosure,

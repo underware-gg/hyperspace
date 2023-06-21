@@ -12,7 +12,7 @@ import { useDocument, useLocalDocument } from '@/hooks/useDocument'
 import { useVeridaContext } from '@/hooks/VeridaContext'
 import { useMetadata } from '@/hooks/useMetadata'
 import usePermission from '@/hooks/usePermission'
-import Button from '@/components/Button'
+import { Button } from '@/components/Button'
 import Textarea from '@/components/Textarea'
 import { SliderPage, SliderProgress } from '@/components/Sliders'
 import { getFilenameFromUrl, getScrollProg } from '@/core/utils'
@@ -143,22 +143,22 @@ const ScreenEditorDocument = ({
     <div className='FillParent'>
       <VStack align='stretch'>
         <HStack>
-          <Button size='sm' toggle onClick={() => setLineNumbers(!lineNumbers)} variant={!lineNumbers ? 'outline' : null}>
+          <Button size='sm' toggleState={lineNumbers} onClick={() => setLineNumbers(!lineNumbers)}>
             #Lines
           </Button>
-          <Button size='sm' toggle onClick={() => setWordWrap(!wordWrap)} variant={!wordWrap ? 'outline' : null}>
+          <Button size='sm' toggleState={wordWrap} onClick={() => setWordWrap(!wordWrap)}>
             Wrap
           </Button>
-          <Button size='sm' toggle onClick={() => setMiniMap(!miniMap)} variant={!miniMap ? 'outline' : null}>
+          <Button size='sm' toggleState={miniMap} onClick={() => setMiniMap(!miniMap)}>
             MiniMap
           </Button>
-          
+
           <Spacer />
-          
+
           {veridaIsConnected &&
-            <Button size='sm' onClick={async () => await _lastTweet()} disabled={!veridaIsConnected || isFetchingTweet}>
-              Append Last Tweet
-            </Button>
+              <Button size='sm' onClick={async () => await _lastTweet()} disabled={!veridaIsConnected || isFetchingTweet}>
+                Append Last Tweet
+              </Button>
           }
         </HStack>
 

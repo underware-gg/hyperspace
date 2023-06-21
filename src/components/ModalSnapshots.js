@@ -7,7 +7,7 @@ import {
 import { useRoomContext } from '@/hooks/RoomContext'
 import Snapshot from '@/components/Snapshot'
 import SnapshotSlug from '@/components/SnapshotSlug'
-import Button from '@/components/Button'
+import { Button } from '@/components/Button'
 
 const ModalSnapshots = ({
   disclosure,

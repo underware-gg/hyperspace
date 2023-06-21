@@ -5,7 +5,7 @@ import {
 } from '@chakra-ui/react'
 import { useVeridaContext } from '@/hooks/VeridaContext'
 import { useRoomContext } from '@/hooks/RoomContext'
-import Button from '@/components/Button'
+import { Button } from '@/components/Button'
 import { useSlugs } from '@/hooks/useSlugs'
 
 export const VeridaConnectMenu = ({

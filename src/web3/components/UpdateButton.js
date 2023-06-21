@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useHyperboxStateContract } from '@/web3/hooks/useHyperboxContract'
 import { useWrite } from '@/web3/hooks/useWrite'
-import Button from '@/components/Button'
+import { Button } from '@/components/Button'
 
 
 const UpdateButton = ({

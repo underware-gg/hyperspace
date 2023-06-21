@@ -7,7 +7,7 @@ import {
   Spacer,
   useDisclosure,
 } from '@chakra-ui/react'
-import Button from '@/components/Button'
+import { Button } from '@/components/Button'
 import Layout from '@/components/Layout'
 import ModalRoomCreate from '@/components/ModalRoomCreate'
 import ModalRoomSelector from '@/components/ModalRoomSelector'

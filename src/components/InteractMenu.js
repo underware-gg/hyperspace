@@ -13,7 +13,7 @@ import { DialogConfirm, useConfirmDisclosure } from '@/components/DialogConfirm'
 import ModalPortal from '@/components/ModalPortal'
 import ModalTrigger from '@/components/ModalTrigger'
 import ModalScreen from '@/components/ModalScreen'
-import Button from '@/components/Button'
+import { Button } from '@/components/Button'
 
 const InteractMenu = ({
   customTileset,

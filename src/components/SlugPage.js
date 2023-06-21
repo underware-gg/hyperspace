@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react'
 import Layout from '@/components/Layout'
 import Hyperbox from '@/components/Hyperbox'
-import Button from '@/components/Button'
+import { Button } from '@/components/Button'
 import ChatBox from '@/components/ChatBox'
 import TilesetSelector from '@/components/TilesetSelector'
 import ModalHelp from '@/components/ModalHelp'

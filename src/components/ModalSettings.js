@@ -14,7 +14,7 @@ import { useDocument } from '@/hooks/useDocument'
 import usePermission from '@/hooks/usePermission'
 import { PermissionsForm } from '@/components/PermissionsForm'
 import { TileInput, useInputValidator } from '@/components/Inputs'
-import Button from '@/components/Button'
+import { Button } from '@/components/Button'
 
 
 export const useSettingsDisclosure = (id) => {

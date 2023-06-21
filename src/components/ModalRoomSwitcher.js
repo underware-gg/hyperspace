@@ -15,7 +15,7 @@ import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
 import ModalRoomCreate from '@/components/ModalRoomCreate'
 import ModalRoomSelector from '@/components/ModalRoomSelector'
-import Button from '@/components/Button'
+import { Button } from '@/components/Button'
 
 const ModalRoomSwitcher = ({
   isOpen,

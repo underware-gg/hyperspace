@@ -8,7 +8,7 @@ import {
   useDisclosure,
   Spacer,
 } from '@chakra-ui/react'
-import Button from '@/components/Button'
+import { Button } from '@/components/Button'
 
 const _defaultOptions = {
   header: 'Action required',

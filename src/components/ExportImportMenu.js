@@ -3,7 +3,7 @@ import { HStack } from '@chakra-ui/react'
 import usePermission from '@/hooks/usePermission'
 import ModalExporter from '@/components/ModalExporter'
 import ModalImporter from '@/components/ModalImporter'
-import Button from '@/components/Button'
+import { Button } from '@/components/Button'
 
 const ExportImportMenu = () => {
   const [showExporter, setShowExporter] = useState(false)
