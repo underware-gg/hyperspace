@@ -8,6 +8,7 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { useRoomContext } from '@/hooks/RoomContext'
+import { SettingsActions, useSettingsContext } from '@/hooks/SettingsContext'
 import { useDocument, useLocalDocument } from '@/hooks/useDocument'
 import { useVeridaContext } from '@/hooks/VeridaContext'
 import { useMetadata } from '@/hooks/useMetadata'
@@ -135,31 +136,42 @@ const ScreenEditorDocument = ({
   }
 
   // editor options
-  const [lineNumbers, setLineNumbers] = useState(true)
-  const [wordWrap, setWordWrap] = useState(false)
-  const [miniMap, setMiniMap] = useState(false)
+  const {
+    editorPreview,
+    editorLineNumbers,
+    editorWordWrap,
+    editorMiniMap,
+    dispatchSettings,
+  } = useSettingsContext()
 
   return (
     <div className='FillParent'>
       <VStack align='stretch'>
         <HStack>
-          <Button size='sm' toggleState={lineNumbers} onClick={() => setLineNumbers(!lineNumbers)}>
+          <Button size='sm' toggleState={editorLineNumbers} onClick={() => dispatchSettings(SettingsActions.SET_EDITOR_LINE_NUMBERS, !editorLineNumbers)}>
             #Lines
           </Button>
-          <Button size='sm' toggleState={wordWrap} onClick={() => setWordWrap(!wordWrap)}>
+          <Button size='sm' toggleState={editorWordWrap} onClick={() => dispatchSettings(SettingsActions.SET_EDITOR_WORD_WRAP, !editorWordWrap)}>
             Wrap
           </Button>
-          <Button size='sm' toggleState={miniMap} onClick={() => setMiniMap(!miniMap)}>
+          <Button size='sm' toggleState={editorMiniMap} onClick={() => dispatchSettings(SettingsActions.SET_EDITOR_MINI_MAP, !editorMiniMap)}>
             MiniMap
           </Button>
 
           <Spacer />
 
           {veridaIsConnected &&
+            <>
               <Button size='sm' onClick={async () => await _lastTweet()} disabled={!veridaIsConnected || isFetchingTweet}>
                 Append Last Tweet
               </Button>
+              <Spacer />
+            </>
           }
+
+          <Button size='sm' toggleState={editorPreview} onClick={() => dispatchSettings(SettingsActions.SET_EDITOR_PREVIEW, !editorPreview)}>
+            Preview
+          </Button>
         </HStack>
 
         <div className='CodeEditor ScrollContainer' ref={outerDiv}>
@@ -181,9 +193,9 @@ const ScreenEditorDocument = ({
                 onChange={(value) => _onContentChange(value)}
                 disabled={disabled}
                 readOnly={readOnly}
-                lineNumbers={lineNumbers}
-                wordWrap={wordWrap}
-                miniMap={miniMap}
+                lineNumbers={editorLineNumbers}
+                wordWrap={editorWordWrap}
+                miniMap={editorMiniMap}
               />
               // <CodeEditor
               //   language={language}

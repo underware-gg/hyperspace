@@ -3,6 +3,7 @@ import { WagmiConfig, createClient } from 'wagmi'
 import { mainnet, goerli } from 'wagmi/chains'
 import { ConnectKitProvider, getDefaultClient } from 'connectkit'
 import { ChakraProvider } from '@chakra-ui/react'
+import { SettingsProvider } from '@/hooks/SettingsContext'
 import { RoomProvider } from '@/hooks/RoomContext'
 import { VeridaProvider } from '@/hooks/VeridaContext'
 import Head from '@/components/Head'
@@ -26,10 +27,12 @@ const MyApp = ({ Component, pageProps }) => (
     <ConnectKitProvider theme='midnight' customTheme={connectKitTheme}>
       <ChakraProvider theme={theme}>
         <VeridaProvider>
-          <RoomProvider>
-            <Head />
-            <Component {...pageProps} />
-          </RoomProvider>
+          <SettingsProvider>
+            <RoomProvider>
+              <Head />
+              <Component {...pageProps} />
+            </RoomProvider>
+          </SettingsProvider>
         </VeridaProvider>
       </ChakraProvider>
     </ConnectKitProvider>

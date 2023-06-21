@@ -7,6 +7,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react'
+import { useSettingsContext } from '@/hooks/SettingsContext'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
 import useGameCanvas from '@/hooks/useGameCanvas'
@@ -22,6 +23,7 @@ import { makeRoute } from '@/core/routes'
 const ModalScreenEdit = ({
   screenId,
 }) => {
+  const { editorPreview } = useSettingsContext()
   const { remoteStore, localStore, slug, Screen } = useRoomContext()
   const { gameCanvas } = useGameCanvas()
   const { permission, isOwner, canEdit, canView } = usePermission(screenId)
@@ -69,8 +71,7 @@ const ModalScreenEdit = ({
       <ModalOverlay />
       <ModalContent
         // maxW='56rem'
-        // backgroundColor='#000a'
-        backgroundColor='#000'
+        backgroundColor={editorPreview ? '#000' : '#000a'}
       >
         <ModalHeader>
           <HStack>
@@ -115,12 +116,16 @@ const ModalScreenEdit = ({
             </Tabs>
 
             <VStack className='ScreenModalColumnRight Padded'>
-              <div className='ScreenModalMapPreview'>
-                <MapPreview store={remoteStore} />
-              </div>
-              <div className='ScreenModalPreview'>
-                <ScreenComponent screenId={screenId} />
-              </div>
+              {editorPreview &&
+                <>
+                  <div className='ScreenModalMapPreview'>
+                    <MapPreview store={remoteStore} />
+                  </div>
+                  <div className='ScreenModalPreview'>
+                    <ScreenComponent screenId={screenId} />
+                  </div>
+                </>
+              }
             </VStack>
 
           </div>
