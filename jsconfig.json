@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    // Detect javascript errors
+    // "checkJs": true,
+    // "jsx": "react",
     // allows VSCode to prompt for path rename when files are moved/renamed
     "baseUrl": ".",
     // import path shortcuts
