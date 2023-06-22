@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useEnsName as wagmiEnsName } from 'wagmi'
 import { validateAddress, formatAddress } from '@/web3/utils'
 

@@ -12,19 +12,19 @@ const FileSelectButton = ({
   onSelect = (fileObject) => { },
   accept,
 }) => {
-  const inputRef = useRef();
+  const inputRef = useRef(null)
 
   function onChange(e) {
     const files = e.target.files
     if (files?.length > 0) {
-      onSelect(files[0]);
+      onSelect(files[0])
     }
   }
 
   return (
     <HStack>
       {textBefore && <Text>{textBefore}</Text>}
-      <Button variant={variant} disabled={disabled} onClick={() => inputRef.current.click()}>
+      <Button variant={variant} disabled={disabled} onClick={() => inputRef.current?.click()}>
         {label}
       </Button>
       <input type='file'

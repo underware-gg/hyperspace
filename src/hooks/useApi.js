@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 import useSWR from 'swr'
 import { getFilenameExtensionFromUrl } from '@/core/utils'
 

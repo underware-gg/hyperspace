@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { SyncIcon } from '@/components/Icons'
 import { validateRoomSlug } from '@/core/utils'
 import { validateSlug } from '@rsodre/crawler-data'

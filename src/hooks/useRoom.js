@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid'
-import { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { RoomContext } from '@/hooks/RoomContext'
 import Room from '@/core/room'
 import Store from '@/core/store'

@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { useNetwork } from 'wagmi'
 
 const HyperboxStateToken = require('@/web3/artifacts/HyperboxStateToken.json')

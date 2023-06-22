@@ -8,7 +8,7 @@ const Footer = () => {
       p='0.5em'
       pb='0.75em'
       display='flex'
-      align='center'
+      alignContent='center'
       justifyContent='center'
       borderWidth='1px 0 0 0'
       >

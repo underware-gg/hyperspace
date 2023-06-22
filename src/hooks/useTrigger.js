@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useDocument } from '@/hooks/useDocument'
 
 const useTrigger = (id) => {

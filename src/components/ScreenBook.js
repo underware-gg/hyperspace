@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from 'react'
+import React, { useState, useMemo, useRef } from 'react'
 import { getFilenameExtensionFromUrl } from '@/core/utils'
 import { useRedirectUrl } from '@/hooks/useApi'
 import { useRoomContext } from '@/hooks/RoomContext'

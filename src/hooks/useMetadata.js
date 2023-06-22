@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { useSlugs } from '@/hooks/useSlugs'
 import { useMetadataDocument } from '@/hooks/useDocument'
 var stringify = require('json-stringify')

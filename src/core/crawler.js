@@ -10,7 +10,7 @@ export const crawlerSlugToChamberData = (slug) => {
     return null
   }
   const coord = Crawler.slugToCoord(slug)
-  const chamberData = Crawler.getChamberData(coord)
+  const chamberData = Crawler.getChamberData(coord.toString())
   return chamberData
 }
 

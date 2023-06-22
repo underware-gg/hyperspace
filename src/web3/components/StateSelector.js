@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Select, useMenu } from '@chakra-ui/react'
 import { useAccount } from 'wagmi'
 import { useHyperboxStateContract } from '@/web3/hooks/useHyperboxContract'

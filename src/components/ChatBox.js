@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Box,
   VStack, HStack,
@@ -54,7 +54,7 @@ const ChatBox = () => {
 
   return (
     <VStack className='ChatDrawer'>
-      <Box className='ChatRow' align='center'>
+      <Box className='ChatRow' alignContent='center'>
         <HStack>
           <b>ROOM CHAT</b>
           <Spacer />

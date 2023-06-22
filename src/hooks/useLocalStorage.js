@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 import useLocalStorageState from 'use-local-storage-state'
 
 const _noSerializer = {

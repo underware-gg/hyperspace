@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useRemoteDocumentIds } from '@/hooks/useDocumentIds'
 import { useDocument } from '@/hooks/useDocument'

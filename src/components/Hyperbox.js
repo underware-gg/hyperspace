@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useContext } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 import { useLocalStorageValue } from '@/hooks/useLocalStorage'
 import { RoomContext } from '@/hooks/RoomContext'
 import useGameCanvas from '@/hooks/useGameCanvas'
@@ -90,8 +90,6 @@ const Hyperbox = ({
         <canvas
           id='game'
           ref={canvas2dRef}
-          border='1px'
-          borderradius={4}
           width={process.env.RENDER_WIDTH}
           height={process.env.RENDER_HEIGHT}
           style={{
@@ -99,7 +97,7 @@ const Hyperbox = ({
             height: '100%',
             display: view3d ? 'none' : 'block',
           }}
-          tabIndex='1'
+          tabIndex={1}
         >
           Canvas not supported by your browser.
         </canvas>
@@ -109,8 +107,6 @@ const Hyperbox = ({
         <canvas
           id='game3D'
           ref={canvas3dRef}
-          border='1px'
-          borderradius={4}
           width={process.env.RENDER_WIDTH}
           height={process.env.RENDER_HEIGHT}
           style={{
@@ -118,7 +114,7 @@ const Hyperbox = ({
             height: '100%',
             display: view3d ? 'block' : 'none',
           }}
-          tabIndex='2'
+          tabIndex={2}
         >
           Canvas not supported by your browser.
         </canvas>

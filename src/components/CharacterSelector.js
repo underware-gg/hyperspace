@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { HStack, Select, Spacer } from '@chakra-ui/react'
 import { spritesheets } from '@/core/texture-data'
 import { useRoomContext } from '@/hooks/RoomContext'
