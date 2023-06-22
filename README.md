@@ -15,7 +15,7 @@ Install [node.js](https://nodejs.org/en/download) 16+
 To run a local development server...
 
 ```bash
-yarn run dev
+npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser and there you have it!
