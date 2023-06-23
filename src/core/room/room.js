@@ -1,9 +1,10 @@
 import {
-  createClientRoom,
+  ClientRoom,
   Store,
   importCrdtData,
   importDataTypes,
 } from 'hyperbox-sdk'
+import { getServerUrl } from '@/core/utils/config'
 import Actions from '@/core/room/actions'
 import Renderer2D from '@/core/rendering/renderer2D'
 import Renderer3D from '@/core/rendering/renderer3D'
@@ -83,7 +84,7 @@ class Room {
 
     // room client: the actual room in use, synched with the server
     // can be null
-    this.clientRoom = (this.slug) ? createClientRoom({
+    this.clientRoom = (this.slug) ? new ClientRoom(getServerUrl(), {
       slug: this.slug,
       store: this.remoteStore,
       roomId: this.roomId,
@@ -91,7 +92,7 @@ class Room {
 
     // session client: transient data (player, editor)
     // can be null
-    this.clientSession = (this.slug && openSession) ? createClientRoom({
+    this.clientSession = (this.slug && openSession) ? new ClientRoom(getServerUrl(), {
       slug: `${this.slug}::session`,
       store: this.sessionStore,
       roomId: this.roomId,
@@ -99,7 +100,7 @@ class Room {
 
     // agents client: persistent agents data (profiles)
     // cannot be null
-    this.clientAgent = (openAgents) ? createClientRoom({
+    this.clientAgent = (openAgents) ? new ClientRoom(getServerUrl(), {
       slug: ':agents',
       store: this.agentStore,
       roomId: this.roomId,
@@ -107,7 +108,7 @@ class Room {
 
     this.agentId = this.clientAgent?.agentId ?? this.clientRoom?.agentId ?? null
 
-    this.clientMetadata = (this.metadataSlug) ? createClientRoom({
+    this.clientMetadata = (this.metadataSlug) ? new ClientRoom(getServerUrl(), {
       slug: this.metadataSlug,
       store: this.metadataStore,
       roomId: this.roomId,
@@ -208,7 +209,7 @@ class Room {
     if (this.sourceSlug && this.sourceSlug != this.slug) {
       let sourceStore = new Store()
 
-      let sourceClient = createClientRoom({
+      let sourceClient = new ClientRoom(getServerUrl(), {
         slug: this.sourceSlug,
         store: sourceStore,
         roomId: this.roomId,

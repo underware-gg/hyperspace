@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { nanoid } from 'nanoid'
 import {
-  createClientRoom,
+  ClientRoom,
   Store,
 } from 'hyperbox-sdk'
+import { getServerUrl } from '@/core/utils/config'
 import { RoomContext } from '@/hooks/RoomContext'
 import Room from '@/core/room/room'
 
@@ -73,7 +74,7 @@ const useClientRoom = (slug) => {
 
     if (slug && agentId) {
       const _store = new Store()
-      _clientRoom = createClientRoom({
+      _clientRoom = new ClientRoom(getServerUrl(), {
         slug,
         store: _store,
         agentId,

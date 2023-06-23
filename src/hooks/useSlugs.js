@@ -1,9 +1,8 @@
 import React, { useMemo } from 'react'
 import {
-  getServerUrl,
-  isProductionServer,
   validateRoomSlug,
 } from 'hyperbox-sdk'
+import { getServerUrl, isProductionServer } from '@/core/utils/config'
 import { useRouter } from 'next/router'
 import { SyncIcon } from '@/components/Icons'
 import { validateSlug } from '@rsodre/crawler-data'
