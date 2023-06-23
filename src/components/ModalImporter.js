@@ -7,14 +7,18 @@ import {
   Text,
   Input,
 } from '@chakra-ui/react'
-import { isCrdtData, importCrdtData, importDataTypes } from '@/core/export-import'
+import {
+  Store,
+  isCrdtData,
+  importCrdtData,
+  importDataTypes,
+} from 'hyperbox-sdk'
 import { useRoomContext } from '@/hooks/RoomContext'
 import usePermission from '@/hooks/usePermission'
 import RequestSignInButton from '@/components/RequestSignInButton'
 import FileSelectButton from '@/components/FileSelectButton'
 import { Button } from '@/components/Button'
 import Snapshot from '@/components/Snapshot'
-import Store from '@/core/store'
 // Verida
 import { VeridaRestoreButton } from '@/components/Verida'
 import { useVeridaContext } from '@/hooks/VeridaContext'
@@ -24,7 +28,7 @@ import { useHyperboxState } from '@/web3/hooks/useHyperboxState'
 import StateSelector from '@/web3/components/StateSelector'
 // Crawler
 import * as Crawler from '@rsodre/crawler-data'
-import { crawlerSlugToChamberData, crawlerSlugToRoom } from '@/core/crawler'
+import { crawlerSlugToChamberData, crawlerSlugToRoom } from '@/core/utils/crawler'
 
 const useImportedData = (data) => {
   const [store, setStore] = useState(null)

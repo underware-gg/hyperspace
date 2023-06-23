@@ -20,8 +20,8 @@ import { useSlugs } from '@/hooks/useSlugs'
 import { useRoomContext } from '@/hooks/RoomContext'
 import usePermission from '@/hooks/usePermission'
 import { ModalSettings, useSettingsDisclosure } from '@/components/ModalSettings'
-import { makeRoute } from '@/core/routes'
-import { crawlerSlugToRoom } from '@/core/crawler'
+import { makeRoute } from '@/core/utils/routes'
+import { crawlerSlugToRoom } from '@/core/utils/crawler'
 
 const SlugPage = () => {
   const router = useRouter()

@@ -7,7 +7,7 @@ import {
 } from '@chakra-ui/react'
 import useProfile from '@/hooks/useProfile'
 import useTexture from '@/hooks/useTexture'
-import { textureData } from '@/core/texture-data'
+import { textureData } from '@/core/utils/texture-data'
 
 const Avatar = ({
   isLoading = false,

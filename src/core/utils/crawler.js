@@ -2,7 +2,7 @@ import * as Crawler from '@rsodre/crawler-data'
 import { MAX_MAP_SIZE } from '@/core/components/map'
 import { TilesetPaths } from './texture-data'
 import { nanoid } from 'nanoid'
-import { TYPE } from './components/screen'
+import { TYPE } from '../components/screen'
 
 export const crawlerSlugToChamberData = (slug) => {
   if (!Crawler.validateSlug(slug)) {

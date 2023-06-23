@@ -1,9 +1,11 @@
-import { nanoid } from 'nanoid'
 import React, { useState, useEffect, useContext } from 'react'
+import { nanoid } from 'nanoid'
+import {
+  createClientRoom,
+  Store,
+} from 'hyperbox-sdk'
 import { RoomContext } from '@/hooks/RoomContext'
-import Room from '@/core/room'
-import Store from '@/core/store'
-import * as ClientRoom from '@/core/networking'
+import Room from '@/core/room/room'
 
 //-----------------------------------------
 // Open a full room inside a <RoomProvider>
@@ -71,7 +73,7 @@ const useClientRoom = (slug) => {
 
     if (slug && agentId) {
       const _store = new Store()
-      _clientRoom = ClientRoom.create({
+      _clientRoom = createClientRoom({
         slug,
         store: _store,
         agentId,

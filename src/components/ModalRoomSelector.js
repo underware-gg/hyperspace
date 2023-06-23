@@ -6,7 +6,7 @@ import {
   VStack,
   Spacer,
 } from '@chakra-ui/react'
-import { makeRoute } from '@/core/routes'
+import { makeRoute } from '@/core/utils/routes'
 import { MapPreviewFromSlugToRoomContext } from '@/components/Map2D'
 import SlugSelector from '@/components/SlugSelector'
 import { Button } from '@/components/Button'

@@ -63,7 +63,7 @@ const Hyperbox = ({
       setGame(null)
       setIsLoading(true)
       // console.log(`[${slug}] <Hyperbox> import...`, isLoading, canvasesReady, slug, agentId)
-      import('src/core/game').then(async ({ default: Game }) => {
+      import('@/core/room/game').then(async ({ default: Game }) => {
         console.log(`[${slug}] <Hyperbox> init...`)
         const _game = new Game()
         await _game.init({

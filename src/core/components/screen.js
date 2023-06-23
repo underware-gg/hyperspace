@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import RoomCollection from '@/core/interfaces/RoomCollection'
 import { HTMLMesh } from '@/core/rendering/HTMLMesh'
-import { getTextureImageByName } from '@/core/textures'
+import { getTextureImageByName } from '@/core/utils/textures'
 import { floors } from '@/core/components/map'
 
 export const TYPE = {

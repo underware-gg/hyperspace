@@ -8,8 +8,10 @@ import {
   Input,
   useDisclosure,
 } from '@chakra-ui/react'
-import { validateRoomSlug } from '@/core/utils'
-import { makeRoute } from '@/core/routes'
+import {
+  validateRoomSlug,
+} from 'hyperbox-sdk'
+import { makeRoute } from '@/core/utils/routes'
 import { useSlugs } from '@/hooks/useSlugs'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'

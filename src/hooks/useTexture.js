@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { getTextureByName, getTextureSprite } from '@/core/textures'
+import { getTextureByName, getTextureSprite } from '@/core/utils/textures'
 
 const useTexture = (textureName) => {
   const [texture, setTexture] = useState(null)

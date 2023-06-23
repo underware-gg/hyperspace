@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import RoomCollection from '@/core/interfaces/RoomCollection'
-import { getTextureImageByName } from '@/core/textures'
+import { getTextureImageByName } from '@/core/utils/textures'
 import { floors } from '@/core/components/map'
 
 class Trigger extends RoomCollection {

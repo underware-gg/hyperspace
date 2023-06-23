@@ -1,9 +1,12 @@
-import { useRouter } from 'next/router'
 import React, { useMemo } from 'react'
+import {
+  getServerUrl,
+  isProductionServer,
+  validateRoomSlug,
+} from 'hyperbox-sdk'
+import { useRouter } from 'next/router'
 import { SyncIcon } from '@/components/Icons'
-import { validateRoomSlug } from '@/core/utils'
 import { validateSlug } from '@rsodre/crawler-data'
-import { getServerUrl, isProductionServer } from '@/core/networking/config'
 
 const useSlugs = () => {
   const router = useRouter()

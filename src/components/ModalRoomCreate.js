@@ -8,13 +8,15 @@ import {
   Text,
   Spacer,
 } from '@chakra-ui/react'
+import {
+  validateRoomSlug,
+} from 'hyperbox-sdk'
 import { useStoreDocument } from '@/hooks/useDocument'
-import { validateRoomSlug } from '@/core/utils'
 import { useDbRooms } from '@/hooks/useApi'
 import { useClientRoom } from '@/hooks/useRoom'
 import { Button } from '@/components/Button'
 import { useInputValidator } from '@/components/Inputs'
-import { makeRoute } from '@/core/routes'
+import { makeRoute } from '@/core/utils/routes'
 import { DEFAULT_ENTRY } from '@/core/components/map'
 
 const ModalRoomCreate = ({

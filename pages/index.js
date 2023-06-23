@@ -11,10 +11,15 @@ import { Button } from '@/components/Button'
 import Layout from '@/components/Layout'
 import ModalRoomCreate from '@/components/ModalRoomCreate'
 import ModalRoomSelector from '@/components/ModalRoomSelector'
+import { pingHyperboxSdk } from 'hyperbox-sdk'
 
 const HomePage = ({ slug }) => {
   const disclosureNewRoom = useDisclosure()
   const disclosureSelectRoom = useDisclosure()
+
+  useEffect(() => {
+    pingHyperboxSdk()
+  }, [])
 
   return (
     <Layout profile backgroundImage={'/gravity.jpg'}>

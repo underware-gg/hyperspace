@@ -1,8 +1,12 @@
 import * as THREE from 'three'
 import RoomCollection from '@/core/interfaces/RoomCollection'
-import { getTextureSprite } from '@/core/textures'
-import { CONST, clamp, clampRadians, deepCompare, deepCopy, toDegrees } from '@/core/utils'
-import { getOverlappingTiles, rectanglesOverlap } from '@/core/collisions'
+import {
+  deepCopy,
+  deepCompare,
+} from 'hyperbox-sdk'
+import { getTextureSprite } from '@/core/utils/textures'
+import { CONST, clamp, clampRadians } from '@/core/utils/utils'
+import { getOverlappingTiles, rectanglesOverlap } from '@/core/utils/collisions'
 import { floors } from '@/core/components/map'
 import Cookies from 'universal-cookie'
 

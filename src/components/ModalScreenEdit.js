@@ -18,7 +18,7 @@ import ScreenEditor from '@/components/ScreenEditor'
 import { PermissionsForm } from '@/components/PermissionsForm'
 import { MapPreview } from '@/components/Map2D'
 import { ScreenComponent } from '@/components/Screens'
-import { makeRoute } from '@/core/routes'
+import { makeRoute } from '@/core/utils/routes'
 
 const ModalScreenEdit = ({
   screenId,

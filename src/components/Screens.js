@@ -9,7 +9,7 @@ import { ScreenBook } from '@/components/ScreenBook'
 import Markdown from '@/components/Markdown'
 import MonacoEditor from '@/components/MonacoEditor'
 import { TYPE } from '@/core/components/screen'
-import { applyScrollProg } from '@/core/utils'
+import { applyScrollProg } from '@/core/utils/utils'
 
 const Screens = ({ }) => {
   const { localStore, actions } = useRoomContext()

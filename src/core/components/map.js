@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import RoomCollection from '@/core/interfaces/RoomCollection'
-import { getTextureImageByName } from '@/core/textures'
-import { defaultTileset } from '@/core/texture-data'
+import { getTextureImageByName } from '@/core/utils/textures'
+import { defaultTileset } from '@/core/utils/texture-data'
 import { isPowerOfTwo } from 'three/src/math/MathUtils'
 
 export const MIN_MAP_SIZE = 5

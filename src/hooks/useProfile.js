@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useLocalDocument, useAgentDocument } from '@/hooks/useDocument'
-import { getFilenameFromUrl } from '@/core/utils'
+import { getFilenameFromUrl } from '@/core/utils/utils'
 
 const useProfile = () => {
   const { agentId, Profile } = useRoomContext()

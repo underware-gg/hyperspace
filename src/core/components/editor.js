@@ -1,8 +1,8 @@
 import { nanoid } from 'nanoid'
 import * as THREE from 'three'
 import RoomCollection from '@/core/interfaces/RoomCollection'
-import { boxGeometryToLineSegmentsGeometry } from '@/core/rendering/mesh-utils'
-import { getFilenameFromUrl } from '@/core/utils'
+import { boxGeometryToLineSegmentsGeometry } from '@/core/rendering/utils'
+import { getFilenameFromUrl } from '@/core/utils/utils'
 import { TYPE } from '@/core/components/screen'
 
 const normalMatrix = new THREE.Matrix3() // create once and reuse

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { HStack, Select, Spacer } from '@chakra-ui/react'
-import { spritesheets } from '@/core/texture-data'
+import { spritesheets } from '@/core/utils/texture-data'
 import { useRoomContext } from '@/hooks/RoomContext'
 import useGameCanvas from '@/hooks/useGameCanvas'
 import useProfile from '@/hooks/useProfile'

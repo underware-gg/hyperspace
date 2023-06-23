@@ -11,7 +11,7 @@ import {
   Text,
   Input,
 } from '@chakra-ui/react'
-import { clamp, map } from '@/core/utils'
+import { clamp, map } from '@/core/utils/utils'
 
 const labelStyles = {
   mt: '2',

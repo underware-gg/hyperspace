@@ -1,5 +1,5 @@
 import RoomCollection from '@/core/interfaces/RoomCollection'
-import { getTextureByName, getAgentTextureName } from '@/core/textures'
+import { getTextureByName, getAgentTextureName } from '@/core/utils/textures'
 import { WALLET } from '@/core/components/wallet'
 
 //

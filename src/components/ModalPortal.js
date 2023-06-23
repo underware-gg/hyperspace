@@ -6,12 +6,14 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react'
+import {
+  validateRoomSlug,
+} from 'hyperbox-sdk'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
 import useGameCanvas from '@/hooks/useGameCanvas'
 import { TileInput, useInputValidator } from '@/components/Inputs'
 import { DEFAULT_ENTRY } from '@/core/components/map'
-import { validateRoomSlug } from '@/core/utils'
 import { Button } from '@/components/Button'
 
 const ModalPortal = ({

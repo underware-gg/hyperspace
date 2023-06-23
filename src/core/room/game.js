@@ -1,4 +1,4 @@
-import Room from '@/core/room'
+import Room from '@/core/room/room'
 
 class Game {
   constructor() {

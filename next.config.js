@@ -11,9 +11,10 @@ const nextConfig = {
   // reactStrictMode: true, // helps to debug React
   swcMinify: true,
   env: {
-    SERVER_URL: process.env.SERVER_URL,
     ENV: process.env.ENV,
-    DEV: process.env.ENV === 'dev',
+    DEV: (process.env.ENV === 'dev'),
+    SERVER_URL: process.env.SERVER_URL,
+    CLIENT_URL: 'https://hyperspace.stage.fundaomental.com/',
     TILE_SIZE: 32,  // pixels
     CANVAS_WIDTH,   // pixels
     CANVAS_HEIGHT,  // pixels

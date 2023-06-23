@@ -6,7 +6,10 @@ import {
   Spacer,
   HStack,
 } from '@chakra-ui/react'
-import { exportCrdtData, exportDataTypes } from '@/core/export-import'
+import {
+  exportCrdtData,
+  exportDataTypes,
+} from 'hyperbox-sdk'
 import { useRoomContext } from '@/hooks/RoomContext'
 import usePermission from '@/hooks/usePermission'
 import RequestSignInButton from '@/components/RequestSignInButton'

@@ -1,8 +1,6 @@
 import React, { createContext, useReducer, useContext, useEffect } from 'react'
 import { useVeridaProfile } from '@/hooks/useVeridaProfile'
-import { useLocalStorageValue } from '@/hooks/useLocalStorage'
-import { getClientUrl } from '@/core/networking/config'
-import { makeRoute } from '@/core/routes'
+import { makeRoute } from '@/core/utils/routes'
 
 //--------------------------------
 // Context
@@ -88,7 +86,7 @@ const VeridaProvider = ({
     const _initVerida = async () => {
       dispatchVerida(VeridaActions.setIsConnecting, true)
 
-      const { VeridaUser, getPublicProfile } = (await import('@/core/verida'))
+      const { VeridaUser, getPublicProfile } = (await import('@/core/utils/verida'))
       dispatchVerida(VeridaActions.setVeridaUser, VeridaUser)
       dispatchVerida(VeridaActions.setGetPublicProfile, getPublicProfile)
       _VeridaUser = VeridaUser
@@ -170,7 +168,7 @@ export const useVeridaContext = () => {
 
   const inviteFriend = async (slug) => {
     const url = makeRoute({
-      url: getClientUrl(),
+      url: process.env.CLIENT_URL,
       slug,
     })
     const recipientDid = window.prompt('DID to invite', 'did:vda:....')

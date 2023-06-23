@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
 import * as THREE from 'three'
 import RoomCollection from '@/core/interfaces/RoomCollection'
-import { getTextureImageByName } from '@/core/textures'
+import { getTextureImageByName } from '@/core/utils/textures'
 import Cookies from 'universal-cookie'
 
 class Portal extends RoomCollection {

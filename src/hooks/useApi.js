@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import useSWR from 'swr'
-import { getFilenameExtensionFromUrl } from '@/core/utils'
+import { getFilenameExtensionFromUrl } from '@/core/utils/utils'
 
 const fetcher = (...args) => fetch(...args).then(res => res.json())
 

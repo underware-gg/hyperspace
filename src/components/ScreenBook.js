@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef } from 'react'
-import { getFilenameExtensionFromUrl } from '@/core/utils'
+import { getFilenameExtensionFromUrl } from '@/core/utils/utils'
 import { useRedirectUrl } from '@/hooks/useApi'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument } from '@/hooks/useDocument'
@@ -67,7 +67,7 @@ export const ScreenBookImage = ({
 import { Document, Page, pdfjs } from 'react-pdf'
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
-import { clamp, map } from '@/core/utils'
+import { clamp, map } from '@/core/utils/utils'
 
 // fix bug!...
 // https://github.com/wojtekmaj/react-pdf/issues/680

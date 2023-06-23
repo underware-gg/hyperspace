@@ -1,5 +1,5 @@
-import { extendTheme, defineStyleConfig } from '@chakra-ui/react'
-import { deepMerge } from '@/core/utils'
+import { deepMerge } from 'hyperbox-sdk'
+import { extendTheme } from '@chakra-ui/react'
 
 // chakra-io theming
 // https://chakra-ui.com/docs/styled-system/customize-theme

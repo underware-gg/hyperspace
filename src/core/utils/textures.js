@@ -1,7 +1,9 @@
+import {
+  deepCopy,
+} from 'hyperbox-sdk'
+import { textureData, TilesetPaths, spritesheets } from '@/core/utils/texture-data'
+import { hashCode } from '@/core/utils/utils'
 import * as THREE from 'three'
-import { textureData, TilesetPaths, spritesheets } from '@/core/texture-data'
-import { deepCopy } from '@/core/merge/tiny-merge'
-import { hashCode } from '@/core/utils'
 
 let textures = {}
 let _loadPromise

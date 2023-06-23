@@ -1,7 +1,10 @@
-import Actions from '@/core/actions'
-import * as ClientRoom from '@/core/networking'
-import { loadTextures } from '@/core/textures'
-import { importCrdtData, importDataTypes } from '@/core/export-import'
+import {
+  createClientRoom,
+  Store,
+  importCrdtData,
+  importDataTypes,
+} from 'hyperbox-sdk'
+import Actions from '@/core/room/actions'
 import Renderer2D from '@/core/rendering/renderer2D'
 import Renderer3D from '@/core/rendering/renderer3D'
 import Portal from '@/core/components/portal'
@@ -15,7 +18,7 @@ import Settings from '@/core/components/settings'
 import Tileset from '@/core/components/tileset'
 import Map from '@/core/components/map'
 import Editor from '@/core/components/editor'
-import Store from '@/core/store'
+import { loadTextures } from '@/core/utils/textures'
 
 let _roomCounter = 0
 let _openRooms = 0
@@ -72,7 +75,7 @@ class Room {
     this.canvas3d = canvas3d
 
     // load all async resources beforehand
-    const { VeridaUser } = (await import('@/core/verida'))
+    const { VeridaUser } = (await import('@/core/utils/verida'))
     await loadTextures()
 
     this.renderer2D.init(this.canvas2d)
@@ -80,7 +83,7 @@ class Room {
 
     // room client: the actual room in use, synched with the server
     // can be null
-    this.clientRoom = (this.slug) ? ClientRoom.create({
+    this.clientRoom = (this.slug) ? createClientRoom({
       slug: this.slug,
       store: this.remoteStore,
       roomId: this.roomId,
@@ -88,7 +91,7 @@ class Room {
 
     // session client: transient data (player, editor)
     // can be null
-    this.clientSession = (this.slug && openSession) ? ClientRoom.create({
+    this.clientSession = (this.slug && openSession) ? createClientRoom({
       slug: `${this.slug}::session`,
       store: this.sessionStore,
       roomId: this.roomId,
@@ -96,7 +99,7 @@ class Room {
 
     // agents client: persistent agents data (profiles)
     // cannot be null
-    this.clientAgent = (openAgents) ? ClientRoom.create({
+    this.clientAgent = (openAgents) ? createClientRoom({
       slug: ':agents',
       store: this.agentStore,
       roomId: this.roomId,
@@ -104,7 +107,7 @@ class Room {
 
     this.agentId = this.clientAgent?.agentId ?? this.clientRoom?.agentId ?? null
 
-    this.clientMetadata = (this.metadataSlug) ? ClientRoom.create({
+    this.clientMetadata = (this.metadataSlug) ? createClientRoom({
       slug: this.metadataSlug,
       store: this.metadataStore,
       roomId: this.roomId,
@@ -205,7 +208,7 @@ class Room {
     if (this.sourceSlug && this.sourceSlug != this.slug) {
       let sourceStore = new Store()
 
-      let sourceClient = ClientRoom.create({
+      let sourceClient = createClientRoom({
         slug: this.sourceSlug,
         store: sourceStore,
         roomId: this.roomId,
