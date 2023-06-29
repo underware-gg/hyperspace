@@ -12,13 +12,10 @@ class RoomCollection extends RoomMate {
   }
 
   exists(id) {
-    if (id == null) return false
-    const data = this.remoteStore.getDocument(this.type, id)
-    return data !== null
+    return this.remoteStore.hasDocument(this.type, id)
   }
 
   get(id) {
-    if (id == null) return null
     return this.remoteStore.getDocument(this.type, id)
   }
 
@@ -34,18 +31,11 @@ class RoomCollection extends RoomMate {
   }
 
   upsert(id, newData, checkPermission = false) {
-    if (id == null) return
-    let data = this.remoteStore.getDocument(this.type, id)
-    data = {
-      ...(data ?? {}),
-      ...newData,
-    }
     if (checkPermission && !this.canEdit(id)) {
       console.warn(`No permission to create/update [${this.type}] (${id})`)
       return
     }
-    this.remoteStore.setDocument(this.type, id, data)
-    return data
+    return this.remoteStore.upsertDocument(this.type, id, newData)
   }
 
   createAtPosition(id, data, x, y, z=0) {
