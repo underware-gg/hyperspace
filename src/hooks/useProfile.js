@@ -3,7 +3,7 @@ import { useRoomContext } from '@/hooks/RoomContext'
 import { useLocalDocument, useAgentDocument } from '@/hooks/useDocument'
 import { getFilenameFromUrl } from '@/core/utils/utils'
 
-const useProfile = () => {
+const useProfile = (defaultName = '...') => {
   const { agentId, Profile } = useRoomContext()
   const [profileName, setProfileName] = useState(null)
   const [characterName, setCharacterName] = useState(null)
@@ -32,7 +32,7 @@ const useProfile = () => {
   return {
     profileId,
     walletType: wallet?.walletType ?? null,
-    profileName: profileName ?? characterName ?? '...',
+    profileName: profileName ?? characterName ?? defaultName,
     profileAvatarUrl,
     profileCharacterUrl,
     view3d: profile?.view3d ?? false,

@@ -9,6 +9,7 @@ import { useRoomContext } from '@/hooks/RoomContext'
 import { useSlugs } from '@/hooks/useSlugs'
 import { ChatDialog, OpenAISetup, useKeys } from 'endlessquestagent'
 import { Button } from '@/components/Button'
+import useProfile from '@/hooks/useProfile'
 
 
 const ModalQuestAgent = ({
@@ -18,6 +19,7 @@ const ModalQuestAgent = ({
   const { isOpen, onOpen, onClose } = disclosure
   const { slug } = useSlugs()
   const { metadataStore } = useRoomContext()
+  const { profileName } = useProfile(null)
 
   useEffect(() => {
     if (isOpen) {
@@ -61,6 +63,7 @@ const ModalQuestAgent = ({
                       chamberSlug={slug}
                       isChatting={true}
                       onStopChatting={onClose}
+                      playerName={profileName}
                     />
                   </TabPanel>
                 }
