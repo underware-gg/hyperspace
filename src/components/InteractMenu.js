@@ -6,6 +6,7 @@ import {
 } from '@chakra-ui/react'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useSessionDocument } from '@/hooks/useDocument'
+import { useSlugs } from '@/hooks/useSlugs'
 import usePlayer from '@/hooks/usePlayer'
 import usePermission from '@/hooks/usePermission'
 import useActionDownListener from '@/hooks/useActionDownListener'
@@ -14,11 +15,14 @@ import ModalPortal from '@/components/ModalPortal'
 import ModalTrigger from '@/components/ModalTrigger'
 import ModalScreen from '@/components/ModalScreen'
 import { Button } from '@/components/Button'
+import { TYPE } from '@/core/components/screen'
+import ModalQuestAgent from './ModalQuestAgent'
 
 const InteractMenu = ({
   customTileset,
   onSelect,
 }) => {
+  const { slug, isQuest } = useSlugs()
   const { agentId, actions } = useRoomContext()
   const {
     canPlace,
@@ -37,6 +41,7 @@ const InteractMenu = ({
   const portalDisclosure = useDisclosure()
   const triggerDisclosure = useDisclosure()
   const screenDisclosure = useDisclosure()
+  const questAgentDisclosure = useDisclosure()
 
   useActionDownListener('editPortal', () => {
     portalDisclosure.onOpen()
@@ -145,6 +150,11 @@ const InteractMenu = ({
       {overScreen &&
         <>
           {screen?.type}:<Text color='important'>{screen?.name ?? screenId}</Text>
+          {(screen?.type == TYPE.METADATA && isQuest) &&
+            <Button size='sm' disabled={!screen || !canViewScreen} onClick={() => questAgentDisclosure.onOpen()}>
+              Talk
+            </Button>
+          }
           {canEditScreen ?
             <>
               <Button size='sm' disabled={!screen || !canEditScreen} onClick={() => actions.emitAction('interact')}>
@@ -164,6 +174,8 @@ const InteractMenu = ({
       }
 
       <ModalScreen screenId={screenId} disclosure={screenDisclosure} />
+
+      <ModalQuestAgent screenId={screenId} disclosure={questAgentDisclosure} />
 
     </HStack>
   )

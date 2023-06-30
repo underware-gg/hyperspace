@@ -8,6 +8,7 @@ import { RoomProvider } from '@/hooks/RoomContext'
 import { VeridaProvider } from '@/hooks/VeridaContext'
 import Head from '@/components/Head'
 import '/styles/styles.scss'
+import 'endlessquestagent/dist/styles/chat.css'
 
 const client = createClient(
   getDefaultClient({
