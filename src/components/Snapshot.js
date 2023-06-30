@@ -14,7 +14,7 @@ import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocumentIds } from '@/hooks/useDocumentIds'
 import { useDocumentTypes } from '@/hooks/useDocumentTypes'
 import { MapPreview } from '@/components/Map2D'
-import { QuestMessagesDoc } from 'hyperbox-sdk'
+import { QuestEncounterDoc } from 'hyperbox-sdk'
 
 const Snapshot = ({
   store,
@@ -108,7 +108,7 @@ const Type = ({
       const doc = store?.getDocument(type, id) ?? null
       if (!doc) continue
       const name = doc.name ?? doc.slug ?? doc?.id ?? null
-      const content = type == 'questMessages' ? (QuestMessagesDoc.getDescription(metadataStore, id)) 
+      const content = type == 'questEncounter' ? (QuestEncounterDoc.getDescription(metadataStore, id)) 
       : (doc.content ? doc.content.slice(0, 20) : null)
       result.push(
         <VStack key={id} alignItems='left' className={`SlugItem${i%2}`}>
