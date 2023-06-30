@@ -28,6 +28,13 @@ const nextConfig = {
       loader: 'file-loader',
     })
 
+    // follow linked dependencies
+    // https://github.com/webpack/webpack/issues/11612#issuecomment-1448208868
+    // https://webpack.js.org/configuration/
+    config.snapshot.managedPaths = []
+    config.watchOptions.followSymlinks = true
+    config.resolve.symlinks = false
+
     return config
   },
 

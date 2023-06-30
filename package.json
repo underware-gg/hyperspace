@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "link": "npm link file:../hyperbox-sdk file:../endlessquestagent",
-    "unlink": "npm unlink hyperbox-sdk endlessquestagent"
+    "link": "npm link file:../hyperbox-sdk file:../endlessquestagent &&  ls -l node_modules | grep \"../\"",
+    "unlink": "npm unlink file:../hyperbox-sdk file:../endlessquestagent"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.17",
