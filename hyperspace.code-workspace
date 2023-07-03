@@ -7,12 +7,12 @@
   "settings": {
     "files.exclude": {
       "**/.next": true,
-      "**/*.svg": true,
       "**/build": true,
       "**/node_modules": true,
       "**/_artwork": true,
     },
     "search.exclude": {
+      "**/*.svg": true,
       "/package-lock.json": true,
       "/yarn.lock": true,
       "/yarn-error.log": true,
