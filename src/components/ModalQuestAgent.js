@@ -116,7 +116,7 @@ const ModalQuestAgent = ({
                     onChange={(timestamp) => setSelectedEncounter(timestamp)}
                   />
                   {encounter &&
-                    <div className='ScrollContainer QuestHistory'>
+                    <div className='ScrollContainer QuestChatBody QuestHistory'>
                       <div className='ScrollContent'>
                         <ChatMessages
                           timestamp={selectedEncounter}
