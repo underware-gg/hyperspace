@@ -5,6 +5,7 @@
 const CANVAS_WIDTH = 640
 const CANVAS_HEIGHT = 480
 const CANVAS_SCALE = 3
+const DEPLOYED_URL = 'https://hyperspace.stage.fundaomental.com/'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -14,13 +15,16 @@ const nextConfig = {
     ENV: process.env.ENV,
     DEV: (process.env.ENV === 'dev'),
     SERVER_URL: process.env.SERVER_URL,
-    CLIENT_URL: 'https://hyperspace.stage.fundaomental.com/',
+    API_URL: process.env.API_URL ?? DEPLOYED_URL,
+    DEPLOYED_URL,
     TILE_SIZE: 32,  // pixels
     CANVAS_WIDTH,   // pixels
     CANVAS_HEIGHT,  // pixels
     CANVAS_SCALE,
     RENDER_WIDTH: (CANVAS_WIDTH * CANVAS_SCALE),
     RENDER_HEIGHT: (CANVAS_HEIGHT * CANVAS_SCALE),
+    SUPABASE_URL: 'https://kegzdrlxljinsutbdfla.supabase.co',
+    SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlZ3pkcmx4bGppbnN1dGJkZmxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE2Njg3NDEzNzksImV4cCI6MTk4NDMxNzM3OX0.Qg--vv50J4XbmSkgIC_XLB5f-m6o8_iqUNCBaDe_35o',
   },
   webpack: (config, options) => {
     config.module.rules.push({
