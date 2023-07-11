@@ -152,13 +152,16 @@ class Actions {
 
   handleKeyDown = e => {
     if (e.metaKey) {
+      // CMD+R : reload page
       if (e.code == 'KeyR') {
         window.location.reload()
       }
-      return // ignore if CMD is pressed
+      // ignore if CMD is pressed
+      return
     }
     const actionName = this.keyMapping[e.which]
-    if (actionName) {
+    if (actionName && !e.repeat) {
+      // console.log(`+++ KEY DOWN`, e.which, actionName, e)
       this.actionDownEmitter.emit(actionName)
       this.actionStates[actionName] = true
     }
@@ -166,6 +169,7 @@ class Actions {
 
   handleKeyUp = e => {
     const actionName = this.keyMapping[e.which]
+    // console.log(`--- KEY UP`, e.which, actionName, e)
     if (actionName) {
       this.actionUpEmitter.emit(actionName)
       this.actionStates[actionName] = false
