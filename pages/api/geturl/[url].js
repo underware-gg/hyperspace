@@ -1,7 +1,12 @@
+import { hexToString } from 'viem'
 
+// /api/geturl/0x68747470733a2f2f687970657273706163652e73746167652e66756e64616f6d656e74616c2e636f6d2f677261766974792e6a7067
+// (https://hyperspace.stage.fundaomental.com/gravity.jpg)
 export default async function api(req, res) {
-  const { url } = req.query
+  const { url: urlHex } = req.query
 
+  const url = hexToString(urlHex)
+  
   console.log(`GETURL:`, url)
 
   const response = await fetch(url, {})

@@ -21,7 +21,7 @@ export default async function handler(req, resp) {
     .getPublicUrl(path)
 
   if (!data || !data.publicUrl || error) {
-    return resp.status(500).json({
+    return resp.status(400).json({
       error: error ?? 'Error fetching download path',
       data,
       query: req.query,

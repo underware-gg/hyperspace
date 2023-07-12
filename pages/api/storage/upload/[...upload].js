@@ -1,26 +1,36 @@
+import { hexToString } from 'viem'
 import { createClient } from '@supabase/supabase-js'
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_API_KEY)
 
-// /api/storage/upload/bucket/folder/filename/url
-// /api/storage/upload/quest/1/S1W1_chamber/https%3A%2F%2Foaidalleapiprodscus.blob.core.windows.net%2Fprivate%2Forg-mSNe7tyaKphe2CUIGBgtXtDj%2Fuser-F21Se6rQxZOAZcEz7huLijvZ%2Fimg-I4WVJ4SUsSUGOo8FDzBegXp1.png
+// /api/storage/upload/bucket/folder/filename/urlHex
+// /api/storage/upload/quest/1/S1W1_chamber/0x68747470733a2f2f687970657273706163652e73746167652e66756e64616f6d656e74616c2e636f6d2f677261766974792e6a7067
+// (https://hyperspace.stage.fundaomental.com/gravity.jpg)
 export default async function handler(req, resp) {
   const { upload } = req.query
-  const [bucket, folder, filename, url] = upload
+  const [bucket, folder, filename, urlHex] = upload
 
-  if (!bucket || !folder || !filename || !url) {
+  if (!bucket || !folder || !filename || !urlHex) {
     return resp.status(400).json({
       error: 'Missing arguments',
       query: req.query,
     })
   }
 
-  // Fetch file
-  const fetchUrl = `${process.env.API_URL}/api/geturl/${encodeURIComponent(url)}`
-  const response = await fetch(fetchUrl, {})
+  const url = hexToString(urlHex)
+  const fetchUrl = `${process.env.API_URL}/api/geturl/${urlHex}`
 
-  if(!response || response.status != 200) {
+  // Fetch file
+  let response = null
+  try {
+    response = await fetch(fetchUrl, {})
+  } catch(error) {
+    response = { error }
+  }
+
+  if (!response || response.error || response.status != 200) {
     return resp.status(response?.status ?? 400).json({
-      error: 'Error fetching file',
+      error: response?.error ?? `Error fetching file status [${response?.status ?? '?'}]`,
+      url,
       fetchUrl,
       query: req.query,
     })
@@ -41,7 +51,7 @@ export default async function handler(req, resp) {
   console.log(`UPLOAD:`, contentType, data, error)
 
   if (!data || error) {
-    return resp.status(500).json({
+    return resp.status(400).json({
       error: error ?? 'Error uploading file',
       query: req.query,
     })

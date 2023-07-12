@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react'
 import useSWR from 'swr'
 import { getFilenameExtensionFromUrl } from '@/core/utils/utils'
+import { stringToHex } from 'viem'
 
 const fetcher = (...args) => fetch(...args).then(res => res.json())
 
@@ -32,7 +33,7 @@ const useRedirectUrl = (url) => {
   const extension = useMemo(() => getFilenameExtensionFromUrl(url), [url])
   const redirectUrl = useMemo(() => {
     if (typeof url == 'string' && (url.startsWith('https://') || url.startsWith('http://'))) {
-      return `/api/geturl/${encodeURIComponent(url)}`
+      return `/api/geturl/${stringToHex(url)}`
     }
     return url
   }, [url])
