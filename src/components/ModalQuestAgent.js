@@ -88,15 +88,13 @@ const ModalQuestAgent = ({
 
             <Tabs isFitted variant='enclosed' w='530px'>
               <TabList mb='1em'>
-                {keysAreOk &&
-                  <Tab _selected={{ bg: 'teal' }}>New Encounter</Tab>
-                }
+                <Tab _selected={{ bg: 'teal' }}>New Encounter</Tab>
                 <Tab _selected={{ bg: 'teal' }}>Past Encounters</Tab>
                 <Tab _selected={{ bg: 'teal' }}>Setup</Tab>
               </TabList>
               <TabPanels>
-                {keysAreOk &&
-                  <TabPanel>
+                <TabPanel>
+                  {keysAreOk ?
                     <ChatDialog
                       store={metadataStore}
                       realmCoord={1n}
@@ -105,8 +103,9 @@ const ModalQuestAgent = ({
                       onStopChatting={onClose}
                       playerName={profileName}
                     />
-                  </TabPanel>
-                }
+                    : <h5>Setup OpenAI keys first</h5>
+                  }
+                </TabPanel>
                 <TabPanel>
                   <EncounterSelector
                     store={metadataStore}
@@ -124,7 +123,6 @@ const ModalQuestAgent = ({
                           agentName={encounter.agentName}
                           playerName={encounter.playerName}
                         />
-
                       </div>
                     </div>
                   }
