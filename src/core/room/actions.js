@@ -161,7 +161,6 @@ class Actions {
     }
     const actionName = this.keyMapping[e.which]
     if (actionName && !e.repeat) {
-      // console.log(`+++ KEY DOWN`, e.which, actionName, e)
       this.actionDownEmitter.emit(actionName)
       this.actionStates[actionName] = true
     }
@@ -169,7 +168,6 @@ class Actions {
 
   handleKeyUp = e => {
     const actionName = this.keyMapping[e.which]
-    // console.log(`--- KEY UP`, e.which, actionName, e)
     if (actionName) {
       this.actionUpEmitter.emit(actionName)
       this.actionStates[actionName] = false

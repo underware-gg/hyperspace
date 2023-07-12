@@ -79,6 +79,8 @@ class Room {
     const { VeridaUser } = (await import('@/core/utils/verida'))
     await loadTextures()
 
+    this.activeElement = null
+
     this.renderer2D.init(this.canvas2d)
     this.renderer3D.init(this.canvas3d)
 
@@ -260,6 +262,13 @@ class Room {
   }
 
   render() {
+    if (document.activeElement != this.activeElement) {
+      // console.log(`changed focus to:`, document.activeElement)
+      if (this.activeElement && (this.activeElement == this.canvas2d || this.activeElement == this.canvas3d)) {
+        this.actions.clearKeys()
+      }
+      this.activeElement = document.activeElement
+    }
     this.render2d()
     this.render3d()
   }
