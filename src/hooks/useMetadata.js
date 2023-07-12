@@ -1,10 +1,12 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { useSlugs } from '@/hooks/useSlugs'
+import { useRoomContext } from '@/hooks/RoomContext'
 import { useMetadataDocument } from '@/hooks/useDocument'
 var stringify = require('json-stringify')
 
-const useMetadata = (key, serialize = true) => {
+const useMetadata = (screenId) => {
   const { slug, isQuest } = useSlugs()
+  const { Screen } = useRoomContext()
 
   const realmMetadata = useMetadataDocument('questRealm', '1')
   const chamberMetadata = useMetadataDocument('questChamber', slug)
@@ -25,6 +27,14 @@ const useMetadata = (key, serialize = true) => {
   const prettyMetadata = useMemo(() => stringify(metadata, null, 2, {
     offset: 0
   }), [metadata])
+
+  useEffect(() => {
+    if (screenId && prettyMetadata) {
+      Screen.updateScreen(screenId, {
+        content: prettyMetadata,
+      })
+    }
+  }, [screenId, prettyMetadata])
 
   return {
     slug, isQuest,

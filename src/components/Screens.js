@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef } from 'react'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useDocument, useLocalDocument } from '@/hooks/useDocument'
 import { useRemoteDocumentIds } from '@/hooks/useDocumentIds'
+import { useMetadata } from '@/hooks/useMetadata'
 import usePermission from '@/hooks/usePermission'
 import useProfile from '@/hooks/useProfile'
 import ModalScreenEdit from '@/components/ModalScreenEdit'
@@ -124,6 +125,9 @@ const MetadataScreen = ({
 }) => {
   const outerDiv = useRef()
   const innerDiv = useRef()
+
+  // keep metadata screen updated
+  useMetadata(screenId)
 
   useEffect(() => {
     applyScrollProg(outerDiv.current, innerDiv.current, scrollProg)

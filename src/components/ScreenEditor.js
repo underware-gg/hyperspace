@@ -64,16 +64,7 @@ const ScreenEditorMetadata = ({
   screen,
   screenId,
 }) => {
-  const { Screen } = useRoomContext()
-  const { metadata, prettyMetadata } = useMetadata()
-
-  useEffect(() => {
-    if (prettyMetadata) {
-      Screen.updateScreen(screenId, {
-        content: prettyMetadata,
-      })
-    }
-  }, [prettyMetadata])
+  useMetadata(screenId)
   
   return (
     <ScreenEditorDocument language='json' screen={screen} screenId={screenId} readOnly={true} />
