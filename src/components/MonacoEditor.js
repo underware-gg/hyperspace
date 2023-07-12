@@ -63,6 +63,22 @@ const MonacoEditor = ({
     monacoEditorRef.current.setModelMarkers(model[0], 'owner', null)
   }
 
+  let options = {
+    stopRenderingLineAfter: 1000,
+    wordWrap,
+    lineNumbers,
+    minimap: { enabled: miniMap },
+  }
+  if (readOnly) {
+    options = {
+      ...options,
+      readOnly: true,
+      domReadOnly: true,
+      scrollBeyondLastLine: false,
+      tabIndex: -1,
+    }
+  }
+
   if (disabled) return <></>
 
   return <Editor
@@ -76,14 +92,7 @@ const MonacoEditor = ({
       monacoEditorRef.current = monaco.editor
       editorRef.current = editor
     }}
-    options={{
-      stopRenderingLineAfter: 1000,
-      readOnly,
-      wordWrap,
-      lineNumbers,
-      minimap: { enabled: miniMap },
-      scrollBeyondLastLine: !readOnly,
-    }}
+    options={options}
     theme={_themes[colorMode]} // preference
     // width='60em'    // preference
     height='41em' // preference

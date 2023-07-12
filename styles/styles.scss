@@ -42,6 +42,9 @@ $color-error: #F34000;
 .MarginSide {
   margin: 0 0.5em !important;
 }
+.NotInteractable {
+  pointer-events: none;
+}
 .Clickable {
   cursor: pointer;
 }

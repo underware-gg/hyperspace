@@ -32,7 +32,7 @@ const Screens = ({ }) => {
           }}
         >
           <div id={screenId}
-            className={`FillParent Clickable ${selectedScreen ? 'ScreenBackground' : 'ClearBackground'}`}
+            className={`FillParent ${selectedScreen ? 'ScreenBackground' : 'ClearBackground'}`}
             onClick={() => localStore.setDocument('screens', 'editing', null)}
           >
             <ScreenComponent screenId={screenId} />
@@ -107,7 +107,7 @@ const DocumentScreen = ({
   }, [outerDiv.current, innerDiv.current, scrollProg])
 
   return (
-    <div className='MarkdownScreen'>
+    <div className='MarkdownScreen NotInteractable'>
       <div className='ScrollContainer' ref={outerDiv}>
         <Markdown className='ScrollContent' ref={innerDiv}>{content}</Markdown>
       </div>
@@ -130,7 +130,7 @@ const MetadataScreen = ({
   }, [outerDiv.current, innerDiv.current, scrollProg])
 
   return (
-    <div className='MetadataScreen'>
+    <div className='MetadataScreen NotInteractable'>
       <div className='ScrollContainer' ref={outerDiv}>
         <div className='ScrollContent' ref={innerDiv}>
           <MonacoEditor

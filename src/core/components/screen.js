@@ -152,7 +152,6 @@ class Screen extends RoomCollection {
     const raycaster = new THREE.Raycaster()
 
     raycaster.setFromCamera(pointer, camera)
-
     let newScreenId = null
 
     const intersects = raycaster.intersectObjects(screenMeshes.children)
