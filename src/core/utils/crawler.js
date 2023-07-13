@@ -111,6 +111,7 @@ export const crawlerSlugToRoom = (slug, options = {}) => {
 
     // Endless Quest
     if (options.isQuest) {
+      // console.warn(`crawlerSlugToRoom:`, options.metadataStore)
       // Gems
       if (i == chamberData.gemPos) {
         result.screen[nanoid()] = {

@@ -74,8 +74,8 @@ const MonacoEditor = ({
       ...options,
       readOnly: true,
       domReadOnly: true,
-      scrollBeyondLastLine: false,
-      tabIndex: -1,
+      // scrollBeyondLastLine: false,
+      // tabIndex: -1,
     }
   }
 
@@ -95,7 +95,7 @@ const MonacoEditor = ({
     options={options}
     theme={_themes[colorMode]} // preference
     // width='60em'    // preference
-    height='100em' // preference
+    height='39em' // preference
   />
 }
 

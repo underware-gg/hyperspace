@@ -54,7 +54,7 @@ export const ScreenBookImage = ({
   }
 
   return (
-    <ScreenCenteredContainer width={imageSize?.width ?? 100} height={imageSize?.height ?? 100}>
+    <ScreenCenteredContainer width={imageSize?.width ?? 100} height={imageSize?.height ?? 100} contentRef={imageRef}>
       <img style={style} src={url} ref={imageRef} onLoad={() => _loaded(true)} onError={() => _loaded(false)} crossOrigin='anonymous' />
     </ScreenCenteredContainer>
   )
@@ -147,6 +147,7 @@ const ScreenCenteredContainer = ({
   width,
   height,
   children,
+  contentRef = null,
 }) => {
   const { gameCanvas } = useGameCanvas()
 
@@ -158,8 +159,8 @@ const ScreenCenteredContainer = ({
     if (width > 0 && height > 0) {
       const aspect = width / height
 
-      const gameWidth = gameCanvas?.clientWidth ?? 800
-      const gameHeight = gameCanvas?.clientHeight ?? 600
+      const gameWidth = contentRef?.current?.parentElement?.clientWidth ?? gameCanvas?.clientWidth ?? 800
+      const gameHeight = contentRef?.current?.parentElement?.clientHeight ?? gameCanvas?.clientHeight ?? 600
       const gameAspect = gameWidth / gameHeight
 
       if (gameAspect > aspect) {
