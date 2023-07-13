@@ -42,7 +42,8 @@ export default async function handler(req, resp) {
   // https://supabase.com/docs/guides/storage/uploads
   // https://supabase.com/docs/reference/javascript/storage-from-upload
   const path = `${folder}/${filename}`
-  const { data, error } = await supabase.storage
+  const { data, error } = await supabase
+    .storage
     .from(bucket)
     .upload(path, buffer, {
       contentType,
@@ -57,7 +58,13 @@ export default async function handler(req, resp) {
     })
   }
 
-  const downloadUrl = `${process.env.API_URL}/api/storage/download/${bucket}/${folder}/${filename}`
+  // Get link from Supabase
+  const { data: downloadData } = supabase
+    .storage
+    .from(bucket)
+    .getPublicUrl(path)
+
+  const downloadUrl = downloadData?.publicUrl ?? `${process.env.API_URL}/api/storage/download/${bucket}/${folder}/${filename}`
   console.log(`UPLOADED to:`, downloadUrl)
 
   resp.status(200).json({

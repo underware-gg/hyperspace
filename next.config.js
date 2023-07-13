@@ -5,7 +5,7 @@
 const CANVAS_WIDTH = 640
 const CANVAS_HEIGHT = 480
 const CANVAS_SCALE = 3
-const DEPLOYED_URL = 'https://hyperspace.stage.fundaomental.com/'
+const DEPLOYED_URL = 'https://hyperspace.stage.fundaomental.com'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
