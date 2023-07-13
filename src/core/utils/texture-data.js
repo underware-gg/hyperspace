@@ -152,6 +152,9 @@ export const textureData = {
   'gravity': {
     src: '/gravity.jpg',
   },
+  'loading': {
+    src: '/icons/loading.jpg',
+  },
   'gridtile': {
     src: '/tiles/gridtile.png',
   },

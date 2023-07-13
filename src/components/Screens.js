@@ -75,15 +75,8 @@ export const ScreenComponent = ({
   }
 
   if (screen?.type == TYPE.METADATA) {
-    // use agent art as preview
-    let artUrl = null
-    try {
-      const meta = JSON.parse(screen.content)
-      artUrl = meta?.agent?.artUrl ?? null
-      console.log(`screen.artUrl`, artUrl)
-    } catch(e) {}
-    if (artUrl) {
-      return <ScreenBook screenId={screenId} url={artUrl} page={screen.page} />
+    if (screen.img) {
+      return <ScreenBook screenId={screenId} url={screen.img} page={screen.page} />
     }
     return <MetadataScreen screenId={screenId} scrollProg={screen.page} content={screen.content} />
   }

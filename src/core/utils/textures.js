@@ -71,8 +71,25 @@ export const loadTextures = async () => {
   return _loadPromise
 }
 
-export const getTextureByName = (name, fallback) => textures[name] ?? textures[fallback] ?? null
-export const getTextureImageByName = name => textures[name]?.image ?? null
+export const getTextureByName = (name_or_url, fallback) => {
+  if (!textures[name_or_url] && name_or_url?.startsWith('http')) {
+    textures[name_or_url] = { ...textures['loading'] }
+    const image = new Image()
+    image.src = name_or_url
+    image.onload = () => {
+      textures[name_or_url] = {
+        src: name_or_url,
+        scale: 1,
+        width: image.width,
+        height: image.height,
+        aspect: (image.width / image.height),
+        image,
+      }
+    }
+  }
+  return textures[name_or_url] ?? textures[fallback] ?? null
+}
+export const getTextureImageByName = (name_or_url) => getTextureByName(name_or_url)?.image ?? null
 
 export const getAgentTextureName = (agentId) => {
   const index = Math.abs(hashCode(agentId)) % spritesheets.length

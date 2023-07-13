@@ -28,14 +28,16 @@ const useMetadata = (screenId) => {
   const prettyMetadata = useMemo(() => stringify(metadata, null, 2, {
     offset: 0
   }), [metadata])
+  const agentArtUrl = useMemo(() => (metadata?.agent?.artUrl ?? null), [metadata])
 
   useEffect(() => {
     if (Screen && screenId && prettyMetadata) {
       Screen.updateScreen(screenId, {
         content: prettyMetadata,
+        img: agentArtUrl,
       })
     }
-  }, [Screen, screenId, prettyMetadata])
+  }, [Screen, screenId, prettyMetadata, agentArtUrl])
 
   return {
     slug, isQuest,

@@ -181,6 +181,10 @@ class Screen extends RoomCollection {
       textureNameOver += `_over`
     }
 
+    if (screen.type == TYPE.METADATA && screen.img) {
+      textureName = textureNameOver = screen.img
+    }
+
     this.Map.drawTextureAtTile(context, x, y, textureNameOver, textureName)
   }
 
