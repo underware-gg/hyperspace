@@ -8,7 +8,7 @@ import {
   Select,
 } from '@chakra-ui/react'
 import { useRoomContext } from '@/hooks/RoomContext'
-import { useDocument } from '@/hooks/useDocument'
+import { useRemoteDocument } from '@/hooks/useDocument'
 import { useSlugs } from '@/hooks/useSlugs'
 import useGameCanvas from '@/hooks/useGameCanvas'
 import { Button } from '@/components/Button'
@@ -59,7 +59,7 @@ const ModalScreen = ({
     }
   }, [isOpen])
 
-  // const screen = useDocument('screen', screenId)
+  // const screen = useRemoteDocument('screen', screenId)
   // const newScreen = (screen == null)
   const screen = null
   const newScreen = true

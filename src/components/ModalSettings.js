@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react'
 import { DEFAULT_ENTRY, MAX_MAP_SIZE } from '@/core/components/map'
 import { useRoomContext } from '@/hooks/RoomContext'
-import { useDocument } from '@/hooks/useDocument'
+import { useRemoteDocument } from '@/hooks/useDocument'
 import usePermission from '@/hooks/usePermission'
 import { PermissionsForm } from '@/components/PermissionsForm'
 import { TileInput, useInputValidator } from '@/components/Inputs'
@@ -40,7 +40,7 @@ export const ModalSettings = ({
   const [entryY, setEntryY] = useState(DEFAULT_ENTRY.y);
   const validator = useInputValidator()
 
-  const settings = useDocument('settings', id)
+  const settings = useRemoteDocument('settings', id)
 
   useEffect(() => {
     if (settings) {

@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { SettingsActions, useSettingsContext } from '@/hooks/SettingsContext'
-import { useDocument, useLocalDocument } from '@/hooks/useDocument'
+import { useRemoteDocument, useLocalDocument } from '@/hooks/useDocument'
 import { useVeridaContext } from '@/hooks/VeridaContext'
 import { useMetadata } from '@/hooks/useMetadata'
 import usePermission from '@/hooks/usePermission'
@@ -29,7 +29,7 @@ const ScreenEditor = ({
   initialFocusRef,
   options = {},
 }) => {
-  const screen = useDocument('screen', screenId)
+  const screen = useRemoteDocument('screen', screenId)
   const { canEdit } = usePermission(screenId)
 
   const _disabled = !screen || !canEdit

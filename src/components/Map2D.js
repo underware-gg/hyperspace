@@ -3,7 +3,7 @@
 
 import React, { useRef, useEffect } from 'react'
 import { useRoomContext } from '@/hooks/RoomContext'
-import { useDocument, useStoreDocument } from '@/hooks/useDocument'
+import { useRemoteDocument, useStoreDocument } from '@/hooks/useDocument'
 import { useRoom } from '@/hooks/useRoom'
 import Map, { MAX_MAP_SIZE } from '@/core/components/map'
 
@@ -23,7 +23,7 @@ const MapPreviewFromSlugToRoomContext = ({
   })
   const { room } = useRoomContext()
 
-  const map = useDocument('map2', 'world')
+  const map = useRemoteDocument('map2', 'world')
 
   useEffect(() => {
     onLoaded(room != null)

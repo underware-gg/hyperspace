@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRoomContext } from '@/hooks/RoomContext'
 
-const useDocument = (type, id) => {
+const useRemoteDocument = (type, id) => {
   const { remoteStore } = useRoomContext()
   return useStoreDocument(type, id, remoteStore)
 }
@@ -59,7 +59,7 @@ const useStoreDocument = (type, id, store) => {
 }
 
 export {
-  useDocument,
+  useRemoteDocument,
   useLocalDocument,
   useSessionDocument,
   useAgentDocument,

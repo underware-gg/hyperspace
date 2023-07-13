@@ -11,7 +11,7 @@ import {
   DeleteIcon,
 } from '@chakra-ui/icons'
 import { useRoomContext } from '@/hooks/RoomContext'
-import { useDocument } from '@/hooks/useDocument'
+import { useRemoteDocument } from '@/hooks/useDocument'
 import { useVeridaContext } from '@/hooks/VeridaContext'
 import useProfile from '@/hooks/useProfile'
 import usePermission from '@/hooks/usePermission'
@@ -26,7 +26,7 @@ const ChatBox = () => {
 
   const [message, setMessage] = useState('')
 
-  const document = useDocument('document', 'chat')
+  const document = useRemoteDocument('document', 'chat')
 
   useEffect(() => {
   }, [])

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useRoomContext } from '@/hooks/RoomContext'
-import { useDocument, useSessionDocument } from '@/hooks/useDocument'
+import { useRemoteDocument, useSessionDocument } from '@/hooks/useDocument'
 import { useRemoteDocumentIds } from '@/hooks/useDocumentIds'
 import useProfile from '@/hooks/useProfile'
 
@@ -12,9 +12,9 @@ const usePlayer = (id) => {
   const [screenId, setScreenId] = useState(null)
   const [playerTile, setPlayerTile] = useState(null)
 
-  const portal = useDocument('portal', portalId)
-  const trigger = useDocument('trigger', triggerId)
-  const screen = useDocument('screen', screenId)
+  const portal = useRemoteDocument('portal', portalId)
+  const trigger = useRemoteDocument('trigger', triggerId)
+  const screen = useRemoteDocument('screen', screenId)
   const { view3d } = useProfile()
 
   const portalIds = useRemoteDocumentIds('portal')

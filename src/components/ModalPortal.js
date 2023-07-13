@@ -10,7 +10,7 @@ import {
   validateRoomSlug,
 } from 'hyperbox-sdk'
 import { useRoomContext } from '@/hooks/RoomContext'
-import { useDocument } from '@/hooks/useDocument'
+import { useRemoteDocument } from '@/hooks/useDocument'
 import useGameCanvas from '@/hooks/useGameCanvas'
 import { TileInput, useInputValidator } from '@/components/Inputs'
 import { DEFAULT_ENTRY } from '@/core/components/map'
@@ -37,7 +37,7 @@ const ModalPortal = ({
     }
   }, [isOpen])
 
-  const portal = useDocument('portal', portalId)
+  const portal = useRemoteDocument('portal', portalId)
 
   useEffect(() => {
     if (isOpen) {

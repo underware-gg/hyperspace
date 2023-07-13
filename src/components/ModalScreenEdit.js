@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react'
 import { useSettingsContext } from '@/hooks/SettingsContext'
 import { useRoomContext } from '@/hooks/RoomContext'
-import { useDocument } from '@/hooks/useDocument'
+import { useRemoteDocument } from '@/hooks/useDocument'
 import useGameCanvas from '@/hooks/useGameCanvas'
 import usePermission from '@/hooks/usePermission'
 import { Button } from '@/components/Button'
@@ -27,7 +27,7 @@ const ModalScreenEdit = ({
   const { remoteStore, localStore, slug, Screen } = useRoomContext()
   const { gameCanvas } = useGameCanvas()
   const { permission, isOwner, canEdit, canView } = usePermission(screenId)
-  const screen = useDocument('screen', screenId)
+  const screen = useRemoteDocument('screen', screenId)
 
   const isOpen = useMemo(() => (screenId != null && canEdit), [screenId, canEdit])
 

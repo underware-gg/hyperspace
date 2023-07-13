@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useRemoteDocumentIds } from '@/hooks/useDocumentIds'
-import { useDocument } from '@/hooks/useDocument'
+import { useRemoteDocument } from '@/hooks/useDocument'
 
 const useScreen = (idOrName) => {
   const { remoteStore } = useRoomContext()
   const screenIds = useRemoteDocumentIds('screen')
 
   const [screenId, setScreenId] = useState(null)
-  const screen = useDocument('screen', screenId)
+  const screen = useRemoteDocument('screen', screenId)
 
   useEffect(() => {
     if (screenIds && remoteStore) {

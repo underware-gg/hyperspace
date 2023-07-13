@@ -5,7 +5,7 @@ import { fromSourceToDataURL } from '@/core/utils/textures'
 import useGameCanvas from '@/hooks/useGameCanvas'
 import FileSelectButton from '@/components/FileSelectButton'
 import { useRoomContext } from '@/hooks/RoomContext'
-import { useDocument } from '@/hooks/useDocument'
+import { useRemoteDocument } from '@/hooks/useDocument'
 import usePermission from '@/hooks/usePermission'
 
 
@@ -13,7 +13,7 @@ const TilesetSelector = ({ }) => {
   const { Tileset } = useRoomContext()
   const { gameCanvas } = useGameCanvas()
   const { canEdit } = usePermission('world')
-  const tileset = useDocument('tileset', 'world')
+  const tileset = useRemoteDocument('tileset', 'world')
   const [selectedValue, setSelectedValue] = useState('')
   const [options, setOptions] = useState([])
 

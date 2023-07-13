@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef } from 'react'
 import { useRoomContext } from '@/hooks/RoomContext'
-import { useDocument, useLocalDocument } from '@/hooks/useDocument'
+import { useRemoteDocument, useLocalDocument } from '@/hooks/useDocument'
 import { useRemoteDocumentIds } from '@/hooks/useDocumentIds'
 import { useMetadata } from '@/hooks/useMetadata'
 import usePermission from '@/hooks/usePermission'
@@ -68,7 +68,7 @@ export default Screens
 export const ScreenComponent = ({
   screenId,
 }) => {
-  const screen = useDocument('screen', screenId)
+  const screen = useRemoteDocument('screen', screenId)
 
   if (screen?.type == TYPE.DOCUMENT) {
     return <DocumentScreen screenId={screenId} scrollProg={screen.page} content={screen.content || `# Screen [${screenId}] has no content`} />

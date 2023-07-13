@@ -14,7 +14,7 @@ import {
 import { makeRoute } from '@/core/utils/routes'
 import { useSlugs } from '@/hooks/useSlugs'
 import { useRoomContext } from '@/hooks/RoomContext'
-import { useDocument } from '@/hooks/useDocument'
+import { useRemoteDocument } from '@/hooks/useDocument'
 import ModalRoomCreate from '@/components/ModalRoomCreate'
 import ModalRoomSelector from '@/components/ModalRoomSelector'
 import { Button } from '@/components/Button'
@@ -32,7 +32,7 @@ const ModalRoomSwitcher = ({
   const disclosureNewRoom = useDisclosure()
   const disclosureSelectRoom = useDisclosure()
 
-  const settings = useDocument('settings', 'world')
+  const settings = useRemoteDocument('settings', 'world')
 
   // detect room change
   useEffect(() => {

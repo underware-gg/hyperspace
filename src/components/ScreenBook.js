@@ -2,7 +2,7 @@ import React, { useState, useMemo, useRef } from 'react'
 import { getFilenameExtensionFromUrl } from '@/core/utils/utils'
 import { useRedirectUrl } from '@/hooks/useApi'
 import { useRoomContext } from '@/hooks/RoomContext'
-import { useDocument } from '@/hooks/useDocument'
+import { useRemoteDocument } from '@/hooks/useDocument'
 import useGameCanvas from '@/hooks/useGameCanvas'
 
 export const ScreenBook = ({
@@ -78,7 +78,7 @@ export const ScreenBookPdf = ({
   url,
 }) => {
   const { localStore } = useRoomContext()
-  const screen = useDocument('screen', screenId)
+  const screen = useRemoteDocument('screen', screenId)
 
   const [numPages, setNumPages] = useState(1);
   const [pageSizes, setPageSizes] = useState([]);
