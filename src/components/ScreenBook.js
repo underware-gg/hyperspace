@@ -9,15 +9,17 @@ export const ScreenBook = ({
   screenId,
   url,
 }) => {
+  const isFromStorage = url.includes('/api/storage/download/') || url.includes('supabase.co/storage')
   const extension = useMemo(() => getFilenameExtensionFromUrl(url), [url])
-  const { redirectUrl: bookUrl } = useRedirectUrl(url)
+  const { redirectUrl: bookUrl } = useRedirectUrl(!isFromStorage ? url : null)
+  console.log(`isFromStorge`, isFromStorage, bookUrl)
 
   if (extension == 'pdf') {
     return <ScreenBookPdf screenId={screenId} url={bookUrl} />
   }
 
-  if (extension == 'jpg' || extension == 'jpeg' || extension == 'png' || extension == 'gif' || extension == 'svg') {
-    return <ScreenBookImage screenId={screenId} url={bookUrl} />
+  if (extension == 'jpg' || extension == 'jpeg' || extension == 'png' || extension == 'gif' || extension == 'svg' || isFromStorage) {
+    return <ScreenBookImage screenId={screenId} url={bookUrl ?? url} />
   }
 
   return (
