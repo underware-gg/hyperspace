@@ -6,11 +6,11 @@ import Editor from '@monaco-editor/react'
 // https://github.com/microsoft/monaco-editor
 // https://microsoft.github.io/monaco-editor/playground.html
 //
+// Monaco options:
+// https://microsoft.github.io/monaco-editor/docs.html#interfaces/editor.IStandaloneEditorConstructionOptions.html
+//
 // React/next.js working example:
 // https://github.com/react-monaco-editor/react-monaco-editor/issues/271#issuecomment-986612363
-//
-// options:
-// https://microsoft.github.io/monaco-editor/docs.html#interfaces/editor.IStandaloneEditorConstructionOptions.html
 //
 
 // available themes
@@ -95,7 +95,7 @@ const MonacoEditor = ({
     options={options}
     theme={_themes[colorMode]} // preference
     // width='60em'    // preference
-    height='41em' // preference
+    height='100em' // preference
   />
 }
 
