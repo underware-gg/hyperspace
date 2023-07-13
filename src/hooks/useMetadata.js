@@ -14,13 +14,14 @@ const useMetadata = (screenId) => {
 
   const metadata = useMemo(() => {
     if (!isQuest) return null
-    delete realmMetadata?.metadata
-    delete chamberMetadata?.metadata
-    delete agentMetadata?.metadata
+    const _copyMetadata = (metadata) => ({
+      ...(metadata ?? {}),
+      metadata: metadata?.metadata ? JSON.parse(metadata.metadata) : {}
+    })
     return {
-      realm: { ...realmMetadata },
-      chamber: { ...chamberMetadata },
-      agent: { ...agentMetadata },
+      realm: _copyMetadata(realmMetadata),
+      chamber: _copyMetadata(chamberMetadata),
+      agent: _copyMetadata(agentMetadata),
     }
   }, [realmMetadata, chamberMetadata, agentMetadata])
 
@@ -29,12 +30,12 @@ const useMetadata = (screenId) => {
   }), [metadata])
 
   useEffect(() => {
-    if (screenId && prettyMetadata) {
+    if (Screen && screenId && prettyMetadata) {
       Screen.updateScreen(screenId, {
         content: prettyMetadata,
       })
     }
-  }, [screenId, prettyMetadata])
+  }, [Screen, screenId, prettyMetadata])
 
   return {
     slug, isQuest,
