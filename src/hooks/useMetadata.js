@@ -2,15 +2,18 @@ import React, { useEffect, useMemo } from 'react'
 import { useSlugs } from '@/hooks/useSlugs'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useMetadataDocument } from '@/hooks/useDocument'
+import { QuestRealmDoc, QuestChamberDoc, QuestAgentDoc } from 'hyperbox-sdk'
 var stringify = require('json-stringify')
 
 const useMetadata = (screenId) => {
-  const { slug, isQuest } = useSlugs()
+  const { slug, realmCoord, isQuest } = useSlugs()
   const { Screen } = useRoomContext()
 
-  const realmMetadata = useMetadataDocument('questRealm', '1')
-  const chamberMetadata = useMetadataDocument('questChamber', slug)
-  const agentMetadata = useMetadataDocument('questAgent', slug)
+  const key = QuestChamberDoc.makeChamberKey(realmCoord, slug)
+
+  const realmMetadata = useMetadataDocument(QuestRealmDoc.type, realmCoord)
+  const chamberMetadata = useMetadataDocument(QuestChamberDoc.type, key)
+  const agentMetadata = useMetadataDocument(QuestAgentDoc.type, key)
 
   const metadata = useMemo(() => {
     if (!isQuest) return null
@@ -40,7 +43,9 @@ const useMetadata = (screenId) => {
   }, [Screen, screenId, prettyMetadata, agentArtUrl])
 
   return {
-    slug, isQuest,
+    slug,
+    realmCoord,
+    isQuest,
     metadata,
     prettyMetadata,
   }

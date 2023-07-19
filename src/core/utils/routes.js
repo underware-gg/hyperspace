@@ -4,7 +4,7 @@ export const makeRoute = ({
   slug,
   branch = null,
   isQuest = false,
-  realm = null, // same as branch when isQuest
+  realmCoord = null, // same as branch when isQuest
   documentName = null,
 }) => {
   if (!slug) {
@@ -18,7 +18,7 @@ export const makeRoute = ({
     result += `/document`
   }
   result += `/${slug}`
-  if (isQuest && realm) result += `/${realm}`
+  if (isQuest && realmCoord) result += `/${realmCoord}`
   else if (branch) result += `/${branch}`
   if (documentName) result += `/${documentName}`
   return result

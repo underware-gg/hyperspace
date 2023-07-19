@@ -6,6 +6,7 @@ import {
   Spacer,
   HStack,
   Select,
+  Divider,
 } from '@chakra-ui/react'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useSlugs } from '@/hooks/useSlugs'
@@ -16,6 +17,7 @@ import { ChatDialog, ChatMessages, OpenAISetup, useKeys } from 'endlessquestagen
 import useProfile from '@/hooks/useProfile'
 import { Button } from '@/components/Button'
 import { makeRoute } from '@/core/utils/routes'
+import { useMetadata } from '@/hooks/useMetadata'
 
 
 const EncounterSelector = ({
@@ -56,7 +58,7 @@ const ModalQuestAgent = ({
   const router = useRouter()
   const { keysAreOk } = useKeys()
   const { isOpen, onOpen, onClose } = disclosure
-  const { slug, realm, isQuest } = useSlugs()
+  const { slug, realmCoord, isQuest } = useSlugs()
   const { metadataStore } = useRoomContext()
   const { profileName } = useProfile(null)
   const [selectedEncounter, setSelectedEncounter] = useState('')
@@ -66,6 +68,8 @@ const ModalQuestAgent = ({
     }
   }, [isOpen])
 
+  const { metadata } = useMetadata()
+
   const encounter = useMetadataDocument(QuestEncounterDoc.type, selectedEncounter?.toString() ?? '')
   // console.log(`ENCOUNTER:`, encounter, JSON.parse(encounter.history))
 
@@ -74,18 +78,18 @@ const ModalQuestAgent = ({
   // Move to Realm 1 if Realm do not exist
   useEffect(() => {
     if (router.isReady && slug && isQuest && ids.length > 0) {
-      const realmDoc = metadataStore.getDocument(QuestRealmDoc.type, realm)
-      if ((!realmDoc || !realm) && realm != '1') {
+      const realmDoc = metadataStore.getDocument(QuestRealmDoc.type, realmCoord)
+      if ((!realmDoc || !realmCoord) && realmCoord != '1') {
         const url = makeRoute({
           slug,
-          realm: '1',
+          realmCoord: '1',
           isQuest,
         })
-        console.log(`Invalid Quest Realm [${realm}], move to Realm 1....`, url)
+        console.log(`Invalid Quest Realm [${realmCoord}], move to Realm 1....`, url)
         router.replace(url)
       }
     }
-  }, [router.isReady, slug, realm, isQuest, ids])
+  }, [router.isReady, slug, realmCoord, isQuest, ids])
 
   return (
     <Modal
@@ -117,14 +121,27 @@ const ModalQuestAgent = ({
               <TabPanels>
                 <TabPanel>
                   {keysAreOk ?
-                    <ChatDialog
-                      store={metadataStore}
-                      realmCoord={1n}
-                      chamberSlug={slug}
-                      isChatting={true}
-                      onStopChatting={onClose}
-                      playerName={profileName}
-                    />
+                    <>
+                      {metadata?.realm && 
+                      <HStack className='Important'>
+                        <div className='QuestRealmArt'>
+                          <img src={metadata.realm.artUrl} />
+                        </div>
+                        <div>
+                          {metadata.realm.name}
+                        </div>
+                        </HStack>
+                      }
+                      <Divider h='10px' />
+                      <ChatDialog
+                        store={metadataStore}
+                        realmCoord={1n}
+                        chamberSlug={slug}
+                        isChatting={true}
+                        onStopChatting={onClose}
+                        playerName={profileName}
+                      />
+                    </>
                     : <h5>Setup OpenAI keys first</h5>
                   }
                 </TabPanel>

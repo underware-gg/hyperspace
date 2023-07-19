@@ -38,7 +38,7 @@ const useSlugs = () => {
   return {
     slug: slug ?? null,
     branch: branch ?? null,
-    realm: isQuest ? branch : null,
+    realmCoord: isQuest ? branch : null,
     branchName,
     documentName: documentName ?? null,
     forceRevert: (forceRevert === 'true'),
