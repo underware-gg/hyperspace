@@ -62,7 +62,7 @@ const ModalQuestAgent = ({
     }
   }, [isOpen])
 
-  const encounter = useMetadataDocument('questEncounter', selectedEncounter?.toString() ?? '')
+  const encounter = useMetadataDocument(QuestEncounterDoc.type, selectedEncounter?.toString() ?? '')
   // console.log(`ENCOUNTER:`, encounter, JSON.parse(encounter.history))
 
   return (
