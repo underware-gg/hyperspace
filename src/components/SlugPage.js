@@ -7,21 +7,22 @@ import {
   Spacer,
   useDisclosure,
 } from '@chakra-ui/react'
-import Layout from '@/components/Layout'
-import Hyperbox from '@/components/Hyperbox'
+import { useSlugs } from '@/hooks/useSlugs'
+import { useRoomContext } from '@/hooks/RoomContext'
+import usePermission from '@/hooks/usePermission'
 import { Button } from '@/components/Button'
+import Layout from '@/components/Layout'
+import Screens from '@/components/Screens'
+import Hyperbox from '@/components/Hyperbox'
 import ChatBox from '@/components/ChatBox'
 import TilesetSelector from '@/components/TilesetSelector'
 import ModalHelp from '@/components/ModalHelp'
 import ModalSnapshots from '@/components/ModalSnapshots'
 import InteractMenu from '@/components/InteractMenu'
 import ExportImportMenu from '@/components/ExportImportMenu'
-import { useSlugs } from '@/hooks/useSlugs'
-import { useRoomContext } from '@/hooks/RoomContext'
-import usePermission from '@/hooks/usePermission'
 import { ModalSettings, useSettingsDisclosure } from '@/components/ModalSettings'
-import { makeRoute } from '@/core/utils/routes'
 import { crawlerSlugToRoom } from '@/core/utils/crawler'
+import { makeRoute } from '@/core/utils/routes'
 
 const SlugPage = () => {
   const router = useRouter()
@@ -73,6 +74,8 @@ const SlugPage = () => {
 
   return (
     <Layout profile>
+
+      <Screens />
 
       <Grid templateColumns='repeat(5, 1fr)' gap={2}>
 

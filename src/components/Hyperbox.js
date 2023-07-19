@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useContext } from 'react'
 import { useLocalStorageValue } from '@/hooks/useLocalStorage'
 import { RoomContext } from '@/hooks/RoomContext'
 import useGameCanvas from '@/hooks/useGameCanvas'
-import Screens from '@/components/Screens'
 
 const Hyperbox = ({
   slug,
@@ -12,7 +11,6 @@ const Hyperbox = ({
   autoFocus = true,
   render2d = true,
   render3d = true,
-  renderScreens = true,
   sourceData = null,
   metadataSlug = null,
   resetAgent = false,
@@ -118,10 +116,6 @@ const Hyperbox = ({
         >
           Canvas not supported by your browser.
         </canvas>
-      }
-
-      {renderScreens &&
-        <Screens />
       }
     </div>
   )

@@ -20,28 +20,26 @@ const Screens = ({ }) => {
   const { permission, isOwner, canEdit, canView } = usePermission(editingScreenId)
   const { view3d } = useProfile()
 
+  const screenSizeStyle = {
+    width: process.env.SCREEN_WIDTH,
+    height: process.env.SCREEN_HEIGHT,
+  }
+
   const screensComponents = useMemo(() => {
     let result = []
     for (const screenId of screenIds) {
-      const overlayScreen = (screenId == editingScreenId && !view3d)
+      // const overlayScreen = (screenId == editingScreenId && !view3d)
       const selectedScreen = (screenId == editingScreenId || screenId == facingScreenId)
       result.push(
-        <div key={screenId}
-          className='FillParent Absolute'
-          style={{
-            zIndex: overlayScreen ? '-100' : '-100',
-          }}
+        <div key={screenId} id={screenId}
+          style={screenSizeStyle}
+          className={`Absolute ${selectedScreen ? 'ScreenBackground' : 'ClearBackground'}`}
+          onClick={() => localStore.setDocument('screens', 'editing', null)}
         >
-          <div id={screenId}
-            style={{ overflow: 'hidden' }} // avoid contents to alter viewport size
-            className={`FillParent ${selectedScreen ? 'ScreenBackground' : 'ClearBackground'}`}
-            onClick={() => localStore.setDocument('screens', 'editing', null)}
-          >
-            <ScreenComponent screenId={screenId} />
-            {selectedScreen &&
-              <div className='ScreenBorder' />
-            }
-          </div>
+          <ScreenComponent screenId={screenId} />
+          {selectedScreen &&
+            <div className='ScreenBorder' />
+          }
         </div>
       )
     }
@@ -54,10 +52,12 @@ const Screens = ({ }) => {
   }, [screensComponents])
 
   return (
-    <div className='FillParent'>
-      {screensComponents}
+    <>
+      <div className='Screens' style={screenSizeStyle}>
+        {screensComponents}
+      </div>
       <ModalScreenEdit screenId={editingScreenId} />
-    </div>
+    </>
   )
 }
 

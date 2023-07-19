@@ -156,8 +156,10 @@ const ScreenCenteredContainer = ({
     let topMargin = 0
     let sideMargin = 0
 
-    const parentWidth = contentRef?.current?.parentElement?.clientWidth ?? gameCanvas?.clientWidth ?? 800
-    const parentHeight = contentRef?.current?.parentElement?.clientHeight ?? gameCanvas?.clientHeight ?? 600
+    // const parentWidth = contentRef?.current?.parentElement?.clientWidth ?? gameCanvas?.clientWidth ?? 800
+    // const parentHeight = contentRef?.current?.parentElement?.clientHeight ?? gameCanvas?.clientHeight ?? 600
+    const parentWidth = process.env.SCREEN_WIDTH
+    const parentHeight = process.env.SCREEN_HEIGHT
     const parentAspect = parentWidth / parentHeight
 
     if (width > 0 && height > 0) {

@@ -222,6 +222,17 @@ input::placeholder {
 // Screen Editor
 //
 
+.Screens {
+  // display: none; // do not render, do not layout
+  visibility: hidden; // renders and layouts, but do not display
+  pointer-events: none; // no mouse events
+  overflow: hidden; // avoid contents to alter viewport size
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -100;
+}
+
 .ScreenModalContainer {
   display: flex;
   flex-flow: column;
