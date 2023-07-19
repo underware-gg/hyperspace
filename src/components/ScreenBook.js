@@ -156,21 +156,21 @@ const ScreenCenteredContainer = ({
     let topMargin = 0
     let sideMargin = 0
 
+    const parentWidth = contentRef?.current?.parentElement?.clientWidth ?? gameCanvas?.clientWidth ?? 800
+    const parentHeight = contentRef?.current?.parentElement?.clientHeight ?? gameCanvas?.clientHeight ?? 600
+    const parentAspect = parentWidth / parentHeight
+
     if (width > 0 && height > 0) {
       const aspect = width / height
 
-      const gameWidth = contentRef?.current?.parentElement?.clientWidth ?? gameCanvas?.clientWidth ?? 800
-      const gameHeight = contentRef?.current?.parentElement?.clientHeight ?? gameCanvas?.clientHeight ?? 600
-      const gameAspect = gameWidth / gameHeight
-
-      if (gameAspect > aspect) {
-        scale = gameHeight / height
-        sideMargin = Math.floor((gameWidth - width * scale) / 2)
+      if (parentAspect > aspect) {
+        scale = parentHeight / height
+        sideMargin = Math.floor((parentWidth - width * scale) / 2)
       } else {
-        scale = gameWidth / width
-        topMargin = Math.floor((gameHeight - height * scale) / 2)
+        scale = parentWidth / width
+        topMargin = Math.floor((parentHeight - height * scale) / 2)
       }
-      // console.log(gameWidth, gameHeight, gameAspect, width, height, aspect, '>', topMargin, sideMargin, scale)
+      console.log(parentWidth, parentHeight, parentAspect, width, height, aspect, '>', topMargin, sideMargin, scale)
     }
 
     return {

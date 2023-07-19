@@ -33,6 +33,7 @@ const Screens = ({ }) => {
           }}
         >
           <div id={screenId}
+            style={{ overflow: 'hidden' }} // avoid contents to alter viewport size
             className={`FillParent ${selectedScreen ? 'ScreenBackground' : 'ClearBackground'}`}
             onClick={() => localStore.setDocument('screens', 'editing', null)}
           >
