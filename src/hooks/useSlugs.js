@@ -33,11 +33,13 @@ const useSlugs = () => {
   const serverDisplay = <span>{serverName} <SyncIcon inSync={inSync} /></span>
   const slugIsValid = (validateRoomSlug(slug) && (!branch || validateRoomSlug(branch)))
   const isCrawlerSlug = slugIsValid && validateSlug(slug)
+  const branchName = isMain ? '[Main]' : isLocal ? '[Local] (Private)' : branch ? (isQuest ? `Realm ${branch}` : branch) : 'Main'
 
   return {
     slug: slug ?? null,
     branch: branch ?? null,
-    branchName: isMain ? '[Main]' : isLocal ? '[Local] (Private)' : (branch ?? 'Main'),
+    realm: isQuest ? branch : null,
+    branchName,
     documentName: documentName ?? null,
     forceRevert: (forceRevert === 'true'),
     slugIsValid,

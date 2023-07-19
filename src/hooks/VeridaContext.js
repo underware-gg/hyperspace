@@ -168,7 +168,7 @@ export const useVeridaContext = () => {
 
   const inviteFriend = async (slug) => {
     const url = makeRoute({
-      url: process.env.DEPLOYED_URL,
+      serverUrl: process.env.DEPLOYED_URL,
       slug,
     })
     const recipientDid = window.prompt('DID to invite', 'did:vda:....')

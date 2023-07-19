@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import { useRouter } from 'next/router'
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
   Tabs, TabList, TabPanels, Tab, TabPanel,
@@ -8,11 +9,13 @@ import {
 } from '@chakra-ui/react'
 import { useRoomContext } from '@/hooks/RoomContext'
 import { useSlugs } from '@/hooks/useSlugs'
-import { ChatDialog, ChatMessages, OpenAISetup, useKeys } from 'endlessquestagent'
-import { QuestEncounterDoc } from 'hyperbox-sdk'
-import { Button } from '@/components/Button'
-import useProfile from '@/hooks/useProfile'
+import { QuestEncounterDoc, QuestRealmDoc } from 'hyperbox-sdk'
 import { useMetadataDocument } from '@/hooks/useDocument'
+import { useMetadataDocumentIds } from '@/hooks/useDocumentIds'
+import { ChatDialog, ChatMessages, OpenAISetup, useKeys } from 'endlessquestagent'
+import useProfile from '@/hooks/useProfile'
+import { Button } from '@/components/Button'
+import { makeRoute } from '@/core/utils/routes'
 
 
 const EncounterSelector = ({
@@ -50,9 +53,10 @@ const EncounterSelector = ({
 const ModalQuestAgent = ({
   disclosure,
 }) => {
+  const router = useRouter()
   const { keysAreOk } = useKeys()
   const { isOpen, onOpen, onClose } = disclosure
-  const { slug } = useSlugs()
+  const { slug, realm, isQuest } = useSlugs()
   const { metadataStore } = useRoomContext()
   const { profileName } = useProfile(null)
   const [selectedEncounter, setSelectedEncounter] = useState('')
@@ -64,6 +68,24 @@ const ModalQuestAgent = ({
 
   const encounter = useMetadataDocument(QuestEncounterDoc.type, selectedEncounter?.toString() ?? '')
   // console.log(`ENCOUNTER:`, encounter, JSON.parse(encounter.history))
+
+  const ids = useMetadataDocumentIds(QuestRealmDoc.type)
+
+  // Move to Realm 1 if Realm do not exist
+  useEffect(() => {
+    if (router.isReady && slug && isQuest && ids.length > 0) {
+      const realmDoc = metadataStore.getDocument(QuestRealmDoc.type, realm)
+      if ((!realmDoc || !realm) && realm != '1') {
+        const url = makeRoute({
+          slug,
+          realm: '1',
+          isQuest,
+        })
+        console.log(`Invalid Quest Realm [${realm}], move to Realm 1....`, url)
+        router.replace(url)
+      }
+    }
+  }, [router.isReady, slug, realm, isQuest, ids])
 
   return (
     <Modal
