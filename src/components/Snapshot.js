@@ -103,8 +103,9 @@ const Type = ({
 
   const items = useMemo(() => {
     let result = []
-    for (let i = 0; i < ids.length; ++i) {
-      const id = ids[i]
+    const _ids = ids.sort((a, b) => a.localeCompare(b))
+    for (let i = 0; i < _ids.length; ++i) {
+      const id = _ids[i]
       const doc = store?.getDocument(type, id) ?? null
       if (!doc) continue
       const name = doc.name ?? doc.slug ?? doc?.id ?? null
