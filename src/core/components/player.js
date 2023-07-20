@@ -342,8 +342,8 @@ class Player extends RoomCollection {
       tile = settings.entry
     }
 
-    player.position.x = tile.x + 0.5
-    player.position.y = tile.y + 1 - PLAYER_RADIUS - 0.01
+    player.position.x = parseInt(tile.x) + 0.5
+    player.position.y = parseInt(tile.y) + 1 - PLAYER_RADIUS - 0.01
 
     this.sessionStore.setDocument('player', id, player)
   }
@@ -539,8 +539,8 @@ class Player extends RoomCollection {
     }
 
     if (tilesUnderPlayer == 0) {
-      console.log(`No ground! Move to entry...`)
       const settings = this.Settings.get('world')
+      console.log(`No ground! Move to entry...`, settings.entry)
       this.moveToTile(this.agentId, settings.entry)
       return
     }
