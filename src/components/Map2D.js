@@ -59,6 +59,7 @@ const MapPreviewFromSlugToRoomContext = ({
 
 const MapPreview = ({
   store,
+  className = null
 }) => {
   const canvasRef = useRef()
 
@@ -78,7 +79,7 @@ const MapPreview = ({
   }, [canvasRef])
 
   return (
-    <div className='FillParent'>
+    <div className={className ?? 'FillParent'}>
       <canvas
         id='room'
         ref={canvasRef}

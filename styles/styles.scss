@@ -223,8 +223,8 @@ input::placeholder {
 //
 
 .Screens {
-  // display: none; // do not render, do not layout
-  visibility: hidden; // renders and layouts, but do not display
+  // display: none; // do not render, do not layout (BAD)
+  visibility: hidden; // renders and layouts, but do not display (GOOD)
   pointer-events: none; // no mouse events
   overflow: hidden; // avoid contents to alter viewport size
   position: absolute;
@@ -252,11 +252,6 @@ input::placeholder {
 .ScreenModalColumnRight {
   @extend .ScreenModalColumnLeft;
   left: 50%;
-}
-
-.ScreenModalPreview {
-  width: 400px;
-  height: 300px;
 }
 
 .ScreenModalMapPreview {

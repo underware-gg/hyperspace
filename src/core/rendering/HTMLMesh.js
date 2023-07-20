@@ -214,7 +214,7 @@ function html2canvas(element) {
 
   }
 
-  function drawElement(element, style) {
+  function drawElement(element, style = {}) {
 
     let x = 0, y = 0, width = 0, height = 0;
 
@@ -286,7 +286,7 @@ function html2canvas(element) {
       height = rect.height;
       // console.log(`HTML element:`, x, y, width, height, typeof element, element)
 
-      style = window.getComputedStyle(element);
+      style = window.getComputedStyle(element) ?? {};
 
       // Get the border of the element used for fill and border
 

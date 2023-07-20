@@ -15,9 +15,9 @@ import usePermission from '@/hooks/usePermission'
 import { Button } from '@/components/Button'
 import Editable from '@/components/Editable'
 import ScreenEditor from '@/components/ScreenEditor'
+import ScreenPreview from '@/components/ScreenPreview'
 import { PermissionsForm } from '@/components/PermissionsForm'
 import { MapPreview } from '@/components/Map2D'
-import { ScreenComponent } from '@/components/Screens'
 import { makeRoute } from '@/core/utils/routes'
 
 const ModalScreenEdit = ({
@@ -118,12 +118,10 @@ const ModalScreenEdit = ({
             <VStack className='ScreenModalColumnRight Padded'>
               {editorPreview &&
                 <>
-                  <div className='ScreenModalMapPreview'>
-                    <MapPreview store={remoteStore} />
-                  </div>
-                  <div className='ScreenModalPreview'>
-                    <ScreenComponent screenId={screenId} />
-                  </div>
+                  <Spacer />
+                  <MapPreview className='ScreenModalMapPreview' store={remoteStore} />
+                  <Spacer />
+                  <ScreenPreview screenId={screenId} />
                 </>
               }
             </VStack>
