@@ -17,7 +17,7 @@
     "@emotion/styled": "^11.11.0",
     "@monaco-editor/react": "^4.5.1",
     "@rsodre/crawler-data": "^0.0.7",
-    "@supabase/supabase-js": "^2.26.0",
+    "@supabase/supabase-js": "^2.29.0",
     "@uiw/react-textarea-code-editor": "1.4.4",
     "@verida/account-web-vault": "^2.3.6",
     "@verida/client-ts": "^2.3.6",
@@ -45,7 +45,7 @@
     "swr": "^2.2.0",
     "three": "^0.145.0",
     "use-local-storage-state": "^18.3.3",
-    "viem": "^1.4.0",
+    "viem": "^1.4.1",
     "wagmi": "0.12.12"
   },
   "devDependencies": {
