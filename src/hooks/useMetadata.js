@@ -5,11 +5,18 @@ import { useMetadataDocument } from '@/hooks/useDocument'
 import { QuestMetadataDocBase, QuestRealmDoc, QuestChamberDoc, QuestAgentDoc } from 'hyperbox-sdk'
 var stringify = require('json-stringify')
 
+function _makeChamberKey(realmCoord, chamberSlug) {
+  if (!realmCoord || !chamberSlug) return null
+  return `${realmCoord.toString()}-${chamberSlug.replace(',', '')}`
+}
+
 const useMetadata = (screenId) => {
   const { slug, realmCoord, isQuest } = useSlugs()
   const { Screen } = useRoomContext()
 
-  const key = QuestMetadataDocBase.makeChamberKey(realmCoord, slug)
+  // TODO: why this is not exposed in production???
+  // const key = QuestMetadataDocBase.makeChamberKey(realmCoord, slug)
+  const key = _makeChamberKey(realmCoord, slug)
 
   const realmMetadata = useMetadataDocument(QuestRealmDoc.type, realmCoord)
   const chamberMetadata = useMetadataDocument(QuestChamberDoc.type, key)
