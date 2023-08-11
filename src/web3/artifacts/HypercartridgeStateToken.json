@@ -2,12 +2,12 @@
   "contractName": "HypercartridgeStateToken",
   "networks": {
     "5": {
-      "address": "0x5D3fE8ce4F94CAb6B79B475C9B318abf9B7CdC66",
-      "transactionHash": "0x6e00fd76dd8936ab95ea4e995238badb4e47fc3d0bb8a86dff85e6ef85c7d0cc"
+      "address": "0x376F2f041b8e38aB44447D8e628D1bbcFf7d3B58",
+      "transactionHash": "0x73b7184cefb82354e9ba46399c4f09719bc8f346576188054e5c59211b30b680"
     },
     "5777": {
-      "address": "0x6D2C9eD40c5f747E70FC590cBf4f72792D7F57D5",
-      "transactionHash": "0xc8751bef017c53b6e9d2a384cfbe2adb1f0c628264bb16ea5488df1c884eb59d"
+      "address": "0x0914b36c6dB50856dc50fAda30d946b7D0e80b63",
+      "transactionHash": "0xcfa35f0e75f755d5eb72bf2fd8934f0fc2931177fdaba3c3904cab4ec14fcda1"
     }
   },
   "abi": [
@@ -536,6 +536,11 @@
             },
             {
               "internalType": "string",
+              "name": "deployedPath",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
               "name": "serverUrl",
               "type": "string"
             },
@@ -609,7 +614,7 @@
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function",
-      "signature": "0xf7a29e04"
+      "signature": "0x1d6684c6"
     },
     {
       "inputs": [
@@ -699,6 +704,11 @@
             },
             {
               "internalType": "string",
+              "name": "deployedPath",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
               "name": "serverUrl",
               "type": "string"
             },
@@ -772,7 +782,7 @@
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function",
-      "signature": "0xd9e44285"
+      "signature": "0xeb85fe21"
     },
     {
       "inputs": [
@@ -819,6 +829,11 @@
             {
               "internalType": "string",
               "name": "deployedAddress",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "deployedPath",
               "type": "string"
             },
             {
