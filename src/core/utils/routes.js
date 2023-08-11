@@ -16,6 +16,8 @@ export const makeRoute = ({
     result += `/endlessquest`
   } else if (documentName) {
     result += `/document`
+  } else {
+    result += `/room`
   }
   result += `/${slug}`
   if (isQuest && realmCoord) result += `/${realmCoord}`

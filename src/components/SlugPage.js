@@ -38,7 +38,7 @@ const SlugPage = () => {
 
   useEffect(() => {
     if (router.isReady && !slugIsValid) {
-      router.replace('/limbo')
+      router.replace(makeRoute({ slug: '/limbo' }))
     }
   }, [router.isReady, slugIsValid])
 

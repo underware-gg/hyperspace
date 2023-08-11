@@ -1,9 +1,5 @@
 import SlugPage from '@/components/SlugPage'
 
-const Page = () => {
-  return (
-    <SlugPage />
-  )
-}
+const Page = () => <SlugPage />
 
 export default Page
