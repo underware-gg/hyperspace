@@ -7,9 +7,13 @@ const CANVAS_HEIGHT = 480
 const CANVAS_SCALE = 3
 const DEPLOYED_URL = 'https://hyperspace.stage.fundaomental.com'
 
+// detect static builds
+const isStaticBuild = (process.env.STATIC_BUILD == '1')
+console.log(`STATIC_BUILD`, process.env.STATIC_BUILD, isStaticBuild)
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
+  output: isStaticBuild ? 'export' : undefined,
   // reactStrictMode: true, // helps to debug React
   swcMinify: true,
   env: {
