@@ -9,6 +9,7 @@ const DEPLOYED_URL = 'https://hyperspace.stage.fundaomental.com'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export',
   // reactStrictMode: true, // helps to debug React
   swcMinify: true,
   env: {
